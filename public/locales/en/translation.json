@@ -1,0 +1,295 @@
+{
+  "aboutUs": {
+    "section1": {
+      "number": "01",
+      "title": "Agaly Hotel Zangilan",
+      "description": "Our hotel in Zəngilan offers comprehensive services for a modern and comfortable stay. With a 24/7 reception and transfer service, and the support of our friendly staff, we deliver an unforgettable experience to our guests. In addition to our restaurant, garden cafe, and Tea Museum, we provide facilities such as connecting rooms, a minibar, and an entertainment center for children. While your daily needs are met with WiFi, laundry, and ironing services, you can also relax with our spa, gym, massage service, Turkish bath, and sauna. Moreover, we cater to every taste and requirement with room service, parking, a conference room, and organized sightseeing tours.",
+      "buttonText": "Go to",
+      "location": "Address:"
+    },
+    "section3": {
+      "number": "03",
+      "title": "Gala Hotel Khankendi",
+      "description": "Located in the center of Khankendi, Gala Hotel is an ideal place for both leisure and business trips. The hotel, distinguished by its modern design and elegant interior, is remembered for its high level of hospitality. The city panorama and mountain views are breathtaking from the upper floors of the hotel, and it is possible to watch the starry sky from the open-air terrace. The spacious and bright rooms provide complete comfort with air conditioning, TV, mini-bar and free Wi-Fi. There are also rooms with balconies overlooking the city. The hotel offers spa and sauna services for guests. There are spacious open and closed halls for weddings, engagements and corporate events. There is a children's playground for family guests. A special parking lot is also provided for car owners. Also, interesting tours of the city and surrounding areas with a professional guide are organized.",
+      "buttonText": "Go to",
+      "location": "Address:"
+    },
+    "section5": {
+      "number": "05",
+      "title": "Qala Hotel Sheki",
+      "description": "Located in the city of Sheki, Qala Hotel Sheki offers accommodation for its guests. This 4-star hotel-type facility features rooms with garden views, and guests can access both the garden and the restaurant. The property provides a 24-hour reception, airport transfer, room service, and free WiFi throughout.\nAll guest rooms at Qala Hotel Sheki are equipped with coffee-making facilities. In all rooms of Ruma Qala Hotel, which offers a communal bathroom with a bidet and complimentary toiletries, air conditioning and a flat-screen TV are provided. Some rooms also have a terrace. Additionally, every room comes with bed linen and towels.",
+      "buttonText": "Go to",
+      "location": "Address:"
+    },
+    "section4": {
+      "number": "04",
+      "title": "Premier Old Gates Hotel",
+      "description": "Premier Old Gates Hotel, located just a 3-minute walk from the Baku Icherisheher metro station, offers a terrace, 24-hour reception, and free WiFi service. The Maiden Tower is situated 300 meters away from the property. The rooms feature air conditioning, a minibar, an electric kettle, and satellite TV. Bathrooms are equipped with a hair dryer. Guests can enjoy meals at the hotel's restaurant. Services such as room service, packed lunch, and in-room breakfast are available upon request. Premier Old Gates Hotel is located 3 km from Baku Railway Station and 27 km from Heydar Aliyev International Airport, with airport transfer provided. Couples especially favor this property – it has received a rating of 9.1 for two-person travel.",
+      "buttonText": "Go to",
+      "location": "Address:"
+    },
+    "section2": {
+      "number": "02",
+      "title": "Natavan Restaurant",
+      "description": "Natavan Restaurant is located in the heart of Baku, at Qəsr 1 döngə, 50 Icherisheher. The restaurant offers delicious dishes of traditional Azerbaijani cuisine; its menu includes national specialties such as pilaf, dolma, and various kebab types.\nOne of the main features of the restaurant is its panoramic view of the city and the sea. Customers can enjoy this magnificent view while sitting on the open veranda. According to user reviews, Natavan Restaurant is distinguished by its high-quality service and hospitable staff.\nThe restaurant's operating hours are from breakfast until 11:00 PM.",
+      "buttonText": "Go to",
+      "location": "Address:"
+    },
+    "moreButton": "More",
+    "banner": {
+      "breadcrumb": "Home /",
+      "pageTitle": "About Us",
+      "mainTitle": "About Us",
+      "subtitle": "At Premier Tour, we aim to provide our clients with an unforgettable travel experience."
+    }
+  },
+  "navbar": {
+    "home": "Home",
+    "tours": "Tours",
+    "domestic": "Incoming",
+    "international": "Outgoing",
+    "about": "About",
+    "contact": "Contact",
+    "blogs": "Blogs",
+    "services": "Services"
+  },
+  "footer": {
+    "tagline": "Discover the world, experience new adventures, and create unforgettable memories with the perfect travel choice.",
+    "linksTitle": "Quick Links",
+    "home": "Home",
+    "tours": "Foreign tours",
+    "domesticTours": "Domestic Tours",
+    "contact": "Contact",
+    "termsTitle": "Services",
+    "bookingPayments": "Flight Ticket Sales",
+    "cancellationsRefunds": "Visa Support",
+    "travelInsurance": "Transfer Services",
+    "customerLiability": "Customer Liability",
+    "contactInfoTitle": "Contact Information",
+    "phone": "+994 70 654 34 98",
+    "email": "Premiertour@gmail.com",
+    "copyright": "© Copyright",
+    "rightsReserved": "All rights reserved."
+  },
+  "contact": {
+    "breadcrumb": "Home /",
+    "pageTitle": "Contact",
+    "title": "Get in Touch",
+    "subtitle": "Have any questions about your trip? Contact us now and let’s make your dream tour come true.",
+    "formTitle": "Fill out the form to contact us",
+    "firstNameLabel": "First Name",
+    "firstNamePlaceholder": "First Name",
+    "lastNameLabel": "Last Name",
+    "lastNamePlaceholder": "Last Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@gmail.com",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+994 99 999 99 99",
+    "messageLabel": "Message",
+    "submitButton": "Send",
+    "socialTitle": "Social Media:",
+    "addressLabel": "Address",
+    "addressValue": "Baku, Nizami Street 45",
+    "phoneCardLabel": "Phone Number",
+    "phoneCardValue": "+994 55 876 44 55",
+    "emailCardLabel": "E-mail",
+    "emailCardValue": "premiertour@gmail.com",
+    "hoursLabel": "Working Hours",
+    "hoursValue": "10:00 - 20:00"
+  },
+  "services": {
+    "breadcrumb": "Home /",
+    "pageTitle": "Our Services",
+    "mainTitle": "Our Services",
+    "subtitle": "Professional services for a comfortable and unforgettable journey",
+    "card1": {
+      "title": "Flight Ticket Sales",
+      "description": "Direct collaboration with leading global airlines."
+    },
+    "card2": {
+      "title": "Visa Support",
+      "description": "Comprehensive support for individuals applying for visas."
+    },
+    "card3": {
+      "title": "Transfer Services",
+      "description": "High-level transfer with luxurious and comfortable vehicles."
+    },
+    "more": {
+      "section1": {
+        "title": "1. Your Gateway to the World – Reliable and Official Flight Ticket Services",
+        "description": "If you are seeking comfort, reliability, and professionalism in your travel plans, you are at the right place. Our company holds accreditation from the International Air Transport Association (IATA) and cooperates directly with leading airlines worldwide. Thanks to our long-term partnerships with reputable airlines such as Qatar Airways, Vueling, FlyDubai, Turkish Airlines, Lufthansa, British Airways, CSA Czech Airlines, Air Astana, Austrian, AZAL, Emirates, Aeroflot, Air France, Indigo, AirArabia, Ajet, Utair, Pegasus, Wizzair and others, we hold official agency status for booking and ticket sales, which offers you a range of advantages:",
+        "description1": "<strong>Extensive Flight Network:</strong> We offer flights to any destination in the world, enabling you to plan your travel routes with greater flexibility.",
+        "description2": "<strong>Competitive Prices and Special Offers:</strong> Through direct cooperation, we offer exclusive discounts and packages for both individual travelers and corporate clients.",
+        "description3": "<strong>Reliable Booking Systems:</strong> Utilizing modern technological solutions, we book your ticket quickly and securely.",
+        "description4": "<strong>Travel Support and Consultation:</strong> We consider the most suitable flight times, transit conditions, and other important details to assist you at every stage of your journey.",
+        "description5": "Thanks to our service that meets international standards, whether you travel for business, tourism, or education, you are ensured to obtain your flight ticket in the shortest time with minimal procedures."
+      },
+      "section2": {
+        "title": "2. Explore the World – Complete Support for Your Visa Matters",
+        "description": "Visa application, one of the essential steps to realize your travel plans, can sometimes become a complex and time-consuming process. Our company prepares the necessary visa documents for your journey and provides comprehensive support at every stage from application to approval. Within this support, we offer the following services:",
+        "description1": "<strong>1. Preparation of the Visa Application:</strong> We prepare all the necessary documents for your visa in accordance with your travel plans and requirements. We pay close attention to every detail, such as filling out the application form and providing financial and travel insurance documents.",
+        "description2": "<strong>2. Selection of the Visa Type:</strong> We help determine which visa type—tourism, business, education, or other specific category—is most advantageous for you, thereby avoiding extra time and cost.",
+        "description3": "<strong>3. Support Related to Visa Permits:</strong> We monitor the progress of your application, accelerate the process of obtaining your visa permits, and maintain regular contact with consulates and embassies to promptly resolve any issues.",
+        "description4": "<strong>4. Contact with Consulates and Embassies:</strong> We are by your side at every step—from obtaining an appointment at a suitable time to gathering the additional documents required for the application.",
+        "description5": "<strong>5. Preparation for the Visa Interview:</strong> If a visa interview is required, we explain potential questions and answer tactics, and provide you with the necessary advice to help you feel confident and at ease.",
+        "description6": "These services help eliminate any difficulties you might encounter during the visa application process and enable you to complete the process in the shortest time with maximum ease. As a result, you can plan your travel in a less stressful and more secure manner."
+      },
+      "section3": {
+        "title": "3. Transfer Services – Your Comfort and Safety Are Our Priority",
+        "description": "Leave the transportation, one of the most important aspects of your journey, to the professionals. Premier Tour provides high-level transfer services with luxurious and comfortable vehicles, offering you a unique travel experience:",
+        "description1": "<strong>Safe and Professional Drivers:</strong> Our drivers, who have years of experience and specialized training, will ensure safe and comfortable travel for you both within the city and across regions.",
+        "description2": "<strong>Comfortable Cars, Minivans, and Buses:</strong> All vehicles in our fleet meet modern technical standards and comfort criteria. We offer transportation options tailored to your needs, whether for individual, family, or group travel.",
+        "description3": "<strong>Multilingual Communication:</strong> Our drivers can communicate fluently in Turkish, English, and Russian, which is a significant advantage for both international guests and corporate representatives.",
+        "description4": "<strong>VIP Reception and Escort at Airports:</strong> We arrange airport reception, baggage assistance, and escort services to ensure you feel special from the moment you arrive until the end of your journey.",
+        "description5": "<strong>Global Airline Services at Your Disposal:</strong> Thanks to Premier Tour's access to a global network of airlines, even the most remote destinations offer you affordable and comfortable flight options.",
+        "description6": "Transfer service is not only about changing locations, but it is also one of the key factors in ensuring the quality and comfort of your journey. Premier Tour guarantees a stress-free and comfortable transfer experience by prioritizing this aspect."
+      }
+    }
+  },
+  "home": {
+    "bannerHome": {
+      "title": "Discover the World with <1>Premier Tour</1>",
+      "subtitle": "We select the most amazing and unforgettable tours for you – trust us for a comfortable, fun, and fulfilling travel experience!",
+      "inputPlaceholder": "Where would you like to go?"
+    },
+    "popular": {
+      "title": "Most Popular Countries",
+      "subtitle": "The destinations loved by travelers! Popular cities, comfortable tours, and unique experiences await you."
+    },
+    "loveTour": {
+      "title": "Most Popular and Beloved Tours",
+      "subtitle": "Create unforgettable memories with our most sought-after tours. Enjoy comfortable flights, luxurious hotels, and exciting itineraries with our exclusive offers.",
+      "button": "View More"
+    },
+    "tourBlog": {
+      "title": "Travel Blog",
+      "subtitle": "Are you ready to discover the world? Find travel stories, useful tips, and articles about unforgettable places here!",
+      "button": "View All"
+    },
+    "review": {
+      "title": "Customer Reviews"
+    }
+  },
+  "blogCard": {
+    "readMore": "Read More"
+  },
+  "reserveCard": {
+    "overnightYes": "Overnight stay included",
+    "overnightNo": "No overnight stay",
+    "ticketIncluded": "Flight ticket included",
+    "ticketNotIncluded": "Flight ticket not included",
+    "insuranceIncluded": "Travel insurance included",
+    "insuranceNotIncluded": "Travel insurance not included",
+    "reserve": "Reserve Now"
+  },
+  "reserveModal": {
+    "formTitle": "Fill out the form to make a reservation",
+    "nameLabel": "First Name",
+    "namePlaceholder": "First Name",
+    "surnameLabel": "Last Name",
+    "surnamePlaceholder": "Last Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "premiertour@gmail.com",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+994 55 852 33 99",
+    "noteLabel": "Note",
+    "submitButton": "Reserve Now"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "tourDetail": {
+    "breadcrumb": "Home / Tours /",
+    "included": "Included in the tour",
+    "contactHeading": "For more information, contact us",
+    "emailLabel": "E-mail",
+    "phoneLabel": "Phone Number",
+    "similarTours": "Similar Tours",
+    "viewAll": "View All",
+    "overnightYes": "Overnight stay included",
+    "overnightNo": "No overnight stay",
+    "ticketIncluded": "Flight ticket included",
+    "ticketNotIncluded": "Flight ticket not included",
+    "visaAvailable": "Visa support available",
+    "visaNotAvailable": "No visa support",
+    "insuranceIncluded": "Insurance included",
+    "insuranceNotIncluded": "Insurance not included",
+    "guide": "Tour guide"
+  },
+  "tours": {
+    "breadcrumb": "Home / Tours /",
+    "pageTitle": "Domestic Tours",
+    "pageTitleOutgoing": "Tours Abroad",
+    "countryLabel": "Country",
+    "selectCountry": "Select Country",
+    "cityLabel": "City",
+    "selectCity": "Select City",
+    "startDatePlaceholder": "Start",
+    "endDatePlaceholder": "End",
+    "tourTitle": "Domestic Tours",
+    "sort": "Sort",
+    "viewMore": "View More",
+    "search": "Search",
+    "startDate": "Start date",
+    "endDate": "Deadline"
+  },
+  "recommed": {
+    "title": "Recommended",
+    "button": "View All"
+  },
+  "blogDetail": {
+    "breadcrumb": "Home / Blog /",
+    "blogHeading": "Premier Tour Travel Blog",
+    "authorLabel": "Author",
+    "copyLink": "Copy link",
+    "section1Title": "1. Singapore Changi Airport (SIN) – The World Leader",
+    "section1Description": "Singapore's Changi Airport has been voted the best airport in the world numerous times. It is not just an ordinary airport – it is a major leisure and entertainment center. The Jewel Changi complex is one of the most striking features of the airport, offering the world's tallest indoor waterfall, lush tropical gardens, and interactive entertainment zones. There are plenty of exciting options for spending time at Changi Airport. Passengers can enjoy a free cinema, explore branded stores in the shopping center, or relax in comfortable lounge areas. Special sleep pods and cozy seating are also available, and the Wi-Fi service is fast and free for everyone. If you have a long transit, Changi Airport is the ideal place to spend your time enjoyably without feeling cramped.",
+    "section1Emphasis": "If you have a long transit, Changi Airport is the best place to spend your time enjoyably without feeling cramped.",
+    "section2Title": "2. Seoul Incheon International Airport (ICN) – A Blend of Technology and Comfort",
+    "section2Description": "Located in Seoul, South Korea, Incheon International Airport is considered one of the most comfortable airports for passengers. It is renowned for its technological innovations and high service standards. The airport offers free shower rooms, high-quality relaxation zones, and exhibits showcasing Korean culture. Additionally, there is a dedicated ice rink, a golf course, and even a spa center. Free Wi-Fi is also available and works very well. If you desire both technology and comfort during your wait, Seoul Incheon International Airport is the perfect choice.",
+    "section3Title": "3. Zurich Airport (ZRH) – The Most Comfortable Airport in Europe",
+    "section3Description": "Zurich Airport in Switzerland is one of the most comfortable and well-organized airports in Europe. Everything is efficiently and precisely managed to create a stress-free environment for passengers. Quick security checks and passport control are significant advantages for transit passengers. The airport also features extensive lounge areas, both indoor and outdoor relaxation spaces, as well as a variety of restaurants. Duty-free stores offer high-quality products with a wide selection.",
+    "recommendTitle": "From the Blog",
+    "viewAll": "View All",
+    "recommendSubtitle": "Are you ready to discover the world? Find travel stories, useful tips, and articles about unforgettable places here!"
+  },
+  "newBlog": {
+    "breadcrumb": "Home /",
+    "pageTitle": "Blog",
+    "title": "Latest",
+    "date": "02.03.2025",
+    "blogTitle": "Top 5 Regions in Turkey for a Summer Vacation – Antalya, Bodrum, or Cappadocia?",
+    "blogContent": "Turkey is one of the most famous destinations for summer tourism in the world. With both beach and sun holidays and regions rich in historical and cultural heritage, there is a place to suit everyone's taste. Which region suits you best? Let's compare Turkey's top 5 summer vacation regions!",
+    "readMore": "Read More"
+  },
+  "oldBlog": {
+    "title": "Previous Blogs",
+    "mainDate": "12.02.2025",
+    "mainTitle": "The World's Best Airports – Where Can You Wait Comfortably?",
+    "mainContent": "While traveling, waiting at the airport can sometimes be tiring, but some airports provide comfortable and luxurious facilities for passengers."
+  },
+  "searchResult": {
+    "title": "Search results"
+  },
+  "searchPage": {
+    "loading": "Loading..."
+  },
+  "blogDetailCard": {
+    "button": "Read Blog"
+  },
+  "countryTours": {
+    "title": "Tours of the country"
+  },
+
+  "notResult": {
+    "title": "Hmm… nothing here!",
+    "description": "Try searching for something else or explore other sections.",
+    "alt": "Not Result",
+
+    "goBack": "Go Back"
+
+}
+
+
+}

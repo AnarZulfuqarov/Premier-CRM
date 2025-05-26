@@ -1,0 +1,5 @@
+export const BLOG_IMG_URL = 'https://premiert-001-site1.ptempurl.com/files/blog_images/'
+export const COUNTRY_IMG_URL = 'https://premiert-001-site1.ptempurl.com/files/country_images/'
+export const CUSTOMER_IMG_URL = 'https://premiert-001-site1.ptempurl.com/files/view_card_images/'
+export const TOUR_CARD_IMG_URL = 'https://premiert-001-site1.ptempurl.com/files/tour_card_images/'
+export const TOUR_IMG_URL = 'https://premiert-001-site1.ptempurl.com/files/tour_images/'
