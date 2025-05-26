@@ -13,10 +13,10 @@ const App = () => {
 
     return (
         <div>
-            <ToastContainer/>
             <RouterProvider router={router}/>
         </div>
     )
 }
 
-export default App
+export default App;
+

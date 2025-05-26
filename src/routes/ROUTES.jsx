@@ -1,11 +1,16 @@
 import {createBrowserRouter} from "react-router-dom";
+import Login from "../pages/LoginPage/index.jsx";
+import CompanyPage from "../pages/UserPages/CompanyPage/index.jsx";
 
 
 const router = createBrowserRouter([
     {
         path: '/',
-        // element: <MainPage/>,
-        children: []
+        element: <Login/>,
+    },
+    {
+        path: '/choose-company',
+        element: <CompanyPage/>,
     },
     {
         path: "/admin",
@@ -17,8 +22,8 @@ const router = createBrowserRouter([
         children: []
     },
     {
-        path: "/login",
-        // element: <AdminLogin/>
+        path: "/",
+        // element: <Login/>
     },
     {
         path: "*",
