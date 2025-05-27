@@ -1,0 +1,144 @@
+.order-form__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.order-form__modal {
+  background: #fff;
+  width: 450px;
+  max-width: 90%;
+  padding:60px 50px 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.order-form__modal-header {
+  margin-bottom: 20px;
+text-align: center;
+  h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+
+  }
+}
+
+.order-form__modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #aaa;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  &:hover {
+    color: #333;
+  }
+}
+
+.order-form__modal-content {
+  margin-bottom: 20px;
+}
+
+.order-form__modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #DCDCDC;
+  }
+
+  th {
+    color: #A4A4A4;
+    font-size: 14px;
+    font-weight: 400;
+    background-color: #007AFF0A;
+  }
+
+  td {
+    font-size: 14px;
+    color: #333;
+  }
+  th:last-child {
+    text-align: right;
+  }
+  td:last-child {
+    text-align: right;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.order-form__modal-notes {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #DCDCDC;
+  border-radius: 4px;
+  min-height: 50px;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #aaa;
+  }
+}
+
+.order-form__modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.order-form__modal-cancel {
+  flex: 1;
+  padding: 10px;
+  background: #fff;
+  color: #384871;
+  border: 1px solid #384871;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.order-form__modal-confirm {
+  flex: 1;
+  padding: 10px;
+  background: #384871;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: #15304a;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-form__modal {
+    width: 90%;
+  }
+}
