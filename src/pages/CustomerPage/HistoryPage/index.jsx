@@ -34,7 +34,7 @@ const OrderHistory = () => {
             id: 'NP764543702735',
             product: 'Kartoşka, subun, səftəli, qab yuyan...',
             quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
+            status: 'Tamamlanmamış',
         },
         {
             id: 'NP764543702735',
@@ -47,8 +47,10 @@ const OrderHistory = () => {
     const filteredOrders = orders.filter((order) => {
         const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = filter === 'all' || (filter === 'pending' && order.status === 'Təsdiq gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış');
+        const matchesFilter = filter === 'all' ||
+            (filter === 'pending' && order.status === 'Təsdiq gözləyən') ||
+            (filter === 'completed' && order.status === 'Tamamlanmış') ||
+            (filter === 'not-completed' && order.status === 'Tamamlanmamış');
         return matchesSearch && matchesFilter;
     });
 
@@ -67,6 +69,7 @@ const OrderHistory = () => {
                     <option value="all">Hamısı</option>
                     <option value="pending">Təsdiq gözləyən</option>
                     <option value="completed">Tamamlanmış</option>
+                    <option value="not-completed">Tamamlanmamış</option>
                 </select>
             </div>
             <div className="order-history__list">
@@ -76,17 +79,17 @@ const OrderHistory = () => {
                             <p className="order-history__id"><span>Order ID</span> {order.id}</p>
                             <span
                                 className={`order-history__status ${
-                                    order.status === 'Tamamlanmış' ? 'completed' : 'pending'
+                                    order.status === 'Tamamlanmış' ? 'completed' :
+                                        order.status === 'Təsdiq gözləyən' ? 'pending' : 'not-completed'
                                 }`}
                             >
-                            {order.status}
-                        </span>
-
+                                {order.status}
+                            </span>
                         </div>
-                       <div className={"order-history__data"}>
-                           <p>{order.product}</p>
-                           <p>{order.quantity}</p>
-                       </div>
+                        <div className="order-history__data">
+                            <p>{order.product}</p>
+                            <p>{order.quantity}</p>
+                        </div>
                     </div>
                 ))}
             </div>

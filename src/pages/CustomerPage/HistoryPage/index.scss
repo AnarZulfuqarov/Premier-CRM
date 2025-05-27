@@ -5,6 +5,7 @@
   background: #fff;
   height: calc(100vh - 129px);
   overflow: hidden;
+
   h2 {
     font-size: 24px;
     font-weight: bold;
@@ -13,7 +14,7 @@
   }
 
   p {
-
+    margin-bottom: 10px;
   }
 
   &__controls {
@@ -68,12 +69,12 @@
     border: 1px solid #ddd;
     background: #fff;
 
-
     &:hover {
       background: #f9f9f9;
     }
   }
-  .order-history__data{
+
+  &__data {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -82,7 +83,8 @@
     background: #FFF;
     height: 42px;
     padding: 0px 10px 0px 11px;
-    p{
+
+    p {
       margin: 0;
       color: #0C0C0C;
       font-size: 14px;
@@ -91,11 +93,13 @@
       line-height: normal;
     }
   }
+
   &__details {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+
     p {
       margin: 5px 0;
       color: #333;
@@ -107,7 +111,8 @@
       font-style: normal;
       font-weight: 500;
       line-height: normal;
-      span{
+
+      span {
         color: #979797;
         font-size: 16px;
         font-style: normal;
@@ -135,5 +140,12 @@
       border: 1px solid #31AC2E;
       background: #E7FFE5;
     }
+
+    &.not-completed {
+      border-radius: 16px;
+      border: 1px solid #FFC31C;
+      background: rgba(255, 229, 159, 0.25);
+    }
   }
+
 }
