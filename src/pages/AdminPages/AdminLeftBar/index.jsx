@@ -21,7 +21,7 @@ const AdminLeftBar = () => {
                     Yeni sifariş
                 </NavLink>
                 </li>
-                <li className="sidebar__menu-item">
+                <li className={location.pathname === "/admin/history" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="23" viewBox="0 0 24 23" fill="none">
   <path
@@ -29,7 +29,9 @@ const AdminLeftBar = () => {
       fill="black"/>
   <path d="M11.2812 5.02905L11.2572 12.9375H17.0312V11.5H12.6991L12.7187 5.03346L11.2812 5.02905Z" fill="black"/>
 </svg>
-                    </span> Tarixcə
+                    </span> <NavLink to={"/admin/history"} className="link">
+                    Tarixcə
+                </NavLink>
                 </li>
             </ul>
         </aside>

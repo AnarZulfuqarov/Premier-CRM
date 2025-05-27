@@ -1,0 +1,139 @@
+.order-history {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  height: calc(100vh - 129px);
+  overflow: hidden;
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  p {
+
+  }
+
+  &__controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #007AFF;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+
+  &__item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+
+
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
+  .order-history__data{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #DCDCDC;
+    background: #FFF;
+    height: 42px;
+    padding: 0px 10px 0px 11px;
+    p{
+      margin: 0;
+      color: #0C0C0C;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .order-history__id {
+      color: #272727;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      span{
+        color: #979797;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        margin-right: 12px;
+      }
+    }
+  }
+
+  &__status {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.pending {
+      border-radius: 16px;
+      border: 1px solid #FBB;
+      background: #FFF5F5;
+    }
+
+    &.completed {
+      border-radius: 16px;
+      border: 1px solid #31AC2E;
+      background: #E7FFE5;
+    }
+  }
+}
