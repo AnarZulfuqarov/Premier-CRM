@@ -27,7 +27,6 @@ function Login() {
 
     return (
         <div id="login">
-            <SomeComponent/>
 
             <div className="login-panel">
                 <div>

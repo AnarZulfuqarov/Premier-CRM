@@ -1,6 +1,6 @@
-.order-history-main{
+.order-history-detail-main {
   position: relative;
-  .xett{
+  .xett {
     width: 100%;
     height: 4px;
     background: #F6F6F6;
@@ -8,8 +8,9 @@
     bottom: 100px;
   }
 }
-.order-history {
-  padding: 20px;
+
+.order-history-detail {
+  padding:50px 50px 20px;
   max-width: 100%;
   margin: 0 auto;
   background: #fff;
@@ -17,38 +18,37 @@
   overflow: hidden;
   position: relative;
 
-
   h2 {
-    font-size: 24px;
-    font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
-  }
-
-  p {
-    margin-bottom: 10px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.56px;
+    margin-bottom: 30px;
+    .link{
+      color: #5B5B5B;
+      text-align: center;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: -0.56px;
+      text-decoration: none;
+    }
   }
 
   &__controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 
     input {
-      flex: 1;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
       outline: none;
-    }
-
-    select {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
     }
   }
 
@@ -87,50 +87,21 @@
     }
   }
 
-  &__data {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 5px;
-    border: 1px solid #DCDCDC;
-    background: #FFF;
-    height: 42px;
-    padding: 0px 10px 0px 11px;
-
-    p {
-      margin: 0;
-      color: #0C0C0C;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-    }
-  }
-
   &__details {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 
-    p {
-      margin: 5px 0;
-      color: #333;
-    }
-
     .order-history__id {
       color: #272727;
       font-size: 14px;
-      font-style: normal;
       font-weight: 500;
-      line-height: normal;
 
       span {
         color: #979797;
         font-size: 16px;
-        font-style: normal;
         font-weight: 400;
-        line-height: normal;
         margin-right: 12px;
       }
     }
@@ -138,28 +109,76 @@
 
   &__status {
     padding: 5px 12px;
-    border-radius: 12px;
+    border-radius: 16px;
     font-size: 12px;
     font-weight: 500;
 
     &.pending {
-      border-radius: 16px;
-      background: #FFF5F5;
-      border: 1px solid #FFC31C;
-      background: rgba(255, 229, 159, 0.25);
-    }
-
-    &.completed {
-      border-radius: 16px;
-      border: 1px solid #31AC2E;
-      background: #E7FFE5;
-    }
-
-    &.not-completed {
-      border-radius: 16px;
-      background: rgba(255, 229, 159, 0.25);
       border: 1px solid #FBB;
       background: #FFF5F5;
+    }
+  }
+
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #DCDCDC;
+    background: #FFF;
+    height: 42px;
+    padding: 0 10px;
+
+    p {
+      margin: 0;
+      color: #0C0C0C;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+
+  &__table {
+    width: 50%;
+    border-collapse: collapse;
+    margin: 30px 0;
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #f9f9f9;
+      font-weight: 500;
+    }
+
+    th input {
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    span {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .order-history-detail__confirm {
+      padding: 10px 40px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      background: #384871;
+
     }
   }
 
@@ -168,10 +187,10 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-    margin-top: 20px;
     position: absolute;
     bottom: 30px;
-    right: 20px;
+    right: 50px;
+
     button {
       padding: 8px 12px;
       background: #fff;

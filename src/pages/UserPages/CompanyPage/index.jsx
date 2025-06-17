@@ -28,11 +28,12 @@ function CompanyPage() {
 
     return (
         <div id="company">
+            <div className="header">
+                <h2>Logo and name</h2>
+            </div>
             <div className="company-panel">
                 <div>
-                    <div className="header">
-                        <h2>Logo and name</h2>
-                    </div>
+
                     <div className="company-form">
                         <div className="title">
                             <h1>Şirkətlər</h1>

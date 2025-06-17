@@ -11,6 +11,11 @@
   &__main {
     flex: 1;
     overflow: hidden;
+    .row{
+      .col-6{
+        padding: 16px 25px;
+      }
+    }
   }
 
   &__title {
@@ -111,6 +116,7 @@
     border-radius: 14px;
     background-color: #fff;
     border: 1px solid #DCDCDC;
+    position: relative;
 
     th,
     td {
@@ -165,7 +171,7 @@
 
   &__table-search-box {
     position: absolute;
-    top: 100%;
+    top:50px;
     left: 0;
     width: 200px;
     background: #fff;
@@ -228,6 +234,7 @@
 
   &__cart-panel_main {
     padding: 20px;
+    height: 90%;
   }
 
   &__cart-search {
@@ -264,7 +271,27 @@
     gap: 10px;
     flex-shrink: 0;
     margin-bottom: 20px;
+    height: 240px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #007AFF;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
   }
 
   &__cart-table {
@@ -307,6 +334,11 @@
     .quantity-Cart{
       border-radius: 15px;
       border: 1px solid #BEBEBE;
+      display: flex;
+      align-items: center;
+      p{
+        margin: 0;
+      }
     }
   }
 
@@ -348,6 +380,7 @@
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
+    margin:  0 0 auto;
     &:hover {
       background-color: #15304a;
     }

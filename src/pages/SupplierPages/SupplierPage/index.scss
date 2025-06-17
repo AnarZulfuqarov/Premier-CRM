@@ -1,0 +1,36 @@
+#supplierPage {
+  background-color: #F6F6F6;
+  height: 100vh;
+  overflow: hidden;
+  padding: 16px;
+
+  .main-content {
+    width: 100%;
+    display: flex;
+    height: calc(100vh - 185px); // Navbar yüksekliği çıkarıldı
+    gap: 15px;
+    @media screen and (max-width: 768px) {
+      padding: 13px 20px 20px 20px;
+      flex-direction: column; // Mobilde alt alta
+    }
+  }
+
+  .leftbar-container {
+    width: 286px;
+    height: 100%;
+    background-color: #fff;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 768px) {
+      width: 60px;
+      padding: 10px;
+    }
+  }
+
+.content-container{
+  width: 100%;
+}
+  @media screen and (max-width: 768px) {
+    padding: 0;
+  }
+}

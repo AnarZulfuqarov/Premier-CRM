@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 
-const AdminNavbar = () => {
+const SupplierNavbar = () => {
     // 3 adet modal için state’ler
     const [showProfilePopup, setShowProfilePopup] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
@@ -170,4 +170,4 @@ const AdminNavbar = () => {
     );
 };
 
-export default AdminNavbar;
+export default SupplierNavbar;
