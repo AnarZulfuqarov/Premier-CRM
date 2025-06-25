@@ -9,6 +9,11 @@ import OrderHistoryDetailTwo from "../pages/CustomerPage/HistoryPageDetail2/inde
 import CompanySectionPage from "../pages/UserPages/CompanySectionPage/index.jsx";
 import CompanyDepartmentPage from "../pages/UserPages/CompanyDepartmentPage/index.jsx";
 import SupplierPage from "../pages/SupplierPages/SupplierPage/index.jsx";
+import ActiveOrders from "../pages/SupplierPages/ActiveOrders/index.jsx";
+import OrderHistorySupplier from "../pages/SupplierPages/HistoryPage/index.jsx";
+import OrderHistoryDetailSuplier from "../pages/SupplierPages/HistoryPageDetail/index.jsx";
+import ActiveOrdersDetail from "../pages/SupplierPages/ActiveOrdersDetail/index.jsx";
+import SupplierProducts from "../pages/SupplierPages/SupplierProducts/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -58,7 +63,26 @@ const router = createBrowserRouter([
             <SupplierPage/>
         ),
         children: [
-            {}
+            {
+                path: "/supplier/activeOrder",
+                element: <ActiveOrders/>
+            },
+            {
+                path: "/supplier/activeOrder/:id",
+                element: <ActiveOrdersDetail/>
+            },
+            {
+                path: "/supplier/history",
+                element: <OrderHistorySupplier/>
+            },
+            {
+                path:"/supplier/history/:id",
+                element:<OrderHistoryDetailSuplier/>
+            },
+            {
+                path:"/supplier/products",
+                element:<SupplierProducts/>
+            },
         ]
     },
     {

@@ -19,7 +19,7 @@ const SupplierLeftBar = () => {
     return (
         <aside className="sidebar">
             <ul className="sidebar__menu">
-                <li className={location.pathname === "/supplier/customerAdd" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname === "/supplier/activeOrder" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path
