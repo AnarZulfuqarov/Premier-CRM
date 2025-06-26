@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 
-const SupplierProducts = () => {
+const SupplierCategories = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -51,16 +51,16 @@ const SupplierProducts = () => {
     };
 
     return (
-        <div className="supplier-product-main">
+        <div className="supplier-category-main">
 
-            <div className="supplier-product">
+            <div className="supplier-category">
                 <div className={"headerr"}>
                     <div className={"head"}>
-                        <h2>Məhsullar</h2>
-                        <p>Məhsul siyahısına baxın, dəyişikliklər edin və yeni məhsullar yaradın.</p>
+                        <h2>Kateqoriyalar</h2>
+                        <p>Buradan kateqoriyaları idarə edə və yenilərini yarada bilərsiniz.</p>
                     </div>
                     <div>
-                        <button onClick={()=>navigate("/supplier/productAdd")}>
+                        <button onClick={()=>navigate("/supplier/categoryAdd")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none">
                                 <path
@@ -73,17 +73,17 @@ const SupplierProducts = () => {
                                     d="M16.5 12.75H7.5C7.08 12.75 6.75 12.42 6.75 12C6.75 11.58 7.08 11.25 7.5 11.25H16.5C16.92 11.25 17.25 11.58 17.25 12C17.25 12.42 16.92 12.75 16.5 12.75Z"
                                     fill="white"/>
                             </svg>
-                            <span>Məhsul əlavə et</span></button>
+                            <span>Kateqoriya əlavə et</span></button>
                     </div>
                 </div>
                 <div className="tab-header">
                     <div className={`tab-item ${activeTab === 'products' ? 'active' : ''}`}
                          onClick={() => setActiveTab('products')}>
-                        Məhsullar
+                        Kateqoriyalar
                     </div>
                     <div className={`tab-item ${activeTab === 'requests' ? 'active' : ''}`}
                          onClick={() => setActiveTab('requests')}>
-                        Məhsul istəkləri
+                        Kateqoriya istəkləri
                     </div>
                     <div className={`tab-item ${activeTab === 'edit' ? 'active' : ''}`}
                          onClick={() => setActiveTab('edit')}>
@@ -114,7 +114,7 @@ const SupplierProducts = () => {
                                             </div>
                                         ) : (
                                             <div className="th-label">
-                                                Məhsul adı
+                                                Kateqoriya adı
                                                 <svg
                                                     onClick={() => setActiveSearch('name')}
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -128,39 +128,8 @@ const SupplierProducts = () => {
                                             </div>
                                         )}
                                     </th>
-                                    <th>
-                                        {activeSearch === 'category' ? (
-                                            <div className="th-search">
-                                                <input
-                                                    autoFocus
-                                                    value={searchCategory}
-                                                    onChange={(e) => setSearchCategory(e.target.value)}
-                                                    placeholder="Axtar..."
-                                                />
-                                                <FaTimes
-                                                    onClick={() => {
-                                                        setActiveSearch(null);
-                                                        setSearchCategory('');
-                                                    }}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="th-label">
-                                                Kateqoriyası
-                                                <svg
-                                                    onClick={() => setActiveSearch('category')}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                >
-                                                    <path d="..." fill="#7A7A7A"/>
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </th>
-                                    <th>Ölçü vahidi</th>
+
+                                    <th>Məhsul sayı</th>
                                     <th>Fəaliyyətlər</th>
                                 </tr>
                                 </thead>
@@ -170,7 +139,6 @@ const SupplierProducts = () => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
-                                            <td>Meyvə-tərəvəz</td>
                                             <td>kq</td>
                                             <td>
                   <span style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
@@ -235,39 +203,15 @@ const SupplierProducts = () => {
                                             </div>
                                         ) : (
                                             <div className="th-label">
-                                                Məhsul adı
+                                                Kateqoriya adı
                                                 <svg onClick={() => setActiveSearch('name')} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path d="..." fill="#7A7A7A" />
                                                 </svg>
                                             </div>
                                         )}
                                     </th>
-                                    <th>
-                                        {activeSearch === 'category' ? (
-                                            <div className="th-search">
-                                                <input
-                                                    autoFocus
-                                                    value={searchCategory}
-                                                    onChange={(e) => setSearchCategory(e.target.value)}
-                                                    placeholder="Axtar..."
-                                                />
-                                                <FaTimes
-                                                    onClick={() => {
-                                                        setActiveSearch(null);
-                                                        setSearchCategory('');
-                                                    }}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="th-label">
-                                                Kateqoriyası
-                                                <svg onClick={() => setActiveSearch('category')} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                    <path d="..." fill="#7A7A7A" />
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </th>
-                                    <th>Ölçü vahidi</th>
+
+                                    <th>Məhsul sayı</th>
                                     <th>Status</th>
                                 </tr>
                                 </thead>
@@ -279,7 +223,6 @@ const SupplierProducts = () => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
-                                            <td>Meyvə-tərəvəz</td>
                                             <td>kq</td>
                                             <td>
                                                 <div style={{
@@ -334,7 +277,7 @@ const SupplierProducts = () => {
                                             </div>
                                         ) : (
                                             <div className="th-label">
-                                                Məhsulun adı
+                                                Kateqoriya adı
                                                 <svg onClick={() => setActiveSearch('name')} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path d="..." fill="#7A7A7A" />
                                                 </svg>
@@ -359,18 +302,16 @@ const SupplierProducts = () => {
                                             </div>
                                         ) : (
                                             <div className="th-label">
-                                                Kateqoriyası
+                                                Yeni kateqoriya adı
                                                 <svg onClick={() => setActiveSearch('category')} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path d="..." fill="#7A7A7A" />
                                                 </svg>
                                             </div>
                                         )}
                                     </th>
-                                    <th>
-                                        Məhsulun yeni adı
-                                    </th>
-                                    <th>Ölçü vahidi</th>
-                                    <th>Yeni ölçü vahidi</th>
+
+                                    <th>Məhsul sayı</th>
+                                    <th>Yeni məhsul sayı</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -380,7 +321,6 @@ const SupplierProducts = () => {
                                         <tr key={i}>
                                             <td>{item.name}</td>
                                             <td>Meyvə-tərəvəz</td>
-                                            <td>{newNames[i % newNames.length]}</td>
                                             <td>kq</td>
                                             <td>kq</td>
                                         </tr>
@@ -394,7 +334,7 @@ const SupplierProducts = () => {
 
 
 
-                <div className="supplier-product__pagination">
+                <div className="supplier-category__pagination">
                     <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
                         &lt;
                     </button>
@@ -424,7 +364,7 @@ const SupplierProducts = () => {
                             </svg>
                         </div>
                         <div className="modal-fields">
-                            <label>Məhsul adı</label>
+                            <label>Kateqoriya adı</label>
                             <input
                                 value={modalData.quantity}
                                 onChange={(e) =>
@@ -432,15 +372,6 @@ const SupplierProducts = () => {
                                 }
                                 placeholder="Miqdar"
                             />
-                            <label>Ölçü vahidi</label>
-                            <input
-                                value={modalData.price}
-                                onChange={(e) =>
-                                    setModalData({ ...modalData, price: e.target.value })
-                                }
-                                placeholder="Qiymət"
-                            />
-
                         </div>
                         <button
                             onClick={() => {
@@ -497,4 +428,4 @@ const SupplierProducts = () => {
     );
 };
 
-export default SupplierProducts;
+export default SupplierCategories;

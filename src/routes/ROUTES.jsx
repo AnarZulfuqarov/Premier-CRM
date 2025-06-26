@@ -14,6 +14,9 @@ import OrderHistorySupplier from "../pages/SupplierPages/HistoryPage/index.jsx";
 import OrderHistoryDetailSuplier from "../pages/SupplierPages/HistoryPageDetail/index.jsx";
 import ActiveOrdersDetail from "../pages/SupplierPages/ActiveOrdersDetail/index.jsx";
 import SupplierProducts from "../pages/SupplierPages/SupplierProducts/index.jsx";
+import SupplierProductAdd from "../pages/SupplierPages/SupplierProductsAdd/index.jsx";
+import SupplierCategories from "../pages/SupplierPages/SupplierCategories/index.jsx";
+import SupplierCategoryAdd from "../pages/SupplierPages/SupplierCategorisAdd/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -80,9 +83,21 @@ const router = createBrowserRouter([
                 element:<OrderHistoryDetailSuplier/>
             },
             {
-                path:"/supplier/products",
+                path:"/supplier/products/products",
                 element:<SupplierProducts/>
             },
+            {
+                path: "/supplier/productAdd",
+                element: <SupplierProductAdd/>
+            },
+            {
+                path:"/supplier/products/categories",
+                element:<SupplierCategories/>
+            },
+            {
+                path: "/supplier/categoryAdd",
+                element: <SupplierCategoryAdd/>
+            }
         ]
     },
     {
