@@ -17,6 +17,17 @@ import SupplierProducts from "../pages/SupplierPages/SupplierProducts/index.jsx"
 import SupplierProductAdd from "../pages/SupplierPages/SupplierProductsAdd/index.jsx";
 import SupplierCategories from "../pages/SupplierPages/SupplierCategories/index.jsx";
 import SupplierCategoryAdd from "../pages/SupplierPages/SupplierCategorisAdd/index.jsx";
+import SupplierVendors from "../pages/SupplierPages/SupplierVendors/index.jsx";
+import VendorHistorySupplier from "../pages/SupplierPages/VendorHistoryPage/index.jsx";
+import VendorHistoryDetailSuplier from "../pages/SupplierPages/VendorHistoryPageDetail/index.jsx";
+import SuperAdminPage from "../pages/SuperAdminPages/SupplierPage/index.jsx";
+import SuperAdminPeople from "../pages/SuperAdminPages/SuperAdminPeople/index.jsx";
+import SuperAdminPeopleDetail from "../pages/SuperAdminPages/SuperAdminPeopleDetail/index.jsx";
+import SuperAdminPeopleDetailAddBolme from "../pages/SuperAdminPages/SuperAdminPeopleDetailAddBolme/index.jsx";
+import SuperAdminProducts from "../pages/SuperAdminPages/SuperAdminProducts/index.jsx";
+import SuperAdminProductsAdd from "../pages/SuperAdminPages/SuperAdminProductsAdd/index.jsx";
+import SuperAdminCategories from "../pages/SuperAdminPages/SuperAdminCategories/index.jsx";
+import SuperAdminCategoryAdd from "../pages/SuperAdminPages/SuperAdminCategorisAdd/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -97,6 +108,74 @@ const router = createBrowserRouter([
             {
                 path: "/supplier/categoryAdd",
                 element: <SupplierCategoryAdd/>
+            },
+            {
+                path: "/supplier/products/vendors",
+                element: <SupplierVendors/>
+            },
+            {
+                path: "/supplier/vendor/:id",
+                element: <VendorHistorySupplier/>
+            },
+            {
+                path: "/supplier/vendor/:id/:id",
+                element: <VendorHistoryDetailSuplier/>
+            }
+        ]
+    },
+    {
+        path:"/superAdmin",
+        element: (
+            <SuperAdminPage/>
+        ),
+        children: [
+            {
+                path: "/superAdmin/people",
+                element: <SuperAdminPeople/>
+            },
+            {
+                path: "/superAdmin/people/:id",
+                element: <SuperAdminPeopleDetail/>
+            },
+            {
+              path: "/superAdmin/people/:id/bolmeAdd",
+              element: <SuperAdminPeopleDetailAddBolme/>
+            },
+            {
+                path: "/superAdmin/history",
+                element: <OrderHistorySupplier/>
+            },
+            {
+                path:"/superAdmin/history/:id",
+                element:<OrderHistoryDetailSuplier/>
+            },
+            {
+                path:"/superAdmin/products/products",
+                element:<SuperAdminProducts/>
+            },
+            {
+                path: "/superAdmin/productAdd",
+                element: <SuperAdminProductsAdd/>
+            },
+            {
+                path:"/superAdmin/products/categories",
+                element:<SuperAdminCategories/>
+            },
+            {
+                path: "/superAdmin/categoryAdd",
+                element: <SuperAdminCategoryAdd/>
+            },
+            {
+                path: "/superAdmin/products/vendors",
+                element: <SupplierVendors/>
+            },
+            {
+                path: "/superAdmin/vendor/:id",
+                element: <VendorHistorySupplier/>
+            },
+            {
+                path: "/superAdmin/vendor/:id/:id",
+                element: <VendorHistoryDetailSuplier/>
             }
         ]
     },

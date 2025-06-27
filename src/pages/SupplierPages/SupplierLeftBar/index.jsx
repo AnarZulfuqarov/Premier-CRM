@@ -97,12 +97,12 @@ const SupplierLeftBar = () => {
                             </li>
                             <li>
                                 <NavLink
-                                    to="/supplier/vendors"
+                                    to="/supplier/products/vendors"
                                     className={({isActive}) =>
                                         isActive ? "sidebar__submenu-item active" : "sidebar__submenu-item"
                                     }
                                 >
-                                    Vendors
+                                    Vendorlar
                                 </NavLink>
                             </li>
                         </ul>
