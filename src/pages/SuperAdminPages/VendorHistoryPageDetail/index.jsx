@@ -4,7 +4,7 @@ import {NavLink} from 'react-router-dom';
 import { FaTimes} from 'react-icons/fa';
 import './index.scss';
 
-const VendorHistoryDetailSuplier = () => {
+const VendorHistoryDetailSuperAdmin = () => {
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
@@ -31,14 +31,14 @@ const VendorHistoryDetailSuplier = () => {
     });
 
     return (
-        <div className="vendor-history-detail-supplier-main">
-            <div className="vendor-history-detail-supplier">
+        <div className="vendor-history-detail-super-admin-main">
+            <div className="vendor-history-detail-super-admin">
                 <h2>
                     <NavLink className="link" to="/admin/history">— Vendorlar</NavLink>{' '}
                     <NavLink to="/admin/history" className={"link"} >— Bravo</NavLink>
                     — Təhvil gözləyən
                 </h2>
-                <div key={order.id} className="vendor-history-detail-supplier_item">
+                <div key={order.id} className="vendor-history-detail-super-admin_item">
                     <div className={"techizat"}>
                         <div className={"order-history-supplier__ids"}>
                             <p className="order-history-supplier__id">
@@ -77,7 +77,7 @@ const VendorHistoryDetailSuplier = () => {
                 </div>
                 <div className="table-wrapper">
                     <div className="table-scroll">
-                        <table className="vendor-history-detail-supplier__table">
+                        <table className="vendor-history-detail-super-admin__table">
                             <thead>
                             <tr>
                                 <th>№</th>
@@ -172,4 +172,4 @@ const VendorHistoryDetailSuplier = () => {
     );
 };
 
-export default VendorHistoryDetailSuplier;
+export default VendorHistoryDetailSuperAdmin;

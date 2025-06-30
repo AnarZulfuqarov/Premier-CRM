@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 
-const VendorHistorySupplier = () => {
+const VendorHistorySuperAdmin =() => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
@@ -115,8 +115,8 @@ const VendorHistorySupplier = () => {
     };
 
     return (
-        <div className={"vendor-detail-main"}>
-            <div className="vendor-detail">
+        <div className={"vendor-detail-super-admin-main"}>
+            <div className="vendor-detail-super-admin">
                 <div className={'path'}>
                     <h2>
                         <NavLink className="link" to="/admin/history">— Vendorlar</NavLink>{' '}
@@ -125,7 +125,7 @@ const VendorHistorySupplier = () => {
                 </div>
                 <h3>Vendorlar</h3>
                 <p>Mövcud vendor məlumatlarını bu bölmədən nəzərdən keçirə bilərsiniz</p>
-                <div className="vendor-detail__controls">
+                <div className="vendor-detail-super-admin__controls">
                     <input
                         type="text"
                         placeholder="Axtarış edin"
@@ -138,28 +138,28 @@ const VendorHistorySupplier = () => {
                         <option value="completed">Tamamlanmış</option>
                     </select>
                 </div>
-                <div className="vendor-detail__list">
+                <div className="vendor-detail-super-admin__list">
                     {paginatedOrders.map((order, index) => (
-                        <div key={order.id || index} className="vendor-detail__item">
+                        <div key={order.id || index} className="vendor-detail-super-admin__item">
                             <div className={"techizat"}>
-                                <div className={"vendor-detail__ids"}>
-                                    <p className="vendor-detail__id">
+                                <div className={"vendor-detail-super-admin__ids"}>
+                                    <p className="vendor-detail-super-admin__id">
                                         <span>Təchizatçının adı:</span> {order.id}
                                     </p>
-                                    <p className="vendor-detail__id">
+                                    <p className="vendor-detail-super-admin__id">
                                         <span>Sifarişçinin adı:</span> {order.price} ₼
                                     </p>
                                 </div>
                             </div>
-                            <div className="vendor-detail__details">
-                                <div className={"vendor-detail__ids"}>
-                                    <p className="vendor-detail__id">
+                            <div className="vendor-detail-super-admin__details">
+                                <div className={"vendor-detail-super-admin__ids"}>
+                                    <p className="vendor-detail-super-admin__id">
                                         <span>Order ID</span> {order.id}
                                     </p>
 
                                 </div>
                                 <span
-                                    className={`vendor-detail__status ${
+                                    className={`vendor-detail-super-admin__status ${
                                         order.status === 'Tamamlanmış'
                                             ? 'completed'
                                             : order.status === 'Sifarişçidən təhvil gözləyən'
@@ -170,14 +170,14 @@ const VendorHistorySupplier = () => {
                 {order.status}
               </span>
                             </div>
-                            <div className="vendor-detail__data">
+                            <div className="vendor-detail-super-admin__data">
                                 <p>{order.product}</p>
                                 <p>{order.quantity}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-                <div className="vendor-detail__pagination">
+                <div className="vendor-detail-super-admin__pagination">
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
@@ -207,4 +207,4 @@ const VendorHistorySupplier = () => {
     );
 };
 
-export default VendorHistorySupplier;
+export default VendorHistorySuperAdmin;

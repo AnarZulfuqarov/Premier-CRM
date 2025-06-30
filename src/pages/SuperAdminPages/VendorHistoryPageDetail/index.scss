@@ -1,4 +1,4 @@
-.vendor-history-detail-supplier-main {
+.vendor-history-detail-super-admin-main {
   position: relative;
   .confirm-modal-overlay {
     position: fixed;
@@ -74,14 +74,14 @@
   }
 }
 
-.vendor-history-detail-supplier {
+.vendor-history-detail-super-admin {
   padding: 50px;
   background: #fff;
   height: calc(100vh - 129px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .vendor-history-detail-supplier_item{
+  .vendor-history-detail-super-admin_item{
     padding: 15px;
     border: 1px solid #ddd;
     background: #fff;
@@ -209,7 +209,7 @@
     cursor: pointer;
   }
 
-  .vendor-history-detail-supplier__table {
+  .vendor-history-detail-super-admin__table {
   margin: 0;
 
     th, td {
@@ -276,7 +276,7 @@
       color: #333;
     }
 
-    .vendor-history-detail-supplier__confirm {
+    .vendor-history-detail-super-admin__confirm {
       padding: 10px 30px;
       background: #384871;
       color: #fff;

@@ -1,4 +1,4 @@
-.vendor-detail-main{
+.vendor-detail-super-admin-main{
   position: relative;
   .xett{
     width: 100%;
@@ -8,7 +8,7 @@
     bottom: 100px;
   }
 }
-.vendor-detail {
+.vendor-detail-super-admin {
   padding: 32px;
   max-width: 100%;
   margin: 0 auto;
@@ -117,12 +117,12 @@
     }
   }
   .techizat{
-    .vendor-detail__ids{
+    .vendor-detail-super-admin__ids{
       display: flex;
       gap: 24px;
       align-items: center;
     }
-    .vendor-detail__id {
+    .vendor-detail-super-admin__id {
       color: #272727;
       font-size: 14px;
       font-style: normal;
@@ -149,12 +149,12 @@
       margin: 5px 0;
       color: #333;
     }
-    .vendor-detail__ids{
+    .vendor-detail-super-admin__ids{
       display: flex;
       gap: 24px;
       align-items: center;
     }
-    .vendor-detail__id {
+    .vendor-detail-super-admin__id {
       color: #272727;
       font-size: 14px;
       font-style: normal;

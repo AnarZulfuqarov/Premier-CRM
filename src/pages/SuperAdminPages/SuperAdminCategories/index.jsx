@@ -212,35 +212,26 @@ const SuperAdminCategories = () => {
                                     </th>
 
                                     <th>Məhsul sayı</th>
-                                    <th>Status</th>
+                                    <th>Qərar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {pagedItems.map((item, i) => {
-                                    const status = i % 2 === 0 ? 'Təsdiq gözləyən' : 'Silinmə gözləyən';
-                                    const isConfirmed = status === 'Təsdiq gözləyən';
 
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
                                             <td>kq</td>
                                             <td>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '8px',
-                                                    color: isConfirmed ? '#D49100' : '#F04438'
-                                                }}>
-                                                    {isConfirmed ? (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                            <path d="M13.25 9C11.18 9 9.5 10.68 9.5 12.75C9.5 14.82 11.18 16.5 13.25 16.5C15.32 16.5 17 14.82 17 12.75C17 10.68 15.32 9 13.25 9ZM14.4875 14.5125L12.875 12.9V10.5H13.625V12.5925L15.0125 13.98L14.4875 14.5125ZM14 2.25H11.615C11.3 1.38 10.475 0.75 9.5 0.75C8.525 0.75 7.7 1.38 7.385 2.25H5C4.175 2.25 3.5 2.925 3.5 3.75V15C3.5 15.825 4.175 16.5 5 16.5H9.5825C9.13822 16.0698 8.77717 15.5613 8.5175 15H5V3.75H6.5V6H12.5V3.75H14V7.56C14.5325 7.635 15.035 7.7925 15.5 8.01V3.75C15.5 2.925 14.825 2.25 14 2.25ZM9.5 3.75C9.0875 3.75 8.75 3.4125 8.75 3C8.75 2.5875 9.0875 2.25 9.5 2.25C9.9125 2.25 10.25 2.5875 10.25 3C10.25 3.4125 9.9125 3.75 9.5 3.75Z" fill="#FAC228"/>
-                                                        </svg>
-                                                    ) : (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                            <path d="M5.56836 12.9324L9.50061 9.00012M9.50061 9.00012L13.4329 5.06787M9.50061 9.00012L5.56836 5.06787M9.50061 9.00012L13.4329 12.9324" stroke="#ED0303" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                        </svg>
-                                                    )}
-                                                    <span>{status}</span>
+                                                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                        <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
+                                                        <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
+                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                        <circle cx="10" cy="10" r="10" fill="#F44336"/>
+                                                        <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
                                                 </div>
                                             </td>
                                         </tr>
@@ -312,6 +303,7 @@ const SuperAdminCategories = () => {
 
                                     <th>Məhsul sayı</th>
                                     <th>Yeni məhsul sayı</th>
+                                    <th>Qərar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -323,6 +315,18 @@ const SuperAdminCategories = () => {
                                             <td>Meyvə-tərəvəz</td>
                                             <td>kq</td>
                                             <td>kq</td>
+                                            <td>
+                                                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                        <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
+                                                        <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
+                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                        <circle cx="10" cy="10" r="10" fill="#F44336"/>
+                                                        <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
+                                                </div>
+                                            </td>
                                         </tr>
                                     );
                                 })}
