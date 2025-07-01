@@ -97,7 +97,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #007AFF;
+      background: #c3c3c3;
       border-radius: 4px;
     }
 
@@ -130,6 +130,7 @@
       color: #333;
       font-weight: 600;
       text-align: center;
+
     }
 
     td {
@@ -162,7 +163,7 @@
   }
 
   &__table-search-icon {
-    margin-left: 5px;
+    margin-left: 30px;
     font-size: 16px;
     color: #aaa;
     vertical-align: middle;
@@ -284,7 +285,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #007AFF;
+      background: #c3c3c3;
       border-radius: 4px;
       cursor: pointer;
     }

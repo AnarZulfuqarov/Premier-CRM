@@ -160,12 +160,12 @@ const SuperAdminLeftBar = () => {
                     Tarixcə
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/history" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname === "/superAdmin/kalkulyasiya" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M18 8H14M16 6V10M18 17.5H14M18 14.5H14M10 17.5L8.25 15.75M8.25 15.75L6.5 14M8.25 15.75L10 14M8.25 15.75L6.5 17.5M10 8H6M21.5 12.95V11.05C21.5 7.02 21.5 5.004 20.109 3.752C18.718 2.5 16.479 2.5 12 2.5C7.522 2.5 5.282 2.5 3.891 3.752C2.5 5.004 2.5 7.02 2.5 11.05V12.95C2.5 16.98 2.5 18.996 3.891 20.248C5.282 21.5 7.521 21.5 12 21.5C16.478 21.5 18.718 21.5 20.109 20.248C21.5 18.996 21.5 16.98 21.5 12.95Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-                    </span> <NavLink to={"/superAdmin/history"} className="link">
+                    </span> <NavLink to={"/superAdmin/kalkulyasiya"} className="link">
                     Kalkulyasiya
                 </NavLink>
                 </li>

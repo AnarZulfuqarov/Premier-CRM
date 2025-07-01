@@ -1,5 +1,12 @@
-.order-history-detail-main-supplier {
+.order-history-detail-super-admin-two-main{
   position: relative;
+  .xett{
+    width: 100%;
+    height: 4px;
+    background: #F6F6F6;
+    position: absolute;
+    bottom: 100px;
+  }
   .confirm-modal-overlay {
     position: fixed;
     top: 0;
@@ -74,14 +81,14 @@
   }
 }
 
-.order-history-detail-supplier {
+.order-history-detail-super-admin-two {
   padding: 50px;
   background: #fff;
   height: calc(100vh - 129px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .order-history-detail-supplier_item{
+  .order-history-detail-super-admin-two_item{
     padding: 15px;
     border: 1px solid #ddd;
     background: #fff;
@@ -91,12 +98,12 @@
     }
     margin-bottom: 20px;
     .techizat{
-      .order-history-supplier__ids{
+      .order-history-super-admin-two__ids{
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-supplier__id {
+      .order-history-super-admin-two__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -113,7 +120,7 @@
         }
       }
     }
-    .order-history__details {
+    .order-history-super-admin-two__details {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -123,12 +130,12 @@
         margin: 5px 0;
         color: #333;
       }
-      .order-history-supplier__ids{
+      .order-history-super-admin-two__ids{
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-supplier__id {
+      .order-history-super-admin-two__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -148,7 +155,7 @@
   }
 
 
-  .order-history-supplier__status {
+  .order-history-super-admin-two__status {
     padding: 5px 12px;
     border-radius: 12px;
     font-size: 12px;
@@ -185,14 +192,13 @@
   }
 
   .table-wrapper {
-    flex: 1;
     display: flex;
     flex-direction: column;
     background: #fff;
   }
 
   .table-scroll {
-    height: calc(60vh - 129px);
+    height: calc(47vh - 129px);
     overflow: auto;
 
   }
@@ -209,7 +215,7 @@
     cursor: pointer;
   }
 
-  .order-history-detail-supplier__table {
+  .order-history-detail-super-admin-two__table {
   margin: 0;
 
     th, td {
@@ -276,7 +282,7 @@
       color: #333;
     }
 
-    .order-history-detail-supplier__confirm {
+    .order-history-detail-super-admin-two__confirm {
       padding: 10px 30px;
       background: #384871;
       color: #fff;
@@ -331,5 +337,79 @@
     font-size: 16px;
     color: #333;
     line-height: 1.4;
+  }
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    button {
+      padding: 8px 12px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      font-size: 14px;
+      min-width: 40px;
+      text-align: center;
+      border-radius: 3px;
+      border: 1px solid #E3E3E3;
+
+      &:disabled {
+        background: #f1f1f1;
+        cursor: not-allowed;
+        color: #999;
+      }
+
+      &:hover:not(:disabled):not(.active) {
+        background: #f9f9f9;
+      }
+
+      &.active {
+        color: #fff;
+        font-weight: 500;
+        border-radius: 3px;
+        background: #384871;
+      }
+
+      &:first-child, &:last-child {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+  }
+  .foot{
+    margin-top: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h5{
+      color: #272727;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      margin: 0;
+    }
+    button{
+      display: flex;
+      width: 169px;
+      height: 41px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #384871;
+      color: #FFF;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      border: none;
+    }
   }
 }

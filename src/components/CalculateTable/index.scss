@@ -1,0 +1,90 @@
+.calc-table-container {
+  border: 1px solid #80a4dd;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  width: fit-content;
+
+  .header {
+    background: #e3efff;
+    padding:16px 30px 16px 21px;
+    font-weight: 600;
+  }
+}
+
+.calc-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td {
+    border: 1px solid #ccc;
+    padding:16px 30px 16px 21px;
+    min-width: 100px;
+    vertical-align: middle;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  .editable-row td {
+    cursor: pointer;
+  }
+
+  .edit-target {
+    padding: 0 ;
+    height: 48px;
+    position: relative;
+
+    .edit-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px 0 21px;
+      width: 100%;
+      height: 100%;
+
+      input {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 14px;
+      }
+
+      .edit-icon {
+        background-color: #e9f1fd;
+        border-radius: 6px;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        pointer-events: none;
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        &.visible {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: auto;
+        }
+
+        &:hover {
+          background-color: #dbe9fb;
+        }
+      }
+    }
+  }
+
+
+
+
+  input {
+    width: 100%;
+    padding: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+  }
+}

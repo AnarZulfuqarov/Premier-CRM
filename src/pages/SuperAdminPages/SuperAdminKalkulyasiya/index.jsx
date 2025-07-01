@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './index.scss';
+import icon from "../../../assets/ph_building-light.svg";
 
-const OrderHistorySupplier = () => {
+const SuperAdminKalkulyasiya = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
@@ -12,7 +13,7 @@ const OrderHistorySupplier = () => {
             id: 'NP764543702735',
             product: 'Kartoşka, subun, səftəli, qab yuyan...',
             quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
+            status: 'Təchizatçıdan təsdiq gözləyən',
             price:"325"
         },
         {
@@ -40,7 +41,7 @@ const OrderHistorySupplier = () => {
             id: 'NP764543702740',
             product: 'Kartoşka, subun, səftəli, qab yuyan...',
             quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
+            status: 'Təchizatçıdan təsdiq gözləyən',
             price:"325"
         },
         {
@@ -73,7 +74,8 @@ const OrderHistorySupplier = () => {
         const matchesFilter =
             filter === 'all' ||
             (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış') ;
+            (filter === 'completed' && order.status === 'Tamamlanmış') ||
+            (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən');
         return matchesSearch && matchesFilter;
     });
 
@@ -112,67 +114,41 @@ const OrderHistorySupplier = () => {
             setCurrentPage(page);
         }
     };
+    const [selectedCompany, setSelectedCompany] = useState(null);
+
+    const companies = [
+        { id: 1, name: 'Şirvanşah 1' },
+        { id: 2, name: 'Şirvanşah 2' },
+        { id: 3, name: 'Şirvanşah 3' },
+        { id: 4, name: 'Şirvanşah 4' },
+    ];
+
+    const handleCompanySelect = (companyId) => {
+        setSelectedCompany(companyId);
+    };
+
 
     return (
-        <div className={"order-history-main-supplier"}>
-            <div className="order-history-supplier">
-                <h2>Tarixçə</h2>
-                <p>Sifarişlərin bütün mərhələlər üzrə vəziyyəti bu bölmədə əks olunur.</p>
-                <div className="order-history-supplier__controls">
-                    <input
-                        type="text"
-                        placeholder="Axtarış edin"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                        <option value="all">Hamısı</option>
-                        <option value="pending">Sifarişçidən təhvil gözləyən</option>
-                        <option value="completed">Tamamlanmış</option>
-                    </select>
-                </div>
-                <div className="order-history-supplier__list">
-                    {paginatedOrders.map((order, index) => (
-                        <div key={order.id || index} className="order-history-supplier__item">
-                            <div className={"techizat"}>
-                                <div className={"order-history-supplier__ids"}>
-                                    <p className="order-history-supplier__id">
-                                        <span>Təchizatçının adı:</span> {order.id}
-                                    </p>
-                                    <p className="order-history-supplier__id">
-                                        <span>Sifarişçinin adı:</span> {order.price} ₼
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="order-history-supplier__details">
-                                <div className={"order-history-supplier__ids"}>
-                                    <p className="order-history-supplier__id">
-                                        <span>Order ID</span> {order.id}
-                                    </p>
-                                    <p className="order-history-supplier__id">
-                                        <span>Ümumi məbləğ:</span> {order.price} ₼
-                                    </p>
-                                </div>
-                                <span
-                                    className={`order-history-supplier__status ${
-                                        order.status === 'Tamamlanmış'
-                                            ? 'completed'
-                                            : order.status === 'Sifarişçidən təhvil gözləyən'
-                                                ? 'pending'
-                                                : 'not-completed'
-                                    }`}
-                                >
-                {order.status}
-              </span>
-                            </div>
-                            <div className="order-history-supplier__data">
-                                <p>{order.product}</p>
-                                <p>{order.quantity}</p>
-                            </div>
+        <div className={"super-admin-kalkulyasiya-main"}>
+            <div className="super-admin-kalkulyasiya">
+                <h2>Kalkulyasiya</h2>
+                <p>Davam etmək üçün işləmək istədiyiniz şirkəti seçin. Seçimdən sonra həmin şirkətə aid əməliyyatlar təqdim olunacaq.</p>
+                <div className="choose">
+                    {companies.map((company) => (
+                        <div
+                            key={company.id}
+                            className={`company ${selectedCompany === company.id ? 'selected' : ''}`}
+                            onClick={() => handleCompanySelect(company.id)}
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Enter' && handleCompanySelect(company.id)}
+                            role="button"
+                        >
+                            <img src={icon} alt={company.name} />
+                            <p className={'p'}>{company.name}</p>
                         </div>
                     ))}
                 </div>
-                <div className="order-history-supplier__pagination">
+                <div className="super-admin-kalkulyasiya__pagination">
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
@@ -202,4 +178,4 @@ const OrderHistorySupplier = () => {
     );
 };
 
-export default OrderHistorySupplier;
+export default SuperAdminKalkulyasiya;

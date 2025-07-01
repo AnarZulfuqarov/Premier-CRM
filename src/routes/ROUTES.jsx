@@ -41,6 +41,12 @@ import SuperAdminBolmeAdd from "../pages/SuperAdminPages/SuperAdminBolmeAdd/inde
 import SuperAdminBolmePerson from "../pages/SuperAdminPages/SuperAdminBolmePerson/index.jsx";
 import SuperAdminVezife from "../pages/SuperAdminPages/SuperAdminVezife/index.jsx";
 import SuperAdminVezifeAdd from "../pages/SuperAdminPages/SuperAdminVezifeAdd/index.jsx";
+import SuperAdminNotification from "../pages/NotificationPages/SuperAdminNotification/index.jsx";
+import OrderHistorySuperAdmin from "../pages/SuperAdminPages/SuperAdminHistoryPage/index.jsx";
+import OrderHistoryDetailSuperAdmin from "../pages/SuperAdminPages/SuperAdminHistoryPageDetail/index.jsx";
+import OrderHistoryDetailSuperAdminTwo from "../pages/SuperAdminPages/SuperAdminHistoryPageDetailTwo/index.jsx";
+import SuperAdminKalkulyasiya from "../pages/SuperAdminPages/SuperAdminKalkulyasiya/index.jsx";
+import SuperAdminKalkulyasiyaDetail from "../pages/SuperAdminPages/SuperAdminKalkulyasiyaDetail/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -155,14 +161,6 @@ const router = createBrowserRouter([
                 element: <SuperAdminPeopleDetailAddBolme/>
             },
             {
-                path: "/superAdmin/history",
-                element: <OrderHistorySupplier/>
-            },
-            {
-                path: "/superAdmin/history/:id",
-                element: <OrderHistoryDetailSuplier/>
-            },
-            {
                 path: "/superAdmin/products/products",
                 element: <SuperAdminProducts/>
             },
@@ -229,6 +227,30 @@ const router = createBrowserRouter([
             {
                 path: "/superAdmin/vezifeAdd",
                 element: <SuperAdminVezifeAdd/>
+            },
+            {
+                path: "/superAdmin/notification",
+                element: <SuperAdminNotification/>
+            },
+            {
+                path: "/superAdmin/history",
+                element: <OrderHistorySuperAdmin/>
+            },
+            {
+                path: "/superAdmin/history/:id",
+                element: <OrderHistoryDetailSuperAdmin/>
+            },
+            {
+                path: "/superAdmin/historyTwo/:id",
+                element: <OrderHistoryDetailSuperAdminTwo/>
+            },
+            {
+                path: "/superAdmin/kalkulyasiya",
+                element: <SuperAdminKalkulyasiya/>
+            },
+            {
+                path: "/superAdmin/kalkulyasiya/:id",
+                element: <SuperAdminKalkulyasiyaDetail/>
             },
         ]
     },

@@ -1,4 +1,4 @@
-.order-history-main-supplier{
+.order-history-super-admin-main{
   position: relative;
   .xett{
     width: 100%;
@@ -8,7 +8,7 @@
     bottom: 100px;
   }
 }
-.order-history-supplier {
+.order-history-super-admin {
   padding: 20px;
   max-width: 100%;
   margin: 0 auto;
@@ -107,12 +107,12 @@
     }
   }
   .techizat{
-    .order-history-supplier__ids{
+    .order-history-super-admin__ids{
       display: flex;
       gap: 24px;
       align-items: center;
     }
-    .order-history-supplier__id {
+    .order-history-super-admin__id {
       color: #272727;
       font-size: 14px;
       font-style: normal;
@@ -139,12 +139,12 @@
       margin: 5px 0;
       color: #333;
     }
-    .order-history-supplier__ids{
+    .order-history-super-admin__ids{
       display: flex;
       gap: 24px;
       align-items: center;
     }
-    .order-history-supplier__id {
+    .order-history-super-admin__id {
       color: #272727;
       font-size: 14px;
       font-style: normal;

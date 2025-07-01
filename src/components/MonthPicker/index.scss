@@ -1,0 +1,64 @@
+.month-picker {
+  position: relative;
+
+  &__trigger {
+    cursor: pointer;
+  }
+
+  &__dropdown {
+    position: absolute;
+    right: 0;
+    top: 36px;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+
+    .year-select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+
+      .year-option {
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #f7f7f7;
+        cursor: pointer;
+        text-align: left;
+
+        &.active {
+          background: #e4e4e4;
+          font-weight: bold;
+        }
+
+        &:hover {
+          background: #e0e0e0;
+        }
+      }
+    }
+
+    .month-options.nested {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      button {
+        padding: 6px 12px;
+        font-size: 13px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #f7f7f7;
+        cursor: pointer;
+
+        &:hover {
+          background: #e4e4e4;
+        }
+      }
+    }
+  }
+}

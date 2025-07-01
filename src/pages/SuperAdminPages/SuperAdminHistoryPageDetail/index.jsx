@@ -1,14 +1,12 @@
-// OrderHistoryDetail.jsx
-import React, {useState} from 'react';
+import  {useState} from 'react';
 import {NavLink} from 'react-router-dom';
-import {FaCheckCircle, FaSearch, FaTimes} from 'react-icons/fa';
+import { FaTimes} from 'react-icons/fa';
 import './index.scss';
 
-const OrderHistoryDetailSuplier = () => {
+const OrderHistoryDetailSuperAdmin = () => {
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
-    const [showModal, setShowModal] = useState(false);
     const order = {
         id: 'NP764543702735',
         status: 'Təsdiq gözləyən',
@@ -32,34 +30,34 @@ const OrderHistoryDetailSuplier = () => {
     });
 
     return (
-        <div className="order-history-detail-main-supplier">
-            <div className="order-history-detail-supplier">
+        <div className="order-history-detail-super-admin-main">
+            <div className="order-history-detail-super-admin">
                 <h2>
                     <NavLink className="link" to="/admin/history">— Tarixçə</NavLink>{' '}
                     — Sifariş detalları
                 </h2>
-                <div key={order.id} className="order-history-detail-supplier_item">
+                <div key={order.id} className="order-history-detail-super-admin_item">
                     <div className={"techizat"}>
-                        <div className={"order-history-supplier__ids"}>
-                            <p className="order-history-supplier__id">
+                        <div className={"order-history-super-admin__ids"}>
+                            <p className="order-history-super-admin__id">
                                 <span>Təchizatçının adı:</span> {order.id}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="order-history-super-admin__id">
                                 <span>Sifarişçinin adı:</span> {order.price} ₼
                             </p>
                         </div>
                     </div>
-                    <div className="order-history-supplier__details">
-                        <div className={"order-history-supplier__ids"}>
-                            <p className="order-history-supplier__id">
+                    <div className="order-history-super-admin__details">
+                        <div className={"order-history-super-admin__ids"}>
+                            <p className="order-history-super-admin__id">
                                 <span>Order ID</span> {order.id}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="order-history-super-admin__id">
                                 <span>Ümumi məbləğ:</span> {order.price} ₼
                             </p>
                         </div>
                         <span
-                            className={`order-history-supplier__status ${
+                            className={`order-history-super-admin__status ${
                                 order.status === 'Tamamlanmış'
                                     ? 'completed'
                                     : order.status === 'Sifarişçidən təhvil gözləyən'
@@ -70,14 +68,14 @@ const OrderHistoryDetailSuplier = () => {
                 {order.status}
               </span>
                     </div>
-                    <div className="order-history-supplier__data">
+                    <div className="order-history-super-admin__data">
                         <p>{order.product}</p>
                         <p>{order.quantity}</p>
                     </div>
                 </div>
                 <div className="table-wrapper">
                     <div className="table-scroll">
-                        <table className="order-history-detail-supplier__table">
+                        <table className="order-history-detail-super-admin__table">
                             <thead>
                             <tr>
                                 <th>
@@ -170,4 +168,4 @@ const OrderHistoryDetailSuplier = () => {
     );
 };
 
-export default OrderHistoryDetailSuplier;
+export default OrderHistoryDetailSuperAdmin;

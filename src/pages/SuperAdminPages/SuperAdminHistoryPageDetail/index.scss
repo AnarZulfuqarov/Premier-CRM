@@ -1,0 +1,335 @@
+.order-history-detail-super-admin-main{
+  position: relative;
+  .confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  /* Modal Kutusu */
+  .confirm-modal {
+    position: relative;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 8px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Kapatma Ikonu */
+  .confirm-modal__close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+  }
+  .confirm-modal__iconHead{
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 79px;
+    background: rgba(226, 255, 223, 0.31);
+    margin: 0 auto;
+  }
+  .confirm-modal__iconMain{
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 45.209px;
+    background: #CBEEC9;
+  }
+
+  /* Başarı Ikonu */
+  .confirm-modal__icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    background: #31AC2E;
+    border-radius: 50%;
+
+  }
+
+  /* Mesaj Metni */
+  .confirm-modal__text {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.4;
+  }
+}
+
+.order-history-detail-super-admin {
+  padding: 50px;
+  background: #fff;
+  height: calc(100vh - 129px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  .order-history-detail-super-admin_item{
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+
+    &:hover {
+      background: #f9f9f9;
+    }
+    margin-bottom: 20px;
+    .techizat{
+      .order-history-super-admin__ids{
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+      .order-history-super-admin__id {
+        color: #272727;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+
+        span {
+          color: #979797;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin-right: 12px;
+        }
+      }
+    }
+    .order-history__details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      p {
+        margin: 5px 0;
+        color: #333;
+      }
+      .order-history-super-admin__ids{
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+      .order-history-super-admin__id {
+        color: #272727;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+
+        span {
+          color: #979797;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin-right: 12px;
+        }
+      }
+    }
+  }
+
+
+  .order-history-super-admin__status {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.pending {
+      border-radius: 16px;
+      background: #FFF5F5;
+      border: 1px solid #FFC31C;
+      background: rgba(255, 229, 159, 0.25);
+    }
+
+    &.completed {
+      border-radius: 16px;
+      border: 1px solid #31AC2E;
+      background: #E7FFE5;
+    }
+
+    &.not-completed {
+      border-radius: 16px;
+      background: rgba(255, 229, 159, 0.25);
+      border: 1px solid #FBB;
+      background: #FFF5F5;
+    }
+  }
+  h2 {
+    font-size: 14px;
+    margin-bottom: 20px;
+
+    .link {
+      color: #5b5b5b;
+      text-decoration: none;
+    }
+  }
+
+  .table-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .table-scroll {
+    height: calc(60vh - 129px);
+    overflow: auto;
+
+  }
+  .table-scroll::-webkit-scrollbar {
+    width: 2px;   /* dikey scroll çubuğu kalınlığı */
+    height: 6px;
+  }
+  .table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: #007aff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .order-history-detail-super-admin__table {
+  margin: 0;
+
+    th, td {
+      padding: 15px;
+      border: 1px solid #ddd;
+      white-space: nowrap;
+    }
+    th {
+      background: #f9f9f9;
+      font-weight: 500;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    th {
+      & .th-label,
+      & .th-search {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      & .th-label {
+        cursor: pointer;
+        svg { margin-left: 16px; }
+      }
+      & .th-search {
+        input {
+          flex: 1;
+          padding: 4px 8px;
+          font-size: 14px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-right: 6px;
+          outline: none;
+        }
+        svg {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .table-footer {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-top: none;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+    border-radius: 0px 0px 8px 8px;
+  }
+
+  &__actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .order-history-detail-super-admin__confirm {
+      padding: 10px 30px;
+      background: #384871;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  }
+  .confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  /* Modal Kutusu */
+  .confirm-modal {
+    position: relative;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 8px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Kapatma Ikonu */
+  .confirm-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* Başarı Ikonu */
+  .confirm-modal__icon {
+    font-size: 48px;
+    color: #4CAF50;
+    margin-bottom: 16px;
+  }
+
+  /* Mesaj Metni */
+  .confirm-modal__text {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.4;
+  }
+}
