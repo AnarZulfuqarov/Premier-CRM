@@ -47,6 +47,10 @@ import OrderHistoryDetailSuperAdmin from "../pages/SuperAdminPages/SuperAdminHis
 import OrderHistoryDetailSuperAdminTwo from "../pages/SuperAdminPages/SuperAdminHistoryPageDetailTwo/index.jsx";
 import SuperAdminKalkulyasiya from "../pages/SuperAdminPages/SuperAdminKalkulyasiya/index.jsx";
 import SuperAdminKalkulyasiyaDetail from "../pages/SuperAdminPages/SuperAdminKalkulyasiyaDetail/index.jsx";
+import ProtectedRoute from "../ProtectedRoute.jsx";
+import SuperPersonAdd from "../pages/SuperAdminPages/SuperAdminPersonAdd/index.jsx";
+import SuperAdminSupplier from "../pages/SuperAdminPages/SuperAdminSupplier/index.jsx";
+import SuperSupplierAdd from "../pages/SuperAdminPages/SuperAdminSupplierAdd/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -145,12 +149,26 @@ const router = createBrowserRouter([
     {
         path: "/superAdmin",
         element: (
-            <SuperAdminPage/>
+            <ProtectedRoute>
+                <SuperAdminPage/>
+            </ProtectedRoute>
         ),
         children: [
             {
                 path: "/superAdmin/people",
                 element: <SuperAdminPeople/>
+            },
+            {
+                path: "/superAdmin/personAdd",
+                element: <SuperPersonAdd/>
+            },
+            {
+                path: "/superAdmin/supplier",
+                element: <SuperAdminSupplier/>
+            },
+            {
+                path: "/superAdmin/supplierAdd",
+                element: <SuperSupplierAdd/>
             },
             {
                 path: "/superAdmin/people/:id",

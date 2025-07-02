@@ -2,13 +2,11 @@ import {RouterProvider} from 'react-router-dom'
 import './App.css'
 import Cookies from "js-cookie";
 import router from './routes/ROUTES'
-import {ToastContainer} from "react-toastify";
 
 const App = () => {
-    const token = Cookies.get("premierCRMToken");
-
+    const token = Cookies.get("superAdminToken");
     if (!token) {
-        Cookies.set("premierCRMToken", "null");
+        Cookies.set("superAdminToken", "null");
     }
 
     return (
@@ -19,4 +17,3 @@ const App = () => {
 }
 
 export default App;
-

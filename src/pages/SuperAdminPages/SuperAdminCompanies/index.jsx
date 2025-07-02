@@ -2,6 +2,7 @@ import './index.scss';
 import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetAllCompaniesQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminCompanies = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -11,6 +12,9 @@ const SuperAdminCompanies = () => {
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
+    const {data:getAllCompanies} = useGetAllCompaniesQuery();
+    const data = getAllCompanies?.data;
+    console.log(data);
     const orders = Array.from({ length: 30 }, (_, idx) => ({
         id: `75875058252${idx + 10}`,
         company: 'Şirvanşah',

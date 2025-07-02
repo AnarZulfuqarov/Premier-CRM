@@ -2,12 +2,12 @@ import './index.scss';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SuperAdminPeople = () => {
+const SuperAdminSupplier = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchColumn, setSearchColumn] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const pageSize =8;
+    const pageSize = 8;
     const [deleteIndex, setDeleteIndex] = useState(null);
 
     const [editingUser, setEditingUser] = useState(null);
@@ -71,15 +71,15 @@ const SuperAdminPeople = () => {
     };
 
     return (
-        <div className="super-admin-people-main">
-            <div className="super-admin-people">
+        <div className="super-admin-supplier-main">
+            <div className="super-admin-supplier">
                 <div className={"headerr"}>
                     <div className={"head"}>
-                        <h2>İstifadəçilər</h2>
+                        <h2>Təchizatçılar</h2>
                         <p>Aşağıdan məhsulları seçərək yeni sifarişinizi tamamlaya bilərsiniz</p>
                     </div>
                     <div>
-                        <button onClick={()=>navigate("/superAdmin/personAdd")}>
+                        <button onClick={()=>navigate("/superAdmin/supplierAdd")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none">
                                 <path
@@ -92,7 +92,7 @@ const SuperAdminPeople = () => {
                                     d="M16.5 12.75H7.5C7.08 12.75 6.75 12.42 6.75 12C6.75 11.58 7.08 11.25 7.5 11.25H16.5C16.92 11.25 17.25 11.58 17.25 12C17.25 12.42 16.92 12.75 16.5 12.75Z"
                                     fill="white"/>
                             </svg>
-                            <span>İstifadəçi əlavə et</span></button>
+                            <span>Təchizatçı əlavə et</span></button>
                     </div>
                 </div>
                 <div className="order-table-wrapper">
@@ -175,33 +175,7 @@ const SuperAdminPeople = () => {
                         <div className="header">Fəaliyyətlər</div>
                         {pagedUsers.map((user) => (
                             <div key={user.id} className="cell">
-                                <span
-                                    className="action-icon eye"
-                                    onClick={() => navigate(`/superAdmin/people/${user.id}`)}
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="20"
-                                        height="20"
-                                        viewBox="0 0 20 20"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M12.5 10C12.5 10.663 12.2366 11.2989 11.7678 11.7678C11.2989 12.2366 10.663 12.5 10 12.5C9.33696 12.5 8.70107 12.2366 8.23223 11.7678C7.76339 11.2989 7.5 10.663 7.5 10C7.5 9.33696 7.76339 8.70107 8.23223 8.23223C8.70107 7.76339 9.33696 7.5 10 7.5C10.663 7.5 11.2989 7.76339 11.7678 8.23223C12.2366 8.70107 12.5 9.33696 12.5 10Z"
-                                            stroke="#606060"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                        <path
-                                            d="M1.66667 10.0003C3 6.58616 6.11333 4.16699 10 4.16699C13.8867 4.16699 17 6.58616 18.3333 10.0003C17 13.4145 13.8867 15.8337 10 15.8337C6.11333 15.8337 3 13.4145 1.66667 10.0003Z"
-                                            stroke="#606060"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </span>
+
                                 <span
                                     className="action-icon edit"
                                     onClick={() => handleEdit(user.id)}
@@ -251,7 +225,7 @@ const SuperAdminPeople = () => {
                     </div>
                 </div>
 
-                <div className="super-admin-people__pagination">
+                <div className="super-admin-supplier__pagination">
                     <button
                         onClick={() => setCurrentPage((p) => p - 1)}
                         disabled={currentPage === 1}
@@ -374,4 +348,4 @@ const SuperAdminPeople = () => {
     );
 };
 
-export default SuperAdminPeople;
+export default SuperAdminSupplier;
