@@ -1,12 +1,16 @@
 import {useState} from 'react';
 import './index.scss';
-import {NavLink} from "react-router-dom";
+import {NavLink, useParams} from "react-router-dom";
+import {useCreateSectionsMutation, useGetDepartmentIdQuery} from "../../../services/adminApi.jsx";
 
 
 const SuperAdminBolmeAdd = () => {
+    const {id} = useParams();
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const [post] = useCreateSectionsMutation()
+    const {data: getDepartmentId} =useGetDepartmentIdQuery(id)
+    const department = getDepartmentId?.data
     const handleChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
@@ -15,6 +19,29 @@ const SuperAdminBolmeAdd = () => {
 
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
+    };
+    const handleSubmit = async () => {
+        try {
+            const validRows = rows.filter(row => row.name.trim() !== '');
+
+            if (validRows.length === 0) return;
+
+            const responses = await Promise.all(
+                validRows.map(row =>
+                    post({ name: row.name, departmentId: id })
+                )
+            );
+
+            const allSuccess = responses.every(res => !res.error);
+            if (allSuccess) {
+                setShowSuccessModal(true);
+            } else {
+                console.error("Bəzi bölmələr əlavə edilə bilmədi.");
+            }
+
+        } catch (err) {
+            console.error("Bölmə əlavə edilərkən xəta baş verdi:", err);
+        }
     };
 
     return (
@@ -25,10 +52,10 @@ const SuperAdminBolmeAdd = () => {
                         <h1>Bölmə əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Şirkətlər</NavLink>
-                        <NavLink className="link" to="/admin/history">—
+                        <NavLink className="link" to="/superAdmin/companies">— Şirkətlər</NavLink>
+                        <NavLink className="link" to={`/superAdmin/company/${department?.companyId}/sobe`}>—
                             Şöbə</NavLink>
-                        <NavLink className="link" to="/admin/history">— Bölmə</NavLink>
+                        <NavLink className="link" to={`/superAdmin/sobe/${id}/bolme`}>— Bölmə</NavLink>
                         — Bölmə əlavə edilməsi
                     </h2>
                 </div>
@@ -76,7 +103,8 @@ const SuperAdminBolmeAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
+
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -87,20 +115,21 @@ const SuperAdminBolmeAdd = () => {
                             <div className={"circleOne"}>
                                 <div className="circle pulse">
                                     <div className="circle-inner">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="31"
-                                             viewBox="0 0 30 31" fill="none">
-                                            <path
-                                                d="M12.2714 19.3539L22.6402 8.9852C22.8849 8.74051 23.1704 8.61816 23.4966 8.61816C23.8229 8.61816 24.1083 8.74051 24.353 8.9852C24.5977 9.22989 24.7201 9.52066 24.7201 9.85752C24.7201 10.1944 24.5977 10.4847 24.353 10.7286L13.1279 21.9844C12.8832 22.2291 12.5977 22.3514 12.2714 22.3514C11.9452 22.3514 11.6597 22.2291 11.415 21.9844L6.15419 16.7235C5.9095 16.4788 5.79205 16.1885 5.80183 15.8524C5.81162 15.5164 5.93927 15.2256 6.18477 14.9801C6.43028 14.7346 6.72105 14.6123 7.0571 14.6131C7.39314 14.6139 7.6835 14.7362 7.92819 14.9801L12.2714 19.3539Z"
-                                                fill="white"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="31" viewBox="0 0 30 31" fill="none">
+                                            <path d="M11.771 19.3539L22.1397 8.9852C22.3844 8.74051 22.6699 8.61816 22.9961 8.61816C23.3224 8.61816 23.6078 8.74051 23.8525 8.9852C24.0972 9.22989 24.2196 9.52066 24.2196 9.85752C24.2196 10.1944 24.0972 10.4847 23.8525 10.7286L12.6274 21.9844C12.3827 22.2291 12.0972 22.3514 11.771 22.3514C11.4447 22.3514 11.1592 22.2291 10.9145 21.9844L5.6537 16.7235C5.40901 16.4788 5.29156 16.1885 5.30135 15.8524C5.31113 15.5164 5.43878 15.2256 5.68429 14.9801C5.92979 14.7346 6.22057 14.6123 6.55661 14.6131C6.89265 14.6139 7.18301 14.7362 7.4277 14.9801L11.771 19.3539Z" fill="white"/>
                                         </svg>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <h3>Bölmə uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
-                            Əsas səhifəyə qayıt
+                        <button
+                            className="back-btn"
+                            onClick={() => window.location.href = `/superAdmin/sobe/${id}/bolme`}
+                        >
+                            Bölmə siyahısına qayıt
                         </button>
+
                     </div>
                 </div>
             )}

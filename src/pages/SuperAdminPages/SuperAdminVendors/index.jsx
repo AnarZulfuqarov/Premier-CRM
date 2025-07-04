@@ -1,32 +1,38 @@
 import './index.scss';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useDeleteVendorMutation, useEditVendorMutation, useGetAllVendorsQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminVendors = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const navigate = useNavigate();
-    const [modalVisible, setModalVisible] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(null);
-    const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [selectedVendor, setSelectedVendor] = useState(null);
+    const [newVendorName, setNewVendorName] = useState('');
 
-    const totalPages = Math.ceil(orders.length / pageSize);
-    const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const pageSize = 5;
+    const navigate = useNavigate();
+
+    const { data: getAllVendors, refetch } = useGetAllVendorsQuery();
+    const [editVendor] = useEditVendorMutation();
+    const [deleteVendor] = useDeleteVendorMutation();
+    useEffect(() => {
+        refetch()
+    }, []);
+    const vendors = getAllVendors?.data || [];
+
+    const filteredVendors = vendors.filter(v =>
+        v.name.toLowerCase().includes(searchName.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredVendors.length / pageSize);
+    const pagedVendors = filteredVendors.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
+        return Array.from({ length: totalPages }, (_, i) => i + 1);
     };
 
     return (
@@ -78,20 +84,26 @@ const SuperAdminVendors = () => {
                             </thead>
 
                             <tbody>
-                            {pagedOrders.map((order, idx) => (
+                            {pagedVendors.map((order, idx) => (
                                 <tr key={order.id}>
-                                    <td>{order.company}</td>
-                                    <td>325 ₼</td>
+                                    <td>{order.name}</td>
+                                    <td>{order.totalSale} ₼</td>
 
-                                    {/* Yeni fəaliyyətlər sütunu */}
                                     <td>
                                         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
                                             {/* edit icon */}
-                                            <svg onClick={() => setModalVisible(true)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 20 20" style={{ cursor: 'pointer' }}>
+                                            <svg onClick={() => {
+                                                setSelectedVendor(order);
+                                                setNewVendorName(order.name);
+                                                setEditModalVisible(true);
+                                            }} xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 20 20" style={{ cursor: 'pointer' }}>
                                                 <path d="M18.333 6.033a1 1 0 00-.042-.32 1 1 0 00-.199-.38L14.558 1.908a1 1 0 00-1.183-.182l-2.359 2.359-9.108 9.109a1 1 0 00-.275.553l-.001.029v3.533a1 1 0 001 1h3.533a1 1 0 00.554-.154l9.058-9.108 2.358-2.358a1 1 0 00.24-.756ZM5.692 16.667H3.333v-2.358l8.275-8.275 2.359 2.359-8.275 8.274ZM15.142 7.217l-2.359-2.359 1.184-1.175 2.358 2.358-1.183 1.176Z" fill="#919191"/>
                                             </svg>
                                             {/* delete icon */}
-                                            <svg onClick={() => setDeleteIndex(idx)} xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none" style={{ cursor: 'pointer' }}>
+                                            <svg onClick={() => {
+                                                setSelectedVendor(order);
+                                                setDeleteModalVisible(true);
+                                            }} xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none" style={{ cursor: 'pointer' }}>
                                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.09167 1.875H11.9083C12.0892 1.875 12.2467 1.875 12.395 1.89833C12.6839 1.94462 12.958 2.05788 13.1953 2.22907C13.4326 2.40025 13.6266 2.6246 13.7617 2.88417C13.8317 3.0175 13.8808 3.16667 13.9383 3.3375L14.0308 3.61667L14.0558 3.6875C14.1312 3.89679 14.2717 4.07645 14.4566 4.20016C14.6415 4.32387 14.8611 4.38514 15.0833 4.375H17.5833C17.7491 4.375 17.9081 4.44085 18.0253 4.55806C18.1425 4.67527 18.2083 4.83424 18.2083 5C18.2083 5.16576 18.1425 5.32473 18.0253 5.44194C17.9081 5.55915 17.7491 5.625 17.5833 5.625H3.41667C3.25091 5.625 3.09194 5.55915 2.97473 5.44194C2.85752 5.32473 2.79167 5.16576 2.79167 5C2.79167 4.83424 2.85752 4.67527 2.97473 4.55806C3.09194 4.44085 3.25091 4.375 3.41667 4.375H5.99167C6.21425 4.36966 6.42927 4.29314 6.60519 4.15667C6.78111 4.02019 6.90867 3.83094 6.96917 3.61667L7.0625 3.3375C7.11917 3.16667 7.16833 3.0175 7.2375 2.88417C7.37266 2.6245 7.56674 2.40009 7.80421 2.2289C8.04168 2.05771 8.31593 1.9445 8.605 1.89833C8.75333 1.875 8.91083 1.875 9.09084 1.875M8.00584 4.375C8.06355 4.26004 8.11231 4.1408 8.15167 4.01833L8.235 3.76833C8.31083 3.54083 8.32833 3.495 8.34583 3.46167C8.39082 3.37501 8.45549 3.30009 8.53465 3.24293C8.61381 3.18577 8.70526 3.14795 8.80167 3.1325C8.91028 3.12288 9.0194 3.12037 9.12833 3.125H11.87C12.11 3.125 12.16 3.12667 12.1967 3.13333C12.293 3.14869 12.3844 3.18639 12.4636 3.2434C12.5427 3.30041 12.6074 3.37516 12.6525 3.46167C12.67 3.495 12.6875 3.54083 12.7633 3.76917L12.8467 4.01917L12.8792 4.1125C12.9119 4.20361 12.9497 4.29111 12.9925 4.375H8.00584Z" fill="#ED0303"/>
                                                 <path d="M5.42917 7.04246C5.41812 6.87703 5.3418 6.72277 5.21701 6.6136C5.09222 6.50444 4.92918 6.44932 4.76375 6.46038C4.59832 6.47143 4.44406 6.54774 4.3349 6.67253C4.22573 6.79732 4.17062 6.96036 4.18167 7.12579L4.56833 12.9191C4.63917 13.9875 4.69667 14.8508 4.83167 15.5291C4.9725 16.2333 5.21083 16.8216 5.70417 17.2825C6.1975 17.7433 6.8 17.9433 7.5125 18.0358C8.1975 18.1258 9.0625 18.1258 10.1342 18.1258H10.8667C11.9375 18.1258 12.8033 18.1258 13.4883 18.0358C14.2 17.9433 14.8033 17.7441 15.2967 17.2825C15.7892 16.8216 16.0275 16.2325 16.1683 15.5291C16.3033 14.8516 16.36 13.9875 16.4317 12.9191L16.8183 7.12579C16.8294 6.96036 16.7743 6.79732 16.6651 6.67253C16.5559 6.54774 16.4017 6.47143 16.2362 6.46038C16.0708 6.44932 15.9078 6.50444 15.783 6.6136C15.6582 6.72277 15.5819 6.87703 15.5708 7.04246L15.1875 12.7925C15.1125 13.915 15.0592 14.6966 14.9425 15.2841C14.8283 15.855 14.67 16.1566 14.4425 16.37C14.2142 16.5833 13.9025 16.7216 13.3258 16.7966C12.7317 16.8741 11.9483 16.8758 10.8225 16.8758H10.1775C9.0525 16.8758 8.26917 16.8741 7.67417 16.7966C7.0975 16.7216 6.78583 16.5833 6.5575 16.37C6.33 16.1566 6.17167 15.855 6.0575 15.285C5.94083 14.6966 5.8875 13.915 5.8125 12.7916L5.42917 7.04246Z" fill="#ED0303"/>
                                                 <path d="M8.35417 8.54413C8.51903 8.52761 8.68371 8.57723 8.812 8.68208C8.9403 8.78694 9.02171 8.93844 9.03833 9.1033L9.455 13.27C9.4672 13.4325 9.4154 13.5934 9.31065 13.7184C9.2059 13.8433 9.05648 13.9223 8.89427 13.9386C8.73206 13.9549 8.5699 13.9072 8.44238 13.8056C8.31486 13.7041 8.23207 13.5567 8.21167 13.395L7.795 9.2283C7.77848 9.06343 7.8281 8.89875 7.93295 8.77046C8.0378 8.64217 8.18931 8.56076 8.35417 8.54413ZM12.6458 8.54413C12.8105 8.56077 12.9619 8.64205 13.0667 8.77016C13.1716 8.89827 13.2213 9.06274 13.205 9.22747L12.7883 13.3941C12.7677 13.5556 12.6848 13.7026 12.5575 13.8039C12.4301 13.9052 12.2682 13.9529 12.1063 13.9367C11.9443 13.9205 11.7951 13.8418 11.6903 13.7173C11.5854 13.5928 11.5333 13.4323 11.545 13.27L11.9617 9.1033C11.9783 8.9386 12.0596 8.78723 12.1877 8.6824C12.3158 8.57757 12.4811 8.52784 12.6458 8.54413Z" fill="#ED0303"/>
@@ -100,7 +112,7 @@ const SuperAdminVendors = () => {
                                     </td>
 
                                     <td>
-                                        <button onClick={() => navigate("/supplier/vendor/:id")}>Ətraflı</button>
+                                        <button onClick={() => navigate("/superAdmin/vendor/:id")}>Ətraflı</button>
                                     </td>
                                 </tr>
                             ))}
@@ -130,10 +142,10 @@ const SuperAdminVendors = () => {
                 </div>
             </div>
             <div className="xett"></div>
-            {modalVisible && (
-                <div className="vendor-edit-modal-overlay" onClick={() => setModalVisible(false)}>
+            {editModalVisible  && (
+                <div className="vendor-edit-modal-overlay" onClick={() => setEditModalVisible(false)}>
                     <div className="vendor-edit-modal" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close-btn" onClick={() => setModalVisible(false)}>
+                        <button className="modal-close-btn" onClick={() => setEditModalVisible(false)}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M12.6668 3.33301L3.3335 12.6663M3.3335 3.33301L12.6668 12.6663" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
@@ -141,14 +153,29 @@ const SuperAdminVendors = () => {
                         <h3>Dəyişiklik et</h3>
                         <div className="modal-fields">
                             <label>Vendor adı</label>
-                            <input type="text" placeholder="Məsələn: Bravo" />
+                            <input
+                                type="text"
+                                value={newVendorName}
+                                onChange={(e) => setNewVendorName(e.target.value)}
+                                placeholder="Məsələn: Bravo"
+                            />
                         </div>
-                        <button className="save-btn">Yadda saxla</button>
+                        <button
+                            className="save-btn"
+                            onClick={async () => {
+                                await editVendor({ id: selectedVendor.id, name: newVendorName });
+                                setEditModalVisible(false);
+                                setSelectedVendor(null);
+                                refetch();
+                            }}
+                        >
+                            Yadda saxla
+                        </button>
                     </div>
                 </div>
             )}
-            {deleteIndex !== null && (
-                <div className="modal-overlay" onClick={() => setDeleteIndex(null)}>
+            {deleteModalVisible && (
+                <div className="modal-overlay" onClick={() => setDeleteModalVisible(false)}>
                     <div className="delete-modal-box" onClick={(e) => e.stopPropagation()}>
                         <div className="delete-icon-wrapper">
                             <div className={"delete-icon-circle-one"}>
@@ -161,14 +188,14 @@ const SuperAdminVendors = () => {
                         </div>
                         <p className="delete-message">Vendoru silmək istədiyinizə əminsiz?</p>
                         <div className="delete-modal-actions">
-                            <button className="cancel-btn" onClick={() => setDeleteIndex(null)}>Ləğv et</button>
+                            <button className="cancel-btn" onClick={() => setDeleteModalVisible(false)}>Ləğv et</button>
                             <button
                                 className="confirm-btn"
-                                onClick={() => {
-                                    const updated = [...orderItems];
-                                    updated.splice(deleteIndex, 1);
-                                    setOrderItems(updated);
-                                    setDeleteIndex(null);
+                                onClick={async () => {
+                                    await deleteVendor(selectedVendor.id);
+                                    setDeleteModalVisible(false);
+                                    setSelectedVendor(null);
+                                    refetch();
                                 }}
                             >
                                 Sil

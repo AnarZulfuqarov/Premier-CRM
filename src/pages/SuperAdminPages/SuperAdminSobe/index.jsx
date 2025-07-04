@@ -1,27 +1,42 @@
 import './index.scss';
-import  { useState } from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {
+    useDeleteDepartmentMutation,
+    useEditDepartmentMutation,
+    useGetCompanyIdQuery,
+    useGetSobeBYCompanyIdQuery
+} from "../../../services/adminApi.jsx";
 
 const SuperAdminSobe = () => {
+    const {id} = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(null);
+    const [deleteDeptId, setDeleteDeptId] = useState(null);
+
+    const [editDeptData, setEditDeptData] = useState({ id: '', name: '' });
+
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+    const {data:getSobeBYCompanyId,refetch} = useGetSobeBYCompanyIdQuery(id)
+    const {data:getCompanyId} = useGetCompanyIdQuery(id)
+    const company = getCompanyId?.data
+    const data = getSobeBYCompanyId?.data || [];
+    const [edit] = useEditDepartmentMutation();
+    const [deleteDepartment] = useDeleteDepartmentMutation()
+    const departments = data.filter(dept =>
+        dept.name.toLowerCase().includes(searchName.toLowerCase())
+    );
 
-    const totalPages = Math.ceil(orders.length / pageSize);
-    const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    useEffect(() => {
+        refetch();
+    }, []);
+    const totalPages = Math.ceil(departments.length / pageSize);
+    const pagedDepartments = departments.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
     const getPageNumbers = () => {
         const pages = [];
@@ -34,7 +49,7 @@ const SuperAdminSobe = () => {
             <div className="super-admin-sobe">
                 <div className={"root"}>
                     <h2 >
-                        <NavLink className="link" to="/admin/history">— Şirkətlər</NavLink>{' '}
+                        <NavLink className="link" to="/superAdmin/companies">— Şirkətlər</NavLink>{' '}
                         — Şöbə
                     </h2>
                 </div>
@@ -44,7 +59,7 @@ const SuperAdminSobe = () => {
                         <h2>Şöbə</h2>
                         <p>Şirkətə aid olan şöbə siyahısına baxın, dəyişikliklər edin və yeni şöbə yaradın.</p>
                     </div>
-                    <button onClick={()=>navigate("/superAdmin/sobeAdd")}>
+                    <button onClick={()=>navigate(`/superAdmin/company/${id}/sobeAdd`)}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                             <path d="M12 23C6.21 23 1.5 18.29 1.5 12.5C1.5 6.71 6.21 2 12 2C17.79 2 22.5 6.71 22.5 12.5C22.5 18.29 17.79 23 12 23ZM12 3.5C7.035 3.5 3 7.535 3 12.5C3 17.465 7.035 21.5 12 21.5C16.965 21.5 21 17.465 21 12.5C21 7.535 16.965 3.5 12 3.5Z" fill="white"/>
                             <path d="M12 17.75C11.58 17.75 11.25 17.42 11.25 17V8C11.25 7.58 11.58 7.25 12 7.25C12.42 7.25 12.75 7.58 12.75 8V17C12.75 17.42 12.42 17.75 12 17.75Z" fill="white"/>
@@ -54,8 +69,8 @@ const SuperAdminSobe = () => {
                     </button>
                 </div>
                 <div className={"paths"}>
-                    <div className={'path1'}>
-                        <h3>Şirkətin adı:</h3> <span>Şirvanşah</span>
+                    <div className="path1">
+                        <h3>Şirkətin adı:</h3> <span>{company?.name || '—'}</span>
                     </div>
                 </div>
                 <div className="order-table-wrapper">
@@ -89,33 +104,32 @@ const SuperAdminSobe = () => {
                             </thead>
 
                             <tbody>
-                            {pagedOrders.map((order, idx) => (
-                                <tr key={order.id}>
-                                    <td>{order.company}</td>
-                                    <td>2 </td>
-
-                                    {/* Yeni fəaliyyətlər sütunu */}
+                            {pagedDepartments.map((dept, idx) => (
+                                <tr key={dept.id}>
+                                    <td>{dept.name}</td>
+                                    <td>{dept.sections?.length || 0}</td>
                                     <td>
                                         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-                                            {/* edit icon */}
-                                            <svg onClick={() => setModalVisible(true)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 20 20" style={{ cursor: 'pointer' }}>
-                                                <path d="M18.333 6.033a1 1 0 00-.042-.32 1 1 0 00-.199-.38L14.558 1.908a1 1 0 00-1.183-.182l-2.359 2.359-9.108 9.109a1 1 0 00-.275.553l-.001.029v3.533a1 1 0 001 1h3.533a1 1 0 00.554-.154l9.058-9.108 2.358-2.358a1 1 0 00.24-.756ZM5.692 16.667H3.333v-2.358l8.275-8.275 2.359 2.359-8.275 8.274ZM15.142 7.217l-2.359-2.359 1.184-1.175 2.358 2.358-1.183 1.176Z" fill="#919191"/>
+                                            <svg style={{cursor:"pointer"}} onClick={() => {
+                                                setEditDeptData({ id: dept.id, name: dept.name });
+                                                setModalVisible(true);
+                                            }} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path d="M18.3337 6.03367C18.3343 5.924 18.3133 5.81528 18.2718 5.71375C18.2303 5.61222 18.1692 5.51987 18.092 5.44201L14.5587 1.90867C14.4808 1.83144 14.3885 1.77033 14.2869 1.72886C14.1854 1.68739 14.0767 1.66637 13.967 1.66701C13.8573 1.66637 13.7486 1.68739 13.6471 1.72886C13.5456 1.77033 13.4532 1.83144 13.3753 1.90867L11.017 4.26701L1.90867 13.3753C1.83144 13.4532 1.77033 13.5456 1.72886 13.6471C1.68739 13.7486 1.66637 13.8573 1.66701 13.967V17.5003C1.66701 17.7214 1.7548 17.9333 1.91108 18.0896C2.06736 18.2459 2.27933 18.3337 2.50034 18.3337H6.03367C6.15028 18.34 6.26692 18.3218 6.37602 18.2801C6.48513 18.2385 6.58427 18.1744 6.66701 18.092L15.7253 8.98367L18.092 6.66701C18.1679 6.58614 18.2299 6.49321 18.2753 6.39201C18.2834 6.32558 18.2834 6.25843 18.2753 6.19201C18.2792 6.15321 18.2792 6.11413 18.2753 6.07534L18.3337 6.03367ZM5.69201 16.667H3.33367V14.3087L11.6087 6.03367L13.967 8.39201L5.69201 16.667ZM15.142 7.21701L12.7837 4.85867L13.967 3.68367L16.317 6.03367L15.142 7.21701Z" fill="#919191"/>
                                             </svg>
-                                            {/* delete icon */}
-                                            <svg onClick={() => setDeleteIndex(idx)} xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none" style={{ cursor: 'pointer' }}>
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.09167 1.875H11.9083C12.0892 1.875 12.2467 1.875 12.395 1.89833C12.6839 1.94462 12.958 2.05788 13.1953 2.22907C13.4326 2.40025 13.6266 2.6246 13.7617 2.88417C13.8317 3.0175 13.8808 3.16667 13.9383 3.3375L14.0308 3.61667L14.0558 3.6875C14.1312 3.89679 14.2717 4.07645 14.4566 4.20016C14.6415 4.32387 14.8611 4.38514 15.0833 4.375H17.5833C17.7491 4.375 17.9081 4.44085 18.0253 4.55806C18.1425 4.67527 18.2083 4.83424 18.2083 5C18.2083 5.16576 18.1425 5.32473 18.0253 5.44194C17.9081 5.55915 17.7491 5.625 17.5833 5.625H3.41667C3.25091 5.625 3.09194 5.55915 2.97473 5.44194C2.85752 5.32473 2.79167 5.16576 2.79167 5C2.79167 4.83424 2.85752 4.67527 2.97473 4.55806C3.09194 4.44085 3.25091 4.375 3.41667 4.375H5.99167C6.21425 4.36966 6.42927 4.29314 6.60519 4.15667C6.78111 4.02019 6.90867 3.83094 6.96917 3.61667L7.0625 3.3375C7.11917 3.16667 7.16833 3.0175 7.2375 2.88417C7.37266 2.6245 7.56674 2.40009 7.80421 2.2289C8.04168 2.05771 8.31593 1.9445 8.605 1.89833C8.75333 1.875 8.91083 1.875 9.09084 1.875M8.00584 4.375C8.06355 4.26004 8.11231 4.1408 8.15167 4.01833L8.235 3.76833C8.31083 3.54083 8.32833 3.495 8.34583 3.46167C8.39082 3.37501 8.45549 3.30009 8.53465 3.24293C8.61381 3.18577 8.70526 3.14795 8.80167 3.1325C8.91028 3.12288 9.0194 3.12037 9.12833 3.125H11.87C12.11 3.125 12.16 3.12667 12.1967 3.13333C12.293 3.14869 12.3844 3.18639 12.4636 3.2434C12.5427 3.30041 12.6074 3.37516 12.6525 3.46167C12.67 3.495 12.6875 3.54083 12.7633 3.76917L12.8467 4.01917L12.8792 4.1125C12.9119 4.20361 12.9497 4.29111 12.9925 4.375H8.00584Z" fill="#ED0303"/>
-                                                <path d="M5.42917 7.04246C5.41812 6.87703 5.3418 6.72277 5.21701 6.6136C5.09222 6.50444 4.92918 6.44932 4.76375 6.46038C4.59832 6.47143 4.44406 6.54774 4.3349 6.67253C4.22573 6.79732 4.17062 6.96036 4.18167 7.12579L4.56833 12.9191C4.63917 13.9875 4.69667 14.8508 4.83167 15.5291C4.9725 16.2333 5.21083 16.8216 5.70417 17.2825C6.1975 17.7433 6.8 17.9433 7.5125 18.0358C8.1975 18.1258 9.0625 18.1258 10.1342 18.1258H10.8667C11.9375 18.1258 12.8033 18.1258 13.4883 18.0358C14.2 17.9433 14.8033 17.7441 15.2967 17.2825C15.7892 16.8216 16.0275 16.2325 16.1683 15.5291C16.3033 14.8516 16.36 13.9875 16.4317 12.9191L16.8183 7.12579C16.8294 6.96036 16.7743 6.79732 16.6651 6.67253C16.5559 6.54774 16.4017 6.47143 16.2362 6.46038C16.0708 6.44932 15.9078 6.50444 15.783 6.6136C15.6582 6.72277 15.5819 6.87703 15.5708 7.04246L15.1875 12.7925C15.1125 13.915 15.0592 14.6966 14.9425 15.2841C14.8283 15.855 14.67 16.1566 14.4425 16.37C14.2142 16.5833 13.9025 16.7216 13.3258 16.7966C12.7317 16.8741 11.9483 16.8758 10.8225 16.8758H10.1775C9.0525 16.8758 8.26917 16.8741 7.67417 16.7966C7.0975 16.7216 6.78583 16.5833 6.5575 16.37C6.33 16.1566 6.17167 15.855 6.0575 15.285C5.94083 14.6966 5.8875 13.915 5.8125 12.7916L5.42917 7.04246Z" fill="#ED0303"/>
-                                                <path d="M8.35417 8.54413C8.51903 8.52761 8.68371 8.57723 8.812 8.68208C8.9403 8.78694 9.02171 8.93844 9.03833 9.1033L9.455 13.27C9.4672 13.4325 9.4154 13.5934 9.31065 13.7184C9.2059 13.8433 9.05648 13.9223 8.89427 13.9386C8.73206 13.9549 8.5699 13.9072 8.44238 13.8056C8.31486 13.7041 8.23207 13.5567 8.21167 13.395L7.795 9.2283C7.77848 9.06343 7.8281 8.89875 7.93295 8.77046C8.0378 8.64217 8.18931 8.56076 8.35417 8.54413ZM12.6458 8.54413C12.8105 8.56077 12.9619 8.64205 13.0667 8.77016C13.1716 8.89827 13.2213 9.06274 13.205 9.22747L12.7883 13.3941C12.7677 13.5556 12.6848 13.7026 12.5575 13.8039C12.4301 13.9052 12.2682 13.9529 12.1063 13.9367C11.9443 13.9205 11.7951 13.8418 11.6903 13.7173C11.5854 13.5928 11.5333 13.4323 11.545 13.27L11.9617 9.1033C11.9783 8.9386 12.0596 8.78723 12.1877 8.6824C12.3158 8.57757 12.4811 8.52784 12.6458 8.54413Z" fill="#ED0303"/>
+                                            <svg style={{cursor:"pointer"}} onClick={() => setDeleteDeptId(dept.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.59199 1.875H11.4087C11.5895 1.875 11.747 1.875 11.8953 1.89833C12.1843 1.94462 12.4583 2.05788 12.6956 2.22907C12.933 2.40025 13.1269 2.6246 13.262 2.88417C13.332 3.0175 13.3812 3.16667 13.4387 3.3375L13.5312 3.61667L13.5562 3.6875C13.6316 3.89679 13.772 4.07645 13.9569 4.20016C14.1418 4.32387 14.3614 4.38514 14.5837 4.375H17.0837C17.2494 4.375 17.4084 4.44085 17.5256 4.55806C17.6428 4.67527 17.7087 4.83424 17.7087 5C17.7087 5.16576 17.6428 5.32473 17.5256 5.44194C17.4084 5.55915 17.2494 5.625 17.0837 5.625H2.91699C2.75123 5.625 2.59226 5.55915 2.47505 5.44194C2.35784 5.32473 2.29199 5.16576 2.29199 5C2.29199 4.83424 2.35784 4.67527 2.47505 4.55806C2.59226 4.44085 2.75123 4.375 2.91699 4.375H5.49199C5.71458 4.36966 5.9296 4.29314 6.10552 4.15667C6.28143 4.02019 6.409 3.83094 6.46949 3.61667L6.56283 3.3375C6.61949 3.16667 6.66866 3.0175 6.73783 2.88417C6.87299 2.6245 7.06707 2.40009 7.30453 2.2289C7.542 2.05771 7.81625 1.9445 8.10533 1.89833C8.25366 1.875 8.41116 1.875 8.59116 1.875M7.50616 4.375C7.56387 4.26004 7.61263 4.1408 7.65199 4.01833L7.73533 3.76833C7.81116 3.54083 7.82866 3.495 7.84616 3.46167C7.89115 3.37501 7.95581 3.30009 8.03497 3.24293C8.11413 3.18577 8.20558 3.14795 8.30199 3.1325C8.4106 3.12288 8.51972 3.12037 8.62866 3.125H11.3703C11.6103 3.125 11.6603 3.12667 11.697 3.13333C11.7933 3.14869 11.8847 3.18639 11.9639 3.2434C12.043 3.30041 12.1077 3.37516 12.1528 3.46167C12.1703 3.495 12.1878 3.54083 12.2637 3.76917L12.347 4.01917L12.3795 4.1125C12.4123 4.20361 12.45 4.29111 12.4928 4.375H7.50616Z" fill="#ED0303"/>
+                                                <path d="M4.92956 7.04148C4.9185 6.87605 4.84219 6.72179 4.7174 6.61263C4.59261 6.50347 4.42957 6.44835 4.26414 6.4594C4.09871 6.47045 3.94445 6.54676 3.83528 6.67155C3.72612 6.79634 3.671 6.95939 3.68206 7.12482L4.06872 12.9181C4.13956 13.9865 4.19706 14.8498 4.33206 15.5281C4.47289 16.2323 4.71122 16.8207 5.20456 17.2815C5.69789 17.7423 6.30039 17.9423 7.01289 18.0348C7.69789 18.1248 8.56289 18.1248 9.63455 18.1248H10.3671C11.4379 18.1248 12.3037 18.1248 12.9887 18.0348C13.7004 17.9423 14.3037 17.7431 14.7971 17.2815C15.2896 16.8207 15.5279 16.2315 15.6687 15.5281C15.8037 14.8506 15.8604 13.9865 15.9321 12.9181L16.3187 7.12482C16.3298 6.95939 16.2747 6.79634 16.1655 6.67155C16.0563 6.54676 15.9021 6.47045 15.7366 6.4594C15.5712 6.44835 15.4082 6.50347 15.2834 6.61263C15.1586 6.72179 15.0823 6.87605 15.0712 7.04148L14.6879 12.7915C14.6129 13.914 14.5596 14.6956 14.4429 15.2831C14.3287 15.854 14.1704 16.1556 13.9429 16.369C13.7146 16.5823 13.4029 16.7206 12.8262 16.7956C12.2321 16.8731 11.4487 16.8748 10.3229 16.8748H9.67789C8.55289 16.8748 7.76956 16.8731 7.17456 16.7956C6.59789 16.7206 6.28622 16.5823 6.05789 16.369C5.83039 16.1556 5.67206 15.854 5.55789 15.284C5.44122 14.6956 5.38789 13.914 5.31289 12.7906L4.92956 7.04148Z" fill="#ED0303"/>
+                                                <path d="M7.85428 8.54511C8.01914 8.52859 8.18382 8.57821 8.31211 8.68306C8.44041 8.78792 8.52182 8.93942 8.53844 9.10428L8.95511 13.2709C8.96731 13.4335 8.91551 13.5944 8.81076 13.7193C8.70601 13.8442 8.55659 13.9233 8.39438 13.9396C8.23217 13.9559 8.07001 13.9082 7.94249 13.8066C7.81497 13.7051 7.73218 13.5577 7.71178 13.3959L7.29511 9.22928C7.27859 9.06441 7.32821 8.89973 7.43306 8.77144C7.53792 8.64314 7.68942 8.56174 7.85428 8.54511ZM12.1459 8.54511C12.3106 8.56174 12.462 8.64303 12.5668 8.77114C12.6717 8.89925 12.7214 9.06371 12.7051 9.22844L12.2884 13.3951C12.2678 13.5565 12.185 13.7036 12.0576 13.8049C11.9302 13.9062 11.7683 13.9538 11.6064 13.9377C11.4444 13.9215 11.2952 13.8428 11.1904 13.7183C11.0856 13.5938 11.0334 13.4333 11.0451 13.2709L11.4618 9.10428C11.4784 8.93958 11.5597 8.78821 11.6878 8.68338C11.8159 8.57855 11.9812 8.52882 12.1459 8.54511Z" fill="#ED0303"/>
                                             </svg>
                                         </div>
                                     </td>
-
                                     <td>
-                                        <button onClick={() => navigate("/superAdmin/bolme")}>Ətraflı</button>
+                                        <button onClick={() => navigate(`/superAdmin/sobe/${dept.id}/bolme`)}>Ətraflı</button>
                                     </td>
                                 </tr>
                             ))}
                             </tbody>
+
 
                         </table>
 
@@ -152,14 +166,44 @@ const SuperAdminSobe = () => {
                         <h3>Dəyişiklik et</h3>
                         <div className="modal-fields">
                             <label>Şöbə adı</label>
-                            <input type="text" placeholder="Məsələn: Şirvanşah" />
+                            <input
+                                type="text"
+                                placeholder="Məsələn: Şirvanşah"
+                                value={editDeptData.name}
+                                onChange={(e) =>
+                                    setEditDeptData((prev) => ({ ...prev, name: e.target.value }))
+                                }
+                            />
+
                         </div>
-                        <button className="save-btn">Yadda saxla</button>
+                        <button
+                            className="save-btn"
+                            onClick={async () => {
+                                if (!editDeptData.name.trim()) return;
+
+                                try {
+                                    await edit({
+                                        id: editDeptData.id,
+                                        name: editDeptData.name,
+                                        companyId: id, // useParams'dan gəlir
+                                    });
+
+                                    setModalVisible(false);
+                                    setEditDeptData({ id: '', name: '' });
+                                    refetch();
+                                } catch (err) {
+                                    console.error("Şöbə redaktə olunarkən xəta:", err);
+                                }
+                            }}
+                        >
+                            Yadda saxla
+                        </button>
+
                     </div>
                 </div>
             )}
-            {deleteIndex !== null && (
-                <div className="modal-overlay" onClick={() => setDeleteIndex(null)}>
+            {deleteDeptId  !== null && (
+                <div className="modal-overlay" onClick={() => setDeleteDeptId(null)}>
                     <div className="delete-modal-box" onClick={(e) => e.stopPropagation()}>
                         <div className="delete-icon-wrapper">
                             <div className={"delete-icon-circle-one"}>
@@ -172,14 +216,17 @@ const SuperAdminSobe = () => {
                         </div>
                         <p className="delete-message">Şöbəni silmək istədiyinizə əminsiz?</p>
                         <div className="delete-modal-actions">
-                            <button className="cancel-btn" onClick={() => setDeleteIndex(null)}>Ləğv et</button>
+                            <button className="cancel-btn" onClick={() => setDeleteDeptId(null)}>Ləğv et</button>
                             <button
                                 className="confirm-btn"
-                                onClick={() => {
-                                    const updated = [...orderItems];
-                                    updated.splice(deleteIndex, 1);
-                                    setOrderItems(updated);
-                                    setDeleteIndex(null);
+                                onClick={async () => {
+                                    try {
+                                        await deleteDepartment(deleteDeptId);
+                                        setDeleteDeptId(null);
+                                        refetch();
+                                    } catch (err) {
+                                        console.error("Silinərkən xəta:", err);
+                                    }
                                 }}
                             >
                                 Sil

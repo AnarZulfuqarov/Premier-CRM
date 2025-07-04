@@ -1,6 +1,7 @@
 import './index.scss';
-import React, { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useGetAllCustomersQuery, useGetJobsIdQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminPeople = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -12,7 +13,14 @@ const SuperAdminPeople = () => {
 
     const [editingUser, setEditingUser] = useState(null);
 
-    // Mock data for table (replacing orders with user data for consistency)
+    const { data: getAllCustomers, refetch } = useGetAllCustomersQuery();
+    const customers = getAllCustomers?.data || [];
+
+    const {data:getJobsId}= useGetJobsIdQuery()
+    const job = getJobsId?.data
+    const getJobNameById = (id) => {
+        return job?.find((j) => j.id === id)?.name || '—';
+    };
     const users = Array.from({ length: 30 }, (_, idx) => ({
         id: `75875058252${idx + 10}`,
         name: 'Leyla',
@@ -23,9 +31,11 @@ const SuperAdminPeople = () => {
         password: '********',
     }));
     const [orderItems, setOrderItems] = useState([...users]); // ya da API-dən gələn məlumat
-
+    useEffect(() => {
+       refetch()
+    },[])
     // Filter users based on search term and column
-    const filteredUsers = users.filter(user => {
+    const filteredUsers = customers.filter(user => {
         if (!searchTerm || !searchColumn) return true;
         const value = user[searchColumn]?.toString().toLowerCase();
         return value?.includes(searchTerm.toLowerCase());
@@ -33,6 +43,7 @@ const SuperAdminPeople = () => {
 
     const totalPages = Math.ceil(filteredUsers.length / pageSize);
     const pagedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
     const getPageNumbers = () => {
         const pages = [];
@@ -161,13 +172,14 @@ const SuperAdminPeople = () => {
                                 <tr key={user.id}>
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
-                                    <td>{user.fin}</td>
-                                    <td>{user.position}</td>
-                                    <td>{user.phone}</td>
-                                    <td>{user.password}</td>
+                                    <td>{user.finCode}</td>
+                                    <td>{getJobNameById(user.jobId)}</td>
+                                    <td>{user.phoneNumber}</td>
+                                    <td>********</td>
                                 </tr>
                             ))}
                             </tbody>
+
                         </table>
                     </div>
 

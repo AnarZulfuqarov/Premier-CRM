@@ -219,19 +219,19 @@ const router = createBrowserRouter([
                 element: <SuperAdminCompanyAdd/>
             },
             {
-                path: "/superAdmin/sobe",
+                path: "/superAdmin/company/:id/sobe",
                 element: <SuperAdminSobe/>
             },
             {
-                path: "/superAdmin/sobeAdd",
+                path: "/superAdmin/company/:id/sobeAdd",
                 element: <SuperAdminSobeAdd/>
             },
             {
-                path: "/superAdmin/bolme",
+                path: "/superAdmin/sobe/:id/bolme",
                 element: <SuperAdminBolme/>
             },
             {
-                path: "/superAdmin/bolmeAdd",
+                path: "/superAdmin/sobe/:id/bolmeAdd",
                 element: <SuperAdminBolmeAdd/>
             },
             {

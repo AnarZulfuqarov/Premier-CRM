@@ -1,15 +1,13 @@
 import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
-import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateVendorsMutation} from "../../../services/adminApi.jsx";
 
-const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
-const units = ['Kg', 'Litr', 'Ədəd'];
 
 const SuperVendorAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const [post] = useCreateVendorsMutation()
     const handleChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
@@ -19,7 +17,19 @@ const SuperVendorAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
-
+    const handleSubmit = async () => {
+        try {
+            for (const row of rows) {
+                if (row.name.trim()) {
+                    await post({ name: row.name.trim() });
+                }
+            }
+            setShowSuccessModal(true);
+            setRows([{ name: '' }]); // form sıfırlansın
+        } catch (error) {
+            console.error("Vendor əlavə olunarkən xəta baş verdi:", error);
+        }
+    };
     return (
         <div className="super-admin-vendor-add-main">
             <div className="super-admin-vendor-add">
@@ -28,7 +38,7 @@ const SuperVendorAdd = () => {
                         <h1>Vendor əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Vendorlar</NavLink> — Vendor əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/products/vendors">— Vendorlar</NavLink> — Vendor əlavə edilməsi
                     </h2>
                 </div>
 
@@ -75,7 +85,7 @@ const SuperVendorAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -94,7 +104,7 @@ const SuperVendorAdd = () => {
                             </div>
                         </div>
                         <h3>Vendor uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/products/vendors"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>

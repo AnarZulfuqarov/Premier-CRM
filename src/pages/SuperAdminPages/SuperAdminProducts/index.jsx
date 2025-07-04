@@ -1,7 +1,8 @@
 import './index.scss';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetAllProductsQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminProducts = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,36 +18,23 @@ const SuperAdminProducts = () => {
 
     const navigate = useNavigate();
     const pageSize = 9;
+    const {data:getAllProducts,refetch} = useGetAllProductsQuery()
+    const products = getAllProducts?.data
 
-    const order = {
-        id: 'NP764543702735',
-        status: 'Təsdiq gözləyən',
-        items: Array.from({length: 20}).map(() => ({
-            name: 'Kartof',
-            category: 'Ərzaq',
-            required: '15 ədəd',
-            provided: '15 ədəd',
-            price: '325 ₼',
-            vendor: 'Bravo',
-            created: '16/05/25, 13:45',
-            delivery: '16/05/25, 13:45',
-            received: '16/05/25, 13:45',
-        })),
-    };
+    useEffect(() => {
+        refetch()
+    },[])
 
-    const filtered = order.items.filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
-        return byName && byCat;
-    });
-    const [orderItems, setOrderItems] = useState(order.items); // yeni state ilə işləyək
+    const filteredProducts = products?.filter(products =>
+        products.name.toLowerCase().includes(searchName.toLowerCase())
+    ) || [];
+    const totalProductPages = Math.ceil(filteredProducts.length / pageSize);
+    const pagedProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-    const totalPages = Math.ceil(filtered.length / pageSize);
-    const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const getPageNumbers = () => {
         const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
+        for (let i = 1; i <= totalProductPages; i++) pages.push(i);
         return pages;
     };
 
@@ -165,7 +153,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
+                                {pagedProducts.map((item, i) => {
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={i}>
@@ -412,7 +400,7 @@ const SuperAdminProducts = () => {
                             {page}
                         </button>
                     ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
+                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalProductPages}>
                         &gt;
                     </button>
                 </div>

@@ -1,7 +1,8 @@
 import './index.scss';
-import React, {useState} from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import { useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminCategories = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,36 +18,22 @@ const SuperAdminCategories = () => {
 
     const navigate = useNavigate();
     const pageSize = 9;
+    const {data: getAllCategories , refetch} = useGetAllCategoriesQuery()
+    const categories = getAllCategories?.data
+    useEffect(() => {
+            refetch()
+    },[])
 
-    const order = {
-        id: 'NP764543702735',
-        status: 'Təsdiq gözləyən',
-        items: Array.from({length: 20}).map(() => ({
-            name: 'Kartof',
-            category: 'Ərzaq',
-            required: '15 ədəd',
-            provided: '15 ədəd',
-            price: '325 ₼',
-            vendor: 'Bravo',
-            created: '16/05/25, 13:45',
-            delivery: '16/05/25, 13:45',
-            received: '16/05/25, 13:45',
-        })),
-    };
+    const filteredCategories = categories?.filter(category =>
+        category.name.toLowerCase().includes(searchName.toLowerCase())
+    ) || [];
+    const totalCategoryPages = Math.ceil(filteredCategories.length / pageSize);
+    const pagedCategories = filteredCategories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-    const filtered = order.items.filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
-        return byName && byCat;
-    });
-    const [orderItems, setOrderItems] = useState(order.items); // yeni state ilə işləyək
-
-    const totalPages = Math.ceil(filtered.length / pageSize);
-    const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const getPageNumbers = () => {
         const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
+        for (let i = 1; i <= totalCategoryPages; i++) pages.push(i);
         return pages;
     };
 
@@ -134,7 +121,7 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
+                                {pagedCategories.map((item, i) => {
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={i}>
@@ -151,9 +138,8 @@ const SuperAdminCategories = () => {
                        onClick={() => {
                            setSelectedRowIndex(absoluteIndex);
                            setModalData({
-                               quantity: item.required,
-                               price: item.price,
-                               vendor: item.vendor,
+                               name: item.name,
+                                // varsa əlavə et
                            });
                        }}
                        style={{ cursor: 'pointer' }}
@@ -351,7 +337,7 @@ const SuperAdminCategories = () => {
                             {page}
                         </button>
                     ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
+                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalCategoryPages}>
                         &gt;
                     </button>
                 </div>
@@ -374,7 +360,7 @@ const SuperAdminCategories = () => {
                                 onChange={(e) =>
                                     setModalData({ ...modalData, quantity: e.target.value })
                                 }
-                                placeholder="Miqdar"
+                                placeholder="Kateqoriya adı"
                             />
                         </div>
                         <button

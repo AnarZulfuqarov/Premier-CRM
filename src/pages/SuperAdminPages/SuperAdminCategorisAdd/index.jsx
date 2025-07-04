@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateCategoriesMutation} from "../../../services/adminApi.jsx";
 
 const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
 const units = ['Kg', 'Litr', 'Ədəd'];
@@ -9,7 +10,7 @@ const units = ['Kg', 'Litr', 'Ədəd'];
 const SuperAdminCategoryAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const [post] = useCreateCategoriesMutation()
     const handleChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
@@ -18,6 +19,16 @@ const SuperAdminCategoryAdd = () => {
 
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
+    };
+    const handleSubmit = async () => {
+        try {
+            const promises = rows.map(row => post({ name: row.name }));
+            await Promise.all(promises); // hamısı tamamlandıqda davam et
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error("Post xətası:", error);
+            // Burada error modalı da göstərə bilərsən
+        }
     };
 
     return (
@@ -75,7 +86,7 @@ const SuperAdminCategoryAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -93,9 +104,8 @@ const SuperAdminCategoryAdd = () => {
                                 </div>
                             </div>
                         </div>
-                        <h3>Əlavə etmə istəyiniz uğurla qeydə alındı!</h3>
-                        <p>Admin təsdiq etdikdən sonra yeni məhsul yaradılacaq</p>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <h3>Uğurla əlavə edildi  !</h3>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/products/categories"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>
