@@ -16,11 +16,7 @@ const SuperAdminPeople = () => {
     const { data: getAllCustomers, refetch } = useGetAllCustomersQuery();
     const customers = getAllCustomers?.data || [];
 
-    const {data:getJobsId}= useGetJobsIdQuery()
-    const job = getJobsId?.data
-    const getJobNameById = (id) => {
-        return job?.find((j) => j.id === id)?.name || '—';
-    };
+
     const users = Array.from({ length: 30 }, (_, idx) => ({
         id: `75875058252${idx + 10}`,
         name: 'Leyla',
@@ -173,7 +169,7 @@ const SuperAdminPeople = () => {
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
                                     <td>{user.finCode}</td>
-                                    <td>{getJobNameById(user.jobId)}</td>
+                                    <td>{user.jobName}</td>
                                     <td>{user.phoneNumber}</td>
                                     <td>********</td>
                                 </tr>

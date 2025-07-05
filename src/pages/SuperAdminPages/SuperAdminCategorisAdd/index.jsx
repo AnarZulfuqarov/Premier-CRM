@@ -39,7 +39,7 @@ const SuperAdminCategoryAdd = () => {
                         <h1>Kateqoriya əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Kateqoriyalar</NavLink> — Kateqoriya əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/products/categories">— Kateqoriyalar</NavLink> — Kateqoriya əlavə edilməsi
                     </h2>
                 </div>
 

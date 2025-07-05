@@ -15,11 +15,17 @@ const CustomDropdown = ({ options, selected, onSelect, placeholder = "Seçin" })
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // selected göstərişini tap (obyekt deyilsə birbaşa göstər)
+    const isObjectOptions = typeof options?.[0] === 'object';
+    const selectedLabel = isObjectOptions
+        ? options.find(opt => opt.value === selected)?.label
+        : selected;
+
     return (
         <div className="custom-dropdown" ref={dropdownRef}>
             <div className="custom-dropdown-header" onClick={() => setOpen(!open)}>
-                {selected ? (
-                    <span>{selected}</span>
+                {selectedLabel ? (
+                    <span>{selectedLabel}</span>
                 ) : (
                     <span className="placeholder">{placeholder}</span>
                 )}
@@ -28,18 +34,22 @@ const CustomDropdown = ({ options, selected, onSelect, placeholder = "Seçin" })
 
             {open && (
                 <div className="custom-dropdown-list">
-                    {options.map((opt, i) => (
-                        <div
-                            key={i}
-                            className={`custom-dropdown-item ${opt === selected ? 'selected' : ''}`}
-                            onClick={() => {
-                                onSelect(opt);
-                                setOpen(false);
-                            }}
-                        >
-                            {opt}
-                        </div>
-                    ))}
+                    {options.map((opt, i) => {
+                        const label = isObjectOptions ? opt.label : opt;
+                        const value = isObjectOptions ? opt.value : opt;
+                        return (
+                            <div
+                                key={i}
+                                className={`custom-dropdown-item ${value === selected ? 'selected' : ''}`}
+                                onClick={() => {
+                                    onSelect(value);
+                                    setOpen(false);
+                                }}
+                            >
+                                {label}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

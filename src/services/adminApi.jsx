@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Cookies from 'js-cookie';
 
-
-
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
@@ -152,6 +150,11 @@ export const api = createApi({
                 url: `/Sections/by-department/${departmentId}`,
             }),
         }),
+        getAllSections: builder.query({
+            query: () => ({
+                url: `/Sections`,
+            }),
+        }),
         createSections: builder.mutation({
             query: (section) => ({
                 url: '/Sections',
@@ -206,6 +209,14 @@ export const api = createApi({
                 url: `/Customers`,
             }),
         }),
+        createCustomers: builder.mutation({
+            query: (customer) => ({
+                url: '/Customers',
+                method: 'POST',
+                body: customer,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
         getAllCategories: builder.query({
             query: () => ({
                 url: `/Categories`,
@@ -219,16 +230,46 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        updateCategories: builder.mutation({
+            query: (category) => ({
+                url: '/Categories/request-update',
+                method: 'POST',
+                body: category,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteCategories: builder.mutation({
+            query: (id) => ({
+                url: `/Categories/request-delete/${id}`,
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
         getAllProducts: builder.query({
             query: () => ({
                 url: `/Products`,
             }),
         }),
         createProducts: builder.mutation({
-            query: (category) => ({
+            query: (product) => ({
                 url: '/Products/request-create',
                 method: 'POST',
-                body: category,
+                body: product,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        updateProducts: builder.mutation({
+            query: (product) => ({
+                url: '/Products/request-update',
+                method: 'POST',
+                body: product,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteProducts: builder.mutation({
+            query: (id) => ({
+                url: `/Products/request-delete/${id}`,
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
@@ -268,11 +309,17 @@ export const {
     useDeleteVendorMutation,
 
     useGetAllCustomersQuery,
+    useCreateCustomersMutation,
 
     useGetAllCategoriesQuery,
     useCreateCategoriesMutation,
+    useUpdateCategoriesMutation,
+    useDeleteCategoriesMutation,
 
 
     useGetAllProductsQuery,
     useCreateProductsMutation,
+    useUpdateProductsMutation,
+    useDeleteProductsMutation,
+    useGetAllSectionsQuery,
 } = api;

@@ -2,14 +2,16 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateProductsMutation, useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
 
-const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
-const units = ['Kg', 'Litr', 'Ədəd'];
+const units = ['kg', 'litr', 'ədəd'];
 
 const SuperProductsAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const [post] =useCreateProductsMutation()
+    const {data:getAllCategories} = useGetAllCategoriesQuery()
+    const categories = getAllCategories?.data
     const handleChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
@@ -28,7 +30,7 @@ const SuperProductsAdd = () => {
                         <h1>Məhsul əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Məhsullar</NavLink> — Məhsul əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/products/products">— Məhsullar</NavLink> — Məhsul əlavə edilməsi
                     </h2>
                 </div>
 
@@ -54,21 +56,23 @@ const SuperProductsAdd = () => {
                             <td>
 
                                 <CustomDropdown
-                                    options={categories}
+                                    options={categories?.map(cat => ({ label: cat.name, value: cat.id }))}
                                     selected={row.category}
                                     onSelect={(value) => handleChange(index, 'category', value)}
                                     placeholder="Kateqoriya seç"
                                 />
 
+
                             </td>
                             <td>
 
                                 <CustomDropdown
-                                    options={units}
+                                    options={['kg', 'litr', 'ədəd']}
                                     selected={row.unit}
                                     onSelect={(value) => handleChange(index, 'unit', value)}
                                     placeholder="Ölçü vahidi seç"
                                 />
+
 
                             </td>
                         </tr>
@@ -95,7 +99,28 @@ const SuperProductsAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button
+                    className="confirm-btn"
+                    onClick={async () => {
+                        try {
+                            const requests = rows?.map(row => post({
+                                name: row.name,
+                                categoryId: row.category,
+                                measure: row.unit
+                            }));
+
+                            await Promise.all(requests);
+
+                            setShowSuccessModal(true);
+                            setRows([{ name: '', category: '', unit: '' }]); // form sıfırlansın
+                        } catch (error) {
+                            console.error("Məhsul əlavə edilərkən xəta:", error);
+                        }
+                    }}
+                >
+                    Təsdiqlə
+                </button>
+
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -113,9 +138,8 @@ const SuperProductsAdd = () => {
                                 </div>
                             </div>
                         </div>
-                        <h3>Əlavə etmə istəyiniz uğurla qeydə alındı!</h3>
-                        <p>Admin təsdiq etdikdən sonra yeni məhsul yaradılacaq</p>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <h3>Məhsul uğurla əlavə edildi !</h3>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/products/products"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>
