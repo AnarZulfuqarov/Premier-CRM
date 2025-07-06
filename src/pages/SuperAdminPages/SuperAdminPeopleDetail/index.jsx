@@ -1,9 +1,11 @@
 import './index.scss';
 import React, {useState} from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetByIdCustomersQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminPeopleDetail = () => {
+    const {id} =useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -12,7 +14,8 @@ const SuperAdminPeopleDetail = () => {
 
     const navigate = useNavigate();
     const pageSize = 9;
-
+    const {data:getByIdCustomers} = useGetByIdCustomersQuery(id)
+    const customer = getByIdCustomers?.data
     const order = {
         id: 'NP764543702735',
         status: 'Təsdiq gözləyən',

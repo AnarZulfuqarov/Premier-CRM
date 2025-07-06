@@ -2,15 +2,18 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateFightersMutation} from "../../../services/adminApi.jsx";
 
 
 
 const SuperSupplierAdd = () => {
     const positions = ['Müdür', 'Mühasib', 'Operator'];
     const departments = ['Satış', 'Marketinq', 'Anbar'];
+    const [postSupplier] = useCreateFightersMutation()
 
-    const [rows, setRows] = useState([{ name: '', surname: '', position: '', department: '', password: '', phone: '' }]);
-
+    const [rows, setRows] = useState([
+        { name: '', surname: '', finCode: '', password: '', phoneNumber: '' }
+    ]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleChange = (index, field, value) => {
@@ -38,7 +41,7 @@ const SuperSupplierAdd = () => {
                         <h1>Təchizatçı əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Təchizatçı</NavLink> — Təchizatçı əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/supplier">— Təchizatçı</NavLink> — Təchizatçı əlavə edilməsi
                     </h2>
                 </div>
 
@@ -47,8 +50,7 @@ const SuperSupplierAdd = () => {
                     <tr>
                         <th>Ad</th>
                         <th>Soyad</th>
-                        <th>Vəzifə</th>
-                        <th>Bölmə</th>
+                        <th>FIN</th>
                         <th>Şifrə</th>
                         <th>Nömrə</th>
                     </tr>
@@ -73,19 +75,11 @@ const SuperSupplierAdd = () => {
                                 />
                             </td>
                             <td>
-                                <CustomDropdown
-                                    options={positions}
-                                    selected={row.position}
-                                    onSelect={(value) => handleChange(index, 'position', value)}
-                                    placeholder="Vəzifə seç"
-                                />
-                            </td>
-                            <td>
-                                <CustomDropdown
-                                    options={departments}
-                                    selected={row.department}
-                                    onSelect={(value) => handleChange(index, 'department', value)}
-                                    placeholder="Bölmə seç"
+                                <input
+                                    type="text"
+                                    placeholder="FIN daxil et"
+                                    value={row.finCode}
+                                    onChange={(e) => handleChange(index, 'finCode', e.target.value)}
                                 />
                             </td>
                             <td>
@@ -100,11 +94,12 @@ const SuperSupplierAdd = () => {
                                 <input
                                     type="text"
                                     placeholder="Nömrə daxil et"
-                                    value={row.phone}
-                                    onChange={(e) => handleChange(index, 'phone', e.target.value)}
+                                    value={row.phoneNumber}
+                                    onChange={(e) => handleChange(index, 'phoneNumber', e.target.value)}
                                 />
                             </td>
                         </tr>
+
                     ))}
                     <tr>
                         <td colSpan="6">
@@ -121,7 +116,35 @@ const SuperSupplierAdd = () => {
                 </table>
 
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button
+                    className="confirm-btn"
+                    onClick={async () => {
+                        try {
+                            const results = await Promise.all(
+                                rows.map(async (row) => {
+                                    const res = await postSupplier({
+                                        name: row.name,
+                                        surname: row.surname,
+                                        password: row.password,
+                                        finCode: row.finCode,
+                                        phoneNumber: row.phoneNumber
+                                    }).unwrap(); // unwrap kullanılıyor
+                                    return res;
+                                })
+                            );
+
+                            // Hepsi başarılı ise buraya düşer
+                            setShowSuccessModal(true);
+                        } catch (err) {
+                            console.error('POST error:', err);
+                            alert("Xəta baş verdi: bəzi təchizatçılar əlavə olunmadı");
+                        }
+                    }}
+
+                >
+                    Təsdiqlə
+                </button>
+
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -140,7 +163,7 @@ const SuperSupplierAdd = () => {
                             </div>
                         </div>
                         <h3>Təchizatçı uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/supplier"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>

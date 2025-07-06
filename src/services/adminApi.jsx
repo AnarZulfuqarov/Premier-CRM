@@ -209,10 +209,29 @@ export const api = createApi({
                 url: `/Customers`,
             }),
         }),
+        getByIdCustomers: builder.query({
+            query: (id) => ({
+                url: `/Customers/${id}`,
+            }),
+        }),
         createCustomers: builder.mutation({
             query: (customer) => ({
                 url: '/Customers',
                 method: 'POST',
+                body: customer,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteCustomer: builder.mutation({
+            query: (id) => ({
+                url: `/Customers/${id}`,
+                method: 'DELETE',
+            }),
+        }),
+        editCustomer: builder.mutation({
+            query: (customer) => ({
+                url: '/Customers',
+                method: 'PUT',
                 body: customer,
                 headers: { 'Content-Type': 'application/json' },
             }),
@@ -273,6 +292,38 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        getAllFighters: builder.query({
+            query: () => ({
+                url: `/Fighters`,
+            }),
+        }),
+        getByIdFighters: builder.query({
+            query: (id) => ({
+                url: `/Fighters/${id}`,
+            }),
+        }),
+        createFighters: builder.mutation({
+            query: (fighter) => ({
+                url: '/Fighters/register',
+                method: 'POST',
+                body: fighter,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteFighter: builder.mutation({
+            query: (email) => ({
+                url: `/Fighters/${email}`,
+                method: 'DELETE',
+            }),
+        }),
+        editFighter: builder.mutation({
+            query: (fighter) => ({
+                url: '/Fighters',
+                method: 'PUT',
+                body: fighter,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
     }),
 });
 
@@ -310,6 +361,9 @@ export const {
 
     useGetAllCustomersQuery,
     useCreateCustomersMutation,
+    useDeleteCustomerMutation,
+    useEditCustomerMutation,
+    useGetByIdCustomersQuery,
 
     useGetAllCategoriesQuery,
     useCreateCategoriesMutation,
@@ -322,4 +376,10 @@ export const {
     useUpdateProductsMutation,
     useDeleteProductsMutation,
     useGetAllSectionsQuery,
+
+    useGetAllFightersQuery,
+    useCreateFightersMutation,
+    useDeleteFighterMutation,
+    useEditFighterMutation,
+    useGetByIdFightersQuery,
 } = api;

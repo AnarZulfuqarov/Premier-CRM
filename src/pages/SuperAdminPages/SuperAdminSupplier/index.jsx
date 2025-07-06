@@ -1,6 +1,7 @@
 import './index.scss';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useDeleteFighterMutation, useEditFighterMutation, useGetAllFightersQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminSupplier = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -11,18 +12,21 @@ const SuperAdminSupplier = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
 
     const [editingUser, setEditingUser] = useState(null);
-
-    // Mock data for table (replacing orders with user data for consistency)
-    const users = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        name: 'Leyla',
-        surname: 'Quliyeva',
-        fin: `9N7GG${432 + idx}`,
-        position: 'Xadimə',
-        phone: '050 789 33 66',
-        password: '********',
-    }));
-    const [orderItems, setOrderItems] = useState([...users]); // ya da API-dən gələn məlumat
+    const {data:getAllFighters,refetch} = useGetAllFightersQuery()
+    const supliers = getAllFighters?.data
+    const [editFighter] = useEditFighterMutation();
+    const [deleteFighter] = useDeleteFighterMutation();
+    useEffect(() => {
+        refetch();
+    },[])
+    const users = supliers?.map((s) => ({
+        id: s.id,
+        name: s.name,
+        surname: s.surname,
+        fin: s.finCode,
+        phone: s.phoneNumber,
+        password: s.password ?? '********'
+    })) || [];
 
     // Filter users based on search term and column
     const filteredUsers = users.filter(user => {
@@ -65,10 +69,29 @@ const SuperAdminSupplier = () => {
         }
     };
 
-    const handleSave = (updatedUser) => {
-        console.log('Yadda saxlanıldı:', updatedUser);
-        setEditingUser(null);
+    const handleSave = async (updatedUser) => {
+        const isPasswordChanged = updatedUser.password !== '********';
+
+        try {
+            await editFighter({
+                id: updatedUser.id,
+                name: updatedUser.name,
+                surname: updatedUser.surname,
+                finCode: updatedUser.fin,
+                password: isPasswordChanged ? updatedUser.password : null
+            }).unwrap();
+
+            alert("Dəyişikliklər uğurla yadda saxlanıldı.");
+            setEditingUser(null);
+            refetch();
+        } catch (err) {
+            console.error("Edit error:", err);
+            alert("Xəta baş verdi. Dəyişikliklər yadda saxlanmadı.");
+        }
     };
+
+
+
 
     return (
         <div className="super-admin-supplier-main">
@@ -100,7 +123,7 @@ const SuperAdminSupplier = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['name', 'surname', 'fin', 'position', 'phone']. map((column) => (
+                                {['name', 'surname', 'fin', 'phone']. map((column) => (
                                     <th key={column}>
                                         {column.charAt(0).toUpperCase() + column.slice(1)}
                                         <span
@@ -162,7 +185,6 @@ const SuperAdminSupplier = () => {
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
                                     <td>{user.fin}</td>
-                                    <td>{user.position}</td>
                                     <td>{user.phone}</td>
                                     <td>{user.password}</td>
                                 </tr>
@@ -282,34 +304,32 @@ const SuperAdminSupplier = () => {
                                     />
                                 </div>
                             </div>
-                            <label>Vəzifə</label>
+
+                            <label>FIN</label>
                             <input
                                 type="text"
-                                value={editingUser.position}
+                                value={editingUser.fin}
                                 onChange={(e) =>
-                                    setEditingUser({ ...editingUser, position: e.target.value })
+                                    setEditingUser({ ...editingUser, fin: e.target.value })
                                 }
                             />
-                            <label>Telefon nömrəsi</label>
-                            <input
-                                type="text"
-                                value={editingUser.phone}
-                                onChange={(e) =>
-                                    setEditingUser({ ...editingUser, phone: e.target.value })
-                                }
-                            />
+
                             <label>Parol</label>
                             <input
                                 type="password"
                                 value={editingUser.password}
+                                placeholder="Parolu dəyişmək üçün daxil et"
                                 onChange={(e) =>
                                     setEditingUser({ ...editingUser, password: e.target.value })
                                 }
                             />
+
+
                             <button className="save-btn" onClick={() => handleSave(editingUser)}>
                                 Yadda saxla
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
@@ -325,21 +345,33 @@ const SuperAdminSupplier = () => {
                                 </div>
                             </div>
                         </div>
-                        <p className="delete-message">Məhsulun silinməsi üçün administratora bildiriş göndəriləcək.</p>
-                        <p className="delete-sub">Silinmə yalnız təsdiqdən sonra həyata keçiriləcək.</p>
+                        <p className="delete-message">Təchizatçını silməyə əminsiniz ?</p>
                         <div className="delete-modal-actions">
                             <button className="cancel-btn" onClick={() => setDeleteIndex(null)}>Ləğv et</button>
                             <button
                                 className="confirm-btn"
-                                onClick={() => {
-                                    const updated = [...orderItems];
-                                    updated.splice(deleteIndex, 1);
-                                    setOrderItems(updated);
-                                    setDeleteIndex(null);
+                                onClick={async () => {
+                                    try {
+                                        const userId = pagedUsers[deleteIndex]?.id;
+                                        console.log(userId)
+                                        if (!userId) {
+                                            alert("İstifadəçi ID-si tapılmadı.");
+                                            return;
+                                        }
+
+                                        await deleteFighter(userId).unwrap();
+                                        alert("Təchizatçı uğurla silindi.");
+                                        setDeleteIndex(null);
+                                        refetch();
+                                    } catch (err) {
+                                        console.error("Silinmə xətası:", err);
+                                        alert("Xəta baş verdi. Təchizatçı silinmədi.");
+                                    }
                                 }}
                             >
                                 Sil
                             </button>
+
                         </div>
                     </div>
                 </div>

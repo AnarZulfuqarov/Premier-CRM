@@ -1,7 +1,11 @@
 import './index.scss';
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useGetAllCustomersQuery, useGetJobsIdQuery} from "../../../services/adminApi.jsx";
+import {
+    useDeleteCustomerMutation,
+    useEditCustomerMutation,
+    useGetAllCustomersQuery, useGetAllJobsQuery
+} from "../../../services/adminApi.jsx";
 
 const SuperAdminPeople = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -15,18 +19,10 @@ const SuperAdminPeople = () => {
 
     const { data: getAllCustomers, refetch } = useGetAllCustomersQuery();
     const customers = getAllCustomers?.data || [];
-
-
-    const users = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        name: 'Leyla',
-        surname: 'Quliyeva',
-        fin: `9N7GG${432 + idx}`,
-        position: 'Xadimə',
-        phone: '050 789 33 66',
-        password: '********',
-    }));
-    const [orderItems, setOrderItems] = useState([...users]); // ya da API-dən gələn məlumat
+    const [deleteCustomer] = useDeleteCustomerMutation()
+    const [editCustomer] = useEditCustomerMutation()
+    const {data:getAllJobs} = useGetAllJobsQuery()
+    const jobs = getAllJobs?.data || [];
     useEffect(() => {
        refetch()
     },[])
@@ -62,19 +58,42 @@ const SuperAdminPeople = () => {
     };
 
     const handleEdit = (id) => {
-        const selectedUser = users.find(u => u.id === id);
+        const selectedUser = customers.find(u => u.id === id);
         setEditingUser(selectedUser);
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm("Silmək istədiyinizə əminsiniz?")) {
-            alert(`Sifariş ${id} silindi!`);
+
+
+    const handleSave = async (updatedUser) => {
+        const payload = {
+            id: updatedUser.id,
+            name: updatedUser.name,
+            surname: updatedUser.surname,
+            jobId: updatedUser.jobId,
+            password: updatedUser.password,
+            finCode: updatedUser.finCode
+        };
+
+        try {
+            await editCustomer(payload).unwrap();
+            setEditingUser(null);
+            refetch();
+        } catch (error) {
+            console.error('Redaktə zamanı xəta:', error);
         }
     };
 
-    const handleSave = (updatedUser) => {
-        console.log('Yadda saxlanıldı:', updatedUser);
-        setEditingUser(null);
+    const handleDeleteConfirm = async () => {
+        const userToDelete = pagedUsers[deleteIndex];
+        if (!userToDelete) return;
+
+        try {
+            await deleteCustomer(userToDelete.id).unwrap();
+            setDeleteIndex(null);
+            refetch(); // güncel veriyi al
+        } catch (err) {
+            console.error('Silinmə zamanı xəta:', err);
+        }
     };
 
     return (
@@ -316,34 +335,46 @@ const SuperAdminPeople = () => {
                                     />
                                 </div>
                             </div>
+
                             <label>Vəzifə</label>
+                            <select
+                                value={editingUser.jobId || ''}
+                                onChange={(e) =>
+                                    setEditingUser({ ...editingUser, jobId: e.target.value })
+                                }
+                            >
+                                <option value="" disabled>Vəzifə seçin</option>
+                                {jobs.map((job) => (
+                                    <option key={job.id} value={job.id}>
+                                        {job.name}
+                                    </option>
+                                ))}
+                            </select>
+
+
+                            <label>FIN kodu</label>
                             <input
                                 type="text"
-                                value={editingUser.position}
+                                value={editingUser.finCode || ''}
                                 onChange={(e) =>
-                                    setEditingUser({ ...editingUser, position: e.target.value })
+                                    setEditingUser({ ...editingUser, finCode: e.target.value })
                                 }
                             />
-                            <label>Telefon nömrəsi</label>
-                            <input
-                                type="text"
-                                value={editingUser.phone}
-                                onChange={(e) =>
-                                    setEditingUser({ ...editingUser, phone: e.target.value })
-                                }
-                            />
+
                             <label>Parol</label>
                             <input
                                 type="password"
-                                value={editingUser.password}
+                                value={editingUser.password || ''}
                                 onChange={(e) =>
                                     setEditingUser({ ...editingUser, password: e.target.value })
                                 }
                             />
+
                             <button className="save-btn" onClick={() => handleSave(editingUser)}>
                                 Yadda saxla
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
@@ -359,21 +390,16 @@ const SuperAdminPeople = () => {
                                 </div>
                             </div>
                         </div>
-                        <p className="delete-message">Məhsulun silinməsi üçün administratora bildiriş göndəriləcək.</p>
-                        <p className="delete-sub">Silinmə yalnız təsdiqdən sonra həyata keçiriləcək.</p>
+                        <p className="delete-message">İstifadəçini silməyə əminsiniz ?</p>
                         <div className="delete-modal-actions">
                             <button className="cancel-btn" onClick={() => setDeleteIndex(null)}>Ləğv et</button>
                             <button
                                 className="confirm-btn"
-                                onClick={() => {
-                                    const updated = [...orderItems];
-                                    updated.splice(deleteIndex, 1);
-                                    setOrderItems(updated);
-                                    setDeleteIndex(null);
-                                }}
+                                onClick={handleDeleteConfirm}
                             >
                                 Sil
                             </button>
+
                         </div>
                     </div>
                 </div>
