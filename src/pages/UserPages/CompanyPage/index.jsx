@@ -3,17 +3,16 @@ import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import icon from '/src/assets/ph_building-light.svg';
+import {useGetUserCompaniesQuery} from "../../../services/adminApi.jsx";
+import Cookies from 'js-cookie'; // bu zaten gerekli
 
 function CompanyPage() {
     const navigate = useNavigate();
     const [selectedCompany, setSelectedCompany] = useState(null);
+    const {data:getUser} = useGetUserCompaniesQuery();
+    const user = getUser?.data
+    const companies = user || [];
 
-    const companies = [
-        { id: 1, name: 'Şirvanşah 1' },
-        { id: 2, name: 'Şirvanşah 2' },
-        { id: 3, name: 'Şirvanşah 3' },
-        { id: 4, name: 'Şirvanşah 4' },
-    ];
 
     const handleCompanySelect = (companyId) => {
         setSelectedCompany(companyId);
@@ -21,10 +20,11 @@ function CompanyPage() {
 
     const handleSubmit = () => {
         if (selectedCompany) {
-            console.log('Selected company ID:', selectedCompany);
-            navigate('/dashboard');
+            Cookies.set('companyId', selectedCompany); // 🍪 companyId cookiede saxlanir
+            navigate('/choose-company-companyDepartment');
         }
     };
+
 
     return (
         <div id="company">

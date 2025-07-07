@@ -8,7 +8,7 @@ const AdminLeftBar = () => {
     return (
         <aside className="sidebar">
             <ul className="sidebar__menu">
-                <li className={location.pathname === "/admin/customerAdd" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname === "/customer/customerAdd" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path
@@ -17,11 +17,11 @@ const AdminLeftBar = () => {
   <path d="M7.5 12H16.5" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M12 7.5V16.5" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-                    </span> <NavLink to={'/admin/customerAdd'} className="link">
+                    </span> <NavLink to={'/customer/customerAdd'} className="link">
                     Yeni sifariş
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/admin/history" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname === "/customer/history" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="23" viewBox="0 0 24 23" fill="none">
   <path
@@ -29,7 +29,7 @@ const AdminLeftBar = () => {
       fill="black"/>
   <path d="M11.2812 5.02905L11.2572 12.9375H17.0312V11.5H12.6991L12.7187 5.03346L11.2812 5.02905Z" fill="black"/>
 </svg>
-                    </span> <NavLink to={"/admin/history"} className="link">
+                    </span> <NavLink to={"/customer/history"} className="link">
                     Tarixcə
                 </NavLink>
                 </li>

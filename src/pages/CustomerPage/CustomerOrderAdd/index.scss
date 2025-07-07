@@ -83,6 +83,24 @@
       margin-right: 20px;
     }
   }
+  .order-form__category-btn.active {
+    border-radius: 10px;
+    border: 1px solid #384871;
+    background: #EBF5FF;
+
+
+  }
+  .custom-datepicker-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+
+  }
+  .react-datepicker-wrapper{
+    width: 100%;
+  }
 
   &__table-container {
     max-height: 570px;

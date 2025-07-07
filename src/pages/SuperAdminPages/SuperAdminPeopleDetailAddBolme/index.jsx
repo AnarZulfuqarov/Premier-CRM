@@ -1,48 +1,87 @@
 import './index.scss';
-import React, {useState} from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import  {useEffect, useState} from 'react';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
+import {
+    useAddBolmeCustomersMutation,
+    useGetAllSectionsQuery,
+    useGetByIdCustomersQuery
+} from "../../../services/adminApi.jsx";
 
 const SuperAdminPeopleDetailAddBolme = () => {
+    const {id} = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [selectedSectionIds, setSelectedSectionIds] = useState([]);
+    const [initialSectionIds, setInitialSectionIds] = useState([]);
 
     const navigate = useNavigate();
     const pageSize = 9;
+    const {data: getByIdCustomers,refetch} = useGetByIdCustomersQuery(id);
+    const customer = getByIdCustomers?.data;
 
-    const order = {
-        id: 'NP764543702735',
-        status: 'Təsdiq gözləyən',
-        items: Array.from({length: 20}).map(() => ({
-            name: 'Kartof',
-            category: 'Ərzaq',
-            required: '15 ədəd',
-            provided: '15 ədəd',
-            price: '325 ₼',
-            vendor: 'Bravo',
-            created: '16/05/25, 13:45',
-            delivery: '16/05/25, 13:45',
-            received: '16/05/25, 13:45',
-        })),
-    };
+    const {data:getAllSections} = useGetAllSectionsQuery()
+    const sections = getAllSections?.data || [];
 
-    const filtered = order.items.filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
+    const [postSection] = useAddBolmeCustomersMutation()
+    const filtered = sections.filter(section => {
+        const byName = section.name?.toLowerCase().includes(searchName.toLowerCase());
+        const byCat = section.departmentName?.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
     });
-    const [orderItems, setOrderItems] = useState(order.items); // yeni state ilə işləyək
 
     const totalPages = Math.ceil(filtered.length / pageSize);
     const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
     const getPageNumbers = () => {
         const pages = [];
         for (let i = 1; i <= totalPages; i++) pages.push(i);
         return pages;
     };
+    useEffect(() => {
+        if (customer?.sections) {
+            const ids = customer.sections.map(s => s.id);
+            setInitialSectionIds(ids);
+            setSelectedSectionIds(ids); // checkbox'ları işaretle
+        }
+    }, [customer]);
+
+    const handleCheckboxChange = (sectionId) => {
+        if (initialSectionIds.includes(sectionId)) return; // zaten atanmışsa değiştirme
+
+        setSelectedSectionIds(prev =>
+            prev.includes(sectionId)
+                ? prev.filter(id => id !== sectionId) // kaldır
+                : [...prev, sectionId]               // ekle
+        );
+    };
+
+    const handleSubmit = async () => {
+        const newSectionIds = selectedSectionIds.filter(id => !initialSectionIds.includes(id));
+        if (newSectionIds.length === 0) {
+            alert("Yeni bir bölmə seçilmədi.");
+            return;
+        }
+
+        try {
+            await postSection({
+                customerId: id,
+                sectionIds: newSectionIds
+            });
+
+            setShowSuccessModal(true);
+            refetch(); // müşteri bilgilerini güncelle (opsiyonel)
+        } catch (err) {
+            console.error("Bölmə əlavə edilərkən xəta baş verdi:", err);
+            alert("Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
+        }
+    };
+
+
+
 
     return (
         <div className="super-admin-people-detail-add-bolme-main">
@@ -56,8 +95,8 @@ const SuperAdminPeopleDetailAddBolme = () => {
                 </div>
                 <div className={"path"}>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— İstifadəçilər</NavLink>{' '}
-                        <NavLink to="/admin/history" className={"link"} >— Leyla Quliyeva</NavLink>
+                        <NavLink className="link" to="/superAdmin/people">— İstifadəçilər</NavLink>{' '}
+                        <NavLink to={`/superAdmin/people/${id}`} className={"link"} >— {customer?.name} {customer?.surname}</NavLink>
                         — Bölmə əlavə et
                     </h2>
                 </div>
@@ -88,22 +127,27 @@ const SuperAdminPeopleDetailAddBolme = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {Array.from({ length: 8 }).map((_, index) => (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>Restoran</td>
-                                    <td>Mətbəx</td>
-                                    <td>Şirvanşah</td>
+                            {pagedItems.map((section, index) => (
+                                <tr key={section.id}>
+                                    <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                                    <td>{section.departmentName}</td>
+                                    <td>{section.name}</td>
+                                    <td>{section.companyName}</td>
                                     <td>
                                         <input
                                             type="checkbox"
-                                            checked={[1, 3, 5, 6, 8].includes(index + 1)}
-                                            readOnly
+                                            style={{ cursor: initialSectionIds.includes(section.id) ? 'not-allowed' : 'pointer' }}
+                                            checked={selectedSectionIds.includes(section.id)}
+                                            onChange={() => handleCheckboxChange(section.id)}
+                                            disabled={initialSectionIds.includes(section.id)} // disable edilmişse tıklanamaz
                                         />
+
                                     </td>
                                 </tr>
                             ))}
                             </tbody>
+
+
                         </table>
                     </div>
                 </div>
@@ -112,7 +156,7 @@ const SuperAdminPeopleDetailAddBolme = () => {
                     <button
 
                         className={"submitBolme"}
-                        onClick={() => setShowSuccessModal(true)}
+                        onClick={handleSubmit}
                     >
                         Təsdiqlə
                     </button>
@@ -185,7 +229,7 @@ const SuperAdminPeopleDetailAddBolme = () => {
                             </div>
                         </div>
                         <h3>Bölmə uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = `/superAdmin/people/${id}`}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>

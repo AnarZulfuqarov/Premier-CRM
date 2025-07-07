@@ -1,5 +1,4 @@
 import {createBrowserRouter} from "react-router-dom";
-import Login from "../pages/LoginPage/index.jsx";
 import CompanyPage from "../pages/UserPages/CompanyPage/index.jsx";
 import AdminPage from "../pages/AdminPages/AdminPage/index.jsx";
 import CustomerOrderAdd from "../pages/CustomerPage/CustomerOrderAdd/index.jsx";
@@ -51,6 +50,9 @@ import ProtectedRoute from "../ProtectedRoute.jsx";
 import SuperPersonAdd from "../pages/SuperAdminPages/SuperAdminPersonAdd/index.jsx";
 import SuperAdminSupplier from "../pages/SuperAdminPages/SuperAdminSupplier/index.jsx";
 import SuperSupplierAdd from "../pages/SuperAdminPages/SuperAdminSupplierAdd/index.jsx";
+import AdminLogin from "../pages/AdminLoginPage/index.jsx";
+import Login from "../pages/LoginPage/index.jsx";
+import ProtectedRouteCustomer from "../ProtectedRouteCustomer.jsx";
 
 
 const router = createBrowserRouter([
@@ -59,37 +61,55 @@ const router = createBrowserRouter([
         element: <Login/>,
     },
     {
-        path: '/choose-company',
-        element: <CompanyPage/>,
+        path: '/adminLogin',
+        element: <AdminLogin/>,
     },
     {
-        path: '/choose-company-companyDepartment/:name',
-        element: <CompanyDepartmentPage/>,
+        path:"/choose-company",
+        element:(
+            <ProtectedRouteCustomer>
+                <CompanyPage/>
+            </ProtectedRouteCustomer>
+        )
     },
     {
-        path: '/choose-company-section/:name',
-        element: <CompanySectionPage/>,
+        path:"/choose-company-companyDepartment",
+        element:(
+            <ProtectedRouteCustomer>
+                <CompanyDepartmentPage/>
+            </ProtectedRouteCustomer>
+        )
     },
     {
-        path: "/admin",
+        path:"/choose-company-section",
+        element:(
+            <ProtectedRouteCustomer>
+                <CompanySectionPage/>
+            </ProtectedRouteCustomer>
+        )
+    },
+    {
+        path: "/customer",
         element: (
-            <AdminPage/>
+            <ProtectedRouteCustomer>
+                <AdminPage/>
+            </ProtectedRouteCustomer>
         ),
         children: [
             {
-                path: "/admin/customerAdd",
+                path: "/customer/customerAdd",
                 element: <CustomerOrderAdd/>
             },
             {
-                path: "/admin/history",
+                path: "/customer/history",
                 element: <OrderHistory/>
             },
             {
-                path: "/admin/history/:id",
+                path: "/customer/history/:id",
                 element: <OrderHistoryDetail/>
             },
             {
-                path: "/admin/historyTwo/:id",
+                path: "/customer/historyTwo/:id",
                 element: <OrderHistoryDetailTwo/>
             }
         ]

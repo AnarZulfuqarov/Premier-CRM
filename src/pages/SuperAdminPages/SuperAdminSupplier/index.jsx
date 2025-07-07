@@ -352,14 +352,13 @@ const SuperAdminSupplier = () => {
                                 className="confirm-btn"
                                 onClick={async () => {
                                     try {
-                                        const userId = pagedUsers[deleteIndex]?.id;
-                                        console.log(userId)
-                                        if (!userId) {
+                                        const phoneNumber = pagedUsers[deleteIndex]?.phone;
+                                        if (!phoneNumber) {
                                             alert("İstifadəçi ID-si tapılmadı.");
                                             return;
                                         }
 
-                                        await deleteFighter(userId).unwrap();
+                                        await deleteFighter(phoneNumber).unwrap();
                                         alert("Təchizatçı uğurla silindi.");
                                         setDeleteIndex(null);
                                         refetch();

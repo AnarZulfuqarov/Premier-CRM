@@ -3,46 +3,34 @@ import Cookies from 'js-cookie';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import {useLoginSuperAdminMutation, useLoginUserMutation} from "../../services/adminApi.jsx";
+import {useLoginSuperAdminMutation} from "../../services/adminApi.jsx";
 
-function Login() {
+function AdminLogin() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
-    const [loginUser, { isLoading, error }] = useLoginUserMutation();
-
+    const [loginSuperAdmin, { isLoading, error }] = useLoginSuperAdminMutation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await loginUser({ phoneNumber, password });
+            const response = await loginSuperAdmin({ phoneNumber, password });
 
-            if ('data' in response) {
-                const { token, role } = response.data.data;
-
-                Cookies.set('role', role);
-
-                if (role === 'Fighter') {
-                    Cookies.set('supplierToken', token);
-                    navigate('/supplier/activeOrder');
-                } else if (role === 'Customer') {
-                    Cookies.set('ordererToken', token);
-                    navigate('/choose-company');
-                } else {
-                    alert('Təyin olunmamış rol: ' + role);
-                }
+            if ('data' in response ) {
+                Cookies.set('superAdminToken', response.data.data.token);
+                Cookies.set('role', response.data.data.role);
+                navigate('/superAdmin/people');
             } else {
-                alert('Giriş uğursuz oldu. Məlumatları yoxlayın.');
+                alert('Giriş uğursuz oldu, məlumatları yoxlayın!');
             }
         } catch (err) {
             console.error(err);
-            alert('Xəta baş verdi.');
+            alert('Bir xəta baş verdi!');
         }
     };
-
 
     return (
         <div id="login">
@@ -111,11 +99,11 @@ function Login() {
                     <p>Copyright@2025</p>
                 </div>
                 <div className="terms">
-                    <p>Sistemə giriş yalnız icazəl şəxslər üçün mümkündür.</p>
+                    <p>Sistemə giriş yalnız icazəli şəxslər üçün mümkündür.</p>
                 </div>
             </div>
         </div>
     );
 }
 
-export default Login;
+export default AdminLogin;

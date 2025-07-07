@@ -2,32 +2,28 @@ import './index.scss';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
 import icon from '/src/assets/ph_building-light.svg';
+import {
+    useGetUserCompaniesDepartmentQuery,
+} from "../../../services/adminApi.jsx";
+import Cookies from 'js-cookie';
 
 function CompanyDepartmentPage() {
     const navigate = useNavigate();
-    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-    const companies = [
-        {id: 1, name: "Mətbəx"},
-        {id: 2, name: "Salon"},
-        {id: 3, name: "Banket zalı"},
-        {id: 4, name: "Mətbəx"},
-        {id: 5, name: "Bar"},
-        {id: 6, name: "Kabinet"},
-        {id: 7, name: "Mətbəx"},
-        {id: 8, name: "Mətbəx"},
-    ];
-
-    const handleCompanySelect = (companyId) => {
-        setSelectedCompany(companyId);
-    };
+    const companyId = Cookies.get('companyId');
+    console.log(companyId);
+    const {data: getUserCompaniesDepartment} =useGetUserCompaniesDepartmentQuery({companyId})
+    const departments = getUserCompaniesDepartment?.data || [];
 
     const handleSubmit = () => {
-        if (selectedCompany) {
-            console.log('Selected company ID:', selectedCompany);
-            navigate('/dashboard');
+        if (selectedDepartment) {
+            Cookies.set('departmentId', selectedDepartment);
+            navigate('/choose-company-section');
         }
     };
+
+
 
     return (
         <div id="company-department">
@@ -42,16 +38,16 @@ function CompanyDepartmentPage() {
                         <p>Zəhmət olmasa, davam etmək istədiyiniz şöbəni seçin.</p>
 
                         <div className="choose">
-                            {companies.map(c => (
+                            {departments.map(c => (
                                 <div
                                     key={c.id}
-                                    className={`company ${selectedCompany === c.id ? 'selected' : ''}`}
-                                    onClick={() => setSelectedCompany(c.id)}
+                                    className={`company ${selectedDepartment=== c.id ? 'selected' : ''}`}
+                                    onClick={() => setSelectedDepartment(c.id)}
                                     role="button"
                                     tabIndex={0}
-                                    onKeyDown={e => e.key === 'Enter' && setSelectedCompany(c.id)}
+                                    onKeyDown={e => e.key === 'Enter' && setSelectedDepartment(c.id)}
                                 >
-                                    <span className={`select-circle ${selectedCompany === c.id ? 'checked' : ''}`}>
+                                    <span className={`select-circle ${selectedDepartment=== c.id ? 'checked' : ''}`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                              viewBox="0 0 24 24" fill="none">
   <path
@@ -74,11 +70,12 @@ function CompanyDepartmentPage() {
                            <button
                                type="button"
                                className="submit"
-                               disabled={selectedCompany === null}
-                               onClick={() => selectedCompany && navigate('/dashboard')}
+                               disabled={selectedDepartment === null}
+                               onClick={handleSubmit}
                            >
                                Davam et
                            </button>
+
                        </div>
                     </div>
                 </div>

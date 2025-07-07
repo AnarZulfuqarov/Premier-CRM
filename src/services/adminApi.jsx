@@ -14,10 +14,10 @@ export const api = createApi({
                 case "SuperAdmin":
                     token = Cookies.get("superAdminToken");
                     break;
-                case "supplier":
+                case "Fighter":
                     token = Cookies.get("supplierToken");
                     break;
-                case "orderer":
+                case "Customer":
                     token = Cookies.get("ordererToken");
                     break;
                 default:
@@ -43,10 +43,30 @@ export const api = createApi({
         }),
         loginUser: builder.mutation({
             query: (credentials) => ({
-                url: '/User/login',
+                url: '/Accounts/login',
                 method: 'POST',
                 body: credentials,
                 headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        getUser: builder.query({
+            query: () => ({
+                url: `/Customers/getUser`,
+            }),
+        }),
+        getUserCompanies: builder.query({
+            query: () => ({
+                url: `/Customers/companies`,
+            }),
+        }),
+        getUserCompaniesDepartment: builder.query({
+            query: ({companyId}) => ({
+                url: `/Customers/departments?companyId=${companyId}`,
+            }),
+        }),
+        getUserCompaniesDepartmentBolme: builder.query({
+            query: ({departmentId}) => ({
+                url: `/Customers/sections?departmentId=${departmentId}`,
             }),
         }),
         getAllCompanies: builder.query({
@@ -222,9 +242,25 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        addBolmeCustomers: builder.mutation({
+            query: ({ customerId, sectionIds }) => ({
+                url: `/Customers/${customerId}/assign-sections`,
+                method: 'POST',
+                body: { sectionIds },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
         deleteCustomer: builder.mutation({
             query: (id) => ({
                 url: `/Customers/${id}`,
+                method: 'DELETE',
+            }),
+        }),
+        deleteCustomerBolme: builder.mutation({
+            query: ({customerId,sectionId}) => ({
+                url: `/Customers/${customerId}/sections/${sectionId}`,
                 method: 'DELETE',
             }),
         }),
@@ -331,7 +367,11 @@ export const api = createApi({
 export const {
     useLoginSuperAdminMutation,
     useLoginUserMutation,
+    useGetUserQuery,
     useGetProtectedDataQuery,
+    useGetUserCompaniesQuery,
+    useGetUserCompaniesDepartmentQuery,
+    useGetUserCompaniesDepartmentBolmeQuery,
 
     useGetAllCompaniesQuery,
     useCreateCompanyMutation,
@@ -364,6 +404,8 @@ export const {
     useDeleteCustomerMutation,
     useEditCustomerMutation,
     useGetByIdCustomersQuery,
+    useDeleteCustomerBolmeMutation,
+    useAddBolmeCustomersMutation,
 
     useGetAllCategoriesQuery,
     useCreateCategoriesMutation,
