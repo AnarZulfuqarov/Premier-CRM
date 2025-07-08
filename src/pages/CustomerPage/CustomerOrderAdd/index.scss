@@ -404,6 +404,14 @@
       background-color: #15304a;
     }
   }
+  .order-form__submit-btn:disabled {
+    background-color: #ccc;      // gri arka plan
+    color: #666;                 // açık gri yazı
+    cursor: not-allowed;         // tıklanamaz imleç
+    opacity: 0.7;
+    transition: background-color 0.3s ease;
+  }
+
 
   @media (max-width: 768px) {
     flex-direction: column;

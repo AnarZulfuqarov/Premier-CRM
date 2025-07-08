@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import './index.scss';
 import OrderSuccessModal from "../../../components/UserComponents/OrderSuccessModal/index.jsx";
 import OrderConfirmationModal from "../../../components/UserComponents/OrderConfirmationModal/index.jsx";
-import {useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
+import {useCreateOrdersMutation, useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Cookies from 'js-cookie';
 
 const OrderForm = () => {
 
@@ -12,6 +13,8 @@ const OrderForm = () => {
     const categories = getAllCategories?.data;
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const [postOrder] = useCreateOrdersMutation()
+    const sectionId = Cookies.get('sectionId');
 
     useEffect(() => {
         if (!categories || !selectedCategoryId) return;
@@ -34,6 +37,7 @@ const OrderForm = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [description, setDescription] = useState('');
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -69,15 +73,41 @@ const OrderForm = () => {
         setIsConfirmationModalOpen(false);
     };
 
-    const handleConfirmOrder = () => {
-        setIsConfirmationModalOpen(false);
-        setIsSuccessModalOpen(true);
+    const handleConfirmOrder = async () => {
+        const sectionId = Cookies.get('sectionId');
+
+        const payload = {
+            sectionId,
+            description,
+            orderLimitTime: selectedDate
+                ? `${selectedDate.getDate().toString().padStart(2, '0')}.${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}.${selectedDate.getFullYear()}`
+                : null,
+
+
+            items: cartItems.map(item => ({
+                productId: item.productId,
+                requiredQuantity: item.quantity
+            }))
+        };
+
+        try {
+            await postOrder(payload);
+            setIsConfirmationModalOpen(false);
+            setIsSuccessModalOpen(true);
+            setCartItems([]);
+        } catch (error) {
+            console.error("Sifariş göndərilərkən xəta:", error);
+        }
     };
+
 
     const handleCloseSuccessModal = () => {
         setIsSuccessModalOpen(false);
-        // Optionally reset cartItems or redirect to another page
+
+        // 🔄 Formu sıfırla
         setCartItems([]);
+        setSelectedDate(null);
+        setDescription('');
     };
 
     useEffect(() => {
@@ -115,7 +145,11 @@ const OrderForm = () => {
                 updated[existingIndex].quantity += product.quantity;
                 return updated;
             } else {
-                return [...prev, { name: product.name, quantity: product.quantity }];
+                return [...prev, {
+                    name: product.name,
+                    quantity: product.quantity,
+                    productId: product.id
+                }];
             }
         });
     };
@@ -286,13 +320,20 @@ const OrderForm = () => {
                                             </tbody>
                                         </table>
                                     </div>
-                                    <textarea placeholder="Qeyd..."></textarea>
+                                    <textarea
+                                        placeholder="Qeyd..."
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                    ></textarea>
+
                                     <button
                                         className="order-form__submit-btn"
                                         onClick={handleOpenConfirmationModal}
+                                        disabled={!selectedDate}
                                     >
                                         Sifariş təsdiqlə
                                     </button>
+
                                 </div>
                             </div>
                         </div>
@@ -305,7 +346,9 @@ const OrderForm = () => {
                 onClose={handleCloseConfirmationModal}
                 onConfirm={handleConfirmOrder}
                 cartItems={cartItems}
+                description={description}
             />
+
 
             <OrderSuccessModal
                 isOpen={isSuccessModalOpen}

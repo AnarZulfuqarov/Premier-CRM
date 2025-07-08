@@ -360,6 +360,42 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        createOrders: builder.mutation({
+            query: (order) => ({
+                url: '/Orders',
+                method: 'POST',
+                body: order,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        getMyOrders: builder.query({
+            query: () => ({
+                url: `/Orders/my-orders`,
+            }),
+        }),
+        getOrders: builder.query({
+            query: () => ({
+                url: `/Orders`,
+            }),
+        }),
+        getMyOrdersId: builder.query({
+            query: (id) => ({
+                url: `/Orders/${id}`,
+            }),
+        }),
+        deleteOrder: builder.mutation({
+            query: (id) => ({
+                url: `/Orders/${id}`,
+                method: 'DELETE',
+            }),
+        }),
+        orderComplate: builder.mutation({
+            query: (order) => ({
+                url: '/Orders/fighter',
+                method: 'POST',
+                body: order,
+            }),
+        }),
     }),
 });
 
@@ -424,4 +460,11 @@ export const {
     useDeleteFighterMutation,
     useEditFighterMutation,
     useGetByIdFightersQuery,
+
+    useCreateOrdersMutation,
+    useGetMyOrdersQuery,
+    useGetMyOrdersIdQuery,
+    useDeleteOrderMutation,
+    useGetOrdersQuery,
+    useOrderComplateMutation,
 } = api;

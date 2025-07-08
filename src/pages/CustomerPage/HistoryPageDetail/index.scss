@@ -100,7 +100,7 @@
   }
 
   .table-scroll {
-    height: calc(70vh - 129px);
+    height: calc(50vh - 129px);
     overflow: auto;
 
   }
@@ -160,7 +160,105 @@
       }
     }
   }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 440px;
+    overflow-y: auto;
 
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #007AFF;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+
+  &__item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin-bottom: 24px;
+
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
+
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .order-history__id {
+      color: #272727;
+      font-size: 14px;
+      font-weight: 500;
+
+      span {
+        color: #979797;
+        font-size: 16px;
+        font-weight: 400;
+        margin-right: 12px;
+      }
+    }
+  }
+
+  .order-history-detail__status {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.pending {
+      border-radius: 16px;
+      background: #FFF5F5;
+      border: 1px solid #FFC31C;
+      background: rgba(255, 229, 159, 0.25);
+    }
+
+    &.completed {
+      border-radius: 16px;
+      border: 1px solid #31AC2E;
+      background: #E7FFE5;
+    }
+
+    &.not-completed {
+      border-radius: 16px;
+      background: rgba(255, 229, 159, 0.25);
+      border: 1px solid #FBB;
+      background: #FFF5F5;
+    }
+  }
+
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #DCDCDC;
+    background: #FFF;
+    height: 42px;
+    padding: 0 10px;
+
+    p {
+      margin: 0;
+      color: #0C0C0C;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
   .table-footer {
     flex-shrink: 0;
     padding: 12px 20px;

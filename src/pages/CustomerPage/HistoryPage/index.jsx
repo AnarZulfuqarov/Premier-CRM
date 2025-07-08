@@ -1,74 +1,38 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './index.scss';
+import {useGetMyOrdersQuery} from "../../../services/adminApi.jsx";
+import {useNavigate} from "react-router-dom";
 
 const OrderHistory = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3; // Number of orders per page
+    const navigate = useNavigate();
+    const {data:getMyOrders,refetch} = useGetMyOrdersQuery()
+    const orderss = getMyOrders?.data
+    useEffect(() => {
+        refetch()
+    }, []);
+    const orders = orderss?.map((order) => {
+        let status = '';
 
-    const orders = [
-        {
-            id: 'NP764543702735',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təsdiq gözləyən',
-        },
-        {
-            id: 'NP764543702736',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınan',
-        },
-        {
-            id: 'NP764543702737',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təsdiq gözləyən',
-        },
-        {
-            id: 'NP764543702738',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınan',
-        },
-        {
-            id: 'NP764543702739',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınmayan',
-        },
-        {
-            id: 'NP764543702740',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınan',
-        },
-        {
-            id: 'NP764543702741',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təsdiq gözləyən',
-        },
-        {
-            id: 'NP764543702742',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınan',
-        },
-        {
-            id: 'NP764543702743',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınmayan',
-        },
-        {
-            id: 'NP764543702744',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təhvil alınan',
-        },
-    ];
+        if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
+            status = 'Tamamlanmış';
+        } else if (order.employeeConfirm && order.fighterConfirm) {
+            status = 'Təhvil alınmayan';
+        } else if (order.employeeConfirm && !order.fighterConfirm) {
+            status = 'Təchizatçıdan təsdiq gözləyən';
+        }
+
+        return {
+            id: order.id,
+            product: order.items.map(item => item.product?.name).join(', '),
+            quantity: `${order.items.length} məhsul`,
+            status,
+        };
+    }) || [];
+
 
     const filteredOrders = orders.filter((order) => {
         const matchesSearch =
@@ -76,8 +40,8 @@ const OrderHistory = () => {
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesFilter =
             filter === 'all' ||
-            (filter === 'pending' && order.status === 'Təsdiq gözləyən') ||
-            (filter === 'completed' && order.status === 'Təhvil alınan') ||
+            (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən') ||
+            (filter === 'completed' && order.status === 'Tamamlanmış') ||
             (filter === 'not-completed' && order.status === 'Təhvil alınmayan');
         return matchesSearch && matchesFilter;
     });
@@ -132,23 +96,23 @@ const OrderHistory = () => {
                     />
                     <select value={filter} onChange={(e) => setFilter(e.target.value)}>
                         <option value="all">Hamısı</option>
-                        <option value="pending">Təsdiq gözləyən</option>
-                        <option value="completed">Təhvil alınan</option>
+                        <option value="pending">Təchizatçıdan təsdiq gözləyən</option>
+                        <option value="completed">Tamamlanmış</option>
                         <option value="not-completed">Təhvil alınmayan</option>
                     </select>
                 </div>
                 <div className="order-history__list">
                     {paginatedOrders.map((order, index) => (
-                        <div key={order.id || index} className="order-history__item">
-                            <div className="order-history__details">
+                        <div key={order.id || index} className="order-history__item" onClick={()=>navigate(`/customer/history/${order.id}`)}>
+                            <div className="order-history__details" >
                                 <p className="order-history__id">
                                     <span>Order ID</span> {order.id}
                                 </p>
                                 <span
                                     className={`order-history__status ${
-                                        order.status === 'Təhvil alınan'
+                                        order.status === 'Tamamlanmış'
                                             ? 'completed'
-                                            : order.status === 'Təsdiq gözləyən'
+                                            : order.status === 'Təchizatçıdan təsdiq gözləyən'
                                                 ? 'pending'
                                                 : 'not-completed'
                                     }`}

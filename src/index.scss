@@ -14,7 +14,17 @@
 
 html {
     scroll-behavior: smooth;
+    //overflow-x: hidden;
 }
+//@media (min-resolution: 120dpi) and (max-resolution: 144dpi) {
+//    html {
+//        transform: scale(0.98);
+//        transform-origin: top left;
+//        width: 104%;
+//    }
+//}
+
+
 
 button, a, .link {
     transition: all .2s ease;

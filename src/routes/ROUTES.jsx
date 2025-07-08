@@ -4,7 +4,6 @@ import AdminPage from "../pages/AdminPages/AdminPage/index.jsx";
 import CustomerOrderAdd from "../pages/CustomerPage/CustomerOrderAdd/index.jsx";
 import OrderHistory from "../pages/CustomerPage/HistoryPage/index.jsx";
 import OrderHistoryDetail from "../pages/CustomerPage/HistoryPageDetail/index.jsx";
-import OrderHistoryDetailTwo from "../pages/CustomerPage/HistoryPageDetail2/index.jsx";
 import CompanySectionPage from "../pages/UserPages/CompanySectionPage/index.jsx";
 import CompanyDepartmentPage from "../pages/UserPages/CompanyDepartmentPage/index.jsx";
 import SupplierPage from "../pages/SupplierPages/SupplierPage/index.jsx";
@@ -108,10 +107,7 @@ const router = createBrowserRouter([
                 path: "/customer/history/:id",
                 element: <OrderHistoryDetail/>
             },
-            {
-                path: "/customer/historyTwo/:id",
-                element: <OrderHistoryDetailTwo/>
-            }
+
         ]
     },
     {

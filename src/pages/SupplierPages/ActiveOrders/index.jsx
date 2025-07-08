@@ -1,20 +1,29 @@
 import './index.scss';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useGetOrdersQuery} from "../../../services/adminApi.jsx";
 
 const ActiveOrders = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const pageSize = 9;
+    const {data:getOrders,refetch} = useGetOrdersQuery()
+    const orderss = getOrders?.data
+    const orders = orderss?.map(order => {
+        const amount = order.items.reduce((sum, item) => {
+            return sum + item.price;
+        }, 0);
 
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+        return {
+            id: order.id,
+            company: order.section?.companyName || '—',
+            person: `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`,
+            amount: amount,
+            orderDate: order.createdDate,
+            deliveryDate: order.orderLimitTime,
+        };
+    }) || [];
+
 
     const totalPages = Math.ceil(orders.length / pageSize);
     const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -37,7 +46,6 @@ const ActiveOrders = () => {
                             <thead>
                             <tr>
                                 <th>№</th>
-                                <th>Sifariş ID</th>
                                 <th>Sifariş verən şirkət</th>
                                 <th>Sifarişi verən şəxs</th>
                                 <th>Sifarişin ümumi məbləği</th>
@@ -49,7 +57,6 @@ const ActiveOrders = () => {
                             {pagedOrders.map((order, idx) => (
                                 <tr key={order.id}>
                                     <td>{(currentPage - 1) * pageSize + idx + 1}</td>
-                                    <td>№{order.id}</td>
                                     <td>{order.company}</td>
                                     <td>{order.person}</td>
                                     <td>{order.amount} ₼</td>
@@ -65,7 +72,7 @@ const ActiveOrders = () => {
                         <div className="header">Sifariş detalları</div>
                         {pagedOrders.map((order) => (
                             <div key={order.id} className="cell">
-                                <button onClick={() => navigate(`/orders/${order.id}`)}>Ətraflı bax</button>
+                                <button onClick={() => navigate(`/supplier/activeOrder/${order.id}`)}>Ətraflı bax</button>
                             </div>
                         ))}
                     </div>

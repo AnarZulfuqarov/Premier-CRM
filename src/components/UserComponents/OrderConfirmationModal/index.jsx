@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.scss'
-const OrderConfirmationModal = ({ isOpen, onClose, onConfirm, cartItems }) => {
+const OrderConfirmationModal = ({ isOpen, onClose, onConfirm, cartItems, description }) => {
     if (!isOpen) return null;
 
     return (
@@ -30,7 +30,7 @@ const OrderConfirmationModal = ({ isOpen, onClose, onConfirm, cartItems }) => {
                         </tbody>
                     </table>
                     <div className="order-form__modal-notes">
-                        <p>Qeyd...</p>
+                        <p><strong>Qeyd:</strong> {description || "Yoxdur"}</p>
                     </div>
                 </div>
                 <div className="order-form__modal-footer">

@@ -1,5 +1,5 @@
 import './index.scss';
-import {NavLink, useLocation} from "react-router-dom";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 
 const SupplierLeftBar = () => {
@@ -15,7 +15,17 @@ const SupplierLeftBar = () => {
     }, [location.pathname]);
 
     const toggleProducts = () => setProductsOpen(o => !o);
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        // Bütün cookies sil
+        document.cookie.split(";").forEach(cookie => {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+        });
 
+        // Ana səhifəyə yönləndir
+        navigate('/');
+    };
     return (
         <aside className="sidebar">
             <ul className="sidebar__menu">
@@ -122,7 +132,7 @@ const SupplierLeftBar = () => {
                 </li>
             </ul>
             <div>
-                <button className={"logOut"}>
+                <button className={"logOut"} onClick={handleLogout}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path
                             d="M5 5H11C11.55 5 12 4.55 12 4C12 3.45 11.55 3 11 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H11C11.55 21 12 20.55 12 20C12 19.45 11.55 19 11 19H5V5Z"
