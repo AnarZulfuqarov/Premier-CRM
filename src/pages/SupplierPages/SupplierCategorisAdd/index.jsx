@@ -1,15 +1,14 @@
 import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
-import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateCategoriesMutation} from "../../../services/adminApi.jsx";
 
-const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
-const units = ['Kg', 'Litr', 'Ədəd'];
+
 
 const SupplierCategoryAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const [post] = useCreateCategoriesMutation()
     const handleChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
@@ -19,7 +18,16 @@ const SupplierCategoryAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
-
+    const handleSubmit = async () => {
+        try {
+            const promises = rows.map(row => post({ name: row.name }));
+            await Promise.all(promises); // hamısı tamamlandıqda davam et
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error("Post xətası:", error);
+            // Burada error modalı da göstərə bilərsən
+        }
+    };
     return (
         <div className="supplier-category-add-main">
             <div className="supplier-category-add">
@@ -28,7 +36,7 @@ const SupplierCategoryAdd = () => {
                         <h1>Kateqoriya əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Kateqoriyalar</NavLink> — Kateqoriya əlavə edilməsi
+                        <NavLink className="link" to="/supplier/products/categories">— Kateqoriyalar</NavLink> — Kateqoriya əlavə edilməsi
                     </h2>
                 </div>
 
@@ -75,7 +83,7 @@ const SupplierCategoryAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -95,7 +103,7 @@ const SupplierCategoryAdd = () => {
                         </div>
                         <h3>Əlavə etmə istəyiniz uğurla qeydə alındı!</h3>
                         <p>Admin təsdiq etdikdən sonra yeni məhsul yaradılacaq</p>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/supplier/products/categories"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>

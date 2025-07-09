@@ -157,7 +157,7 @@ const router = createBrowserRouter([
                 element: <VendorHistorySupplier/>
             },
             {
-                path: "/supplier/vendor/:id/:id",
+                path: "/supplier/vendor/:vendorId/:id",
                 element: <VendorHistoryDetailSuplier/>
             }
         ]

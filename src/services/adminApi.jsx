@@ -202,6 +202,11 @@ export const api = createApi({
                 url: `/Vendors`,
             }),
         }),
+        getAllVendorsId: builder.query({
+            query: (id) => ({
+                url: `/Vendors/${id}`,
+            }),
+        }),
         createVendors: builder.mutation({
             query: (section) => ({
                 url: '/Vendors',
@@ -378,6 +383,11 @@ export const api = createApi({
                 url: `/Orders`,
             }),
         }),
+        getOrdersVendor: builder.query({
+            query: (vendorId) => ({
+                url: `/Orders/by-vendor?vendorId=${vendorId}`,
+            }),
+        }),
         getMyOrdersId: builder.query({
             query: (id) => ({
                 url: `/Orders/${id}`,
@@ -396,6 +406,74 @@ export const api = createApi({
                 body: order,
             }),
         }),
+        orderConfirm: builder.mutation({
+            query: (orderId) => ({
+                url: `/Orders/confirm-delivery/${orderId}`,
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        getProductAddPending: builder.query({
+            query: () => ({
+                url: `/Products/pending/adds`,
+            }),
+        }),
+        getProductAddMyPending: builder.query({
+            query: () => ({
+                url: `/Products/my-pending/adds`,
+            }),
+        }),
+        getProductDeletePending: builder.query({
+            query: () => ({
+                url: `/Products/pending/deletes`,
+            }),
+        }),
+        getProductDeleteMyPending: builder.query({
+            query: () => ({
+                url: `/Products/my-pending/deletes`,
+            }),
+        }),
+        getProductUpdatePending: builder.query({
+            query: () => ({
+                url: `/Products/pending/updates`,
+            }),
+        }),
+        getProductUpdateMyPending: builder.query({
+            query: () => ({
+                url: `/Products/my-pending/updates`,
+            }),
+        }),
+        getCategorieAddPending: builder.query({
+            query: () => ({
+                url: `/Categories/pending/adds`,
+            }),
+        }),
+        getCategorieAddMyPending: builder.query({
+            query: () => ({
+                url: `/Categories/my-pending/adds`,
+            }),
+        }),
+        getCategorieDeletePending: builder.query({
+            query: () => ({
+                url: `/Categories/pending/deletes`,
+            }),
+        }),
+        getCategorieDeleteMyPending: builder.query({
+            query: () => ({
+                url: `/Categories/my-pending/deletes`,
+            }),
+        }),
+        getCategorieUpdatePending: builder.query({
+            query: () => ({
+                url: `/Categories/pending/updates`,
+            }),
+        }),
+        getCategorieUpdateMyPending: builder.query({
+            query: () => ({
+                url: `/Categories/my-pending/updates`,
+            }),
+        }),
+
     }),
 });
 
@@ -432,6 +510,7 @@ export const {
 
     useGetAllVendorsQuery,
     useCreateVendorsMutation,
+    useGetAllVendorsIdQuery,
     useEditVendorMutation,
     useDeleteVendorMutation,
 
@@ -466,5 +545,22 @@ export const {
     useGetMyOrdersIdQuery,
     useDeleteOrderMutation,
     useGetOrdersQuery,
+    useGetOrdersVendorQuery,
     useOrderComplateMutation,
+    useOrderConfirmMutation,
+
+    useGetProductAddPendingQuery,
+    useGetProductAddMyPendingQuery,
+    useGetProductDeletePendingQuery,
+    useGetProductDeleteMyPendingQuery,
+    useGetProductUpdatePendingQuery,
+    useGetProductUpdateMyPendingQuery,
+
+    useGetCategorieAddPendingQuery,
+    useGetCategorieAddMyPendingQuery,
+    useGetCategorieDeletePendingQuery,
+    useGetCategorieDeleteMyPendingQuery,
+    useGetCategorieUpdatePendingQuery,
+    useGetCategorieUpdateMyPendingQuery,
+
 } = api;

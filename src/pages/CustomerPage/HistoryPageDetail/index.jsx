@@ -3,14 +3,14 @@ import {useEffect, useState} from 'react';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from 'react-icons/fa';
 import './index.scss';
-import {useDeleteOrderMutation, useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
+import {useDeleteOrderMutation, useGetMyOrdersIdQuery, useOrderConfirmMutation} from "../../../services/adminApi.jsx";
 
 const OrderHistoryDetail = () => {
     const {id} = useParams();
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const {data: getMyOrdersId} = useGetMyOrdersIdQuery(id)
+    const {data: getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data
     let status = '';
 
@@ -21,20 +21,28 @@ const OrderHistoryDetail = () => {
     } else if (orderData?.employeeConfirm && !orderData?.fighterConfirm) {
         status = 'Təchizatçıdan təsdiq gözləyən';
     }
+    useEffect(() => {
+        refetch()
+    }, []);
+        // filtre uygula
+    const [tehvil, { isSuccess: isTehvilSuccess }] = useOrderConfirmMutation();
 
+    useEffect(() => {
+        if (isTehvilSuccess) {
+            navigate('/customer/history');
+        }
+    }, [isTehvilSuccess]);
 
-    // filtre uygula
     const filtered = orderData?.items?.map((item) => {
         const name = item.product?.name || '—';
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const priceTotal = item.price * item.requiredQuantity;
+        const priceTotal = item.price ;
         const price = `${priceTotal} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
-        console.log(orderData)
         return {
             name,
             category,
@@ -123,7 +131,7 @@ const OrderHistoryDetail = () => {
                             <span>Ümumi məbləğ:</span>
                             <span>
   {
-      `${orderData?.items?.reduce((sum, item) => sum + (item.price * item.requiredQuantity), 0)} ₼`
+      `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
   }
 </span>
 
@@ -149,9 +157,16 @@ const OrderHistoryDetail = () => {
                     {status === 'Təhvil alınmayan' && (
                         <div className="order-history-detail__actions">
                             <span>Sifariş hazırdır. Təhvil almağı təsdiq edin.</span>
-                            <button className="btn confirm order-history-detail__confirm" onClick={() => setShowModal(true)}>
+                            <button
+                                className="btn confirm order-history-detail__confirm"
+                                onClick={() => {
+                                    tehvil(id); // Order ID-ni backend-ə göndər
+                                    setShowModal(true); // Modalı göstər
+                                }}
+                            >
                                 Təhvil al
                             </button>
+
                         </div>
                     )}
 

@@ -1,70 +1,47 @@
 import React, { useState } from 'react';
 import './index.scss';
+import {useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {useNavigate} from "react-router-dom";
 
 const OrderHistorySupplier = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3; // Number of orders per page
+    const {data:getOrders ,refetch} = useGetOrdersQuery()
+    const orderss = getOrders?.data
+    const orders = orderss
+        ?.filter(order => order.employeeConfirm && order.fighterConfirm) // Yalnız təsdiqlənənlər
+        .map(order => {
+            const isDelivered = order.employeeDelivery;
 
-    const orders = [
-        {
-            id: 'NP764543702735',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702736',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702737',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702738',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702740',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702741',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702742',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702744',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-    ];
+            let status = '';
+            if (isDelivered) {
+                status = 'Tamamlanmış';
+            } else {
+                status = 'Sifarişçidən təhvil gözləyən';
+            }
+
+            const totalPrice = order.items?.reduce((sum, item) => sum + item.price, 0) || 0;
+            const productNames = order.items?.map(item => item.product?.name).join(', ');
+            const totalQuantity = order.items?.length;
+
+            const customerFullName = `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`;
+            const supplierFullName = `${order.fighterInfo?.name || ''} ${order.fighterInfo?.surname || ''}`;
+
+            return {
+                id: order.id,
+                product: productNames,
+                quantity: `${totalQuantity} məhsul`,
+                status,
+                price: totalPrice,
+                customer: customerFullName,
+                supplier: supplierFullName
+            };
+        }) || [];
+
+
+
 
     const filteredOrders = orders.filter((order) => {
         const matchesSearch =
@@ -73,9 +50,10 @@ const OrderHistorySupplier = () => {
         const matchesFilter =
             filter === 'all' ||
             (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış') ;
+            (filter === 'completed' && order.status === 'Tamamlanmış');
         return matchesSearch && matchesFilter;
     });
+
 
     // Pagination logic
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
@@ -112,7 +90,7 @@ const OrderHistorySupplier = () => {
             setCurrentPage(page);
         }
     };
-
+    const navigate = useNavigate()
     return (
         <div className={"order-history-main-supplier"}>
             <div className="order-history-supplier">
@@ -133,14 +111,14 @@ const OrderHistorySupplier = () => {
                 </div>
                 <div className="order-history-supplier__list">
                     {paginatedOrders.map((order, index) => (
-                        <div key={order.id || index} className="order-history-supplier__item">
+                        <div key={order.id || index} className="order-history-supplier__item" onClick={()=>navigate(`/supplier/history/${order.id}`)}>
                             <div className={"techizat"}>
                                 <div className={"order-history-supplier__ids"}>
                                     <p className="order-history-supplier__id">
-                                        <span>Təchizatçının adı:</span> {order.id}
+                                        <span>Təchizatçının adı:</span> {order.supplier}
                                     </p>
                                     <p className="order-history-supplier__id">
-                                        <span>Sifarişçinin adı:</span> {order.price} ₼
+                                        <span>Sifarişçinin adı:</span> {order.customer}
                                     </p>
                                 </div>
                             </div>

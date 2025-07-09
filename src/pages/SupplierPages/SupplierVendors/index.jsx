@@ -2,6 +2,7 @@ import './index.scss';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetAllVendorsQuery} from "../../../services/adminApi.jsx";
 
 const SupplierVendors = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -9,17 +10,18 @@ const SupplierVendors = () => {
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+    const {data:getAllVendors} = useGetAllVendorsQuery()
+    const vendors = getAllVendors?.data
+    const filteredVendors = vendors?.filter((vendor) =>
+        vendor.name.toLowerCase().includes(searchName.toLowerCase())
+    );
 
-    const totalPages = Math.ceil(orders.length / pageSize);
-    const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const totalPages = Math.ceil(filteredVendors?.length / pageSize);
+    const pagedVendors = filteredVendors?.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
+
 
     const getPageNumbers = () => {
         const pages = [];
@@ -67,12 +69,14 @@ const SupplierVendors = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedOrders.map((order, idx) => (
-                                <tr key={order.id}>
-                                    <td>№{order.id}</td>
-                                    <td>{order.company}</td>
+                            {pagedVendors?.map((vendor) => (
+                                <tr key={vendor.id}>
+                                    <td>{vendor.name}</td>
+                                    <td>{vendor.totalSale} ₼</td>
                                     <td>
-                                        <button onClick={()=>navigate("/supplier/vendor/:id")}>Ətraflı</button>
+                                        <button onClick={() => navigate(`/supplier/vendor/${vendor.id}`)}>
+                                            Ətraflı
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

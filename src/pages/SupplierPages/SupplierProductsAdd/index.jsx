@@ -2,9 +2,9 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
+import {useCreateProductsMutation, useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
 
-const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
-const units = ['Kg', 'Litr', 'Ədəd'];
+const units = ['kg', 'litr', 'ədəd'];
 
 const SupplierProductAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
@@ -19,6 +19,26 @@ const SupplierProductAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
+    const [postProduct] = useCreateProductsMutation()
+    const {data:getAllCategories} = useGetAllCategoriesQuery()
+    const categories = getAllCategories?.data
+    const handleSubmit = async () => {
+        try {
+            for (const row of rows) {
+                if (row.name && row.category && row.unit) {
+                    await postProduct({
+                        name: row.name,
+                        categoryId: row.category, // BURA ID-DİR
+                        measure: row.unit
+                    }).unwrap();
+                }
+            }
+            setShowSuccessModal(true); // əgər hamısı uğurlu gedibsə, modal açılır
+        } catch (err) {
+            console.error("Xəta baş verdi:", err);
+            alert("Məhsul göndərilərkən xəta baş verdi.");
+        }
+    };
 
     return (
         <div className="supplier-product-add-main">
@@ -28,7 +48,7 @@ const SupplierProductAdd = () => {
                         <h1>Məhsul əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/admin/history">— Məhsullar</NavLink> — Məhsul əlavə edilməsi
+                        <NavLink className="link" to="/supplier/products/products">— Məhsullar</NavLink> — Məhsul əlavə edilməsi
                     </h2>
                 </div>
 
@@ -54,7 +74,7 @@ const SupplierProductAdd = () => {
                             <td>
 
                                 <CustomDropdown
-                                    options={categories}
+                                    options={categories?.map(cat => ({ label: cat.name, value: cat.id }))}
                                     selected={row.category}
                                     onSelect={(value) => handleChange(index, 'category', value)}
                                     placeholder="Kateqoriya seç"
@@ -95,7 +115,8 @@ const SupplierProductAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={() => setShowSuccessModal(true)}>Təsdiqlə</button>
+                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
+
             </div>
             <div className="xett"></div>
             {showSuccessModal && (
@@ -115,7 +136,7 @@ const SupplierProductAdd = () => {
                         </div>
                         <h3>Əlavə etmə istəyiniz uğurla qeydə alındı!</h3>
                         <p>Admin təsdiq etdikdən sonra yeni məhsul yaradılacaq</p>
-                        <button className="back-btn" onClick={() => window.location.href = "/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/supplier/products/products"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>

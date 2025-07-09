@@ -1,79 +1,104 @@
 // OrderHistoryDetail.jsx
-import React, {useState} from 'react';
-import {NavLink} from 'react-router-dom';
-import {FaCheckCircle, FaSearch, FaTimes} from 'react-icons/fa';
+import {useEffect, useState} from 'react';
+import {NavLink, useParams} from 'react-router-dom';
+import {FaTimes} from 'react-icons/fa';
 import './index.scss';
+import {useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
 
 const OrderHistoryDetailSuplier = () => {
+    const {id} = useParams();
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
-    const [showModal, setShowModal] = useState(false);
-    const order = {
-        id: 'NP764543702735',
-        status: 'Təsdiq gözləyən',
-        items: Array.from({length: 20}).map(() => ({
-            name: 'Sabun',
-            category: 'Təmizlik',
-            required: '15 ədəd',
-            provided: '15 ədəd',
-            price: '325 ₼',
-            created: '16/05/25, 13:45',
-            delivery: '16/05/25, 13:45',
-            received: '16/05/25, 13:45',
-        })),
-    };
+    const {data:getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
+    const orderData = getMyOrdersId?.data
+    let status = '';
+    if (orderData?.employeeConfirm && orderData?.fighterConfirm && orderData?.employeeDelivery) {
+        status = 'Tamamlanmış';
+    } else if (orderData?.employeeConfirm && orderData?.fighterConfirm && !orderData?.employeeDelivery) {
+        status = 'Sifarişçidən təhvil gözləyən';
+    }
+    useEffect(() => {
+        refetch()
+    }, []);
 
     // filtre uygula
-    const filtered = order.items.filter(item => {
+    const filtered = orderData?.items?.map((item) => {
+        const name = item.product?.name || '—';
+        const category = item.product?.categoryName || '—';
+        const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
+        const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
+        const price = `${item.price} ₼`;
+        const created = orderData?.createdDate;
+        const delivery = orderData?.orderLimitTime;
+        const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
+
+        return {
+            name,
+            category,
+            required,
+            provided,
+            price,
+            created,
+            delivery,
+            received
+        };
+    }).filter(item => {
         const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
         const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
-    });
+    }) || [];
+
 
     return (
         <div className="order-history-detail-main-supplier">
             <div className="order-history-detail-supplier">
                 <h2>
-                    <NavLink className="link" to="/admin/history">— Tarixçə</NavLink>{' '}
+                    <NavLink className="link" to="/supplier/history">— Tarixçə</NavLink>{' '}
                     — Sifariş detalları
                 </h2>
-                <div key={order.id} className="order-history-detail-supplier_item">
+                <div key={orderData?.id} className="order-history-detail-supplier_item">
                     <div className={"techizat"}>
                         <div className={"order-history-supplier__ids"}>
                             <p className="order-history-supplier__id">
-                                <span>Təchizatçının adı:</span> {order.id}
+                                <span>Təchizatçının adı:</span> {orderData?.fighterInfo?.name} {orderData?.fighterInfo?.surname}
                             </p>
                             <p className="order-history-supplier__id">
-                                <span>Sifarişçinin adı:</span> {order.price} ₼
+                                <span>Sifarişçinin adı:</span> {orderData?.adminInfo?.name} {orderData?.adminInfo?.surname}
                             </p>
+
                         </div>
                     </div>
                     <div className="order-history-supplier__details">
-                        <div className={"order-history-supplier__ids"}>
+                        <div className="order-history-supplier__ids">
                             <p className="order-history-supplier__id">
-                                <span>Order ID</span> {order.id}
+                                <span>Order ID:</span> {orderData?.id}
                             </p>
                             <p className="order-history-supplier__id">
-                                <span>Ümumi məbləğ:</span> {order.price} ₼
+                                <span>Ümumi məbləğ:</span>{' '}
+                                {orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼
                             </p>
                         </div>
                         <span
                             className={`order-history-supplier__status ${
-                                order.status === 'Tamamlanmış'
+                                status === 'Tamamlanmış'
                                     ? 'completed'
-                                    : order.status === 'Sifarişçidən təhvil gözləyən'
+                                    : status === 'Sifarişçidən təhvil gözləyən'
                                         ? 'pending'
                                         : 'not-completed'
                             }`}
                         >
-                {order.status}
-              </span>
+    {status}
+  </span>
                     </div>
+
                     <div className="order-history-supplier__data">
-                        <p>{order.product}</p>
-                        <p>{order.quantity}</p>
+                        <p>
+                            {orderData?.items?.map((item) => item.product?.name).join(', ')}
+                        </p>
+                        <p>{orderData?.items?.length} məhsul</p>
                     </div>
+
                 </div>
                 <div className="table-wrapper">
                     <div className="table-scroll">
@@ -143,25 +168,41 @@ const OrderHistoryDetailSuplier = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {filtered.map((item, i) => (
-                                <tr key={i}>
-                                    <td>{item.name}</td>
-                                    <td>{item.category}</td>
-                                    <td>{item.required}</td>
-                                    <td>{item.provided}</td>
-                                    <td>{item.price}</td>
-                                    <td>{item.created}</td>
-                                    <td>{item.delivery}</td>
-                                    <td>{item.received}</td>
-                                </tr>
-                            ))}
+                            {filtered.map((item, i) => {
+                                // Sayı kimi müqayisə üçün rəqəmləri çıxarırıq
+                                const requiredQty = parseFloat(item.required);
+                                const providedQty = parseFloat(item.provided);
+
+                                const rowStyle = requiredQty > providedQty
+                                    ? { backgroundColor: 'rgba(255, 0, 0, 0.08)' } // Açıq qırmızı fon
+                                    : {};
+
+                                return (
+                                    <tr key={i} style={rowStyle}>
+                                        <td>{item.name}</td>
+                                        <td>{item.category}</td>
+                                        <td>{item.required}</td>
+                                        <td>{item.provided}</td>
+                                        <td>{item.price}</td>
+                                        <td>{item.created}</td>
+                                        <td>{item.delivery}</td>
+                                        <td>{item.received}</td>
+                                    </tr>
+                                );
+                            })}
                             </tbody>
+
                         </table>
                     </div>
                     <div className="table-footer">
                         <span>Ümumi məbləğ:</span>
-                        <span>2450 ₼</span>
+                        <span>
+    {
+        `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
+    }
+  </span>
                     </div>
+
                 </div>
 
             </div>
