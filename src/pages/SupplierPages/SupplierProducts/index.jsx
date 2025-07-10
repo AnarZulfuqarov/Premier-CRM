@@ -440,21 +440,6 @@ const SupplierProducts = () => {
                                 placeholder="Yeni ad"
                             />
 
-                            <label>Kateqoriya seçin</label>
-                            <select
-                                value={modalData.categoryId}
-                                onChange={(e) =>
-                                    setModalData({ ...modalData, categoryId: e.target.value })
-                                }
-                            >
-                                <option value="">-- Seçin --</option>
-                                {categories?.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
-
                             <label>Ölçü vahidi seçin</label>
                             <select
                                 value={modalData.newMeasure}

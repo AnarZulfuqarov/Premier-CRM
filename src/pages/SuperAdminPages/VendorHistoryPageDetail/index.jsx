@@ -1,78 +1,88 @@
 // OrderHistoryDetail.jsx
 import  {useState} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useParams} from 'react-router-dom';
 import { FaTimes} from 'react-icons/fa';
 import './index.scss';
+import {useGetAllVendorsIdQuery, useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
 
 const VendorHistoryDetailSuperAdmin = () => {
+    const { vendorId, id } = useParams()
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
-    const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
-    const order = {
-        id: 'NP764543702735',
-        status: 'Təsdiq gözləyən',
-        items: Array.from({length: 20}).map(() => ({
-            name: 'Sabun',
-            category: 'Təmizlik',
-            required: '15 ədəd',
-            provided: '15 ədəd',
-            price: '325 ₼',
-            created: '16/05/25, 13:45',
-            delivery: '16/05/25, 13:45',
-            received: '16/05/25, 13:45',
-        })),
-    };
+    const [activeSearch, setActiveSearch] = useState(null);
 
-    // filtre uygula
-    const filtered = order.items.filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
-        return byName && byCat;
+    const { data: getAllVendorsId } = useGetAllVendorsIdQuery(vendorId);
+    const vendor = getAllVendorsId?.data;
+
+    const { data: getMyOrdersId } = useGetMyOrdersIdQuery(id);
+    const orderData = getMyOrdersId?.data;
+
+    if (
+        !orderData?.employeeConfirm ||
+        !orderData?.fighterConfirm ||
+        (orderData?.employeeConfirm && !orderData?.fighterConfirm && !orderData?.employeeDelivery)
+    ) {
+        return null; // Maplama! görünməyəcək
+    }
+
+    const status =
+        orderData.employeeConfirm && orderData.fighterConfirm && !orderData.employeeDelivery
+            ? 'Sifarişçidən təhvil gözləyən'
+            : orderData.employeeConfirm && orderData.fighterConfirm && orderData.employeeDelivery
+                ? 'Tamamlanmış'
+                : 'Təsdiq gözləyən';
+
+    const filteredItems = orderData.items.filter((item) => {
+        const byName = item.product.name.toLowerCase().includes(searchName.toLowerCase());
+        const byCategory = item.product.categoryName.toLowerCase().includes(searchCategory.toLowerCase());
+        return byName && byCategory;
     });
+
+    const totalPrice = orderData.items.reduce((sum, item) => sum + item.price, 0);
 
     return (
         <div className="vendor-history-detail-super-admin-main">
             <div className="vendor-history-detail-super-admin">
                 <h2>
-                    <NavLink className="link" to="/admin/history">— Vendorlar</NavLink>{' '}
-                    <NavLink to="/admin/history" className={"link"} >— Bravo</NavLink>
-                    — Təhvil gözləyən
+                    <NavLink className="link" to="/superAdmin/products/vendors">— Vendorlar</NavLink>{' '}
+                    <NavLink to={`/superAdmin/vendor/${vendorId}`} className={"link"} >— {vendor?.name}</NavLink>
+                    — {status}
                 </h2>
-                <div key={order.id} className="vendor-history-detail-super-admin_item">
+                <div key={orderData.id} className="vendor-history-detail-super-admin_item">
                     <div className={"techizat"}>
-                        <div className={"order-history-supplier__ids"}>
+                        <div className="order-history-supplier__ids">
                             <p className="order-history-supplier__id">
-                                <span>Təchizatçının adı:</span> {order.id}
+                                <span>Təchizatçının adı:</span> {orderData.fighterInfo.name} {orderData.fighterInfo.surname}
                             </p>
                             <p className="order-history-supplier__id">
-                                <span>Sifarişçinin adı:</span> {order.price} ₼
+                                <span>Sifarişçinin adı:</span> {orderData.adminInfo.name} {orderData.adminInfo.surname}
                             </p>
                         </div>
                     </div>
                     <div className="order-history-supplier__details">
                         <div className={"order-history-supplier__ids"}>
                             <p className="order-history-supplier__id">
-                                <span>Order ID</span> {order.id}
+                                <span>Order ID</span> {orderData.id}
                             </p>
                             <p className="order-history-supplier__id">
-                                <span>Ümumi məbləğ:</span> {order.price} ₼
+                                <span>Ümumi məbləğ:</span> {totalPrice.toFixed(2)} ₼
                             </p>
                         </div>
                         <span
                             className={`order-history-supplier__status ${
-                                order.status === 'Tamamlanmış'
+                                status === 'Tamamlanmış'
                                     ? 'completed'
-                                    : order.status === 'Sifarişçidən təhvil gözləyən'
+                                    : status === 'Sifarişçidən təhvil gözləyən'
                                         ? 'pending'
                                         : 'not-completed'
                             }`}
                         >
-                {order.status}
-              </span>
+            {status}
+        </span>
                     </div>
                     <div className="order-history-supplier__data">
-                        <p>{order.product}</p>
-                        <p>{order.quantity}</p>
+                        <p>{orderData.section.departmentName}</p>
+                        <p>{orderData.section.name}</p>
                     </div>
                 </div>
                 <div className="table-wrapper">
@@ -144,17 +154,17 @@ const VendorHistoryDetailSuperAdmin = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {filtered.map((item, i) => (
-                                <tr key={i}>
-                                    <td>1</td>
-                                    <td>{item.name}</td>
-                                    <td>{item.category}</td>
-                                    <td>{item.required}</td>
-                                    <td>{item.provided}</td>
-                                    <td>{item.price}</td>
-                                    <td>{item.created}</td>
-                                    <td>{item.delivery}</td>
-                                    <td>{item.received}</td>
+                            {filteredItems.map((item, i) => (
+                                <tr key={item.id}>
+                                    <td>{i + 1}</td>
+                                    <td>{item.product.name}</td>
+                                    <td>{item.product.categoryName}</td>
+                                    <td>{item.requiredQuantity} {item.product.measure}</td>
+                                    <td>{item.suppliedQuantity} {item.product.measure}</td>
+                                    <td>{item.price} ₼</td>
+                                    <td>{orderData.createdDate}</td>
+                                    <td>{item.orderItemDeliveryTime}</td>
+                                    <td>{orderData.employeeDelivery ? orderData.orderDeliveryTime : '-'}</td>
                                 </tr>
                             ))}
                             </tbody>
@@ -162,7 +172,7 @@ const VendorHistoryDetailSuperAdmin = () => {
                     </div>
                     <div className="table-footer">
                         <span>Ümumi məbləğ:</span>
-                        <span>2450 ₼</span>
+                        <span>{totalPrice.toFixed(2)} ₼</span>
                     </div>
                 </div>
 

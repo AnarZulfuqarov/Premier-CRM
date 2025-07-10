@@ -1,73 +1,19 @@
 import React, { useState } from 'react';
 import './index.scss';
 import icon from "../../../assets/ph_building-light.svg";
+import {useGetAllCompaniesQuery} from "../../../services/adminApi.jsx";
+import { useNavigate } from 'react-router-dom';
 
 const SuperAdminKalkulyasiya = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
+
     const itemsPerPage = 3; // Number of orders per page
+    const {data:getAllCompanies} = useGetAllCompaniesQuery()
+    const companies = getAllCompanies?.data
 
-    const orders = [
-        {
-            id: 'NP764543702735',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təchizatçıdan təsdiq gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702736',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702737',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702738',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702740',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Təchizatçıdan təsdiq gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702741',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Sifarişçidən təhvil gözləyən',
-            price:"325"
-        },
-        {
-            id: 'NP764543702742',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-        {
-            id: 'NP764543702744',
-            product: 'Kartoşka, subun, səftəli, qab yuyan...',
-            quantity: '5 kateqoriya, 36 ədəd məhsul',
-            status: 'Tamamlanmış',
-            price:"325"
-        },
-    ];
-
-    const filteredOrders = orders.filter((order) => {
+    const filteredOrders = companies?.filter((order) => {
         const matchesSearch =
             order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
@@ -80,10 +26,10 @@ const SuperAdminKalkulyasiya = () => {
     });
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredOrders?.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
+    const paginatedOrders = filteredOrders?.slice(startIndex, endIndex);
 
     // Generate page numbers with ellipsis
     const getPageNumbers = () => {
@@ -116,17 +62,21 @@ const SuperAdminKalkulyasiya = () => {
     };
     const [selectedCompany, setSelectedCompany] = useState(null);
 
-    const companies = [
-        { id: 1, name: 'Şirvanşah 1' },
-        { id: 2, name: 'Şirvanşah 2' },
-        { id: 3, name: 'Şirvanşah 3' },
-        { id: 4, name: 'Şirvanşah 4' },
-    ];
+
 
     const handleCompanySelect = (companyId) => {
         setSelectedCompany(companyId);
     };
 
+    const navigate = useNavigate();
+
+    const handleContinue = () => {
+        if (selectedCompany) {
+            navigate(`/superAdmin/kalkulyasiya/${selectedCompany}`);
+        } else {
+            alert("Zəhmət olmasa bir şirkət seçin");
+        }
+    };
 
     return (
         <div className={"super-admin-kalkulyasiya-main"}>
@@ -134,7 +84,7 @@ const SuperAdminKalkulyasiya = () => {
                 <h2>Kalkulyasiya</h2>
                 <p>Davam etmək üçün işləmək istədiyiniz şirkəti seçin. Seçimdən sonra həmin şirkətə aid əməliyyatlar təqdim olunacaq.</p>
                 <div className="choose">
-                    {companies.map((company) => (
+                    {companies?.map((company) => (
                         <div
                             key={company.id}
                             className={`company ${selectedCompany === company.id ? 'selected' : ''}`}
@@ -147,6 +97,12 @@ const SuperAdminKalkulyasiya = () => {
                             <p className={'p'}>{company.name}</p>
                         </div>
                     ))}
+                </div>
+                <div className="kalkulyasiya-button-wrapper">
+                    <button className="kalkulyasiya-continue-btn" onClick={handleContinue}>
+
+                        Davam et
+                    </button>
                 </div>
                 <div className="super-admin-kalkulyasiya__pagination">
                     <button
@@ -173,6 +129,8 @@ const SuperAdminKalkulyasiya = () => {
                     </button>
                 </div>
             </div>
+
+
             <div className={"xett"}></div>
         </div>
     );

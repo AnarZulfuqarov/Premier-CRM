@@ -1,24 +1,48 @@
 import React, { useState } from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
+import {
+    useChangePasswordCustomersMutation,
+    useGetUserQuery
+} from "../../../services/adminApi.jsx";
 
-const AdminNavbar = () => {
+const SupplierNavbar = () => {
     // 3 adet modal için state’ler
     const [showProfilePopup, setShowProfilePopup] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const {data:getUser} = useGetUserQuery()
+    const user = getUser?.data
     // input’lar için state
     const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
     const [newPass2, setNewPass2] = useState('');
 
-    const handlePasswordSubmit = (e) => {
+    const [changePassword] = useChangePasswordCustomersMutation()
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
-        // Burada validasyon yapabilirsiniz
-        // örn: if(newPass !== newPass2) return;
-        setShowChangePassword(false);
-        setShowSuccessModal(true);
+
+        if (newPass !== newPass2) {
+            alert("Yeni şifrələr eyni deyil!");
+            return;
+        }
+
+        try {
+            await changePassword({
+                oldPassword: oldPass,
+                newPassword: newPass,
+                confirmPassword: newPass2
+            });
+
+            setShowChangePassword(false);
+            setShowSuccessModal(true);
+            setOldPass('');
+            setNewPass('');
+            setNewPass2('');
+        } catch (error) {
+            console.error("Şifrə dəyişmə zamanı xəta:", error);
+            alert("Şifrə dəyişdirilə bilmədi!");
+        }
     };
 
     return (
@@ -45,9 +69,9 @@ const AdminNavbar = () => {
                             <img src={profileIcon} alt="Profile" className="icon" />
                         </div>
                         <div>
-                            <span className="navbar__profile-name">Sabina Heydarova</span>
+                            <span className="navbar__profile-name">{user?.name} {user?.surname}</span>
                             <br />
-                            <span className="navbar__profile-email">+994 55 874 33 88</span>
+                            <span className="navbar__profile-email">+994 {user?.phoneNumber}</span>
                         </div>
                     </div>
                 </div>
@@ -60,8 +84,8 @@ const AdminNavbar = () => {
                         <div className="modal-header">
                             <img src={profileIcon} alt="" className="modal-icon" />
                             <div className={"user"}>
-                                <strong>Sabina Heydarova</strong><br/>
-                                <small>sabina.heidarovaa@gmail.com</small>
+                                <strong>{user?.name} {user?.surname}</strong><br/>
+                                <small>+994{user?.phoneNumber}</small>
                             </div>
                         </div>
                         <div className="modal-body">
@@ -76,10 +100,10 @@ const AdminNavbar = () => {
                                     </svg> Şifrəni dəyiş
                                 </div>
                                 <span className="arrow">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
-  <path d="M9.3241 15.1479L13.4777 10.9726L9.30234 6.81899" stroke="#212121" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-                                </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+      <path d="M9.3241 15.1479L13.4777 10.9726L9.30234 6.81899" stroke="#212121" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+                                    </span>
                             </button>
                         </div>
                     </div>
@@ -94,8 +118,8 @@ const AdminNavbar = () => {
                         <div className="modal-header">
                             <img src={profileIcon} alt="" className="modal-icon" />
                             <div className={"user"}>
-                                <strong>Sabina Heydarova</strong><br/>
-                                <small>sabina.heidarovaa@gmail.com</small>
+                                <strong>{user?.name} {user?.surname}</strong><br/>
+                                <small>+994{user?.phoneNumber}</small>
                             </div>
                         </div>
                         <form className="modal-form" onSubmit={handlePasswordSubmit}>
@@ -147,8 +171,8 @@ const AdminNavbar = () => {
                         <div className="modal-header">
                             <img src={profileIcon} alt="" className="modal-icon" />
                             <div className={"user"}>
-                                <strong>Sabina Heydarova</strong><br/>
-                                <small>sabina.heidarovaa@gmail.com</small>
+                                <strong>{user?.name} {user?.surname}</strong><br/>
+                                <small>+994{user?.phoneNumber}</small>
                             </div>
                         </div>
                         <button className="modal-close" onClick={() => setShowSuccessModal(false)}>×</button>
@@ -170,4 +194,4 @@ const AdminNavbar = () => {
     );
 };
 
-export default AdminNavbar;
+export default SupplierNavbar;

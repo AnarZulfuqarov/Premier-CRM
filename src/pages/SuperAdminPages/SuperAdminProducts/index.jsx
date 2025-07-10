@@ -3,8 +3,19 @@ import  {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {
-    useDeleteProductsMutation, useGetAllCategoriesQuery,
-    useGetAllProductsQuery, useUpdateProductsMutation,
+    useCreateProductsConfirmMutation,
+    useCreateProductsRejectMutation,
+    useDeleteProductsConfirmMutation,
+    useDeleteProductsRejectMutation,
+    useDeleteProductsMutation,
+    useEditProductsConfirmMutation,
+    useEditProductsRejectMutation,
+    useGetAllCategoriesQuery,
+    useGetAllProductsQuery,
+    useUpdateProductsMutation,
+    useGetProductAddPendingQuery,
+    useGetProductDeletePendingQuery,
+    useGetProductUpdatePendingQuery,
 } from "../../../services/adminApi.jsx";
 
 const SuperAdminProducts = () => {
@@ -21,7 +32,7 @@ const SuperAdminProducts = () => {
 
     const navigate = useNavigate();
     const pageSize = 9;
-    const {data:getAllProducts,refetch} = useGetAllProductsQuery()
+    const {data:getAllProducts,refetch:productRefetch} = useGetAllProductsQuery()
     const products = getAllProducts?.data
     const [edit] = useUpdateProductsMutation()
     const [deleteProduct] = useDeleteProductsMutation()
@@ -30,7 +41,7 @@ const SuperAdminProducts = () => {
     const units = ['kg', 'litr', 'ədəd'];
 
     useEffect(() => {
-        refetch()
+        productRefetch()
     },[])
 
     const filteredProducts = products?.filter(products =>
@@ -45,7 +56,31 @@ const SuperAdminProducts = () => {
         for (let i = 1; i <= totalProductPages; i++) pages.push(i);
         return pages;
     };
+    const {data:getProductAddPending,refetch:addPendingRefetch} = useGetProductAddPendingQuery()
+    const addRequests = getProductAddPending?.data
+    const {data:getProductDeletePending,refetch:deletePendingRefetch} = useGetProductDeletePendingQuery()
+    const deleteRequest = getProductDeletePending?.data
 
+    const filteredAddRequests = addRequests?.filter(item => item.isCreated === false) || [];
+    const filteredDeleteRequests = deleteRequest?.filter(item => item.deleted === true) || [];
+
+    const combinedRequests = [
+        ...filteredAddRequests.map(item => ({ ...item, statusType: 'add' })),
+        ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
+    ];
+    const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredProducts || [];
+    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
+    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    const {data:getProductUpdatePending,refetch:editRefetch} = useGetProductUpdatePendingQuery()
+    const editRequest = getProductUpdatePending?.data
+
+    const [confirmEdit] = useEditProductsConfirmMutation()
+    const [rejectEdit] = useEditProductsRejectMutation()
+    const [confirmDelete] = useDeleteProductsConfirmMutation()
+    const [rejectDelete] = useDeleteProductsRejectMutation()
+    const [confirmAdd] = useCreateProductsConfirmMutation()
+    const [rejectAdd] = useCreateProductsRejectMutation()
     return (
         <div className="super-admin-products-main">
 
@@ -272,20 +307,52 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
+                                {pagedItemsdelAdd.map((item, i) => {
+                                    const handleConfirm = async () => {
+                                        try {
+                                            if (item.statusType === 'add') {
+                                                await confirmAdd( item.id );
+                                            } else if (item.statusType === 'delete') {
+                                                await confirmDelete(item.id);
+                                            }
+                                            addPendingRefetch()
+                                            deletePendingRefetch()
+                                            productRefetch();
+                                        } catch (error) {
+                                            console.error("Onaylama zamanı xəta:", error);
+                                        }
+                                    };
 
+                                    const handleReject = async () => {
+                                        try {
+                                            if (item.statusType === 'add') {
+                                                await rejectAdd(item.id);
+                                            } else if (item.statusType === 'delete') {
+                                                await rejectDelete(item.id);
+                                            }
+                                            addPendingRefetch()
+                                            deletePendingRefetch()
+                                            productRefetch();
+                                        } catch (error) {
+                                            console.error("Rədd zamanı xəta:", error);
+                                        }
+                                    };
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
-                                            <td>Meyvə-tərəvəz</td>
-                                            <td>kq</td>
+                                            <td>{item.categoryName}</td>
+                                            <td>{item.measure}</td>
                                             <td>
                                                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={handleConfirm}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
                                                         <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={handleReject}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#F44336"/>
                                                         <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
@@ -367,22 +434,41 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
-                                    const newNames = ['Soğan', 'Xiyar'];
+                                {editRequest.map((item, i) => {
                                     return (
                                         <tr key={i}>
-                                            <td>{item.name}</td>
-                                            <td>Meyvə-tərəvəz</td>
-                                            <td>{newNames[i % newNames.length]}</td>
-                                            <td>kq</td>
-                                            <td>kq</td>
+                                            <td>{item.oldName}</td>
+                                            <td>{item.categoryName}</td>
+                                            <td>{item.newName}</td>
+                                            <td>{item.oldMeasure}</td>
+                                            <td>{item.newMeasure}</td>
                                             <td>
                                                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={async () => {
+                                                             try {
+                                                                 await confirmEdit(item.id );
+                                                                 productRefetch()
+                                                                 editRefetch();
+                                                             } catch (error) {
+                                                                 console.error("Onaylama zamanı xəta:", error);
+                                                             }
+                                                         }}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
                                                         <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={async () => {
+                                                             try {
+                                                                 await rejectEdit(item.id );
+                                                                 productRefetch()
+                                                                 editRefetch();
+                                                             } catch (error) {
+                                                                 console.error("Rədd zamanı xəta:", error);
+                                                             }
+                                                         }}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#F44336"/>
                                                         <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
@@ -479,7 +565,7 @@ const SuperAdminProducts = () => {
                                         newMeasure: modalData.newMeasure,
                                     });
                                     setModalData(null);
-                                    refetch();
+                                    productRefetch();
                                 } catch (err) {
                                     console.error("Update failed:", err);
                                 }
@@ -514,7 +600,7 @@ const SuperAdminProducts = () => {
                                     try {
                                         await deleteProduct(deleteIndex); // məhsulun ID-si backend-ə gedir
                                         setDeleteIndex(null);
-                                        refetch(); // məhsul siyahısını yenilə
+                                        productRefetch(); // məhsul siyahısını yenilə
                                     } catch (err) {
                                         console.error("Delete failed:", err);
                                     }

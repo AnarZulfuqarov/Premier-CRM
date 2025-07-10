@@ -7,6 +7,7 @@
     position: absolute;
     bottom: 100px;
   }
+
 }
 .super-admin-kalkulyasiya {
   padding: 32px;
@@ -16,6 +17,42 @@
   height: calc(100vh - 129px);
   overflow: hidden;
   position: relative;
+  .kalkulyasiya-button-wrapper {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 125px;
+    right:20px;
+
+
+    .kalkulyasiya-continue-btn {
+      background-color: #3D4173;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      svg {
+        stroke: white;
+      }
+
+      &:hover {
+        background-color: #2f325c;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
 
 
   h2 {

@@ -3,8 +3,19 @@ import {useEffect, useState} from 'react';
 import { useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {
+    useCreateCategoriesConfirmMutation, useCreateCategoriesRejectMutation,
+    useDeleteCategoriesConfirmMutation,
     useDeleteCategoriesMutation,
+    useDeleteCategoriesRejectMutation,
+    useEditCategoriesConfirmMutation,
+    useEditCategoriesRejectMutation,
     useGetAllCategoriesQuery,
+    useGetCategorieAddPendingQuery,
+    useGetCategorieDeletePendingQuery,
+    useGetCategorieUpdatePendingQuery,
+    useGetProductAddMyPendingQuery,
+    useGetProductDeleteMyPendingQuery,
+    useGetProductUpdateMyPendingQuery,
     useUpdateCategoriesMutation
 } from "../../../services/adminApi.jsx";
 
@@ -23,13 +34,13 @@ const SuperAdminCategories = () => {
     const navigate = useNavigate();
     const pageSize = 9;
     //Sorgular
-    const {data: getAllCategories , refetch} = useGetAllCategoriesQuery()
+    const {data: getAllCategories , refetch:categoryRefetch} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
 
     const [edit] = useUpdateCategoriesMutation()
     const [deleteCategory] = useDeleteCategoriesMutation()
     useEffect(() => {
-            refetch()
+        categoryRefetch()
     },[])
 
     const filteredCategories = categories?.filter(category =>
@@ -44,7 +55,31 @@ const SuperAdminCategories = () => {
         for (let i = 1; i <= totalCategoryPages; i++) pages.push(i);
         return pages;
     };
+    const {data:getCategorieAddPending,refetch:addPendingRefetch} = useGetCategorieAddPendingQuery()
+    const addRequests = getCategorieAddPending?.data
+    const {data:getCategorieDeletePending,refetch:deletePendingRefetch} = useGetCategorieDeletePendingQuery()
+    const deleteRequest = getCategorieDeletePending?.data
 
+    const filteredAddRequests = addRequests?.filter(item => item.isCreated === false) || [];
+    const filteredDeleteRequests = deleteRequest?.filter(item => item.deleted === true) || [];
+
+    const combinedRequests = [
+        ...filteredAddRequests.map(item => ({ ...item, statusType: 'add' })),
+        ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
+    ];
+    const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredCategories || [];
+    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
+    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    const {data:getCategorieUpdatePending,refetch:editRefetch} = useGetCategorieUpdatePendingQuery()
+    const editRequest = getCategorieUpdatePending?.data
+
+    const [confirmEdit] = useEditCategoriesConfirmMutation()
+    const [rejectEdit] = useEditCategoriesRejectMutation()
+    const [confirmDelete] = useDeleteCategoriesConfirmMutation()
+    const [rejectDelete] = useDeleteCategoriesRejectMutation()
+    const [confirmAdd] = useCreateCategoriesConfirmMutation()
+    const [rejectAdd] = useCreateCategoriesRejectMutation()
     return (
         <div className="super-admin-category-main">
 
@@ -130,11 +165,12 @@ const SuperAdminCategories = () => {
                                 </thead>
                                 <tbody>
                                 {pagedCategories.map((item, i) => {
+
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={item.id}>
                                             <td>{item.name}</td>
-                                            <td>kq</td>
+                                            <td>{item.products?.length}</td>
                                             <td>
                   <span style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
                    <svg
@@ -205,24 +241,54 @@ const SuperAdminCategories = () => {
                                         )}
                                     </th>
 
-                                    <th>Məhsul sayı</th>
                                     <th>Qərar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
+                                {pagedItemsdelAdd.map((item, i) => {
+                                    const handleConfirm = async () => {
+                                        try {
+                                            if (item.statusType === 'add') {
+                                                await confirmAdd( item.id );
+                                            } else if (item.statusType === 'delete') {
+                                                await confirmDelete(item.id``);
+                                            }
+                                            addPendingRefetch()
+                                            deletePendingRefetch()
+                                            categoryRefetch();
+                                        } catch (error) {
+                                            console.error("Onaylama zamanı xəta:", error);
+                                        }
+                                    };
 
+                                    const handleReject = async () => {
+                                        try {
+                                            if (item.statusType === 'add') {
+                                                await rejectAdd(item.id );
+                                            } else if (item.statusType === 'delete') {
+                                                await rejectDelete(item.id);
+                                            }
+                                            addPendingRefetch()
+                                            deletePendingRefetch()
+                                            categoryRefetch();
+                                        } catch (error) {
+                                            console.error("Rədd zamanı xəta:", error);
+                                        }
+                                    };
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
-                                            <td>kq</td>
                                             <td>
                                                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={handleConfirm}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
                                                         <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={handleReject}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#F44336"/>
                                                         <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
@@ -295,27 +361,43 @@ const SuperAdminCategories = () => {
                                         )}
                                     </th>
 
-                                    <th>Məhsul sayı</th>
-                                    <th>Yeni məhsul sayı</th>
+
                                     <th>Qərar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems.map((item, i) => {
-                                    const newNames = ['Soğan', 'Xiyar'];
+                                {editRequest.map((item, i) => {
                                     return (
                                         <tr key={i}>
-                                            <td>{item.name}</td>
-                                            <td>Meyvə-tərəvəz</td>
-                                            <td>kq</td>
-                                            <td>kq</td>
+                                            <td>{item.oldName}</td>
+                                            <td>{item.newName}</td>
                                             <td>
                                                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={async () => {
+                                                             try {
+                                                                 await confirmEdit(item.id );
+                                                                 categoryRefetch()
+                                                                 editRefetch();
+                                                             } catch (error) {
+                                                                 console.error("Onaylama zamanı xəta:", error);
+                                                             }
+                                                         }}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
                                                         <path d="M14 7L8.5 12.5L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
-                                                    <svg style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <svg style={{cursor:"pointer"}}
+                                                         onClick={async () => {
+                                                             try {
+                                                                 await rejectEdit(item.id );
+                                                                 categoryRefetch()
+                                                                 editRefetch();
+                                                             } catch (error) {
+                                                                 console.error("Rədd zamanı xəta:", error);
+                                                             }
+                                                         }}
+                                                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#F44336"/>
                                                         <path d="M13 7L7 13M7 7L13 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>

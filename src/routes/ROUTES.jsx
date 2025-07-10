@@ -52,6 +52,7 @@ import SuperSupplierAdd from "../pages/SuperAdminPages/SuperAdminSupplierAdd/ind
 import AdminLogin from "../pages/AdminLoginPage/index.jsx";
 import Login from "../pages/LoginPage/index.jsx";
 import ProtectedRouteCustomer from "../ProtectedRouteCustomer.jsx";
+import ProtectedRouteSupplier from "../ProtectedRouteSupplier.jsx";
 
 
 const router = createBrowserRouter([
@@ -113,7 +114,9 @@ const router = createBrowserRouter([
     {
         path: "/supplier",
         element: (
+            <ProtectedRouteSupplier>
             <SupplierPage/>
+            </ProtectedRouteSupplier>
         ),
         children: [
             {
@@ -223,7 +226,7 @@ const router = createBrowserRouter([
                 element: <VendorHistorySuperAdmin/>
             },
             {
-                path: "/superAdmin/vendor/:id/:id",
+                path: "/superAdmin/vendor/:vendorId/:id",
                 element: <VendorHistoryDetailSuperAdmin/>
             },
             {

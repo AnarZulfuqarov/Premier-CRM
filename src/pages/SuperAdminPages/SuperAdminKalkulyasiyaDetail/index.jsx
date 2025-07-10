@@ -1,25 +1,41 @@
 import './index.scss';
 import  { useState } from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import MonthPicker from "../../../components/MonthPicker/index.jsx";
 import CalculationTable from "../../../components/CalculateTable/index.jsx";
+import {
+    useGetCalculationFilterQuery,
+    useGetCalculationQuery
+} from "../../../services/adminApi.jsx";
+import { skipToken } from '@reduxjs/toolkit/query';
 
 const SuperAdminKalkulyasiyaDetail = () => {
+    const {id} = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const pageSize = 5;
     const [selectedMonthYear, setSelectedMonthYear] = useState(null);
+    const {data:getCalculation} = useGetCalculationQuery(id)
+    const currentCalc = getCalculation?.data;
+    console.log(currentCalc);
+    const {
+        data: getCalculationFilter
+    } = useGetCalculationFilterQuery(
+        selectedMonthYear
+            ? {
+                companyId: id,
+                year: selectedMonthYear.year,
+                month: selectedMonthYear.month,
+            }
+            : skipToken // eğer seçim yoxdursa, heç çağırma
+    );
 
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+    const filterCalc = getCalculationFilter?.data
 
-    const totalPages = Math.ceil(orders.length / pageSize);
+
+
+    const totalPages = Math.ceil(currentCalc?.length / pageSize);
+
 
     const getPageNumbers = () => {
         const pages = [];
@@ -41,18 +57,25 @@ const SuperAdminKalkulyasiyaDetail = () => {
                 </div>
                 <div className={"root"}>
                     <h2 >
-                        <NavLink className="link" to="/admin/history">— Şirkətlər</NavLink>{' '}
-                        — Şirvanşah
+                        <NavLink className="link" to="/superAdmin/kalkulyasiya">— Şirkətlər</NavLink>{' '}
+                        — {currentCalc?.[0]?.companyName}
                     </h2>
                 </div>
                 {
-                    selectedMonthYear
-                        ? <CalculationTable type="selected" selectedDate={selectedMonthYear} />
-                        : <>
-                            <CalculationTable type="current" />
-                            <CalculationTable type="previous" />
+                    selectedMonthYear ? (
+                        <CalculationTable type="selected" selectedDate={selectedMonthYear} data={getCalculationFilter?.data?.[0] || []}/>
+                    ) : (
+                        <>
+                            <CalculationTable type="current" data={currentCalc?.[0]} companyId={id}/>
+                            {
+                                currentCalc && currentCalc?.[0]?.monthName?.toLowerCase() !== 'iyul' && (
+                                    <CalculationTable type="previous" />
+                                )
+                            }
                         </>
+                    )
                 }
+
                 <div className="super-admin-kalkulyasiya-detail__pagination">
                     <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
                         &lt;

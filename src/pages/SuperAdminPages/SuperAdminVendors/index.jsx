@@ -112,7 +112,7 @@ const SuperAdminVendors = () => {
                                     </td>
 
                                     <td>
-                                        <button onClick={() => navigate("/superAdmin/vendor/:id")}>Ətraflı</button>
+                                        <button onClick={() => navigate(`/superAdmin/vendor/${order.id}`)}>Ətraflı</button>
                                     </td>
                                 </tr>
                             ))}

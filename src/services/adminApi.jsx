@@ -54,6 +54,11 @@ export const api = createApi({
                 url: `/Customers/getUser`,
             }),
         }),
+        getUserFighters: builder.query({
+            query: () => ({
+                url: `/Fighters/getUser`,
+            }),
+        }),
         getUserCompanies: builder.query({
             query: () => ({
                 url: `/Customers/companies`,
@@ -473,7 +478,117 @@ export const api = createApi({
                 url: `/Categories/my-pending/updates`,
             }),
         }),
-
+        createCategoriesConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/approve-create/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        createCategoriesReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/reject-create/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        deleteCategoriesConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/approve-delete/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteCategoriesReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/reject-delete/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        editCategoriesConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/approve-update/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        editCategoriesReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Categories/reject-update/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        createProductsConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/approve-create/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        createProductsReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/reject-create/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        deleteProductsConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/approve-delete/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteProductsReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/reject-delete/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        editProductsConfirm: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/approve-update/${categoryId}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        editProductsReject: builder.mutation({
+            query: (categoryId) => ({
+                url: `/Products/reject-update/${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
+        changePasswordFighters: builder.mutation({
+            query: (pass) => ({
+                url: `/Fighters/change-password`,
+                method: 'POST',
+                body:pass,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        changePasswordCustomers: builder.mutation({
+            query: (pass) => ({
+                url: `/Customers/change-password`,
+                method: 'POST',
+                body:pass,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        editCalculation: builder.mutation({
+            query: ({companyId,newAmount}) => ({
+                url: `/Calculations/edit-initial?companyId=${companyId}&newAmount=${newAmount}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        getCalculation: builder.query({
+            query: (companyId) => ({
+                url: `/Calculations/get-current-and-previous?companyId=${companyId}`,
+            }),
+        }),
+        getCalculationFilter: builder.query({
+            query: ({companyId,year,month}) => ({
+                url: `/Calculations/filter?companyId=${companyId}&year=${year}&month=${month}`,
+            }),
+        }),
     }),
 });
 
@@ -482,6 +597,7 @@ export const {
     useLoginSuperAdminMutation,
     useLoginUserMutation,
     useGetUserQuery,
+    useGetUserFightersQuery,
     useGetProtectedDataQuery,
     useGetUserCompaniesQuery,
     useGetUserCompaniesDepartmentQuery,
@@ -555,6 +671,12 @@ export const {
     useGetProductDeleteMyPendingQuery,
     useGetProductUpdatePendingQuery,
     useGetProductUpdateMyPendingQuery,
+    useCreateProductsConfirmMutation,
+    useCreateProductsRejectMutation,
+    useDeleteProductsConfirmMutation,
+    useDeleteProductsRejectMutation,
+    useEditProductsConfirmMutation,
+    useEditProductsRejectMutation,
 
     useGetCategorieAddPendingQuery,
     useGetCategorieAddMyPendingQuery,
@@ -562,5 +684,19 @@ export const {
     useGetCategorieDeleteMyPendingQuery,
     useGetCategorieUpdatePendingQuery,
     useGetCategorieUpdateMyPendingQuery,
+    useCreateCategoriesConfirmMutation,
+    useCreateCategoriesRejectMutation,
+    useDeleteCategoriesConfirmMutation,
+    useDeleteCategoriesRejectMutation,
+    useEditCategoriesConfirmMutation,
+    useEditCategoriesRejectMutation,
+
+
+    useChangePasswordFightersMutation,
+    useChangePasswordCustomersMutation,
+
+    useGetCalculationQuery,
+    useGetCalculationFilterQuery,
+    useEditCalculationMutation,
 
 } = api;

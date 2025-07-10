@@ -46,7 +46,7 @@ const VendorHistoryDetailSuplier = () => {
                 <h2>
                     <NavLink className="link" to="/supplier/products/vendors">— Vendorlar</NavLink>{' '}
                     <NavLink to={`/supplier/vendor/${vendorId}`} className={"link"} >— {vendor?.name}</NavLink>
-                    — Təhvil gözləyən
+                    — {status}
                 </h2>
                 <div key={orderData.id} className="vendor-history-detail-supplier_item">
                     <div className="techizat">
