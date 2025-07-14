@@ -404,6 +404,12 @@ export const api = createApi({
                 method: 'DELETE',
             }),
         }),
+        deleteOrderAdmin: builder.mutation({
+            query: (id) => ({
+                url: `/Orders/admin/${id}`,
+                method: 'DELETE',
+            }),
+        }),
         orderComplate: builder.mutation({
             query: (order) => ({
                 url: '/Orders/fighter',
@@ -589,6 +595,28 @@ export const api = createApi({
                 url: `/Calculations/filter?companyId=${companyId}&year=${year}&month=${month}`,
             }),
         }),
+        getAdminNotificationsSuperAdmin: builder.query({
+            query: () => ({
+                url: `/AdminNotifications/superAdmin`,
+            }),
+        }),
+        getAdminNotificationsFighter: builder.query({
+            query: () => ({
+                url: `/AdminNotifications/fighter`,
+            }),
+        }),
+        getAdminNotificationsCustomer: builder.query({
+            query: () => ({
+                url: `/AdminNotifications/customer`,
+            }),
+        }),
+        markAsRead: builder.mutation({
+            query: (id) => ({
+                url: `/AdminNotifications/mark-as-read/${id}`,
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
     }),
 });
 
@@ -660,6 +688,7 @@ export const {
     useGetMyOrdersQuery,
     useGetMyOrdersIdQuery,
     useDeleteOrderMutation,
+    useDeleteOrderAdminMutation,
     useGetOrdersQuery,
     useGetOrdersVendorQuery,
     useOrderComplateMutation,
@@ -699,4 +728,9 @@ export const {
     useGetCalculationFilterQuery,
     useEditCalculationMutation,
 
+
+    useGetAdminNotificationsSuperAdminQuery,
+    useGetAdminNotificationsFighterQuery,
+    useGetAdminNotificationsCustomerQuery,
+    useMarkAsReadMutation,
 } = api;

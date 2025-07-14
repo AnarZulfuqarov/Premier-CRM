@@ -53,6 +53,9 @@ import AdminLogin from "../pages/AdminLoginPage/index.jsx";
 import Login from "../pages/LoginPage/index.jsx";
 import ProtectedRouteCustomer from "../ProtectedRouteCustomer.jsx";
 import ProtectedRouteSupplier from "../ProtectedRouteSupplier.jsx";
+import SupplierNotification from "../pages/NotificationPages/SupplierNotification/index.jsx";
+import CustomerNotification from "../pages/NotificationPages/CustomerNotification/index.jsx";
+import SuperAdminStatistik from "../pages/SuperAdminPages/SuperAdminStatictic/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -108,6 +111,10 @@ const router = createBrowserRouter([
                 path: "/customer/history/:id",
                 element: <OrderHistoryDetail/>
             },
+            {
+                path: "/customer/notification",
+                element: <CustomerNotification/>
+            },
 
         ]
     },
@@ -162,7 +169,11 @@ const router = createBrowserRouter([
             {
                 path: "/supplier/vendor/:vendorId/:id",
                 element: <VendorHistoryDetailSuplier/>
-            }
+            },
+            {
+                path: "/supplier/notification",
+                element: <SupplierNotification/>
+            },
         ]
     },
     {
@@ -289,6 +300,10 @@ const router = createBrowserRouter([
                 path: "/superAdmin/kalkulyasiya/:id",
                 element: <SuperAdminKalkulyasiyaDetail/>
             },
+            {
+                path: "/superAdmin/statistik",
+                element: <SuperAdminStatistik/>
+            }
         ]
     },
     {

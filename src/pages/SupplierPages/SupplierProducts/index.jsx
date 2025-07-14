@@ -1,5 +1,5 @@
 import './index.scss';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {
@@ -11,8 +11,10 @@ import {
     useGetProductUpdateMyPendingQuery,
     useUpdateProductsMutation
 } from "../../../services/adminApi.jsx";
-
+import { useLocation } from 'react-router-dom';
 const SupplierProducts = () => {
+    const location = useLocation();
+    const { state } = location;
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -28,7 +30,13 @@ const SupplierProducts = () => {
     const {data:getAllProducts,refetch} = useGetAllProductsQuery()
     const products = getAllProducts?.data
 
-
+    useEffect(() => {
+        if (state?.type === "create" || state?.type === "delete") {
+            setActiveTab("requests");
+        } else if (state?.type === "update") {
+            setActiveTab("edit");
+        }
+    }, [state]);
     const filteredProducts = products?.filter(item => {
         const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
         const byCat = item.categoryName.toLowerCase().includes(searchCategory.toLowerCase());

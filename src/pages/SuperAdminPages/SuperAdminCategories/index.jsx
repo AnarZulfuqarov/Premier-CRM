@@ -18,8 +18,10 @@ import {
     useGetProductUpdateMyPendingQuery,
     useUpdateCategoriesMutation
 } from "../../../services/adminApi.jsx";
-
+import { useLocation } from 'react-router-dom';
 const SuperAdminCategories = () => {
+    const location = useLocation();
+    const { state } = location;
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -46,9 +48,15 @@ const SuperAdminCategories = () => {
     const filteredCategories = categories?.filter(category =>
         category.name.toLowerCase().includes(searchName.toLowerCase())
     ) || [];
-    const totalCategoryPages = Math.ceil(filteredCategories.length / pageSize);
-    const pagedCategories = filteredCategories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
+    const totalCategoryPages = Math.ceil(filteredCategories?.length / pageSize);
+    const pagedCategories = filteredCategories?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    useEffect(() => {
+        if (state?.type === "create" || state?.type === "delete") {
+            setActiveTab("requests");
+        } else if (state?.type === "update") {
+            setActiveTab("edit");
+        }
+    }, [state]);
 
     const getPageNumbers = () => {
         const pages = [];
@@ -64,8 +72,8 @@ const SuperAdminCategories = () => {
     const filteredDeleteRequests = deleteRequest?.filter(item => item.deleted === true) || [];
 
     const combinedRequests = [
-        ...filteredAddRequests.map(item => ({ ...item, statusType: 'add' })),
-        ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
+        ...filteredAddRequests?.map(item => ({ ...item, statusType: 'add' })),
+        ...filteredDeleteRequests?.map(item => ({ ...item, statusType: 'delete' })),
     ];
     const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredCategories || [];
     const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
@@ -164,7 +172,7 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedCategories.map((item, i) => {
+                                {pagedCategories?.map((item, i) => {
 
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
@@ -245,7 +253,7 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItemsdelAdd.map((item, i) => {
+                                {pagedItemsdelAdd?.map((item, i) => {
                                     const handleConfirm = async () => {
                                         try {
                                             if (item.statusType === 'add') {
@@ -366,7 +374,7 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {editRequest.map((item, i) => {
+                                {editRequest?.map((item, i) => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.oldName}</td>
@@ -418,7 +426,7 @@ const SuperAdminCategories = () => {
                     <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
                         &lt;
                     </button>
-                    {getPageNumbers().map((page) => (
+                    {getPageNumbers()?.map((page) => (
                         <button
                             key={page}
                             className={page === currentPage ? 'active' : ''}

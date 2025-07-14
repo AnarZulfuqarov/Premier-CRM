@@ -17,8 +17,10 @@ import {
     useGetProductDeletePendingQuery,
     useGetProductUpdatePendingQuery,
 } from "../../../services/adminApi.jsx";
-
+import { useLocation } from 'react-router-dom';
 const SuperAdminProducts = () => {
+    const location = useLocation();
+    const { state } = location;
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -40,6 +42,13 @@ const SuperAdminProducts = () => {
     const categories = getAllCategories?.data
     const units = ['kg', 'litr', 'ədəd'];
 
+    useEffect(() => {
+        if (state?.type === "create" || state?.type === "delete") {
+            setActiveTab("requests");
+        } else if (state?.type === "update") {
+            setActiveTab("edit");
+        }
+    }, [state]);
     useEffect(() => {
         productRefetch()
     },[])
@@ -65,8 +74,8 @@ const SuperAdminProducts = () => {
     const filteredDeleteRequests = deleteRequest?.filter(item => item.deleted === true) || [];
 
     const combinedRequests = [
-        ...filteredAddRequests.map(item => ({ ...item, statusType: 'add' })),
-        ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
+        ...filteredAddRequests?.map(item => ({ ...item, statusType: 'add' })),
+        ...filteredDeleteRequests?.map(item => ({ ...item, statusType: 'delete' })),
     ];
     const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredProducts || [];
     const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
@@ -196,7 +205,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedProducts.map((item, i) => {
+                                {pagedProducts?.map((item, i) => {
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={i}>
@@ -307,7 +316,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItemsdelAdd.map((item, i) => {
+                                {pagedItemsdelAdd?.map((item, i) => {
                                     const handleConfirm = async () => {
                                         try {
                                             if (item.statusType === 'add') {
@@ -434,7 +443,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {editRequest.map((item, i) => {
+                                {editRequest?.map((item, i) => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.oldName}</td>
@@ -475,7 +484,7 @@ const SuperAdminProducts = () => {
                                                 </div>
                                             </td>
                                         </tr>
-                                    );
+                                    )
                                 })}
                                 </tbody>
                             </table>
@@ -547,7 +556,7 @@ const SuperAdminProducts = () => {
                                 }
                             >
                                 <option value="">-- Seçin --</option>
-                                {units.map((unit) => (
+                                {units?.map((unit) => (
                                     <option key={unit} value={unit}>
                                         {unit}
                                     </option>

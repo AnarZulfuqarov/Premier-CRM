@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {NavLink, useParams} from 'react-router-dom';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import { FaTimes} from 'react-icons/fa';
 import './index.scss';
-import {useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
+import {useDeleteOrderAdminMutation, useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
 
 const OrderHistoryDetailSuperAdmin = () => {
     const {id} = useParams();
@@ -23,7 +23,7 @@ const OrderHistoryDetailSuperAdmin = () => {
     useEffect(() => {
         refetch()
     }, []);
-
+    const [deleteOrder] =useDeleteOrderAdminMutation()
     // filtre uygula
     const filtered = orderData?.items?.map((item) => {
         const name = item.product?.name || '—';
@@ -50,7 +50,7 @@ const OrderHistoryDetailSuperAdmin = () => {
         const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
     }) || [];
-
+    const navigate = useNavigate()
     return (
         <div className="order-history-detail-super-admin-main">
             <div className="order-history-detail-super-admin">
@@ -179,6 +179,17 @@ const OrderHistoryDetailSuperAdmin = () => {
     }
   </span>
                     </div>
+                    {status === 'Təchizatçıdan təsdiq gözləyən' && (
+                        <div className="order-history-detail-super-admin__delete">
+                            <button className="delete-btn" onClick={() => {
+                                navigate('/superAdmin/history')
+                                deleteOrder(id)
+                            }}>
+                                Sil
+                            </button>
+                        </div>
+                    )}
+
                 </div>
 
             </div>

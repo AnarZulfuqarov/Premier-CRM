@@ -11,8 +11,10 @@ import {
     useUpdateCategoriesMutation
 } from "../../../services/adminApi.jsx";
 import * as pagedItems from "react-bootstrap/ElementChildren";
-
+import { useLocation } from 'react-router-dom';
 const SupplierCategories = () => {
+    const location = useLocation();
+    const { state } = location;
     const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -23,7 +25,13 @@ const SupplierCategories = () => {
     const [confirmedRows, setConfirmedRows] = useState({});
     const [activeTab, setActiveTab] = useState('products'); // Sekme kontrolü eklendi
     const [deleteIndex, setDeleteIndex] = useState(null);
-
+    useEffect(() => {
+        if (state?.type === "create" || state?.type === "delete") {
+            setActiveTab("requests");
+        } else if (state?.type === "update") {
+            setActiveTab("edit");
+        }
+    }, [state]);
     const navigate = useNavigate();
     const pageSize = 9;
     //Sorgular

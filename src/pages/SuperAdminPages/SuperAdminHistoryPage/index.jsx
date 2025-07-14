@@ -13,7 +13,7 @@ const OrderHistorySuperAdmin = () => {
     const orderss = getMyOrders?.data
     useEffect(() => {
         refetch()
-    }, []);
+    }, [orderss]);
     const orders = orderss?.map((order) => {
         let status = '';
 

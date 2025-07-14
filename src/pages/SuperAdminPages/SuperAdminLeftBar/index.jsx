@@ -29,14 +29,14 @@ const SuperAdminLeftBar = () => {
     return (
         <aside className="sidebar">
             <ul className="sidebar__menu">
-                <li className={location.pathname === "/superAdmin/charts" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname === "/superAdmin/statistik" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M19 7.5C20.3807 7.5 21.5 6.38071 21.5 5C21.5 3.61929 20.3807 2.5 19 2.5C17.6193 2.5 16.5 3.61929 16.5 5C16.5 6.38071 17.6193 7.5 19 7.5Z" stroke="black" stroke-width="1.5"/>
   <path d="M21.25 10V15.25C21.25 16.8413 20.6179 18.3674 19.4926 19.4926C18.3674 20.6179 16.8413 21.25 15.25 21.25H8.75C7.1587 21.25 5.63258 20.6179 4.50736 19.4926C3.38214 18.3674 2.75 16.8413 2.75 15.25V8.75C2.75 7.1587 3.38214 5.63258 4.50736 4.50736C5.63258 3.38214 7.1587 2.75 8.75 2.75H14" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
   <path d="M8.276 16.0356V11.6476M12.106 16.0356V8.76855M15.724 16.0356V10.5256" stroke="black" stroke-width="1.6" stroke-linecap="round"/>
 </svg>
-                    </span> <NavLink to={'/superAdmin/charts'} className="link">
+                    </span> <NavLink to={'/superAdmin/statistik'} className="link">
                     Statistikalar
                 </NavLink>
                 </li>
