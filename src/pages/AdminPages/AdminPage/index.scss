@@ -4,33 +4,66 @@
   overflow: hidden;
   padding: 16px;
 
-  .main-content {
-    width: 100%;
+  .row {
     display: flex;
-    height: calc(100vh - 185px); // Navbar yüksekliği çıkarıldı
-    gap: 15px;
-    @media screen and (max-width: 768px) {
-      padding: 13px 20px 20px 20px;
-      flex-direction: column; // Mobilde alt alta
-    }
+    height: 100%;
   }
 
   .leftbar-container {
     width: 286px;
-    height: 100%;
     background-color: #fff;
-    box-sizing: border-box;
+    transition: transform 0.3s ease;
+    height: calc(100vh - 129px);
+    margin-top: 16px;
 
     @media screen and (max-width: 768px) {
-      width: 60px;
-      padding: 10px;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: calc(100% - 60px);
+      transform: translateX(-100%);
+      z-index: 1000;
+      width: 240px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+
+
+      &.open {
+        transform: translateX(0);
+      }
     }
   }
 
-.content-container{
-  width: 100%;
-}
+  .content-container {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+
+    @media screen and (max-width: 768px) {
+      padding: 12px;
+    }
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+    border: none;
+    font-size: 24px;
+    margin-left: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    background: #D6EBFF;
+    width: 24px;
+    height: 24px;
+    align-content: center;
+
+    @media screen and (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   @media screen and (max-width: 768px) {
     padding: 0;
+    flex-direction: column;
   }
 }

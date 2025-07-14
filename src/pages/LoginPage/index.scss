@@ -266,3 +266,76 @@
     }
   }
 }
+// Mevcut media sorgusunun altında güncellemeler:
+@media (max-width: 576px) {
+  #login {
+    padding: 20px 10px;
+
+    .login-panel {
+      margin-bottom: 20px;
+
+      .header {
+        margin-bottom: 100px;
+
+        .login-logo {
+          height: 50px;
+        }
+
+        h2 {
+          font-size: 18px;
+        }
+      }
+
+      .login-form {
+        padding: 1rem;
+        border-radius: 6px;
+
+        .title {
+          h1 {
+            font-size: 20px;
+            margin-bottom: 8px;
+          }
+
+          p {
+            font-size: 13px;
+            line-height: 18px;
+          }
+        }
+
+        .form {
+          .form-group {
+            label {
+              font-size: 13px;
+            }
+
+            input {
+              font-size: 13px;
+              padding: 0.5rem;
+            }
+          }
+
+          .submit {
+            font-size: 13px;
+            height: 38px;
+            margin-bottom: 24px;
+          }
+
+          .problem {
+            font-size: 13px;
+            line-height: 18px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      .copyRight,
+      .terms {
+        p {
+          font-size: 13px;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

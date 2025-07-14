@@ -56,6 +56,7 @@ import ProtectedRouteSupplier from "../ProtectedRouteSupplier.jsx";
 import SupplierNotification from "../pages/NotificationPages/SupplierNotification/index.jsx";
 import CustomerNotification from "../pages/NotificationPages/CustomerNotification/index.jsx";
 import SuperAdminStatistik from "../pages/SuperAdminPages/SuperAdminStatictic/index.jsx";
+import MobileCartPage from "../pages/CustomerPage/CustomerBasketPage/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
                 path: "/customer/notification",
                 element: <CustomerNotification/>
             },
+            {
+                path: '/customer/basket',
+                element: <MobileCartPage/>
+            }
 
         ]
     },

@@ -27,7 +27,7 @@ const SupplierLeftBar = () => {
         navigate('/');
     };
     return (
-        <aside className="sidebar">
+        <aside className="sidebarSupplier">
             <ul className="sidebar__menu">
                 <li className={location.pathname === "/supplier/activeOrder" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">

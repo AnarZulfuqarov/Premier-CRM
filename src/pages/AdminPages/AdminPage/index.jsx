@@ -1,22 +1,29 @@
+import { useState } from "react";
 import AdminNavbar from "../AdminNavbar/index.jsx";
 import AdminLeftBar from "../AdminLeftBar/index.jsx";
 import "./index.scss";
-import OrderForm from "../../CustomerPage/CustomerOrderAdd/index.jsx";
-import {Outlet} from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 function AdminPage() {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(prev => !prev);
+    };
+
     return (
         <div id="adminPage">
-            <AdminNavbar />
-            <div className={"row"}>
-                <div className={"col-2"}>
-                        <AdminLeftBar />
+            <AdminNavbar onToggleSidebar={toggleSidebar} />
+
+            <div className="row">
+                <div className={`col-2 leftbar-container ${isSidebarOpen ? 'open' : ''}`}>
+                    <AdminLeftBar />
                 </div>
-                <div className={"col-10"}>
-                       <Outlet/>
+
+                <div className="col-10 content-container">
+                    <Outlet />
                 </div>
             </div>
-
         </div>
     );
 }

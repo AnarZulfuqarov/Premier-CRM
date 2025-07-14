@@ -1,4 +1,4 @@
-.sidebar {
+.sidebarSupplier {
   height: calc(100vh - 129px);
   background-color: #FFFFFF;
   width: 100%;
@@ -112,13 +112,7 @@
         margin: 0;
       }
 
-      &:nth-child(1) .sidebar__menu-icon::before {
-        content: "+";
-      }
 
-      &:nth-child(2) .sidebar__menu-icon::before {
-        content: "⏳";
-      }
     }
   }
 }
