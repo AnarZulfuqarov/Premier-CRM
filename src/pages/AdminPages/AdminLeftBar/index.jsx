@@ -10,7 +10,7 @@ const AdminLeftBar = ({ isOpen, onClose }) => {
             const name = cookie.split("=")[0].trim();
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
         });
-
+        if (onClose) onClose();
         // Ana səhifəyə yönləndir
         navigate('/');
     };
@@ -18,7 +18,7 @@ const AdminLeftBar = ({ isOpen, onClose }) => {
     return (
         <aside className={`sidebarCustomer ${isOpen ? 'open' : ''}`}>
             <ul className="sidebarCustomer__menu">
-                <li className={location.pathname === "/customer/customerAdd" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
+                <li onClick={onClose} className={location.pathname === "/customer/customerAdd" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
                     <span className="sidebarCustomer__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path
@@ -31,7 +31,7 @@ const AdminLeftBar = ({ isOpen, onClose }) => {
                     Yeni sifariş
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/customer/history" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
+                <li onClick={onClose} className={location.pathname === "/customer/history" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
                     <span className="sidebarCustomer__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="23" viewBox="0 0 24 23" fill="none">
   <path

@@ -18,6 +18,7 @@
   position: relative;
 
 
+
   h2 {
     font-size: 24px;
     font-weight: bold;
@@ -203,6 +204,99 @@
       &:first-child, &:last-child {
         font-size: 14px;
         padding: 8px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 576px) {
+  .xett{
+    display: none;
+  }
+  .order-history {
+    padding: 12px;
+    overflow: auto;
+    height: calc(100vh - 78px);
+    h2 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+
+    &__controls {
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+
+      input,
+      select {
+        font-size: 13px;
+        padding: 8px;
+      }
+    }
+
+    &__list {
+      gap: 12px;
+      max-height: unset;
+      overflow-y: visible;
+    }
+
+    &__item {
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    &__details {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 16px;
+
+      .order-history__id {
+        font-size: 13px;
+
+        span {
+          font-size: 13px;
+        }
+      }
+
+      .order-history__status {
+        font-size: 11px;
+        padding: 4px 10px;
+        margin-left: auto;
+      }
+    }
+
+    &__data {
+      align-items: flex-start;
+      gap: 4px;
+      padding: 10px;
+      height: auto;
+
+      p {
+        font-size: 13px;
+      }
+    }
+    .order-history__data p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+    .order-history__data p:nth-child(2){
+      text-align: right;
+    }
+    &__pagination {
+      justify-content: end;
+      flex-wrap: wrap;
+      position: static;
+      margin-top: 24px;
+
+      button {
+        font-size: 12px;
+        padding: 6px 10px;
+        min-width: 32px;
       }
     }
   }

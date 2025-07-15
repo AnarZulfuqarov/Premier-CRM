@@ -17,7 +17,7 @@ function AdminPage() {
 
             <div className="row">
                 <div className={`col-2 leftbar-container ${isSidebarOpen ? 'open' : ''}`}>
-                    <AdminLeftBar />
+                    <AdminLeftBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}/>
                 </div>
 
                 <div className="col-10 content-container">

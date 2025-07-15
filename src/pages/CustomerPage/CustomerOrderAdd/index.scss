@@ -244,6 +244,43 @@
       background-color: #d2e3fc;
     }
   }
+  @media screen and (max-width: 576px) {
+    .order-form__table {
+      th, td {
+        font-size: 12px !important;
+        padding: 4px 6px !important;
+      }
+
+      th {
+        white-space: nowrap;
+      }
+
+      td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .order-form__table-search-box {
+      top: 35px;
+      width: 150px;
+      input {
+        font-size: 12px;
+        padding: 4px;
+      }
+    }
+
+    .order-form__add-btn {
+      font-size: 12px;
+      padding: 4px 6px;
+    }
+
+    .order-form__quantity-btn {
+      padding: 0 6px;
+      font-size: 14px;
+    }
+  }
 
   &__cart-panel {
     width: 100%;

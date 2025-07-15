@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
@@ -21,7 +21,16 @@ const SupplierNavbar = ({ onToggleSidebar }) => {
     const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
     const [newPass2, setNewPass2] = useState('');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     const [changePassword] = useChangePasswordCustomersMutation()
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
@@ -69,9 +78,9 @@ const SupplierNavbar = ({ onToggleSidebar }) => {
                             </svg>
                             {hasUnread && <div className="notification_red"></div>}
                         </div>
-                        <div>
+                        {isMobile ? "" : <div>
                             <h6>Bildirişlər</h6>
-                        </div>
+                        </div>}
                     </div>
                     <div className="navbar__profile" onClick={() => setShowProfilePopup(true)}>
                         <div className="navbar__profile-icon">
