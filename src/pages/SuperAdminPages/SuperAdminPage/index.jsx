@@ -11,7 +11,9 @@ function SuperAdminPage() {
                 <div className={"col-2"}>
                         <SuperAdminLeftBar/>
                 </div>
-                <div className={"col-10"}>
+                <div className={"col-10"} style={{
+                    padding: "16px 16px 16px 0"
+                }}>
                        <Outlet/>
                 </div>
             </div>

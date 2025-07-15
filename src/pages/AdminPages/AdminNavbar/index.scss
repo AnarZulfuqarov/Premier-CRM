@@ -184,9 +184,11 @@
       align-items: center;
       gap: 8px;
       padding-right: 16px;
-      border-right: 2px solid #CFCFCF;
+      border-right: 1px solid #CFCFCF;
       .notification_icon{
         position: relative;
+        width: 16px;
+
         .notification_red{
           display: flex;
           width: 11px;
