@@ -113,12 +113,13 @@ const OrderForm = () => {
 
     const handleCloseSuccessModal = () => {
         setIsSuccessModalOpen(false);
-
-        // 🔄 Formu sıfırla
         setCartItems([]);
         setSelectedDate(null);
         setDescription('');
+        localStorage.removeItem('cartData');
     };
+
+
 
     useEffect(() => {
         const handleWheel = (e) => {
@@ -149,20 +150,45 @@ const OrderForm = () => {
 
     const handleAddToCart = (product) => {
         setCartItems(prev => {
-            const existingIndex = prev.findIndex(item => item.name === product.name);
+            const existingIndex = prev.findIndex(item => item.productId === product.id);
+            let updated;
+
             if (existingIndex > -1) {
-                const updated = [...prev];
+                updated = [...prev];
                 updated[existingIndex].quantity += product.quantity;
-                return updated;
             } else {
-                return [...prev, {
+                updated = [...prev, {
                     name: product.name,
                     quantity: product.quantity,
                     productId: product.id
                 }];
             }
+
+            // 💾 LocalStorage da güncelleniyor
+            const cartData = {
+                cartItems: updated,
+                selectedDate,
+                description
+            };
+            localStorage.setItem('cartData', JSON.stringify(cartData));
+
+            return updated;
         });
     };
+
+    useEffect(() => {
+        if (!cartItems || cartItems.length === 0) return;
+
+        const cartData = {
+            cartItems,
+            selectedDate,
+            description
+        };
+        localStorage.setItem('cartData', JSON.stringify(cartData));
+    }, [cartItems, selectedDate, description]);
+
+
+
 
     return (
         <div className="container1">

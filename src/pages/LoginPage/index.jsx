@@ -3,13 +3,15 @@ import Cookies from 'js-cookie';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import {useLoginSuperAdminMutation, useLoginUserMutation} from "../../services/adminApi.jsx";
+import { useLoginUserMutation} from "../../services/adminApi.jsx";
+import {usePopup} from "../../components/Popup/PopupContext.jsx";
 
 function Login() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const showPopup = usePopup();
 
     const [loginUser, { isLoading, error }] = useLoginUserMutation();
 
@@ -24,7 +26,7 @@ function Login() {
                 const { token, role } = response.data.data;
 
                 Cookies.set('role', role);
-
+                showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
                 if (role === 'Fighter') {
                     Cookies.set('supplierToken', token);
                     navigate('/supplier/activeOrder');
@@ -32,14 +34,14 @@ function Login() {
                     Cookies.set('ordererToken', token);
                     navigate('/choose-company');
                 } else {
-                    alert('Təyin olunmamış rol: ' + role);
+                    showPopup('Naməlum rol', 'Təyin olunmamış rol: ' + role, 'warning');
                 }
             } else {
-                alert('Giriş uğursuz oldu. Məlumatları yoxlayın.');
+                showPopup('Giriş uğursuz oldu', 'Məlumatları yoxlayın.', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Xəta baş verdi.');
+            showPopup('Xəta baş verdi', 'Sistem daxil olarkən problem oldu.', 'error');
         }
     };
 

@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from 'react';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import { FaTimes } from "react-icons/fa";
 import {useGetAllVendorsQuery, useGetMyOrdersIdQuery, useOrderComplateMutation} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const ActiveOrdersDetail = () => {
     const {id} = useParams()
@@ -24,6 +25,7 @@ const ActiveOrdersDetail = () => {
     const {data:getMyOrdersId} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data;
     const [complateOrder] = useOrderComplateMutation()
+    const showPopup = usePopup();
     const filtered = orderData?.items?.map((item) => {
         return {
             name: item.product?.name || '—',
@@ -119,7 +121,7 @@ useEffect(() => {
                     {!isCompleted && (
                         <button onClick={async () => {
                             if (!Object.keys(confirmedRows).length) {
-                                alert("Ən azı bir məhsul təsdiqlənməlidir.");
+                                showPopup("Xəbardarlıq.","Ən azı bir məhsul təsdiqlənməlidir.","warning")
                                 return;
                             }
 
@@ -147,10 +149,11 @@ useEffect(() => {
                             try {
                                 await complateOrder(formData).unwrap();
                                 alert("Sifariş tamamlandı");
+                                showPopup("Uğurlu.","Sifariş tamamlandı","success")
                                 navigate("/supplier/activeOrder");
                             } catch (err) {
                                 console.error(err);
-                                alert("Xəta baş verdi");
+                                showPopup("Xəbardarlıq.","İnyovs yüklənməlidir","warning")
                             }
                         }}>
                             Sifarişi tamamla

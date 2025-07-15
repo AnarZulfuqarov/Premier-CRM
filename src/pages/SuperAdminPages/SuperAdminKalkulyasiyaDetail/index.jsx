@@ -17,31 +17,32 @@ const SuperAdminKalkulyasiyaDetail = () => {
     const [selectedMonthYear, setSelectedMonthYear] = useState(null);
     const {data:getCalculation} = useGetCalculationQuery(id)
     const currentCalc = getCalculation?.data;
-    console.log(currentCalc);
+    const isSameAsCurrent =
+        selectedMonthYear &&
+        Number(selectedMonthYear.month) === Number(currentCalc?.[0]?.month) &&
+        Number(selectedMonthYear.year) === Number(currentCalc?.[0]?.year);
+
     const {
         data: getCalculationFilter
     } = useGetCalculationFilterQuery(
-        selectedMonthYear
+        selectedMonthYear && !isSameAsCurrent
             ? {
                 companyId: id,
                 year: selectedMonthYear.year,
                 month: selectedMonthYear.month,
             }
-            : skipToken // eğer seçim yoxdursa, heç çağırma
+            : skipToken // eyni ay/il seçilibsə, heç çağırma
     );
 
     const filterCalc = getCalculationFilter?.data
 
 
 
+
+
     const totalPages = Math.ceil(currentCalc?.length / pageSize);
 
 
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
 
     return (
         <div className="super-admin-kalkulyasiya-detail-main">
@@ -62,37 +63,23 @@ const SuperAdminKalkulyasiyaDetail = () => {
                     </h2>
                 </div>
                 {
-                    selectedMonthYear ? (
-                        <CalculationTable type="selected" selectedDate={selectedMonthYear} data={getCalculationFilter?.data?.[0] || []}/>
+                    selectedMonthYear && !isSameAsCurrent ? (
+                        <CalculationTable
+                            type="selected"
+                            selectedDate={selectedMonthYear}
+                            data={getCalculationFilter?.data?.[0] || []}
+                        />
                     ) : (
                         <>
-                            <CalculationTable type="current" data={currentCalc?.[0]} companyId={id}/>
-                            {
-                                currentCalc && currentCalc?.[0]?.monthName?.toLowerCase() !== 'iyul' && (
-                                    <CalculationTable type="previous" />
-                                )
-                            }
+                            <CalculationTable type="current" data={currentCalc?.[0]} companyId={id} />
+                            {currentCalc && currentCalc?.[0]?.monthName?.toLowerCase() !== 'iyul' && (
+                                <CalculationTable type="previous" />
+                            )}
                         </>
                     )
                 }
 
-                <div className="super-admin-kalkulyasiya-detail__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
+
             </div>
             <div className="xett"></div>
         </div>

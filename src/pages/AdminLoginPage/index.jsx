@@ -4,13 +4,14 @@ import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import {useLoginSuperAdminMutation} from "../../services/adminApi.jsx";
+import {usePopup} from "../../components/Popup/PopupContext.jsx";
 
 function AdminLogin() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-
+    const showPopup = usePopup();
     const [loginSuperAdmin, { isLoading, error }] = useLoginSuperAdminMutation();
 
     const handleSubmit = async (e) => {
@@ -18,17 +19,17 @@ function AdminLogin() {
 
         try {
             const response = await loginSuperAdmin({ phoneNumber, password });
-
+            showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
             if ('data' in response ) {
                 Cookies.set('superAdminToken', response.data.data.token);
                 Cookies.set('role', response.data.data.role);
                 navigate('/superAdmin/people');
             } else {
-                alert('Giriş uğursuz oldu, məlumatları yoxlayın!');
+                showPopup('Giriş uğursuz oldu', 'Məlumatları yoxlayın.', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Bir xəta baş verdi!');
+            showPopup('Xəta baş verdi', 'Sistem daxil olarkən problem oldu.', 'error');
         }
     };
 

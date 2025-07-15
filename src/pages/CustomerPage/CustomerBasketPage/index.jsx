@@ -1,5 +1,5 @@
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
@@ -9,13 +9,27 @@ import OrderSuccessModal from '../../../components/UserComponents/OrderSuccessMo
 import {useCreateOrdersMutation} from '../../../services/adminApi';
 
 const MobileCartPage = () => {
-    const {state} = useLocation();
+    const { state } = useLocation();
+    const localCartData = localStorage.getItem('cartData');
+    const parsedData = localCartData ? JSON.parse(localCartData) : {};
+
     const navigate = useNavigate();
     const [postOrder] = useCreateOrdersMutation();
 
-    const [selectedDate, setSelectedDate] = useState(state?.selectedDate || null);
-    const [description, setDescription] = useState(state?.description || '');
-    const [cartItems, setCartItems] = useState(state?.cartItems || []);
+    const [cartItems, setCartItems] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [description, setDescription] = useState('');
+    useEffect(() => {
+        const savedCart = localStorage.getItem('cartData');
+        if (savedCart) {
+            const parsed = JSON.parse(savedCart);
+            if (parsed.cartItems) setCartItems(parsed.cartItems);
+            if (parsed.selectedDate) setSelectedDate(new Date(parsed.selectedDate));
+            if (parsed.description) setDescription(parsed.description);
+        }
+    }, []);
+
+
 
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -41,6 +55,8 @@ const MobileCartPage = () => {
             await postOrder(payload);
             setIsConfirmationModalOpen(false);
             setIsSuccessModalOpen(true);
+            localStorage.removeItem('cartData'); // 🧹 Temizle
+
         } catch (err) {
             console.error('Sifariş xətası:', err);
         }

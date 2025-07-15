@@ -44,6 +44,9 @@
     box-sizing: border-box;
     overflow-x: auto;
     scroll-behavior: smooth;
+    @media screen and (max-width: 576px){
+      margin: 0;
+    }
 
     &::-webkit-scrollbar {
       height: 0px;
@@ -248,7 +251,7 @@
     .order-form__table {
       th, td {
         font-size: 12px !important;
-        padding: 4px 6px !important;
+        padding: 8px 6px !important;
       }
 
       th {

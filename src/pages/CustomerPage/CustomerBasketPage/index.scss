@@ -29,7 +29,7 @@
 
   .order-form__cart-search {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 
     input {
       width: 100%;
@@ -71,7 +71,7 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
-    max-height: 150px;
+    max-height: 200px;
     overflow-y: auto;
 
     &::-webkit-scrollbar {
@@ -161,7 +161,7 @@
     padding: 10px;
     border: 1px solid #DCDCDC;
     border-radius: 4px;
-    min-height: 70px;
+    height: 60px;
     outline: none;
     resize: vertical;
   }

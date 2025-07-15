@@ -16,18 +16,23 @@ const CustomerNotification = () => {
     const [markAsRead] = useMarkAsReadMutation()
     // Pagination logic
 
+
     const filteredNotifications = notification?.filter((n) => {
-        const matchesSearch = n.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (n.productId === null ? "kateqoriya" : "məhsul").includes(searchTerm.toLowerCase());
+        const matchesSearch =
+            n.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (n.productId === null ? 'kateqoriya' : 'məhsul').includes(searchTerm.toLowerCase());
 
         const matchesFilter =
-            filter === "all" ? true :
-                filter === "read" ? n.isRead :
-                    filter === "unread" ? !n.isRead :
-                        true;
+            filter === 'all'
+                ? true
+                : filter === 'read'
+                    ? n.isRead
+                    : filter === 'unread'
+                        ? !n.isRead
+                        : true;
 
         return matchesSearch && matchesFilter;
-    }) || [];
+    });
     const totalPages = Math.ceil(filteredNotifications?.length / itemsPerPage);
 
     const paginatedNotifications = filteredNotifications?.slice(
@@ -77,7 +82,8 @@ const CustomerNotification = () => {
             console.error("Bildiriş oxunarkən xəta baş verdi:", error);
         }
     };
-
+    const isMobile = window.innerWidth <= 576;
+    const notificationsToShow = isMobile ? filteredNotifications : paginatedNotifications;
 
     return (
         <div className={"super-admin-notification-main"}>
@@ -100,7 +106,7 @@ const CustomerNotification = () => {
                 </div>
                 <div className="notification-table-wrapper">
                     <div className="notification-table">
-                        {paginatedNotifications?.map((n, index) => {
+                        {notificationsToShow?.map((n, index) => {
                             const iconColor = n.role === "fighter" ? "red" : n.role === "admin" ? "blue" : "red";
                             return (
                             <div className={`notification-row ${n.isRead ? 'read' : 'unread'}`} key={n.id} onClick={() => handleMarkAsRead(n)}>
