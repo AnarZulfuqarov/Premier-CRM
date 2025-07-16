@@ -9,20 +9,28 @@ const ActiveOrders = () => {
     const pageSize = 9;
     const {data:getOrders,refetch} = useGetOrdersQuery()
     const orderss = getOrders?.data
-    const orders = orderss?.map(order => {
-        const amount = order.items.reduce((sum, item) => {
-            return sum + item.price;
-        }, 0);
+    const orders = orderss
+        ?.filter(order => {
+            const { employeeConfirm, fighterConfirm, employeeDelivery } = order;
+            const bothConfirmed = employeeConfirm && fighterConfirm;
+            const allTrue = employeeConfirm && fighterConfirm && employeeDelivery;
+            return !(bothConfirmed || allTrue); // true olanları çıxarırıq
+        })
+        .map(order => {
+            const amount = order.items.reduce((sum, item) => {
+                return sum + item.price;
+            }, 0);
 
-        return {
-            id: order.id,
-            company: order.section?.companyName || '—',
-            person: `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`,
-            amount: amount,
-            orderDate: order.createdDate,
-            deliveryDate: order.orderLimitTime,
-        };
-    }) || [];
+            return {
+                id: order.id,
+                company: order.section?.companyName || '—',
+                person: `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`,
+                amount: `${order.section?.companyName || ''}`,
+                orderDate: order.createdDate,
+                deliveryDate: order.orderLimitTime,
+            };
+        }) || [];
+
 
 
     const totalPages = Math.ceil(orders.length / pageSize);
@@ -47,8 +55,9 @@ const ActiveOrders = () => {
                             <tr>
                                 <th>№</th>
                                 <th>Sifariş verən şirkət</th>
+                                <th>Sifarişi verən şirkət</th>
                                 <th>Sifarişi verən şəxs</th>
-                                <th>Sifarişin ümumi məbləği</th>
+
                                 <th>Sifariş tarixi</th>
                                 <th>Çatdırılacaq tarix</th>
                             </tr>
@@ -58,8 +67,9 @@ const ActiveOrders = () => {
                                 <tr key={order.id}>
                                     <td>{(currentPage - 1) * pageSize + idx + 1}</td>
                                     <td>{order.company}</td>
+                                    <td>{order.amount}</td>
                                     <td>{order.person}</td>
-                                    <td>{order.amount} ₼</td>
+
                                     <td>{order.orderDate}</td>
                                     <td>{order.deliveryDate}</td>
                                 </tr>

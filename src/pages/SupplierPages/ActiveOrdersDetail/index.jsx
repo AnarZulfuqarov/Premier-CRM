@@ -309,11 +309,12 @@ useEffect(() => {
                             </tbody>
 
                         </table>
+                        <div className="table-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>{totalAmount} ₼</span>
+                        </div>
                     </div>
-                    <div className="table-footer">
-                        <span>Ümumi məbləğ:</span>
-                        <span>{totalAmount} ₼</span>
-                    </div>
+
                 </div>
 
                 {selectedRowIndex !== null && (

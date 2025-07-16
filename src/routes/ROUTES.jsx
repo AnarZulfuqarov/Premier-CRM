@@ -126,9 +126,7 @@ const router = createBrowserRouter([
     {
         path: "/supplier",
         element: (
-            <ProtectedRouteSupplier>
             <SupplierPage/>
-            </ProtectedRouteSupplier>
         ),
         children: [
             {
