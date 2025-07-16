@@ -112,26 +112,33 @@
     background: #f1f1f1;
   }
   .table-scroll::-webkit-scrollbar-thumb {
-    background: #007aff;
+    background: #cacaca;
     border-radius: 4px;
     cursor: pointer;
   }
 
   .order-history-detail__table {
   margin: 0;
+    width: 100%;
 
     th, td {
-      padding: 15px;
+      padding: 8px 16px;
       border: 1px solid #ddd;
       white-space: nowrap;
+      font-size: 14px;
     }
     th {
       background: #f9f9f9;
-      font-weight: 500;
+      font-weight: 400;
       text-align: left;
       position: sticky;
+      color: black;
+
       top: 0;
       z-index: 1;
+    }
+    td{
+      color: #6c6c6c;
     }
     th {
       & .th-label,
@@ -195,23 +202,41 @@
       background: #f9f9f9;
     }
   }
+  .order-history-detail__id-tech {
+    color: #272727;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 
+    span {
+      color: #979797;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      margin-right: 12px;
+    }
+  }
   &__details {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 
-    .order-history__id {
+    .order-history-detail__id {
       color: #272727;
       font-size: 14px;
+      font-style: normal;
       font-weight: 500;
+      line-height: normal;
 
       span {
-
         color: #979797;
         font-size: 16px;
+        font-style: normal;
         font-weight: 400;
+        line-height: normal;
         margin-right: 12px;
       }
     }
@@ -255,22 +280,33 @@
 
     p {
       margin: 0;
-      color: #0C0C0C;
-      font-size: 14px;
-      font-weight: 400;
+      .quantity-count {
+        font-weight: 400;
+        color: #0C0C0C;
+      }
+
+      .quantity-label {
+        font-weight: 400;
+        color: #979797;
+      }
     }
   }
   .table-footer {
-    flex-shrink: 0;
-    padding: 12px 20px;
-    border: 1px solid #ddd;
-    border-top: none;
-    background: #fff;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #fff;
     font-weight: 500;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
     border-radius: 0px 0px 8px 8px;
   }
+
 
   &__actions {
     margin-top: 20px;
@@ -387,6 +423,7 @@
 
     .table-wrapper {
       margin-top: 16px;
+
     }
 
     .table-scroll {
@@ -395,6 +432,7 @@
 
     .order-history-detail__table {
       min-width: 600px;
+
 
       th, td {
         padding: 8px;

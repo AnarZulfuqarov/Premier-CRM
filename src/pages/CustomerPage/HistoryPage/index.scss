@@ -5,7 +5,7 @@
     height: 4px;
     background: #F6F6F6;
     position: absolute;
-    bottom: 100px;
+    bottom: 80px;
   }
 }
 .order-history {
@@ -52,12 +52,74 @@
       cursor: pointer;
     }
   }
+  .order-history__filter-button {
+    position: relative;
+
+    .filter-icon {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 8px;
+    }
+
+    .filter-dropdown {
+      position: absolute;
+      right: 0;
+      top: 40px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
+      button {
+        width: 250px;
+        padding: 8px 12px;
+        background: none;
+        border: none;
+        text-align: left;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        gap: 8px;
+        .statuss{
+          display: flex;
+          width: 20px;
+          height: 20px;
+          padding: 4.971px 4.143px;
+          justify-content: center;
+          align-items: center;
+          gap: 8.286px;
+          border-radius: 50%;
+          &.pending{
+            background: #FDEDC8;
+          }
+          &.completed{
+            background: #D4FFD0;
+          }
+          &.not-completed{
+            background: #FDE5E5;
+          }
+        }
+
+        &:hover {
+          background: #f5f5f5;
+        }
+
+        &.active {
+          font-weight: 600;
+          background: #f0f0f0;
+        }
+      }
+    }
+  }
 
   &__list {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    max-height: 440px;
+    max-height: 480px;
     overflow-y: auto;
 
     &::-webkit-scrollbar {
@@ -106,8 +168,38 @@
       font-weight: 400;
       line-height: normal;
     }
-  }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: normal;
 
+      .quantity-count {
+        font-weight: 400;
+        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
+      }
+
+      .quantity-label {
+        font-weight: 400;
+        color: #979797; // Açıq boz (yazı hissəsi üçün)
+      }
+    }
+  }
+  .order-history__id-tech {
+    color: #272727;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    span {
+      color: #979797;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      margin-right: 12px;
+    }
+  }
   &__details {
     display: flex;
     justify-content: space-between;
@@ -171,7 +263,7 @@
     gap: 5px;
     margin-top: 20px;
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     right: 20px;
     button {
       padding: 8px 12px;

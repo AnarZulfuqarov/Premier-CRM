@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useLoginUserMutation} from "../../services/adminApi.jsx";
 import {usePopup} from "../../components/Popup/PopupContext.jsx";
-
+import logo from "/src/assets/Mask group.png"
 function Login() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
@@ -51,7 +51,7 @@ function Login() {
             <div className="login-panel">
                 <div>
                     <div className="header">
-                        <h2>Logo and name</h2>
+                        <img src={logo} className="logo" alt="logo" />
                     </div>
                     <div className="login-form">
                         <div className="title">

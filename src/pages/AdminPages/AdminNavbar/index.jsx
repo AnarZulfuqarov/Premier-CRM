@@ -6,7 +6,7 @@ import {
     useGetUserQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
-
+import logo from "/src/assets/Mask group.png"
 const SupplierNavbar = ({ onToggleSidebar }) => {
     // 3 adet modal için state’ler
     const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -62,7 +62,7 @@ const SupplierNavbar = ({ onToggleSidebar }) => {
         <div id={"navbar"}>
             <nav className="navbar">
                 <div className="navbar__logo">
-                    Shirvanshah
+                    <img src={logo} className="logo" alt="logo" />
                     <button className="mobile-menu-toggle" onClick={onToggleSidebar}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" fill="none">
                             <path d="M0.5 1H11.5M0.5 4H11.5M0.5 7H11.5" stroke="#384871" stroke-miterlimit="10" stroke-linecap="round"/>
@@ -73,7 +73,7 @@ const SupplierNavbar = ({ onToggleSidebar }) => {
                 <div className={"navbar_right"}>
                     <div className={"notification"} onClick={()=>navigate("/customer/notification")}>
                         <div className={"notification_icon"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                                 <path d="M12 4C10.4087 4 8.88258 4.63214 7.75736 5.75736C6.63214 6.88258 6 8.4087 6 10V18M12 4C13.5913 4 15.1174 4.63214 16.2426 5.75736C17.3679 6.88258 18 8.4087 18 10V18M12 4C12.2652 4 12.5196 3.89464 12.7071 3.70711C12.8946 3.51957 13 3.26522 13 3C13 2.73478 12.8946 2.48043 12.7071 2.29289C12.5196 2.10536 12.2652 2 12 2C11.7348 2 11.4804 2.10536 11.2929 2.29289C11.1054 2.48043 11 2.73478 11 3C11 3.26522 11.1054 3.51957 11.2929 3.70711C11.4804 3.89464 11.7348 4 12 4ZM20 18H4M14 20C14 20.5304 13.7893 21.0391 13.4142 21.4142C13.0391 21.7893 12.5304 22 12 22C11.4696 22 10.9609 21.7893 10.5858 21.4142C10.2107 21.0391 10 20.5304 10 20" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             {hasUnread && <div className="notification_red"></div>}

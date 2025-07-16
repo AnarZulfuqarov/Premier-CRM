@@ -21,6 +21,17 @@ const OrderHistoryDetail = () => {
     } else if (orderData?.employeeConfirm && !orderData?.fighterConfirm) {
         status = 'Təchizatçıdan təsdiq gözləyən';
     }
+    const vendorName = orderData?.fighterInfo
+        ? `${orderData.fighterInfo.name} ${orderData.fighterInfo.surname}`
+        : null;
+
+    const totalPrice = orderData?.items?.reduce((sum, item) => sum + (item.price || 0), 0);
+    const itemCount = orderData?.items?.length || 0;
+
+    const uniqueCategories = [
+        ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
+    ];
+    const categoryCount = uniqueCategories.length;
     useEffect(() => {
         refetch()
     }, []);
@@ -77,10 +88,28 @@ const OrderHistoryDetail = () => {
                 </h2>
                 <div className="order-history-detail__list">
                     <div className="order-history-detail__item">
+                        {['Tamamlanmış', 'Təhvil alınmayan'].includes(status) && (
+                                <p className={"order-history-detail__id-tech"}>
+                                    <span>Təchizatçının adı:</span> {vendorName || '—'}
+                                </p>
+
+                        )}
                         <div className="order-history-detail__details">
-                            <p className="order-history-detail__id">
-                                <span>Order ID</span> {orderData?.id}
-                            </p>
+                            <div style={{
+                                display: 'flex',
+                                gap: '40px',
+                            }}>
+                                <p className="order-history-detail__id">
+                                    <span>Order ID</span> {orderData?.id}
+                                </p>
+                                {['Tamamlanmış', 'Təhvil alınmayan'].includes(status) && (
+
+                                        <p className={"order-history-detail__id"}>
+                                            <span>Ümumi məbləğ:</span> {totalPrice} ₼
+                                        </p>
+
+                                )}
+                            </div>
                             <span
                                 className={`order-history-detail__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'not-completed'}`}>
   {status}
@@ -88,7 +117,13 @@ const OrderHistoryDetail = () => {
                         </div>
                         <div className="order-history-detail__data">
                             <p>{orderData?.items?.map(item => item.product?.name).join(', ')}</p>
-                            <p>{orderData?.items?.length} məhsul</p>
+                            <p>
+                                <span className="quantity-count">{itemCount}</span>{' '}
+                                <span className="quantity-label">məhsul,</span>{' '}
+                                <span className="quantity-count">{categoryCount}</span>{' '}
+                                <span className="quantity-label">kateqoriya</span>
+                            </p>
+
                         </div>
 
                     </div>
@@ -125,18 +160,16 @@ const OrderHistoryDetail = () => {
                             </tbody>
 
                         </table>
-                    </div>
-                    {(status === 'Təhvil alınmayan' || status === 'Tamamlanmış') && (
-                        <div className="table-footer">
-                            <span>Ümumi məbləğ:</span>
-                            <span>
-  {
-      `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
-  }
-</span>
 
-                        </div>
-                    )}
+                        {(status === 'Təhvil alınmayan' || status === 'Tamamlanmış') && (
+                            <div className="table-footer sticky-footer">
+                                <span>Ümumi məbləğ:</span>
+                                <span>{totalPrice} ₼</span>
+                            </div>
+                        )}
+                    </div>
+
+
 
                 </div>
 

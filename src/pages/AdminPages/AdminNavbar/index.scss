@@ -161,237 +161,242 @@
       }
     }
   }
-}
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 32px;
-  background-color: #fff;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  /* index.scss – modallarla ilgili eklemeler */
-
-
-  .navbar_right{
+  .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    .notification{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-right: 16px;
-      border-right: 1px solid #CFCFCF;
-      .notification_icon{
-        position: relative;
-        width: 16px;
+    padding: 16px 32px;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    /* index.scss – modallarla ilgili eklemeler */
 
-        .notification_red{
+
+    .navbar_right{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      .notification{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-right: 16px;
+        border-right: 1px solid #CFCFCF;
+        .notification_icon{
+          position: relative;
           display: flex;
-          width: 11px;
-          height: 11px;
-          padding: 1.25px;
-          flex-direction: column;
-          justify-content: center;
           align-items: center;
-          gap: 12.5px;
-          border-radius: 7.5px;
-          background: #ED0303;
-          position: absolute;
-          top: 0;
-          right: 0;
+          justify-content: center;
+          .notification_red{
+            display: flex;
+            width: 11px;
+            height: 11px;
+            padding: 1.25px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12.5px;
+            border-radius: 7.5px;
+            background: #ED0303;
+            position: absolute;
+            top: 0;
+            right: 0;
+          }
+        }
+        h6{
+          margin:0;
         }
       }
-      h6{
-        margin:0;
-      }
     }
-  }
-  &__logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    display: flex;
-    align-items: center;
-  }
-
-  &__search {
-    flex: 0.5;
-    margin: 0 20px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    &-input-icon {
-      position: absolute;
-      left: 10px;
-      font-size: 16px;
-      color: #aaa;
-    }
-
-    input {
-      width: 100%;
-      padding: 9px 16px 8px 40px;
-      border-radius: 4px;
-      font-size: 14px;
-      outline: none;
-      box-sizing: border-box;
-      border: 1px solid #DCDCDC;
-      background: #FFF;
-
-      &::placeholder {
-        color: #aaa;
-      }
-    }
-  }
-
-  &__search-icon {
-    font-size: 20px;
-    cursor: pointer;
-    color: #333;
-    margin-right: 10px;
-    display: none;
-  }
-
-  &__search-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    z-index: 1000;
-
-    &-content {
+    &__logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
       display: flex;
       align-items: center;
-      width: 100%;
-      gap: 10px;
-      position: relative;
+      img{
+
+        height: 48px;
+      }
     }
-
-    &-input-icon {
-      position: absolute;
-      left: 10px;
-      font-size: 16px;
-      color: #aaa;
-    }
-
-    input {
-      flex: 1;
-      padding: 8px 16px 8px 34px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    &-close {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #333;
-    }
-  }
-
-  &__profile {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-
-    &-name {
-      color: #000;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 600;
-      line-height: normal;
-      margin-bottom: 4px;
-    }
-
-    &-email {
-      color: #737373;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding: 20px;
 
     &__search {
-      display: none; // 768px ve altında arama çubuğu gizlenecek
+      flex: 0.5;
+      margin: 0 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      &-input-icon {
+        position: absolute;
+        left: 10px;
+        font-size: 16px;
+        color: #aaa;
+      }
+
+      input {
+        width: 100%;
+        padding: 9px 16px 8px 40px;
+        border-radius: 4px;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+        border: 1px solid #DCDCDC;
+        background: #FFF;
+
+        &::placeholder {
+          color: #aaa;
+        }
+      }
     }
 
     &__search-icon {
-      display: block; // Arama ikonu görünecek
-    }
-
-    &__profile {
-      gap: 5px;
-
-      &-name,
-      &-email {
-        display: none;
-      }
-
-      &-icon {
-        width: 28px;
-        height: 28px;
-      }
-
-      img {
-        width: 100% !important;
-        height: 100% !important;
-      }
-    }
-  }
-
-  @media (max-width: 480px) {
-    &__logo {
-      font-size: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+      margin-right: 10px;
+      display: none;
     }
 
     &__search-modal {
-      height: 50px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
 
       &-content {
-        input {
-          padding: 6px 12px 6px 30px;
-          font-size: 12px;
-        }
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+        position: relative;
+      }
 
-        &-input-icon {
-          left: 8px;
-          font-size: 14px;
-        }
+      &-input-icon {
+        position: absolute;
+        left: 10px;
+        font-size: 16px;
+        color: #aaa;
+      }
+
+      input {
+        flex: 1;
+        padding: 8px 16px 8px 34px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        outline: none;
       }
 
       &-close {
-        font-size: 18px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #333;
       }
     }
 
     &__profile {
-      &-icon {
-        width: 24px;
-        height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      &-name {
+        color: #000;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        margin-bottom: 4px;
+      }
+
+      &-email {
+        color: #737373;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 20px;
+
+      &__search {
+        display: none; // 768px ve altında arama çubuğu gizlenecek
+      }
+
+      &__search-icon {
+        display: block; // Arama ikonu görünecek
+      }
+
+      &__profile {
+        gap: 5px;
+
+        &-name,
+        &-email {
+          display: none;
+        }
+
+        &-icon {
+          width: 28px;
+          height: 28px;
+        }
+
+        img {
+          width: 100% !important;
+          height: 100% !important;
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      &__logo {
+        font-size: 16px;
+      }
+
+      &__search-modal {
+        height: 50px;
+
+        &-content {
+          input {
+            padding: 6px 12px 6px 30px;
+            font-size: 12px;
+          }
+
+          &-input-icon {
+            left: 8px;
+            font-size: 14px;
+          }
+        }
+
+        &-close {
+          font-size: 18px;
+        }
+      }
+
+      &__profile {
+        &-icon {
+          width: 24px;
+          height: 24px;
+        }
       }
     }
   }

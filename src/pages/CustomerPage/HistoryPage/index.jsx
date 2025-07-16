@@ -16,7 +16,6 @@ const OrderHistory = () => {
     }, []);
     const orders = orderss?.map((order) => {
         let status = '';
-
         if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
             status = 'Tamamlanmış';
         } else if (order.employeeConfirm && order.fighterConfirm) {
@@ -25,13 +24,24 @@ const OrderHistory = () => {
             status = 'Təchizatçıdan təsdiq gözləyən';
         }
 
+        const uniqueCategories = [
+            ...new Set(order.items.map(item => item.product?.categoryName).filter(Boolean))
+        ];
+
+        const totalPrice = order.items.reduce((sum, item) => sum + (item.price || 0), 0);
+        const vendorName = order.fighterInfo ? `${order.fighterInfo.name} ${order.fighterInfo.surname}` : null;
+
         return {
             id: order.id,
             product: order.items.map(item => item.product?.name).join(', '),
-            quantity: `${order.items.length} məhsul`,
+            itemCount: order.items.length,
+            categoryCount: uniqueCategories.length,
             status,
+            totalPrice,
+            vendorName,
         };
     }) || [];
+
 
 
     const filteredOrders = orders.filter((order) => {
@@ -81,6 +91,7 @@ const OrderHistory = () => {
             setCurrentPage(page);
         }
     };
+    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
     return (
         <div className={"order-history-main"}>
@@ -94,35 +105,103 @@ const OrderHistory = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                        <option value="all">Hamısı</option>
-                        <option value="pending">Təchizatçıdan təsdiq gözləyən</option>
-                        <option value="completed">Tamamlanmış</option>
-                        <option value="not-completed">Təhvil alınmayan</option>
-                    </select>
+                    <div className="order-history__filter-button">
+                        <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
+                                <path d="M7 14H11V12H7V14ZM3 8H15V6H3V8ZM0 0V2H18V0H0Z" fill="black"/>
+                            </svg>
+                        </button>
+
+                        {showFilterDropdown && (
+                            <div className="filter-dropdown">
+                                <button
+                                    className={filter === 'all' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('all');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                    Hamısı
+                                </button>
+                                <button
+                                    className={filter === 'pending' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('pending');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                  <div className={"statuss pending"}></div>  Təchizatçıdan təsdiq gözləyən
+                                </button>
+                                <button
+                                    className={filter === 'completed' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('completed');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                   <div className={"statuss completed"}></div> Tamamlanmış
+                                </button>
+                                <button
+                                    className={filter === 'not-completed' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('not-completed');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                   <div className={"statuss not-completed"}></div> Təhvil alınmayan
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+
                 </div>
                 <div className="order-history__list">
                     {paginatedOrders.map((order, index) => (
                         <div key={order.id || index} className="order-history__item" onClick={()=>navigate(`/customer/history/${order.id}`)}>
-                            <div className="order-history__details" >
-                                <p className="order-history__id">
-                                    <span>Order ID</span> {order.id}
+                            {['Tamamlanmış', 'Təhvil alınmayan'].includes(order.status) && (
+
+                                <p className="order-history__id-tech">
+                                    <span>Təchizatçının adı:</span>{order.vendorName || '—'}
                                 </p>
-                                <span
-                                    className={`order-history__status ${
-                                        order.status === 'Tamamlanmış'
-                                            ? 'completed'
-                                            : order.status === 'Təchizatçıdan təsdiq gözləyən'
-                                                ? 'pending'
-                                                : 'not-completed'
-                                    }`}
-                                >
-                {order.status}
-              </span>
+
+                            )}
+                            <div className="order-history__details">
+
+                               <div style={{display:"flex",gap:"40px"}}> <p className="order-history__id">
+                                   <span>Order ID</span> {order.id}
+                               </p>
+
+                                   {['Tamamlanmış', 'Təhvil alınmayan'].includes(order.status) && (
+
+                                       <p className="order-history__id">
+                                           <span>Ümumi məbləğ:</span> {order.totalPrice} ₼
+                                       </p>
+
+                                   )}
+
+                               </div>
+
+                                <span className={`order-history__status ${
+                                    order.status === 'Tamamlanmış'
+                                        ? 'completed'
+                                        : order.status === 'Təchizatçıdan təsdiq gözləyən'
+                                            ? 'pending'
+                                            : 'not-completed'
+                                }`}>
+    {order.status}
+  </span>
                             </div>
+
                             <div className="order-history__data">
                                 <p>{order.product}</p>
-                                <p>{order.quantity}</p>
+                                <p>
+                                    <span className="quantity-count">{order.itemCount}</span>{' '}
+                                    <span className="quantity-label">məhsul,</span>{' '}
+                                    <span className="quantity-count">{order.categoryCount}</span>{' '}
+                                    <span className="quantity-label">kateqoriya</span>
+                                </p>
+
                             </div>
                         </div>
                     ))}

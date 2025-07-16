@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 
   .login-panel {
     position: relative;
@@ -13,18 +14,10 @@
 
     .header {
       text-align: center;
-      margin-bottom: 60px; // Reduced for mobile
-
-      .login-logo {
-        height: 80px; // Slightly smaller for mobile
-        margin: 0 auto;
-        padding-top: 10px;
-
-        img {
-          aspect-ratio: 2/1;
-          height: 100%;
-          max-width: 100%;
-        }
+      margin-bottom: 60px;
+     visibility: hidden;
+      img{
+        height: 80px;
       }
 
       h2 {
@@ -184,6 +177,7 @@
         font-size: 16px;
         font-weight: 500;
         line-height: 24px;
+        margin: 0 ;
       }
     }
   }

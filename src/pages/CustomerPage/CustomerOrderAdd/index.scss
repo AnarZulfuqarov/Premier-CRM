@@ -158,6 +158,7 @@
       color: #333;
       font-weight: 600;
       text-align: center;
+      position: relative;
 
     }
 
@@ -178,7 +179,7 @@
 
     td:nth-child(2),
     td:nth-child(3) {
-      width: 150px;
+      width: 200px;
     }
 
     tr:last-child td {
@@ -191,11 +192,14 @@
   }
 
   &__table-search-icon {
-    margin-left: 30px;
-    font-size: 16px;
+    font-size: 14px;
     color: #aaa;
     vertical-align: middle;
     cursor: pointer;
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
+
   }
 
   &__table-search-box {
@@ -237,11 +241,11 @@
   &__add-btn {
     padding: 5px 10px;
     background: #e8f0fe;
-    color: #1a73e8;
     cursor: pointer;
     border-radius: 9.739px;
-    border: 1px solid #007AFF;
-    background: rgba(0, 122, 255, 0.15);
+    border: 1px solid #384871;
+    background: rgba(152, 201, 255, 0.15);
+    color: #384871;
 
     &:hover {
       background-color: #d2e3fc;
@@ -287,17 +291,48 @@
 
   &__cart-panel {
     width: 100%;
-    height: 100%;
     border-radius: 14px;
     border: 1px solid #DCDCDC;
     overflow: hidden;
 
     h3 {
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 400;
       padding: 20px;
       margin: 0;
       background: #F0F7FF;
+      color: #000;
+    }
+  }
+  .custom-datepicker-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    width: 100%;
+    background-color: white;
+
+    .label {
+      color: #333;
+      font-weight: 500;
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .value {
+      color: #aaa;
+      margin-right: 30px;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -435,7 +470,9 @@
     border-radius: 4px;
     min-height: 70px;
     outline: none;
-
+    &::placeholder {
+      font-size: 14px;
+    }
   }
   .mobileBasket{
     width: 100%;
