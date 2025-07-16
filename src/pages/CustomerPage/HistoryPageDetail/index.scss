@@ -202,6 +202,14 @@
       background: #f9f9f9;
     }
   }
+  .orderAndPrice{
+    display: flex;
+    gap: 40px;
+    @media (max-width: 576px){
+      flex-direction: column;
+      row-gap: 10px !important;
+    }
+  }
   .order-history-detail__id-tech {
     color: #272727;
     font-size: 14px;

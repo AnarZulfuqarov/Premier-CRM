@@ -61,7 +61,9 @@ const MobileCartPage = () => {
             console.error('Sifariş xətası:', err);
         }
     };
-
+    const handleDeleteItem = (index) => {
+        setCartItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    };
     return (
         <div className="mobile-cart-page">
             <div className={"path"}>

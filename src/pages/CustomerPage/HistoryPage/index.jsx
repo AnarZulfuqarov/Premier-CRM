@@ -168,7 +168,7 @@ const OrderHistory = () => {
                             )}
                             <div className="order-history__details">
 
-                               <div style={{display:"flex",gap:"40px"}}> <p className="order-history__id">
+                               <div className={"orderAndPrice"} > <p className="order-history__id">
                                    <span>Order ID</span> {order.id}
                                </p>
 

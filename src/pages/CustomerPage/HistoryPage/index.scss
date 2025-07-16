@@ -210,7 +210,14 @@
       margin: 5px 0;
       color: #333;
     }
-
+  .orderAndPrice{
+    display: flex;
+    gap: 40px;
+    @media (max-width: 576px){
+      flex-direction: column;
+      row-gap: 10px !important;
+    }
+  }
     .order-history__id {
       color: #272727;
       font-size: 14px;
@@ -317,7 +324,6 @@
     }
 
     &__controls {
-      flex-direction: column;
       gap: 8px;
       margin-bottom: 20px;
 

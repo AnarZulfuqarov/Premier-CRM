@@ -95,10 +95,7 @@ const OrderHistoryDetail = () => {
 
                         )}
                         <div className="order-history-detail__details">
-                            <div style={{
-                                display: 'flex',
-                                gap: '40px',
-                            }}>
+                            <div className={"orderAndPrice"}>
                                 <p className="order-history-detail__id">
                                     <span>Order ID</span> {orderData?.id}
                                 </p>
