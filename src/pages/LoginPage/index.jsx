@@ -98,7 +98,6 @@ function Login() {
                                 {isLoading ? 'Yoxlanılır...' : 'Giriş et'}
                             </button>
 
-                            {error && <div className="error">Xəta: Məlumatlar səhvdir!</div>}
 
                             <div className="problem">
                                 Problemlə üzləşdiniz?
