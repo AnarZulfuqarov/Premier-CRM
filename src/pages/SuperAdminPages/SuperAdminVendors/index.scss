@@ -196,7 +196,6 @@
  .headerr{
    display: flex;
    justify-content: space-between;
-   align-items: center;
    margin-bottom: 48px;
    .head{
      h2 {
@@ -230,10 +229,7 @@
 
   .order-table-wrapper {
     display: flex;
-    border: 1px solid #ddd;
     background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
     width: 40%;
 
 
@@ -246,10 +242,11 @@
           background: #f9f9f9;
 
           th {
-            padding: 10px;
+            padding:8px 16px;
             border: 1px solid #e0e0e0; // border for th
             white-space: nowrap;
             text-align: center;
+            font-size: 14px;
           }
           .th-label{
             display: flex;
@@ -263,8 +260,7 @@
 
         tbody {
           tr {
-            height: 60px;
-            text-align: center;
+              text-align: center;
 
             &:nth-child(odd) {
               background-color: #ffffff;
@@ -276,7 +272,8 @@
           }
 
           td {
-            padding: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
             border: 1px solid #e0e0e0; // border for td
             white-space: nowrap;
             vertical-align: middle;

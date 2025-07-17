@@ -106,6 +106,21 @@
       font-weight: 400;
       line-height: normal;
     }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: normal;
+
+      .quantity-count {
+        font-weight: 400;
+        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
+      }
+
+      .quantity-label {
+        font-weight: 400;
+        color: #979797; // Açıq boz (yazı hissəsi üçün)
+      }
+    }
   }
   .techizat{
     .order-history-super-admin__ids{

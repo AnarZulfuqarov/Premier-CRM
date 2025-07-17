@@ -4,13 +4,14 @@ import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 import {useCreateCustomersMutation, useGetAllJobsQuery, useGetAllSectionsQuery} from "../../../services/adminApi.jsx";
 import Select from 'react-select';
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperPersonAdd = () => {
     const [rows, setRows] = useState([
         { name: '', surname: '', fin: '', position: '', department: '', password: '', phone: '' }
     ]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const showPopup = usePopup()
     const {data: getAllJobs} = useGetAllJobsQuery();
     const {data: getAllSections} = useGetAllSectionsQuery();
 
@@ -35,7 +36,7 @@ const SuperPersonAdd = () => {
                 const selectedJob = positions.find(p => p.name === row.position);
 
                 const selectedSectionIds = departments
-                    .filter(d => row.departments?.includes(d.name))
+                    .filter(d => row.departments?.includes(d.id))
                     .map(d => d.id);
 
                 const payload = {
@@ -48,17 +49,25 @@ const SuperPersonAdd = () => {
                     sectionIds: selectedSectionIds
                 };
 
-                await post(payload);
+                const response = await post(payload).unwrap();
+
+                // Əgər backend-dən gələn cavab uğurlu deyilsə
+                if (response?.statusCode !== 200) {
+                    showPopup("Xəta baş verdi", "İstifadəçi əlavə olunmadı", "error")
+                    return;
+                }
             }
 
+            // Hər şey uğurlu oldusa modal aç
             setShowSuccessModal(true);
             setRows([{
                 name: '', surname: '', fin: '', position: '', departments: [], password: '', phone: ''
             }]);
-        } catch (err) {
-            console.error("İstifadəçi əlavə edilə bilmədi:", err);
+        } catch  {
+            showPopup("Xəta baş verdi", "İstifadəçi əlavə olunmadı", "error")
         }
     };
+
 
     return (
         <div className="super-admin-person-add-main">

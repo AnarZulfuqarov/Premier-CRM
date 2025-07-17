@@ -610,6 +610,11 @@ export const api = createApi({
                 url: `/AdminNotifications/customer`,
             }),
         }),
+        getAdminNotificationsCustomerId: builder.query({
+            query: (customerId) => ({
+                url: `/AdminNotifications/customer/${customerId}`,
+            }),
+        }),
         markAsRead: builder.mutation({
             query: (id) => ({
                 url: `/AdminNotifications/mark-as-read/${id}`,
@@ -732,5 +737,6 @@ export const {
     useGetAdminNotificationsSuperAdminQuery,
     useGetAdminNotificationsFighterQuery,
     useGetAdminNotificationsCustomerQuery,
+    useGetAdminNotificationsCustomerIdQuery,
     useMarkAsReadMutation,
 } = api;

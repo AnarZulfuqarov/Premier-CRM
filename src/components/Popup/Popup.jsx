@@ -23,7 +23,7 @@ export default function Popup({ title, description, type }) {
                 </svg>
             );
             color = '#404040';
-            bg = '#FA6F6F17';
+            bg = '#ffcccc';
             border = '#E60D0D';
             break;
 

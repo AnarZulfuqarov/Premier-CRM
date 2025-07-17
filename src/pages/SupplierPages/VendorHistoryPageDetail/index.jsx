@@ -24,6 +24,12 @@ const VendorHistoryDetailSuplier = () => {
     ) {
         return null; // Maplama! görünməyəcək
     }
+    const itemCount = orderData?.items?.length || 0;
+
+    const uniqueCategories = [
+        ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
+    ];
+    const categoryCount = uniqueCategories.length;
 
     const status =
         orderData.employeeConfirm && orderData.fighterConfirm && !orderData.employeeDelivery
@@ -83,8 +89,13 @@ const VendorHistoryDetailSuplier = () => {
                     </div>
 
                     <div className="order-history-supplier__data">
-                        <p>{orderData.section.departmentName}</p>
-                        <p>{orderData.section.name}</p>
+                        <p>{orderData?.items?.map((item) => item.product?.name).join(', ')}</p>
+                        <p>
+                            <span className="quantity-count">{itemCount}</span>{' '}
+                            <span className="quantity-label">məhsul,</span>{' '}
+                            <span className="quantity-count">{categoryCount}</span>{' '}
+                            <span className="quantity-label">kateqoriya</span>
+                        </p>
                     </div>
                 </div>
 
@@ -173,11 +184,12 @@ const VendorHistoryDetailSuplier = () => {
                             </tbody>
 
                         </table>
+                        <div className="table-footer sticky-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>{totalPrice.toFixed(2)} ₼</span>
+                        </div>
                     </div>
-                    <div className="table-footer">
-                        <span>Ümumi məbləğ:</span>
-                        <span>{totalPrice.toFixed(2)} ₼</span>
-                    </div>
+
 
                 </div>
 

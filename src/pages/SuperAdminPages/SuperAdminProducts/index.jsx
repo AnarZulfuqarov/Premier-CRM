@@ -137,38 +137,6 @@ const SuperAdminProducts = () => {
                                 <thead>
                                 <tr>
                                     <th>
-                                        {activeSearch === 'name' ? (
-                                            <div className="th-search">
-                                                <input
-                                                    autoFocus
-                                                    value={searchName}
-                                                    onChange={(e) => setSearchName(e.target.value)}
-                                                    placeholder="Axtar..."
-                                                />
-                                                <FaTimes
-                                                    onClick={() => {
-                                                        setActiveSearch(null);
-                                                        setSearchName('');
-                                                    }}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="th-label">
-                                                Məhsul adı
-                                                <svg
-                                                    onClick={() => setActiveSearch('name')}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                >
-                                                    <path d="..." fill="#7A7A7A"/>
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </th>
-                                    <th>
                                         {activeSearch === 'category' ? (
                                             <div className="th-search">
                                                 <input
@@ -200,6 +168,39 @@ const SuperAdminProducts = () => {
                                             </div>
                                         )}
                                     </th>
+                                    <th>
+                                        {activeSearch === 'name' ? (
+                                            <div className="th-search">
+                                                <input
+                                                    autoFocus
+                                                    value={searchName}
+                                                    onChange={(e) => setSearchName(e.target.value)}
+                                                    placeholder="Axtar..."
+                                                />
+                                                <FaTimes
+                                                    onClick={() => {
+                                                        setActiveSearch(null);
+                                                        setSearchName('');
+                                                    }}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="th-label">
+                                                Məhsul adı
+                                                <svg
+                                                    onClick={() => setActiveSearch('name')}
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                >
+                                                    <path d="..." fill="#7A7A7A"/>
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </th>
+
                                     <th>Ölçü vahidi</th>
                                     <th>Fəaliyyətlər</th>
                                 </tr>
@@ -209,8 +210,9 @@ const SuperAdminProducts = () => {
                                     const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={i}>
-                                            <td>{item.name}</td>
                                             <td>{item.categoryName}</td>
+                                            <td>{item.name}</td>
+
                                             <td>{item.measure}</td>
                                             <td>
                   <span style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>

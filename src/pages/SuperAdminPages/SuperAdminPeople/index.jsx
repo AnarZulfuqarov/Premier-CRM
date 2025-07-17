@@ -121,7 +121,7 @@ const SuperAdminPeople = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['name', 'surname', 'fin', 'position', 'phone'].map((column) => (
+                                {['Ad', 'Soyad', 'fin', 'Vəzifə', 'Mobil nömrə'].map((column) => (
                                     <th key={column}>
                                         <div style={{
                                             display: 'flex',
@@ -171,7 +171,7 @@ const SuperAdminPeople = () => {
                                         </div>
                                     </th>
                                 ))}
-                                <th>Parol</th>
+                                <th>Şifrə</th>
                             </tr>
                             </thead>
                             <tbody>

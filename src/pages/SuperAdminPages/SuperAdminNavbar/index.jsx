@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {useGetAdminNotificationsSuperAdminQuery} from "../../../services/adminApi.jsx";
 import {IoNotifications} from "react-icons/io5";
 import {MdNotificationsNone} from "react-icons/md";
+import logo from "../../../assets/Mask group.png";
 
 const SuperAdminNavbar = () => {
     // 3 adet modal için state’ler
@@ -32,7 +33,7 @@ const SuperAdminNavbar = () => {
         <div id={"navbar"}>
             <nav className="navbar">
                 <div className="navbar__logo">
-                    Shirvanshah
+                    <img src={logo} className="logo" alt="logo" />
                 </div>
 
                 <div className={"navbar_right"}>

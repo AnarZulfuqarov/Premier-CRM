@@ -1,12 +1,13 @@
 import './index.scss';
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SupplierLeftBar = () => {
     const location = useLocation();
     const [productsOpen, setProductsOpen] = useState(false);
     const dropdownRef = useRef(null);
-
+    const showPopup = usePopup()
     // Eğer rota /supplier/products/... ise dropdown otomatik açık olsun
     useEffect(() => {
         if (location.pathname.startsWith("/supplier/products")) {
@@ -22,7 +23,7 @@ const SupplierLeftBar = () => {
             const name = cookie.split("=")[0].trim();
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
         });
-
+        showPopup("Sistemdən çıxış edildi","Hesabdan uğurla çıxış etdiniz.","success")
         // Ana səhifəyə yönləndir
         navigate('/');
     };

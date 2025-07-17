@@ -4,12 +4,14 @@ import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from 'react-icons/fa';
 import './index.scss';
 import {useDeleteOrderMutation, useGetMyOrdersIdQuery, useOrderConfirmMutation} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const OrderHistoryDetail = () => {
     const {id} = useParams();
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const showPopup= usePopup()
     const {data: getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data
     let status = '';
@@ -75,6 +77,7 @@ const OrderHistoryDetail = () => {
     const navigate = useNavigate();
     useEffect(() => {
         if (isSuccess) {
+            showPopup("Sifariş ləğv edildi","Seçilmiş sifariş sistemdən silindi.","success")
             navigate('/customer/history');
         }
     }, [isSuccess, navigate]);
@@ -176,7 +179,11 @@ const OrderHistoryDetail = () => {
                             <span>Sifariş təsdiqlənməyib. İmtina etmək üçün silə bilərsiniz.</span>
                             <button
                                 className="btn delete order-history-detail__confirm"
-                                onClick={() => deleteOrder(id)}
+                                onClick={() => {
+                                    deleteOrder(id);
+
+                                }}
+
                             >
                                 Sil
                             </button>

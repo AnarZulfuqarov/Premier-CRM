@@ -108,7 +108,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     .head{
       h2{
         color: #000;
@@ -308,10 +308,12 @@
     width:60%;
 
     th, td {
-      padding: 15px;
+      padding: 8px 16px;
       border: 1px solid #ddd;
       white-space: nowrap;
+      font-size: 14px;
     }
+
     th {
       background: #f9f9f9;
       font-weight: 500;

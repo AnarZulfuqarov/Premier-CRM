@@ -1,9 +1,11 @@
 import './index.scss';
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const AdminLeftBar = ({ isOpen, onClose }) => {
     const location = useLocation();
     const navigate = useNavigate();
+    const showPopup = usePopup()
     const handleLogout = () => {
         // Bütün cookies sil
         document.cookie.split(";").forEach(cookie => {
@@ -11,14 +13,17 @@ const AdminLeftBar = ({ isOpen, onClose }) => {
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
         });
         if (onClose) onClose();
-        // Ana səhifəyə yönləndir
+        showPopup("Sistemdən çıxış edildi","Hesabdan uğurla çıxış etdiniz.","success")
         navigate('/');
     };
 
     return (
         <aside className={`sidebarCustomer ${isOpen ? 'open' : ''}`}>
             <ul className="sidebarCustomer__menu">
-                <li onClick={onClose} className={location.pathname === "/customer/customerAdd" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
+                <li onClick={()=>{
+                    onClose();
+                    navigate('/customer/customerAdd')
+                }} className={location.pathname === "/customer/customerAdd" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
                     <span className="sidebarCustomer__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none">
   <path
@@ -31,7 +36,10 @@ const AdminLeftBar = ({ isOpen, onClose }) => {
                     Yeni sifariş
                 </NavLink>
                 </li>
-                <li onClick={onClose} className={location.pathname === "/customer/history" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
+                <li onClick={()=>{
+                    onClose();
+                    navigate('/customer/history')
+                }} className={location.pathname === "/customer/history" ? "sidebarCustomer__menu-item active" : "sidebarCustomer__menu-item"}>
                     <span className="sidebarCustomer__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 23" fill="none">
   <path

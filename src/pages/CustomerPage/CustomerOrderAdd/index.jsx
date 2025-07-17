@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Cookies from 'js-cookie';
 import {useNavigate} from "react-router-dom";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
     <div className="custom-datepicker-wrapper" onClick={onClick} ref={ref}>
         <span className="label">Sifariş çatdırılma tarixi</span>
@@ -29,7 +30,7 @@ const OrderForm = () => {
     const [postOrder] = useCreateOrdersMutation()
     const sectionId = Cookies.get('sectionId');
     const datepickerRef = useRef(null);
-
+const showPopup = usePopup()
     useEffect(() => {
         if (!categories || !selectedCategoryId) return;
 
@@ -49,9 +50,19 @@ const OrderForm = () => {
         }
     }, [categories]);
 
-    const [cartItems, setCartItems] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [description, setDescription] = useState('');
+    const [cartItems, setCartItems] = useState(() => {
+        const savedData = localStorage.getItem('cartData');
+        return savedData ? JSON.parse(savedData).cartItems || [] : [];
+    });
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const savedData = localStorage.getItem('cartData');
+        const dateStr = savedData ? JSON.parse(savedData).selectedDate : null;
+        return dateStr ? new Date(dateStr) : null;
+    });
+    const [description, setDescription] = useState(() => {
+        const savedData = localStorage.getItem('cartData');
+        return savedData ? JSON.parse(savedData).description || '' : '';
+    });
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -283,7 +294,10 @@ const OrderForm = () => {
                                                 {
                                                     isMobile ? ( <button
                                                         className="order-form__add-btnn"
-                                                        onClick={() => handleAddToCart(product)}
+                                                        onClick={() => {
+                                                            handleAddToCart(product);
+                                                            showPopup('Ugurlu','Sebete elave olundu','success')
+                                                        }}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                              viewBox="0 0 24 24" fill="none">
@@ -309,15 +323,17 @@ const OrderForm = () => {
                             </div>
                             {window.innerWidth <= 768 && (
                                 <button className={'mobileBasket'} onClick={() => {
+                                    const savedData = JSON.parse(localStorage.getItem('cartData'));
                                     navigate('/customer/basket', {
                                         state: {
-                                            cartItems,
-                                            selectedDate,
-                                            description
+                                            cartItems: savedData?.cartItems || [],
+                                            selectedDate: savedData?.selectedDate ? new Date(savedData.selectedDate) : null,
+                                            description: savedData?.description || ''
                                         }
                                     });
+
                                 }}>
-                                    Səbətə keç ({cartItems.length})
+                                    Səbətə keç ({JSON.parse(localStorage.getItem('cartData'))?.cartItems?.length || 0})
                                 </button>
                             )}
 

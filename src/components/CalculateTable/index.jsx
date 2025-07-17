@@ -66,7 +66,7 @@ const CalculationTable = ({ type, selectedDate, data = [],companyId }) => {
                                 />
                             ) : (
                                 <>
-                                    <span>{initialAmount}</span>
+                                    <span>{initialAmount || "0"}</span>
                                     {isCurrent && (
                                         <span className={`edit-icon ${hovered ? 'visible' : ''}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -82,11 +82,11 @@ const CalculationTable = ({ type, selectedDate, data = [],companyId }) => {
 
                 <tr>
                     <td>Verilən sifariş məbləği</td>
-                    <td>{firstItem?.orderTotalAmount}</td>
+                    <td>{firstItem?.orderTotalAmount || "0"}</td>
                 </tr>
                 <tr>
                     <td>Ümumi məbləğ</td>
-                    <td>{initialAmount + (firstItem?.orderTotalAmount)}</td>
+                    <td>{initialAmount + (firstItem?.orderTotalAmount) || "0"}</td>
                 </tr>
                 </tbody>
             </table>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './index.scss';
 import {NavLink, useNavigate, useParams} from "react-router-dom";
 import {useGetAllVendorsIdQuery, useGetOrdersVendorQuery} from "../../../services/adminApi.jsx";
@@ -9,10 +9,10 @@ const VendorHistorySupplier = () => {
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 2; // Number of orders per page
-    const {data:getAllVendorsId} = useGetAllVendorsIdQuery(id)
+    const {data: getAllVendorsId} = useGetAllVendorsIdQuery(id)
     const vendor = getAllVendorsId?.data
 
-    const {data:getOrdersVendor} = useGetOrdersVendorQuery(id)
+    const {data: getOrdersVendor} = useGetOrdersVendorQuery(id)
     const orderData = getOrdersVendor?.data
     const orders = orderData
         ?.filter(order => order.employeeConfirm && order.fighterConfirm) // yalnız uyğun olanları saxla
@@ -84,6 +84,7 @@ const VendorHistorySupplier = () => {
         }
     };
     const navigate = useNavigate()
+    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
     return (
         <div className={"vendor-detail-main"}>
             <div className="vendor-detail">
@@ -102,15 +103,53 @@ const VendorHistorySupplier = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                        <option value="all">Hamısı</option>
-                        <option value="pending">Sifarişçidən təhvil gözləyən</option>
-                        <option value="completed">Tamamlanmış</option>
-                    </select>
+                    <div className="order-history__filter-button">
+                        <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14"
+                                 fill="none">
+                                <path d="M7 14H11V12H7V14ZM3 8H15V6H3V8ZM0 0V2H18V0H0Z" fill="black"/>
+                            </svg>
+                        </button>
+
+                        {showFilterDropdown && (
+                            <div className="filter-dropdown">
+                                <button
+                                    className={filter === 'all' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('all');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                    Hamısı
+                                </button>
+                                <button
+                                    className={filter === 'pending' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('pending');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                    <div className={"statuss pending"}></div>
+                                    Sifarişçidən təhvil gözləyən
+                                </button>
+                                <button
+                                    className={filter === 'completed' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('completed');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                    <div className={"statuss completed"}></div>
+                                    Tamamlanmış
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="vendor-detail__list">
                     {paginatedOrders.map((order, index) => (
-                        <div key={order.id || index} className="vendor-detail__item" onClick={()=>navigate(`/supplier/vendor/${id}/${order.id}`)}>
+                        <div key={order.id || index} className="vendor-detail__item"
+                             onClick={() => navigate(`/supplier/vendor/${id}/${order.id}`)}>
                             <div className="techizat">
                                 <div className="vendor-detail__ids">
                                     <p className="vendor-detail__id">

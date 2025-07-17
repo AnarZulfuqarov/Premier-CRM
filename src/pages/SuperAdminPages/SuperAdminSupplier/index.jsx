@@ -123,7 +123,7 @@ const SuperAdminSupplier = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['name', 'surname', 'fin', 'phone']. map((column) => (
+                                {['Ad', 'Soyad', 'fin', 'Mobil nömrə']. map((column) => (
                                     <th key={column}>
                                         {column.charAt(0).toUpperCase() + column.slice(1)}
                                         <span
@@ -176,7 +176,7 @@ const SuperAdminSupplier = () => {
                                         )}
                                     </th>
                                 ))}
-                                <th>Parol</th>
+                                <th>Şifrə</th>
                             </tr>
                             </thead>
                             <tbody>

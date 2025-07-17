@@ -3,6 +3,7 @@ import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 import {useCreateFightersMutation} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 
 
@@ -10,7 +11,7 @@ const SuperSupplierAdd = () => {
     const positions = ['Müdür', 'Mühasib', 'Operator'];
     const departments = ['Satış', 'Marketinq', 'Anbar'];
     const [postSupplier] = useCreateFightersMutation()
-
+    const showPopup = usePopup();
     const [rows, setRows] = useState([
         { name: '', surname: '', finCode: '', password: '', phoneNumber: '' }
     ]);
@@ -120,26 +121,38 @@ const SuperSupplierAdd = () => {
                     className="confirm-btn"
                     onClick={async () => {
                         try {
-                            const results = await Promise.all(
-                                rows.map(async (row) => {
-                                    const res = await postSupplier({
-                                        name: row.name,
-                                        surname: row.surname,
-                                        password: row.password,
-                                        finCode: row.finCode,
-                                        phoneNumber: row.phoneNumber
-                                    }).unwrap(); // unwrap kullanılıyor
-                                    return res;
-                                })
-                            );
+                            for (const row of rows) {
+                                const response = await postSupplier({
+                                    name: row.name,
+                                    surname: row.surname,
+                                    password: row.password,
+                                    finCode: row.finCode,
+                                    phoneNumber: row.phoneNumber
+                                }).unwrap();
 
-                            // Hepsi başarılı ise buraya düşer
+                                if (response?.statusCode !== 200) {
+                                    showPopup(
+                                        "Əlavə olunmadı",
+                                        `${row.name} ${row.surname} adlı təchizatçı sistemə əlavə edilə bilmədi.`,
+                                        "error"
+                                    );
+                                    return;
+                                }
+                            }
+
                             setShowSuccessModal(true);
+                            setRows([{ name: '', surname: '', finCode: '', password: '', phoneNumber: '' }]);
                         } catch (err) {
                             console.error('POST error:', err);
-                            alert("Xəta baş verdi: bəzi təchizatçılar əlavə olunmadı");
+                            showPopup(
+                                "Xəta baş verdi",
+                                "Təchizatçı əlavə edilərkən sistemdə nasazlıq oldu. Zəhmət olmasa yenidən cəhd edin.",
+                                "error"
+                            );
                         }
                     }}
+
+
 
                 >
                     Təsdiqlə

@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import './index.scss';
 import {
-    useGetAdminNotificationsCustomerQuery,
+    useGetAdminNotificationsCustomerIdQuery, useGetUserQuery,
     useMarkAsReadMutation
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
@@ -11,7 +11,9 @@ const CustomerNotification = () => {
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6; // Number of orders per page
-    const {data:getAdminNotificationsSuperAdmin,refetch} = useGetAdminNotificationsCustomerQuery()
+    const {data:getUser} = useGetUserQuery()
+    const user = getUser?.data
+    const {data:getAdminNotificationsSuperAdmin,refetch} = useGetAdminNotificationsCustomerIdQuery(user?.id)
     const notification = getAdminNotificationsSuperAdmin?.data
     const [markAsRead] = useMarkAsReadMutation()
     // Pagination logic

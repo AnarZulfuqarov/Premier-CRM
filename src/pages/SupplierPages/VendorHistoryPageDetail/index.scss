@@ -90,6 +90,20 @@
       background: #f9f9f9;
     }
     margin-bottom: 20px;
+    .order-history-supplier__data{
+      p {
+        margin: 0;
+        .quantity-count {
+          font-weight: 400;
+          color: #0C0C0C;
+        }
+
+        .quantity-label {
+          font-weight: 400;
+          color: #979797;
+        }
+      }
+    }
     .techizat{
       .order-history-supplier__ids{
         display: flex;
@@ -211,11 +225,13 @@
 
   .vendor-history-detail-supplier__table {
   margin: 0;
+    width: 100%;
 
     th, td {
-      padding: 15px;
+      padding: 8px 16px;
       border: 1px solid #ddd;
       white-space: nowrap;
+      font-size: 14px;
     }
     th {
       background: #f9f9f9;
@@ -254,14 +270,18 @@
   }
 
   .table-footer {
-    flex-shrink: 0;
-    padding: 12px 20px;
-    border: 1px solid #ddd;
-    border-top: none;
-    background: #fff;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #fff;
     font-weight: 500;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
     border-radius: 0px 0px 8px 8px;
   }
 

@@ -149,18 +149,19 @@ const SuperAdminPeopleDetailAddBolme = () => {
 
 
                         </table>
+                        <div style={{ marginTop: '24px' }}>
+                            <button
+
+                                className={"submitBolme"}
+                                onClick={handleSubmit}
+                            >
+                                Təsdiqlə
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div style={{ marginTop: '24px' }}>
-                    <button
 
-                        className={"submitBolme"}
-                        onClick={handleSubmit}
-                    >
-                        Təsdiqlə
-                    </button>
-                </div>
                 <div className="super-admin-people-detail-add-bolme__pagination">
                     <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
                         &lt;

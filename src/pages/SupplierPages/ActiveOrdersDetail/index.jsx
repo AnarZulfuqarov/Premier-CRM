@@ -1,7 +1,7 @@
 import './index.scss';
 import {useEffect, useRef, useState} from 'react';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
-import { FaTimes } from "react-icons/fa";
+import {FaTimes} from "react-icons/fa";
 import {useGetAllVendorsQuery, useGetMyOrdersIdQuery, useOrderComplateMutation} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
@@ -12,17 +12,17 @@ const ActiveOrdersDetail = () => {
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-    const [modalData, setModalData] = useState({ quantity: '', price: '', vendor: '' });
+    const [modalData, setModalData] = useState({quantity: '', price: '', vendor: ''});
     const [confirmedRows, setConfirmedRows] = useState({});
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const printRef = useRef(null);
-    const {data:getAllVendors} = useGetAllVendorsQuery()
+    const {data: getAllVendors} = useGetAllVendorsQuery()
     const vendors = getAllVendors?.data
     const navigate = useNavigate();
     const pageSize = 9;
-    const {data:getMyOrdersId} = useGetMyOrdersIdQuery(id)
+    const {data: getMyOrdersId} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data;
     const [complateOrder] = useOrderComplateMutation()
     const showPopup = usePopup();
@@ -72,7 +72,7 @@ const ActiveOrdersDetail = () => {
         setUploadedFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
     const isCompleted = orderData?.employeeConfirm && orderData?.fighterConfirm;
-useEffect(() => {
+    useEffect(() => {
         if (isCompleted && orderData?.items?.length) {
             const filled = {};
             orderData.items.forEach((item, index) => {
@@ -120,11 +120,13 @@ useEffect(() => {
                     </h2>
                     {!isCompleted && (
                         <button onClick={async () => {
+                            // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
                             if (!Object.keys(confirmedRows).length) {
-                                showPopup("Xəbardarlıq.","Ən azı bir məhsul təsdiqlənməlidir.","warning")
+                                showPopup("Əməliyyat mümkün olmadı", "Davam etmək üçün ən azı 1 məhsulu tamamlamalısınız. Zəhmət olmasa, yoxlayın və yenidən cəhd edin.0", "warning");
                                 return;
                             }
 
+                            // JSON üçün array düzəlt
                             const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
                                 const originalItem = filtered[parseInt(index)];
                                 const vendor = vendors?.find(v => v.name === row.vendor);
@@ -139,7 +141,13 @@ useEffect(() => {
                             const formData = new FormData();
                             formData.append("orderId", id);
 
-                            // 🔥 Faylları ayrı ayrı binary olaraq əlavə et
+                            // ⚠️ Warning 2: invoys yüklənməyibsə
+                            if (!uploadedFiles.length) {
+                                showPopup("Invoys sənədi əlavə olunmayıb", "Sifarişi tamamlamaq üçün invoys sənədini yükləməlisiniz.", "warning");
+                                return;
+                            }
+
+                            // invoys faylları əlavə et
                             uploadedFiles.forEach(f => {
                                 formData.append("orderOverhead", f.file);
                             });
@@ -147,17 +155,19 @@ useEffect(() => {
                             formData.append("orderItemsJson", JSON.stringify(itemsArray));
 
                             try {
-                                await complateOrder(formData).unwrap();
-                                alert("Sifariş tamamlandı");
-                                showPopup("Uğurlu.","Sifariş tamamlandı","success")
+                                const response = await complateOrder(formData).unwrap();
+
+                                // ✅ Success
+                                showPopup("Uğurlu əməliyyat", "Sifariş sistemə uğurla daxil edildi.", "success");
                                 navigate("/supplier/activeOrder");
                             } catch (err) {
-                                console.error(err);
-                                showPopup("Xəbardarlıq.","İnyovs yüklənməlidir","warning")
+                                // 🔴 Error
+                                showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
                             }
                         }}>
                             Sifarişi tamamla
                         </button>
+
                     )}
 
 
@@ -191,7 +201,7 @@ useEffect(() => {
                         </svg>
                     </button>
                 </div>
-                <div style={{ display: 'none' }}>
+                <div style={{display: 'none'}}>
                     <div ref={printRef}>
                         <h2>Sifariş Detalları</h2>
                         <p><strong>Şirkət:</strong> {orderData?.section?.companyName}</p>
@@ -229,7 +239,7 @@ useEffect(() => {
                             </tbody>
                         </table>
 
-                        <div style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                        <div style={{marginTop: '10px', fontWeight: 'bold'}}>
                             Ümumi məbləğ: {totalAmount} ₼
                         </div>
                     </div>
@@ -465,11 +475,11 @@ useEffect(() => {
             )}
             {selectedImage && (
                 <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
-                    <div className="modal-box" style={{ maxWidth: '90%', maxHeight: '90%' }}>
+                    <div className="modal-box" style={{maxWidth: '90%', maxHeight: '90%'}}>
                         <img
                             src={selectedImage}
                             alt="böyük şəkil"
-                            style={{ maxWidth: '100%', maxHeight: '80vh', display: 'block', margin: '0 auto' }}
+                            style={{maxWidth: '100%', maxHeight: '80vh', display: 'block', margin: '0 auto'}}
                         />
                     </div>
                 </div>

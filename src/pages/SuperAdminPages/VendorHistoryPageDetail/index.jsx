@@ -16,7 +16,12 @@ const VendorHistoryDetailSuperAdmin = () => {
 
     const { data: getMyOrdersId } = useGetMyOrdersIdQuery(id);
     const orderData = getMyOrdersId?.data;
+    const itemCount = orderData?.items?.length || 0;
 
+    const uniqueCategories = [
+        ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
+    ];
+    const categoryCount = uniqueCategories.length;
     if (
         !orderData?.employeeConfirm ||
         !orderData?.fighterConfirm ||
@@ -81,8 +86,13 @@ const VendorHistoryDetailSuperAdmin = () => {
         </span>
                     </div>
                     <div className="order-history-supplier__data">
-                        <p>{orderData.section.departmentName}</p>
-                        <p>{orderData.section.name}</p>
+                        <p>{orderData?.items?.map((item) => item.product?.name).join(', ')}</p>
+                        <p>
+                            <span className="quantity-count">{itemCount}</span>{' '}
+                            <span className="quantity-label">məhsul,</span>{' '}
+                            <span className="quantity-count">{categoryCount}</span>{' '}
+                            <span className="quantity-label">kateqoriya</span>
+                        </p>
                     </div>
                 </div>
                 <div className="table-wrapper">
@@ -169,11 +179,12 @@ const VendorHistoryDetailSuperAdmin = () => {
                             ))}
                             </tbody>
                         </table>
+                        <div className="table-footer sticky-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>{totalPrice.toFixed(2)} ₼</span>
+                        </div>
                     </div>
-                    <div className="table-footer">
-                        <span>Ümumi məbləğ:</span>
-                        <span>{totalPrice.toFixed(2)} ₼</span>
-                    </div>
+
                 </div>
 
             </div>

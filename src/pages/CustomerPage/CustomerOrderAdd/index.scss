@@ -2,9 +2,6 @@
   display: flex;
   gap: 20px;
   padding: 32px 32px 0;
-  @media screen and (max-width: 576px){
-    padding: 16px 16px 0;
-  }
   background-color: #fff;
   width: 100%;
   height: calc(100vh - 129px);
@@ -12,6 +9,7 @@
   box-sizing: border-box;
   @media screen and (max-width: 576px){
     height: calc(100vh - 77px);
+    padding: 16px 16px 0;
 
   }
 

@@ -7,6 +7,9 @@ import {useDeleteOrderAdminMutation, useGetMyOrdersIdQuery} from "../../../servi
 const OrderHistoryDetailSuperAdmin = () => {
     const {id} = useParams();
     const [searchName, setSearchName] = useState('');
+    const [isOverheadModalOpen, setIsOverheadModalOpen] = useState(false);
+    const [selectedOverheadImage, setSelectedOverheadImage] = useState(null);
+
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
     const {data:getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
@@ -16,10 +19,16 @@ const OrderHistoryDetailSuperAdmin = () => {
     if (orderData?.employeeConfirm && orderData?.fighterConfirm && orderData?.employeeDelivery) {
         status = 'Tamamlanmış';
     } else if (orderData?.employeeConfirm && orderData?.fighterConfirm) {
-        status = 'Təhvil alınmayan';
+        status = 'Sifarişçidən təhvil gözləyən';
     } else if (orderData?.employeeConfirm && !orderData?.fighterConfirm) {
         status = 'Təchizatçıdan təsdiq gözləyən';
     }
+    const itemCount = orderData?.items?.length || 0;
+
+    const uniqueCategories = [
+        ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
+    ];
+    const categoryCount = uniqueCategories.length;
     useEffect(() => {
         refetch()
     }, []);
@@ -79,13 +88,18 @@ const OrderHistoryDetailSuperAdmin = () => {
                             </p>
                         </div>
                         <span
-                            className={`order-history-super-admin__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'not-completed'}`}>
+                            className={`order-history-super-admin__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'pending'}`}>
   {status}
 </span>
                     </div>
                     <div className="order-history-super-admin__data">
-                        <p>{orderData?.product}</p>
-                        <p>{orderData?.quantity}</p>
+                        <p>{orderData?.items?.map(item => item.product?.name).join(', ')}</p>
+                        <p>
+                            <span className="quantity-count">{itemCount}</span>{' '}
+                            <span className="quantity-label">məhsul,</span>{' '}
+                            <span className="quantity-count">{categoryCount}</span>{' '}
+                            <span className="quantity-label">kateqoriya</span>
+                        </p>
                     </div>
                 </div>
                 <div className="table-wrapper">
@@ -153,6 +167,12 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
+                                {status === 'Tamamlanmış' || status === "Sifarişçidən təhvil gözləyən" && (
+                                    <th>
+                                        İnyovsa Bax
+                                    </th>
+                                )}
+
                             </tr>
                             </thead>
                             <tbody>
@@ -166,19 +186,30 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
                                     <td>{item.received}</td>
+                                    {status === 'Tamamlanmış' || status === "Sifarişçidən təhvil gözləyən" &&(
+                                        <td style={{
+                                            textAlign:"center"
+                                        }}>
+                                            <svg onClick={() => setIsOverheadModalOpen(true)} style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                                                <path d="M13 10C13 10.663 12.7366 11.2989 12.2678 11.7678C11.7989 12.2366 11.163 12.5 10.5 12.5C9.83696 12.5 9.20107 12.2366 8.73223 11.7678C8.26339 11.2989 8 10.663 8 10C8 9.33696 8.26339 8.70107 8.73223 8.23223C9.20107 7.76339 9.83696 7.5 10.5 7.5C11.163 7.5 11.7989 7.76339 12.2678 8.23223C12.7366 8.70107 13 9.33696 13 10Z" stroke="#606060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M2.16602 10.0003C3.49935 6.58616 6.61268 4.16699 10.4993 4.16699C14.386 4.16699 17.4993 6.58616 18.8327 10.0003C17.4993 13.4145 14.386 15.8337 10.4993 15.8337C6.61268 15.8337 3.49935 13.4145 2.16602 10.0003Z" stroke="#606060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                             </tbody>
                         </table>
-                    </div>
-                    <div className="table-footer">
-                        <span>Ümumi məbləğ:</span>
-                        <span>
+                        <div className="table-footer sticky-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>
     {
         `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
     }
   </span>
+                        </div>
                     </div>
+
                     {status === 'Təchizatçıdan təsdiq gözləyən' && (
                         <div className="order-history-detail-super-admin__delete">
                             <button className="delete-btn" onClick={() => {
@@ -193,6 +224,31 @@ const OrderHistoryDetailSuperAdmin = () => {
                 </div>
 
             </div>
+            {isOverheadModalOpen && (
+                <div className="overhead-modal-overlay" onClick={() => setIsOverheadModalOpen(false)}>
+                    <div className="overhead-modal" onClick={e => e.stopPropagation()}>
+                        <h3>İnvoys Şəkilləri</h3>
+                        <div className="overhead-images">
+                            {orderData?.overheadNames?.map((img, i) => (
+                                <img
+                                    key={i}
+                                    src={img}
+                                    alt={`overhead-${i}`}
+                                    onClick={() => setSelectedOverheadImage(img)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {selectedOverheadImage && (
+                <div className="image-preview-modal" onClick={() => setSelectedOverheadImage(null)}>
+                    <div className="image-preview-content" onClick={e => e.stopPropagation()}>
+                        <img src={selectedOverheadImage} alt="preview" />
+                    </div>
+                </div>
+            )}
+
 
         </div>
     );

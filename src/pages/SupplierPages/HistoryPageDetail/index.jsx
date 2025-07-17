@@ -18,6 +18,12 @@ const OrderHistoryDetailSuplier = () => {
     } else if (orderData?.employeeConfirm && orderData?.fighterConfirm && !orderData?.employeeDelivery) {
         status = 'Sifarişçidən təhvil gözləyən';
     }
+    const itemCount = orderData?.items?.length || 0;
+
+    const uniqueCategories = [
+        ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
+    ];
+    const categoryCount = uniqueCategories.length;
     useEffect(() => {
         refetch()
     }, []);
@@ -96,7 +102,12 @@ const OrderHistoryDetailSuplier = () => {
                         <p>
                             {orderData?.items?.map((item) => item.product?.name).join(', ')}
                         </p>
-                        <p>{orderData?.items?.length} məhsul</p>
+                        <p>
+                            <span className="quantity-count">{itemCount}</span>{' '}
+                            <span className="quantity-label">məhsul,</span>{' '}
+                            <span className="quantity-count">{categoryCount}</span>{' '}
+                            <span className="quantity-label">kateqoriya</span>
+                        </p>
                     </div>
 
                 </div>
@@ -193,15 +204,16 @@ const OrderHistoryDetailSuplier = () => {
                             </tbody>
 
                         </table>
-                    </div>
-                    <div className="table-footer">
-                        <span>Ümumi məbləğ:</span>
-                        <span>
+                        <div className="table-footer sticky-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>
     {
         `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
     }
   </span>
+                        </div>
                     </div>
+
 
                 </div>
 
