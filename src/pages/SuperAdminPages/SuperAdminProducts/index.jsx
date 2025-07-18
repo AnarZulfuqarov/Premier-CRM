@@ -466,7 +466,7 @@ const SuperAdminProducts = () => {
                                                                  await confirmEdit(item.id );
                                                                  productRefetch()
                                                                  editRefetch();
-                                                                 showPopup("Məhsulun edit tələbəni təsdiq etdiniz","Dəyişikliklər uğurla tətbiq olundu","success")
+                                                                 showPopup("Məhsulun düzəliş tələbəni təsdiq etdiniz","Dəyişikliklər uğurla tətbiq olundu","success")
                                                              } catch  {
                                                                  showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")}
                                                          }}

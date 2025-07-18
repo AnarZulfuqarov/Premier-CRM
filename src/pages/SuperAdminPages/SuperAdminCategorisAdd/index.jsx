@@ -3,9 +3,9 @@ import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 import {useCreateCategoriesMutation} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
-const categories = ['Meyvə', 'Tərəvəz', 'Ət'];
-const units = ['Kg', 'Litr', 'Ədəd'];
+
 
 const SuperAdminCategoryAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
@@ -16,7 +16,7 @@ const SuperAdminCategoryAdd = () => {
         updatedRows[index][field] = value;
         setRows(updatedRows);
     };
-
+    const showPopup = usePopup()
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
@@ -26,7 +26,8 @@ const SuperAdminCategoryAdd = () => {
             await Promise.all(promises); // hamısı tamamlandıqda davam et
             setShowSuccessModal(true);
         } catch (error) {
-            console.error("Post xətası:", error);
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+
             // Burada error modalı da göstərə bilərsən
         }
     };

@@ -13,12 +13,10 @@ import {
     useGetCategorieAddPendingQuery,
     useGetCategorieDeletePendingQuery,
     useGetCategorieUpdatePendingQuery,
-    useGetProductAddMyPendingQuery,
-    useGetProductDeleteMyPendingQuery,
-    useGetProductUpdateMyPendingQuery,
     useUpdateCategoriesMutation
 } from "../../../services/adminApi.jsx";
 import { useLocation } from 'react-router-dom';
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SuperAdminCategories = () => {
     const location = useLocation();
     const { state } = location;
@@ -28,7 +26,7 @@ const SuperAdminCategories = () => {
     const [activeSearch, setActiveSearch] = useState(null);
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
     const [modalData, setModalData] = useState(null);
-
+    const showPopup = usePopup()
     const [confirmedRows, setConfirmedRows] = useState({});
     const [activeTab, setActiveTab] = useState('products'); // Sekme kontrolü eklendi
     const [deleteIndex, setDeleteIndex] = useState(null);
@@ -258,14 +256,19 @@ const SuperAdminCategories = () => {
                                         try {
                                             if (item.statusType === 'add') {
                                                 await confirmAdd( item.id );
+                                                showPopup("Kateqiriya yaratma tələbini təsdiq etdiniz","Yeni kateqoriya sistemə əlavə olundu","success")
+
                                             } else if (item.statusType === 'delete') {
                                                 await confirmDelete(item.id``);
+                                                showPopup("Kateqiriyanın silinmə tələbini təsdiq etdiniz","Seçilmiş kateqoriya sistemdən silindi","success")
+
                                             }
                                             addPendingRefetch()
                                             deletePendingRefetch()
                                             categoryRefetch();
                                         } catch (error) {
-                                            console.error("Onaylama zamanı xəta:", error);
+                                            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+
                                         }
                                     };
 
@@ -273,14 +276,19 @@ const SuperAdminCategories = () => {
                                         try {
                                             if (item.statusType === 'add') {
                                                 await rejectAdd(item.id );
+                                                showPopup("Kateqoriya yaratma tələbini ləğv etdiniz","Kateqoriya yaradılması ilə bağlı tələb silindi","success")
+
                                             } else if (item.statusType === 'delete') {
                                                 await rejectDelete(item.id);
+                                                showPopup("Kateqoriyanın silinmə tələbini ləğv etdiniz","Kateqoriya sistemdə saxlanıldı","success")
+
                                             }
                                             addPendingRefetch()
                                             deletePendingRefetch()
                                             categoryRefetch();
                                         } catch (error) {
-                                            console.error("Rədd zamanı xəta:", error);
+                                            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+
                                         }
                                     };
                                     return (
@@ -387,9 +395,9 @@ const SuperAdminCategories = () => {
                                                                  await confirmEdit(item.id );
                                                                  categoryRefetch()
                                                                  editRefetch();
-                                                             } catch (error) {
-                                                                 console.error("Onaylama zamanı xəta:", error);
-                                                             }
+                                                                 showPopup("Kateqoriyanın düzəliş tələbəni təsdiq etdiniz","Dəyişikliklər uğurla tətbiq olundu","success")
+                                                             } catch  {
+                                                                 showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")}
                                                          }}
                                                          xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
@@ -401,8 +409,9 @@ const SuperAdminCategories = () => {
                                                                  await rejectEdit(item.id );
                                                                  categoryRefetch()
                                                                  editRefetch();
-                                                             } catch (error) {
-                                                                 console.error("Rədd zamanı xəta:", error);
+                                                                 showPopup("Kateqoriyanın düzəliş tələbini ləğv etdiniz","Gözləmədə olan düzəliş tələbi silindi","success")
+                                                             } catch {
+                                                                 showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                                              }
                                                          }}
                                                          xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -469,10 +478,11 @@ const SuperAdminCategories = () => {
                                         newName: modalData.name
                                     });
                                     setModalData(null);
-                                    refetch(); // Backend'dən son data al
+                                    showPopup("Kateqoriyaya uğurla düzəliş etdiniz","Dəyişikliklər uğurla yadda saxlanıldı","success")
+
+                                    categoryRefetch();
                                 } catch (error) {
-                                    console.error("Yeniləmə zamanı xəta:", error);
-                                }
+                                    showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")}
                             }}
                         >
                             Yadda saxla
@@ -502,9 +512,11 @@ const SuperAdminCategories = () => {
                                     try {
                                         await deleteCategory(deleteIndex);
                                         setDeleteIndex(null);
-                                        refetch(); // Backend-dəki dəyişiklikləri yenilə
-                                    } catch (error) {
-                                        console.error("Silinmə zamanı xəta:", error);
+                                        showPopup("Kateqoriyanı uğurla sildiniz","Seçilmiş kateqoriya sistemdən silindi","success")
+
+                                        categoryRefetch(); // Backend-dəki dəyişiklikləri yenilə
+                                    } catch  {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >
