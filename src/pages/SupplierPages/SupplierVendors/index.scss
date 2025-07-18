@@ -185,3 +185,75 @@
     }
   }
 }
+@media (max-width: 576px) {
+  .supplier-vendors {
+    padding: 16px;
+
+    h2 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .order-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 8px;
+
+      table {
+        min-width: 500px; // geniş cədvəllər üçün scroll
+        thead th,
+        tbody td {
+          font-size: 13px;
+          padding: 6px 10px;
+        }
+
+        tbody td button {
+          width: 80px;
+          height: 28px;
+          font-size: 13px;
+        }
+      }
+    }
+
+    &__pagination {
+      position: static;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      button {
+        font-size: 13px;
+        min-width: 34px;
+        padding: 6px 10px;
+      }
+    }
+  }
+
+  .supplier-vendors-main {
+    .xett {
+      bottom: 40px; // pagination yer dəyişdiyinə görə düzəliş
+    }
+  }
+
+  .th-search input {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .th-search svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .th-label {
+    font-size: 14px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

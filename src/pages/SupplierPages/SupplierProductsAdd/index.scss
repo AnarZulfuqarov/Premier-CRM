@@ -171,3 +171,98 @@
   }
 
 }
+@media (max-width: 576px) {
+  .supplier-product-add {
+    padding: 16px;
+
+    .headerr {
+      align-items: flex-start;
+      gap: 12px;
+
+      .head h1 {
+        font-size: 20px;
+      }
+    }
+
+    h2 {
+      font-size: 13px;
+    }
+
+    .product-table {
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+
+      th, td {
+        padding: 8px;
+        font-size: 13px;
+      }
+
+      input, select {
+        font-size: 13px;
+        padding: 6px 8px;
+      }
+
+      .add-row-btn {
+        font-size: 13px;
+        padding: 8px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 6px;
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+
+    .confirm-btn {
+      width: 100%;
+      font-size: 14px;
+      padding: 12px;
+    }
+  }
+
+  .supplier-product-add-main {
+    .success-modal {
+      width: 90%;
+      padding: 24px;
+
+      .check-icon .circleOne {
+        width: 100px;
+        height: 100px;
+      }
+
+      .circle {
+        width: 70px;
+        height: 70px;
+      }
+
+      .circle-inner {
+        width: 36px;
+        height: 36px;
+      }
+
+      h3 {
+        font-size: 15px;
+      }
+
+      p {
+        font-size: 13px;
+      }
+
+      .back-btn {
+        font-size: 13px;
+        padding: 10px 0;
+      }
+
+      .close-btn {
+        font-size: 16px;
+        top: 12px;
+        right: 12px;
+      }
+    }
+  }
+}

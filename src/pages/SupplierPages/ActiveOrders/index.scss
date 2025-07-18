@@ -61,6 +61,26 @@
   .order-table-wrapper {
     display: flex;
     background: #fff;
+    .search-icon {
+      cursor: pointer;
+      margin-left: 6px;
+      font-size: 14px;
+      color: #606060;
+      position: absolute;
+      right:5px;
+    }
+
+    .search-input-box {
+      margin-top: 6px;
+
+      input {
+        width: 100%;
+        padding: 4px 8px;
+        font-size: 13px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    }
 
     .scrollable-part {
       width: 100%;
@@ -102,6 +122,7 @@
             white-space: nowrap;
             font-weight: 500;
             font-size: 14px;
+            position: relative;
           }
         }
 

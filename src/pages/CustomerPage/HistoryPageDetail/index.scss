@@ -91,6 +91,26 @@
       text-decoration: none;
     }
   }
+  .order-history-detail__search-icon {
+    cursor: pointer;
+    margin-left: auto;
+    font-size: 14px;
+    color: #555;
+    position: absolute;
+    right: 5px;
+  }
+
+  .order-history-detail__search-box {
+    margin-top: 5px;
+
+    input {
+      width: 100%;
+      padding: 4px 8px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
 
   .table-wrapper {
     flex: 1;
@@ -131,7 +151,7 @@
       background: #f9f9f9;
       font-weight: 400;
       text-align: left;
-      position: sticky;
+      position: relative;
       color: black;
 
       top: 0;

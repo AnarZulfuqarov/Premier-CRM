@@ -357,3 +357,128 @@
     line-height: 1.4;
   }
 }
+@media (max-width: 576px) {
+  .order-history-detail-supplier {
+    padding: 16px;
+
+    h2 {
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+
+      .link {
+        font-size: 13px;
+      }
+    }
+
+    .order-history-detail-supplier_item {
+      padding: 12px;
+      margin-bottom: 16px;
+
+      .techizat .order-history-supplier__ids,
+      .order-history__details .order-history-supplier__ids {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .order-history-supplier__id {
+        font-size: 13px;
+
+        span {
+          font-size: 14px;
+          margin-right: 8px;
+        }
+      }
+
+      .order-history-supplier__data {
+        padding: 8px 10px;
+        align-items: center;
+        gap: 4px;
+
+        p {
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
+        .quantity-count {
+          font-weight: 500;
+        }
+
+        .quantity-label {
+          font-size: 12px;
+        }
+      }
+
+      .order-history-supplier__details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 20px;
+
+        .order-history-supplier__status {
+          margin-top: 8px;
+        }
+      }
+    }
+
+    .order-history-detail-supplier__table {
+      th, td {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+
+      th .th-label svg,
+      th .th-search svg {
+        width: 18px;
+        height: 18px;
+        margin-left: 8px;
+      }
+
+      th .th-search input {
+        font-size: 12px;
+        padding: 4px 6px;
+      }
+    }
+
+    .table-footer {
+      padding: 8px 12px;
+      font-size: 13px;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .order-history-detail-main-supplier {
+    .confirm-modal {
+      width: 90%;
+      padding: 24px;
+
+      .confirm-modal__iconHead {
+        width: 90px;
+        height: 90px;
+      }
+
+      .confirm-modal__iconMain {
+        width: 60px;
+        height: 60px;
+      }
+
+      .confirm-modal__icon {
+        width: 36px;
+        height: 36px;
+        font-size: 32px;
+      }
+
+      .confirm-modal__text {
+        font-size: 14px;
+      }
+
+      .confirm-modal__close {
+        top: 10px;
+        right: 10px;
+        font-size: 16px;
+      }
+    }
+  }
+}

@@ -55,7 +55,7 @@ const OrderHistoryDetailSuplier = () => {
         return byName && byCat;
     }) || [];
 
-
+    const isMobile = window.innerWidth <= 768;
     return (
         <div className="order-history-detail-main-supplier">
             <div className="order-history-detail-supplier">
@@ -85,7 +85,7 @@ const OrderHistoryDetailSuplier = () => {
                                 {orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼
                             </p>
                         </div>
-                        <span
+                        {isMobile ? ("") : (<div
                             className={`order-history-supplier__status ${
                                 status === 'Tamamlanmış'
                                     ? 'completed'
@@ -94,8 +94,8 @@ const OrderHistoryDetailSuplier = () => {
                                         : 'not-completed'
                             }`}
                         >
-    {status}
-  </span>
+                            {status}
+                        </div>)}
                     </div>
 
                     <div className="order-history-supplier__data">
@@ -109,7 +109,24 @@ const OrderHistoryDetailSuplier = () => {
                             <span className="quantity-label">kateqoriya</span>
                         </p>
                     </div>
-
+                    {isMobile ? (<div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent:"end",
+                        marginTop:"10px"
+                    }}>
+                        <div
+                            className={`order-history-supplier__status ${
+                                status === 'Tamamlanmış'
+                                    ? 'completed'
+                                    : status === 'Sifarişçidən təhvil gözləyən'
+                                        ? 'pending'
+                                        : 'not-completed'
+                            }`}
+                        >
+                            {status}
+                        </div>
+                    </div>) : ("")}
                 </div>
                 <div className="table-wrapper">
                     <div className="table-scroll">

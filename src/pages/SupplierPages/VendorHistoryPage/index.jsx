@@ -85,6 +85,7 @@ const VendorHistorySupplier = () => {
     };
     const navigate = useNavigate()
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const isMobile = window.innerWidth <= 768;
     return (
         <div className={"vendor-detail-main"}>
             <div className="vendor-detail">
@@ -169,17 +170,29 @@ const VendorHistorySupplier = () => {
                                         <span>Ümumi məbləğ:</span> {order.price} ₼
                                     </p>
                                 </div>
-                                <span className={`vendor-detail__status ${
+                                {isMobile ? ("") : (<div className={`vendor-detail__status ${
                                     order.status === 'Tamamlanmış' ? 'completed' :
                                         order.status === 'Sifarişçidən təhvil gözləyən' ? 'pending' : ''
                                 }`}>
-        {order.status}
-      </span>
+                                    {order.status}
+                                </div>)}
                             </div>
                             <div className="vendor-detail__data">
                                 <p>{order.product}</p>
                                 <p>{order.quantity}</p>
                             </div>
+                            {isMobile ? (<div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent:"end"
+                            }}>
+                                <div className={`vendor-detail__status ${
+                                    order.status === 'Tamamlanmış' ? 'completed' :
+                                        order.status === 'Sifarişçidən təhvil gözləyən' ? 'pending' : ''
+                                }`}>
+                                    {order.status}
+                                </div>
+                            </div>) : ("")}
                         </div>
                     ))}
 

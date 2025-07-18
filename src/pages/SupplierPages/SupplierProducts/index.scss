@@ -497,7 +497,7 @@
     background: #f1f1f1;
   }
   .table-scroll::-webkit-scrollbar-thumb {
-    background: #007aff;
+    background: #384871;
     border-radius: 4px;
     cursor: pointer;
   }
@@ -672,4 +672,116 @@
     }
   }
 
+}
+@media (max-width: 576px) {
+  .supplier-product {
+    padding: 16px;
+
+    .headerr {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+
+      .head {
+        h2 {
+          font-size: 20px;
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+
+      button {
+        width: 100%;
+        justify-content: center;
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+
+    .tab-header {
+      gap: 12px;
+
+      .tab-item {
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        padding: 10px;
+
+
+      }
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .order-history-detail-supplier__table {
+      min-width: 600px;
+
+      th,
+      td {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+
+    .modal-box,
+    .delete-modal-box {
+      width: 90%;
+      padding: 24px;
+    }
+
+    .modal-fields input,
+    .modal-fields select {
+      font-size: 13px;
+    }
+
+    .delete-message {
+      font-size: 15px;
+    }
+
+    .delete-sub {
+      font-size: 13px;
+    }
+
+    .delete-modal-actions {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+
+      button {
+        width: 100%;
+        font-size: 14px;
+      }
+    }
+
+    .modal-box h3 {
+      font-size: 16px;
+    }
+
+    .supplier-product__pagination {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      position: static;
+      margin-top: 20px;
+
+      button {
+        font-size: 13px;
+        min-width: 34px;
+        padding: 6px 10px;
+      }
+    }
+
+    .warningg {
+      font-size: 13px;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
 }

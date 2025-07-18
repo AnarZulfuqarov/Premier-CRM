@@ -143,6 +143,34 @@ const showPopup = usePopup()
         localStorage.removeItem('cartData');
     };
 
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        if (value.trim() === '') {
+            // Əgər boşdursa, filtrsiz göstər
+            const category = categories.find(cat => cat.id === selectedCategoryId);
+            if (category) {
+                const updatedProducts = category.products?.map(p => ({
+                    ...p,
+                    quantity: 1
+                })) || [];
+                setFilteredProducts(updatedProducts);
+            }
+        } else {
+            // Axtarışa görə filtr
+            const category = categories.find(cat => cat.id === selectedCategoryId);
+            if (category) {
+                const filtered = category.products?.filter(product =>
+                    product.name.toLowerCase().includes(value.toLowerCase())
+                ).map(p => ({
+                    ...p,
+                    quantity: 1
+                })) || [];
+                setFilteredProducts(filtered);
+            }
+        }
+    };
 
 
     useEffect(() => {

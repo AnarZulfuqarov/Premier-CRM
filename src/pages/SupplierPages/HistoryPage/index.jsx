@@ -95,6 +95,7 @@ const OrderHistorySupplier = () => {
     };
     const navigate = useNavigate()
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const isMobile = window.innerWidth <= 768;
     return (
         <div className={"order-history-main-supplier"}>
             <div className="order-history-supplier">
@@ -170,17 +171,19 @@ const OrderHistorySupplier = () => {
                                         <span>Ümumi məbləğ:</span> {order.price} ₼
                                     </p>
                                 </div>
-                                <span
-                                    className={`order-history-supplier__status ${
-                                        order.status === 'Tamamlanmış'
-                                            ? 'completed'
-                                            : order.status === 'Sifarişçidən təhvil gözləyən'
-                                                ? 'pending'
-                                                : 'not-completed'
-                                    }`}
-                                >
-                {order.status}
-              </span>
+                                {isMobile ? ("") : (
+                                    <div
+                                        className={`order-history-supplier__status ${
+                                            order.status === 'Tamamlanmış'
+                                                ? 'completed'
+                                                : order.status === 'Sifarişçidən təhvil gözləyən'
+                                                    ? 'pending'
+                                                    : 'not-completed'
+                                        }`}
+                                    >
+                                        {order.status}
+                                    </div>
+                                )}
                             </div>
                             <div className="order-history-supplier__data">
                                 <p>{order.product}</p>
@@ -191,6 +194,24 @@ const OrderHistorySupplier = () => {
                                     <span className="quantity-label">kateqoriya</span>
                                 </p>
                             </div>
+                            {isMobile ? (<div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent:"end",
+                                marginTop:"10px"
+                            }}>
+                                <div
+                                    className={`order-history-supplier__status ${
+                                        order.status === 'Tamamlanmış'
+                                            ? 'completed'
+                                            : order.status === 'Sifarişçidən təhvil gözləyən'
+                                                ? 'pending'
+                                                : 'not-completed'
+                                    }`}
+                                >
+                                    {order.status}
+                                </div>
+                            </div>): ("")}
                         </div>
                     ))}
                 </div>
