@@ -173,7 +173,24 @@
   position: relative;
   /* index.scss – modallarla ilgili eklemeler */
 
+  .navbar__menu-icon{
+    display: none;
+    border: none;
+    font-size: 24px;
+    margin-left: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    background: #D6EBFF;
+    width: 24px;
+    height: 24px;
+    align-content: center;
 
+    @media screen and (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
   .navbar_right{
     display: flex;
     justify-content: space-between;

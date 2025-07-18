@@ -60,6 +60,17 @@ const SuperPersonAdd = () => {
             showPopup("Xəta baş verdi", "İstifadəçi əlavə olunmadı", "error")
         }
     };
+    const isFormValid = () => {
+        return rows.every(row =>
+            row.name.trim() &&
+            row.surname.trim() &&
+            row.fin.trim() &&
+            row.position &&
+            Array.isArray(row.departments) && row.departments.length > 0 &&
+            row.password.trim() &&
+            row.phone.trim()
+        );
+    };
 
 
     return (
@@ -103,6 +114,7 @@ const SuperPersonAdd = () => {
                                     placeholder="Soyad daxil et"
                                     value={row.surname}
                                     onChange={(e) => handleChange(index, 'surname', e.target.value)}
+                                    required
                                 />
                             </td>
                             <td>
@@ -111,6 +123,7 @@ const SuperPersonAdd = () => {
                                     placeholder="FİN daxil et"
                                     value={row.fin}
                                     onChange={(e) => handleChange(index, 'fin', e.target.value)}
+                                    required
                                 />
                             </td>
                             <td>
@@ -119,6 +132,7 @@ const SuperPersonAdd = () => {
                                     selected={row.position}
                                     onSelect={(value) => handleChange(index, 'position', value)}
                                     placeholder="Vəzifə seç"
+
                                 />
                             </td>
                             <td>
@@ -149,6 +163,7 @@ const SuperPersonAdd = () => {
                                     placeholder="Şifrə daxil et"
                                     value={row.password}
                                     onChange={(e) => handleChange(index, 'password', e.target.value)}
+                                    required
                                 />
                             </td>
                             <td>
@@ -157,28 +172,22 @@ const SuperPersonAdd = () => {
                                     placeholder="Nömrə daxil et"
                                     value={row.phone}
                                     onChange={(e) => handleChange(index, 'phone', e.target.value)}
+                                    required
                                 />
                             </td>
                         </tr>
                     ))}
-                    <tr>
-                        <td colSpan="7">
-                            <button className="add-row-btn" onClick={addRow}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
-                                    <path d="M12.5 23C6.71 23 2 18.29 2 12.5C2 6.71 6.71 2 12.5 2C18.29 2 23 6.71 23 12.5C23 18.29 18.29 23 12.5 23ZM12.5 3.5C7.535 3.5 3.5 7.535 3.5 12.5C3.5 17.465 7.535 21.5 12.5 21.5C17.465 21.5 21.5 17.465 21.5 12.5C21.5 7.535 17.465 3.5 12.5 3.5Z" fill="#6C6C6C"/>
-                                    <path d="M12.5 17.75C12.08 17.75 11.75 17.42 11.75 17V8C11.75 7.58 12.08 7.25 12.5 7.25C12.92 7.25 13.25 7.58 13.25 8V17C13.25 17.42 12.92 17.75 12.5 17.75Z" fill="#6C6C6C"/>
-                                    <path d="M17 13.25H8C7.58 13.25 7.25 12.92 7.25 12.5C7.25 12.08 7.58 11.75 8 11.75H17C17.42 11.75 17.75 12.08 17.75 12.5C17.75 12.92 17.42 13.25 17 13.25Z" fill="#6C6C6C"/>
-                                </svg>
-                                Yeni istifadəçi əlavə et
-                            </button>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={handleSubmit}>
+                <button
+                    className={`confirm-btn ${!isFormValid() ? 'disabled' : ''}`}
+                    onClick={handleSubmit}
+                    disabled={!isFormValid()}
+                >
                     Təsdiqlə
                 </button>
+
 
             </div>
 

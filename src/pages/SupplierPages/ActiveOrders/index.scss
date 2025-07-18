@@ -17,6 +17,35 @@
   background: #fff;
   min-height: calc(100vh - 129px);
   position: relative;
+  .eye-icon-cell {
+    text-align: center;
+
+    button {
+      background: #F0F7FF;
+      border: 1px solid #384871;
+      border-radius: 9px;
+      color: #384871;
+      font-size: 14px;
+      padding: 6px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      button {
+        padding: 6px;
+        width: 32px;
+        height: 32px;
+        font-size: 0; // Yazını gizlət
+      }
+    }
+  }
 
   h2 {
     font-size: 24px;
@@ -31,10 +60,7 @@
 
   .order-table-wrapper {
     display: flex;
-    border: 1px solid #ddd;
     background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
 
     .scrollable-part {
       width: 100%;
@@ -189,3 +215,93 @@
     }
   }
 }
+@media (max-width: 576px) {
+  .active-order {
+    padding: 16px;
+
+    h2 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .order-table-wrapper {
+      flex-direction: row; // row olaraq qalacaq (important!)
+
+      .scrollable-part {
+        width: calc(100% - 60px); // solda qalan hissə
+        overflow-x: auto;
+
+        table {
+          min-width: 600px;
+
+          thead th,
+          tbody td {
+            font-size: 12px;
+            padding: 8px;
+          }
+        }
+      }
+
+      .fixed-column {
+        width: 100px; // daha dar
+        position: sticky;
+        right: 0;
+        top: 0;
+        z-index: 10;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
+
+        .header {
+          font-size: 12px;
+          padding: 8px;
+          height: 37px;
+        }
+
+        .cell {
+          height: 34px  ; // sətir hündürlüyünə uyğun
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-bottom: 1px solid #eee;
+          padding: 8px;
+          button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #384871;
+            padding: 4px;
+            cursor: pointer;
+
+            &:hover {
+              color: #2e375a;
+            }
+          }
+        }
+      }
+    }
+
+    &__pagination {
+      position: absolute;
+      margin-top: 20px;
+      flex-wrap: wrap;
+
+      button {
+        font-size: 12px;
+        padding: 6px 10px;
+        min-width: 32px;
+      }
+    }
+  }
+
+  .active-order-main {
+    .xett {
+      display: none;
+    }
+  }
+}
+

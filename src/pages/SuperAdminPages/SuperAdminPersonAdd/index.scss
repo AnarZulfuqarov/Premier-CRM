@@ -166,5 +166,11 @@
     font-size: 16px;
     cursor: pointer;
   }
+  .confirm-btn.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
 
 }
