@@ -109,7 +109,7 @@ const ActiveOrdersDetail = () => {
         printWindow.print();
         printWindow.close();
     };
-
+    const isMobile = window.innerWidth <= 768;
     return (
         <div className="active-order-detail-main">
             <div className="active-order-detail">
@@ -118,56 +118,57 @@ const ActiveOrdersDetail = () => {
                         <NavLink className="link" to="/supplier/activeOrder">— Aktiv sifarişlər</NavLink>{' '}
                         — Sifariş detallları
                     </h2>
-                    {!isCompleted && (
-                        <button onClick={async () => {
-                            // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
-                            if (!Object.keys(confirmedRows).length) {
-                                showPopup("Əməliyyat mümkün olmadı", "Davam etmək üçün ən azı 1 məhsulu tamamlamalısınız. Zəhmət olmasa, yoxlayın və yenidən cəhd edin.0", "warning");
-                                return;
-                            }
+                    {isMobile ? ("") : (
+                        <>{!isCompleted && (
+                            <button onClick={async () => {
+                                // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
+                                if (!Object.keys(confirmedRows).length) {
+                                    showPopup("Əməliyyat mümkün olmadı", "Davam etmək üçün ən azı 1 məhsulu tamamlamalısınız. Zəhmət olmasa, yoxlayın və yenidən cəhd edin.0", "warning");
+                                    return;
+                                }
 
-                            // JSON üçün array düzəlt
-                            const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
-                                const originalItem = filtered[parseInt(index)];
-                                const vendor = vendors?.find(v => v.name === row.vendor);
-                                return {
-                                    orderItemId: originalItem.itemId,
-                                    price: parseFloat(row.price.replace(' ₼', '')),
-                                    suppliedQuantity: parseFloat(row.quantity),
-                                    vendorId: vendor?.id || '',
-                                };
-                            });
+                                // JSON üçün array düzəlt
+                                const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
+                                    const originalItem = filtered[parseInt(index)];
+                                    const vendor = vendors?.find(v => v.name === row.vendor);
+                                    return {
+                                        orderItemId: originalItem.itemId,
+                                        price: parseFloat(row.price.replace(' ₼', '')),
+                                        suppliedQuantity: parseFloat(row.quantity),
+                                        vendorId: vendor?.id || '',
+                                    };
+                                });
 
-                            const formData = new FormData();
-                            formData.append("orderId", id);
+                                const formData = new FormData();
+                                formData.append("orderId", id);
 
-                            // ⚠️ Warning 2: invoys yüklənməyibsə
-                            if (!uploadedFiles.length) {
-                                showPopup("Invoys sənədi əlavə olunmayıb", "Sifarişi tamamlamaq üçün invoys sənədini yükləməlisiniz.", "warning");
-                                return;
-                            }
+                                // ⚠️ Warning 2: invoys yüklənməyibsə
+                                if (!uploadedFiles.length) {
+                                    showPopup("Invoys sənədi əlavə olunmayıb", "Sifarişi tamamlamaq üçün invoys sənədini yükləməlisiniz.", "warning");
+                                    return;
+                                }
 
-                            // invoys faylları əlavə et
-                            uploadedFiles.forEach(f => {
-                                formData.append("orderOverhead", f.file);
-                            });
+                                // invoys faylları əlavə et
+                                uploadedFiles.forEach(f => {
+                                    formData.append("orderOverhead", f.file);
+                                });
 
-                            formData.append("orderItemsJson", JSON.stringify(itemsArray));
+                                formData.append("orderItemsJson", JSON.stringify(itemsArray));
 
-                            try {
-                                const response = await complateOrder(formData).unwrap();
+                                try {
+                                    const response = await complateOrder(formData).unwrap();
 
-                                // ✅ Success
-                                showPopup("Uğurlu əməliyyat", "Sifariş sistemə uğurla daxil edildi.", "success");
-                                navigate("/supplier/activeOrder");
-                            } catch (err) {
-                                // 🔴 Error
-                                showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
-                            }
-                        }}>
-                            Sifarişi tamamla
-                        </button>
-
+                                    // ✅ Success
+                                    showPopup("Uğurlu əməliyyat", "Sifariş sistemə uğurla daxil edildi.", "success");
+                                    navigate("/supplier/activeOrder");
+                                } catch (err) {
+                                    // 🔴 Error
+                                    showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
+                                }
+                            }}>
+                                Sifarişi tamamla
+                            </button>
+                        )}</>
                     )}
 
 
@@ -192,14 +193,81 @@ const ActiveOrdersDetail = () => {
                         </p>
                     </div>
 
-                    <button onClick={handlePrint}>
+                    {isMobile ? (
+                        <div style={{
+                            display:"flex",
+                            justifyContent:"center",
+                            alignItems:"center",
+                            width:"100%",
+                            gap:"10px"
+                        }}>
+                            {!isCompleted && (
+                                <button className={'complateBtn'} onClick={async () => {
+                                    // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
+                                    if (!Object.keys(confirmedRows).length) {
+                                        showPopup("Əməliyyat mümkün olmadı", "Davam etmək üçün ən azı 1 məhsulu tamamlamalısınız. Zəhmət olmasa, yoxlayın və yenidən cəhd edin.0", "warning");
+                                        return;
+                                    }
+
+                                    // JSON üçün array düzəlt
+                                    const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
+                                        const originalItem = filtered[parseInt(index)];
+                                        const vendor = vendors?.find(v => v.name === row.vendor);
+                                        return {
+                                            orderItemId: originalItem.itemId,
+                                            price: parseFloat(row.price.replace(' ₼', '')),
+                                            suppliedQuantity: parseFloat(row.quantity),
+                                            vendorId: vendor?.id || '',
+                                        };
+                                    });
+
+                                    const formData = new FormData();
+                                    formData.append("orderId", id);
+
+                                    // ⚠️ Warning 2: invoys yüklənməyibsə
+                                    if (!uploadedFiles.length) {
+                                        showPopup("Invoys sənədi əlavə olunmayıb", "Sifarişi tamamlamaq üçün invoys sənədini yükləməlisiniz.", "warning");
+                                        return;
+                                    }
+
+                                    // invoys faylları əlavə et
+                                    uploadedFiles.forEach(f => {
+                                        formData.append("orderOverhead", f.file);
+                                    });
+
+                                    formData.append("orderItemsJson", JSON.stringify(itemsArray));
+
+                                    try {
+                                        const response = await complateOrder(formData).unwrap();
+
+                                        // ✅ Success
+                                        showPopup("Uğurlu əməliyyat", "Sifariş sistemə uğurla daxil edildi.", "success");
+                                        navigate("/supplier/activeOrder");
+                                    } catch (err) {
+                                        // 🔴 Error
+                                        showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
+                                    }
+                                }}>
+                                    Sifarişi tamamla
+                                </button>
+                            )}
+                            <button className={"printBtn"} onClick={handlePrint}>
+                                <span>Çap et</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M15.753 3C16.3497 3 16.922 3.23705 17.344 3.65901C17.7659 4.08097 18.003 4.65326 18.003 5.25L18.002 6.003H18.752C19.614 6.00353 20.4405 6.34605 21.0502 6.95537C21.6599 7.56469 22.0029 8.39103 22.004 9.253L22.007 15.25C22.007 15.8464 21.7702 16.4184 21.3487 16.8403C20.9272 17.2622 20.3554 17.4995 19.759 17.5H18V18.75C18 19.3467 17.7629 19.919 17.341 20.341C16.919 20.7629 16.3467 21 15.75 21H8.25C7.65326 21 7.08097 20.7629 6.65901 20.341C6.23705 19.919 6 19.3467 6 18.75V17.5H4.25C3.65326 17.5 3.08097 17.2629 2.65901 16.841C2.23705 16.419 2 15.8467 2 15.25V9.254C2 8.39205 2.34241 7.5654 2.9519 6.9559C3.5614 6.34641 4.38805 6.004 5.25 6.004L5.999 6.003L6 5.25C6 4.65326 6.23705 4.08097 6.65901 3.65901C7.08097 3.23705 7.65326 3 8.25 3H15.753ZM15.75 13.5H8.25C8.05109 13.5 7.86032 13.579 7.71967 13.7197C7.57902 13.8603 7.5 14.0511 7.5 14.25V18.75C7.5 19.164 7.836 19.5 8.25 19.5H15.75C15.9489 19.5 16.1397 19.421 16.2803 19.2803C16.421 19.1397 16.5 18.9489 16.5 18.75V14.25C16.5 14.0511 16.421 13.8603 16.2803 13.7197C16.1397 13.579 15.9489 13.5 15.75 13.5ZM18.752 7.504H5.25C4.78587 7.504 4.34075 7.68837 4.01256 8.01656C3.68437 8.34475 3.5 8.78987 3.5 9.254V15.25C3.5 15.664 3.836 16 4.25 16H6V14.25C6 13.6533 6.23705 13.081 6.65901 12.659C7.08097 12.2371 7.65326 12 8.25 12H15.75C16.3467 12 16.919 12.2371 17.341 12.659C17.7629 13.081 18 13.6533 18 14.25V16H19.783C19.9772 15.9933 20.1612 15.9114 20.2963 15.7717C20.4313 15.632 20.5069 15.4453 20.507 15.251L20.504 9.254C20.5029 8.78985 20.318 8.34504 19.9896 8.01702C19.6612 7.68901 19.2162 7.50453 18.752 7.504ZM15.752 4.5H8.25C8.05109 4.5 7.86032 4.57902 7.71967 4.71967C7.57902 4.86032 7.5 5.05109 7.5 5.25L7.499 6.003H16.502V5.25C16.502 5.05109 16.423 4.86032 16.2823 4.71967C16.1417 4.57902 15.9509 4.5 15.752 4.5Z"
+                                        fill="#434343"/>
+                                </svg>
+                            </button>
+                        </div>
+                    ) : ( <button className={"printBtn"} onClick={handlePrint}>
                         <span>Çap et</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M15.753 3C16.3497 3 16.922 3.23705 17.344 3.65901C17.7659 4.08097 18.003 4.65326 18.003 5.25L18.002 6.003H18.752C19.614 6.00353 20.4405 6.34605 21.0502 6.95537C21.6599 7.56469 22.0029 8.39103 22.004 9.253L22.007 15.25C22.007 15.8464 21.7702 16.4184 21.3487 16.8403C20.9272 17.2622 20.3554 17.4995 19.759 17.5H18V18.75C18 19.3467 17.7629 19.919 17.341 20.341C16.919 20.7629 16.3467 21 15.75 21H8.25C7.65326 21 7.08097 20.7629 6.65901 20.341C6.23705 19.919 6 19.3467 6 18.75V17.5H4.25C3.65326 17.5 3.08097 17.2629 2.65901 16.841C2.23705 16.419 2 15.8467 2 15.25V9.254C2 8.39205 2.34241 7.5654 2.9519 6.9559C3.5614 6.34641 4.38805 6.004 5.25 6.004L5.999 6.003L6 5.25C6 4.65326 6.23705 4.08097 6.65901 3.65901C7.08097 3.23705 7.65326 3 8.25 3H15.753ZM15.75 13.5H8.25C8.05109 13.5 7.86032 13.579 7.71967 13.7197C7.57902 13.8603 7.5 14.0511 7.5 14.25V18.75C7.5 19.164 7.836 19.5 8.25 19.5H15.75C15.9489 19.5 16.1397 19.421 16.2803 19.2803C16.421 19.1397 16.5 18.9489 16.5 18.75V14.25C16.5 14.0511 16.421 13.8603 16.2803 13.7197C16.1397 13.579 15.9489 13.5 15.75 13.5ZM18.752 7.504H5.25C4.78587 7.504 4.34075 7.68837 4.01256 8.01656C3.68437 8.34475 3.5 8.78987 3.5 9.254V15.25C3.5 15.664 3.836 16 4.25 16H6V14.25C6 13.6533 6.23705 13.081 6.65901 12.659C7.08097 12.2371 7.65326 12 8.25 12H15.75C16.3467 12 16.919 12.2371 17.341 12.659C17.7629 13.081 18 13.6533 18 14.25V16H19.783C19.9772 15.9933 20.1612 15.9114 20.2963 15.7717C20.4313 15.632 20.5069 15.4453 20.507 15.251L20.504 9.254C20.5029 8.78985 20.318 8.34504 19.9896 8.01702C19.6612 7.68901 19.2162 7.50453 18.752 7.504ZM15.752 4.5H8.25C8.05109 4.5 7.86032 4.57902 7.71967 4.71967C7.57902 4.86032 7.5 5.05109 7.5 5.25L7.499 6.003H16.502V5.25C16.502 5.05109 16.423 4.86032 16.2823 4.71967C16.1417 4.57902 15.9509 4.5 15.752 4.5Z"
                                 fill="#434343"/>
                         </svg>
-                    </button>
+                    </button>)}
                 </div>
                 <div style={{display: 'none'}}>
                     <div ref={printRef}>
