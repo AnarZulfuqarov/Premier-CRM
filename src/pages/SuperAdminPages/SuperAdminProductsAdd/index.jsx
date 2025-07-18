@@ -3,6 +3,7 @@ import './index.scss';
 import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 import {useCreateProductsMutation, useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const units = ['kg', 'litr', 'ədəd'];
 
@@ -21,7 +22,7 @@ const SuperProductsAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
-
+    const showPopup = usePopup()
     return (
         <div className="super-admin-product-add-main">
             <div className="super-admin-product-add">
@@ -114,7 +115,7 @@ const SuperProductsAdd = () => {
                             setShowSuccessModal(true);
                             setRows([{ name: '', category: '', unit: '' }]); // form sıfırlansın
                         } catch (error) {
-                            console.error("Məhsul əlavə edilərkən xəta:", error);
+                            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                         }
                     }}
                 >

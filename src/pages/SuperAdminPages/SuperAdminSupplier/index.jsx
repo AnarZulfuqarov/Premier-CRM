@@ -2,6 +2,7 @@ import './index.scss';
 import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useDeleteFighterMutation, useEditFighterMutation, useGetAllFightersQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminSupplier = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -10,7 +11,7 @@ const SuperAdminSupplier = () => {
     const navigate = useNavigate();
     const pageSize = 8;
     const [deleteIndex, setDeleteIndex] = useState(null);
-
+    const showPopup = usePopup()
     const [editingUser, setEditingUser] = useState(null);
     const {data:getAllFighters,refetch} = useGetAllFightersQuery()
     const supliers = getAllFighters?.data
@@ -81,12 +82,11 @@ const SuperAdminSupplier = () => {
                 password: isPasswordChanged ? updatedUser.password : null
             }).unwrap();
 
-            alert("Dəyişikliklər uğurla yadda saxlanıldı.");
+            showPopup("Təchizatçıya düzəliş etdiniz","Dəyişikliklər uğurla yadda saxlanıldı","success")
             setEditingUser(null);
             refetch();
-        } catch (err) {
-            console.error("Edit error:", err);
-            alert("Xəta baş verdi. Dəyişikliklər yadda saxlanmadı.");
+        } catch  {
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
         }
     };
 
@@ -359,12 +359,11 @@ const SuperAdminSupplier = () => {
                                         }
 
                                         await deleteFighter(phoneNumber).unwrap();
-                                        alert("Təchizatçı uğurla silindi.");
+                                        showPopup("Təchizatçını sildiniz","Seçilmiş təchizatçı sistemdən uğurla silindi","success")
                                         setDeleteIndex(null);
                                         refetch();
-                                    } catch (err) {
-                                        console.error("Silinmə xətası:", err);
-                                        alert("Xəta baş verdi. Təchizatçı silinmədi.");
+                                    } catch  {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >

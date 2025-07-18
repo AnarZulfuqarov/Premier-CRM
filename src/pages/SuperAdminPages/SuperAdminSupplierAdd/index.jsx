@@ -130,14 +130,7 @@ const SuperSupplierAdd = () => {
                                     phoneNumber: row.phoneNumber
                                 }).unwrap();
 
-                                if (response?.statusCode !== 200) {
-                                    showPopup(
-                                        "Əlavə olunmadı",
-                                        `${row.name} ${row.surname} adlı təchizatçı sistemə əlavə edilə bilmədi.`,
-                                        "error"
-                                    );
-                                    return;
-                                }
+
                             }
 
                             setShowSuccessModal(true);

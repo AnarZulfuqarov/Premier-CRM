@@ -49,13 +49,6 @@ const SuperPersonAdd = () => {
                     sectionIds: selectedSectionIds
                 };
 
-                const response = await post(payload).unwrap();
-
-                // Əgər backend-dən gələn cavab uğurlu deyilsə
-                if (response?.statusCode !== 200) {
-                    showPopup("Xəta baş verdi", "İstifadəçi əlavə olunmadı", "error")
-                    return;
-                }
             }
 
             // Hər şey uğurlu oldusa modal aç

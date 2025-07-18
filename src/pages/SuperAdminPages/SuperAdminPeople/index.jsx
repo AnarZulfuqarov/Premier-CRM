@@ -6,11 +6,11 @@ import {
     useEditCustomerMutation,
     useGetAllCustomersQuery, useGetAllJobsQuery
 } from "../../../services/adminApi.jsx";
-import {FaSearch} from "react-icons/fa";
 import {IoSearchSharp} from "react-icons/io5";
 import {MdOutlineRemoveRedEye} from "react-icons/md";
 import {LuPencil} from "react-icons/lu";
 import {GoPlusCircle, GoTrash} from "react-icons/go";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminPeople = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +19,7 @@ const SuperAdminPeople = () => {
     const navigate = useNavigate();
     const pageSize = 8;
     const [deleteIndex, setDeleteIndex] = useState(null);
-
+    const showPopup = usePopup()
     const [editingUser, setEditingUser] = useState(null);
 
     const {data: getAllCustomers, refetch} = useGetAllCustomersQuery();
@@ -82,8 +82,9 @@ const SuperAdminPeople = () => {
             await editCustomer(payload).unwrap();
             setEditingUser(null);
             refetch();
+            showPopup("İstifadəçiyə uğurla düzəliş etdiniz","Dəyişikliklər yadda saxlanıldı","success")
         } catch (error) {
-            console.error('Redaktə zamanı xəta:', error);
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
         }
     };
 
@@ -94,9 +95,10 @@ const SuperAdminPeople = () => {
         try {
             await deleteCustomer(userToDelete.id).unwrap();
             setDeleteIndex(null);
-            refetch(); // güncel veriyi al
+            refetch();
+            showPopup("İstifadəçini uğurla sildiniz","Seçilmiş istifadəçi sistemdən silindi","success")
         } catch (err) {
-            console.error('Silinmə zamanı xəta:', err);
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
         }
     };
 

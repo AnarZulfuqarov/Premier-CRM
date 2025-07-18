@@ -165,7 +165,7 @@ const SupplierCategories = () => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
-                                            <td>kq</td>
+                                            <td>{item?.products?.length}</td>
                                             <td>
                   <span style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
                       <div style={{
@@ -266,7 +266,7 @@ const SupplierCategories = () => {
                                         return (
                                             <tr key={i}>
                                                 <td>{item.name}</td>
-                                                <td>kq</td>
+                                                <td>{item?.products?.length}</td>
                                                 <td>
                                                     <div style={{
                                                         display: 'flex',

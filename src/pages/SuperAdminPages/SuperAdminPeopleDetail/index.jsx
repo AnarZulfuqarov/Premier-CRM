@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {useDeleteCustomerBolmeMutation, useGetByIdCustomersQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminPeopleDetail = () => {
     const {id} = useParams();
@@ -11,7 +12,7 @@ const SuperAdminPeopleDetail = () => {
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
-
+    const showPopup = usePopup()
     const navigate = useNavigate();
     const pageSize = 9;
     const {data: getByIdCustomers,refetch} = useGetByIdCustomersQuery(id);
@@ -220,8 +221,9 @@ const SuperAdminPeopleDetail = () => {
                                         await deleteSection({ customerId: id, sectionId });
                                         setDeleteIndex(null);
                                         refetch()
-                                    } catch (error) {
-                                        console.error("Silinmə zamanı xəta baş verdi:", error);
+                                        showPopup("Bölmə icazəsi deaktiv edildi","Seçilmiş istifadəçinin bölmə icazəsini ləğv etdiniz","success")
+                                    } catch  {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >

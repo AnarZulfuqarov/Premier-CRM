@@ -18,6 +18,7 @@ import {
     useGetProductUpdatePendingQuery,
 } from "../../../services/adminApi.jsx";
 import { useLocation } from 'react-router-dom';
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SuperAdminProducts = () => {
     const location = useLocation();
     const { state } = location;
@@ -31,7 +32,7 @@ const SuperAdminProducts = () => {
     const [confirmedRows, setConfirmedRows] = useState({});
     const [activeTab, setActiveTab] = useState('products'); // Sekme kontrolü eklendi
     const [deleteIndex, setDeleteIndex] = useState(null);
-
+    const showPopup = usePopup()
     const navigate = useNavigate();
     const pageSize = 9;
     const {data:getAllProducts,refetch:productRefetch} = useGetAllProductsQuery()
@@ -323,14 +324,16 @@ const SuperAdminProducts = () => {
                                         try {
                                             if (item.statusType === 'add') {
                                                 await confirmAdd( item.id );
+                                                showPopup("Məhsul yaratma tələbini təsdiq etdiniz","Yeni məhsul sistemə əlavə olundu","success")
                                             } else if (item.statusType === 'delete') {
                                                 await confirmDelete(item.id);
+                                                showPopup("Məhsulun silinmə tələbini təsdiq etdiniz","Seçilmiş məhsul sistemdən silindi","success")
                                             }
                                             addPendingRefetch()
                                             deletePendingRefetch()
                                             productRefetch();
-                                        } catch (error) {
-                                            console.error("Onaylama zamanı xəta:", error);
+                                        } catch {
+                                            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                         }
                                     };
 
@@ -338,14 +341,16 @@ const SuperAdminProducts = () => {
                                         try {
                                             if (item.statusType === 'add') {
                                                 await rejectAdd(item.id);
+                                                showPopup("Məhsul yaratma tələbini ləğv etdiniz","Məhsul yaradılması ilə bağlı tələb silindi","success")
                                             } else if (item.statusType === 'delete') {
                                                 await rejectDelete(item.id);
+                                                showPopup("Məhsulun silinmə tələbini ləğv etdiniz","Məhsul sistemdə saxlanıldı","success")
                                             }
                                             addPendingRefetch()
                                             deletePendingRefetch()
                                             productRefetch();
-                                        } catch (error) {
-                                            console.error("Rədd zamanı xəta:", error);
+                                        } catch {
+                                            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                         }
                                     };
                                     return (
@@ -461,9 +466,9 @@ const SuperAdminProducts = () => {
                                                                  await confirmEdit(item.id );
                                                                  productRefetch()
                                                                  editRefetch();
-                                                             } catch (error) {
-                                                                 console.error("Onaylama zamanı xəta:", error);
-                                                             }
+                                                                 showPopup("Məhsulun edit tələbəni təsdiq etdiniz","Dəyişikliklər uğurla tətbiq olundu","success")
+                                                             } catch  {
+                                                                 showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")}
                                                          }}
                                                          xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                                         <circle cx="10" cy="10" r="10" fill="#4CAF50"/>
@@ -475,8 +480,9 @@ const SuperAdminProducts = () => {
                                                                  await rejectEdit(item.id );
                                                                  productRefetch()
                                                                  editRefetch();
-                                                             } catch (error) {
-                                                                 console.error("Rədd zamanı xəta:", error);
+                                                                 showPopup("Məhsulun edit tələbini ləğv etdiniz","Gözləmədə olan düzəliş tələbi silindi","success")
+                                                             } catch  {
+                                                                 showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                                              }
                                                          }}
                                                          xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -577,8 +583,9 @@ const SuperAdminProducts = () => {
                                     });
                                     setModalData(null);
                                     productRefetch();
-                                } catch (err) {
-                                    console.error("Update failed:", err);
+                                    showPopup("Məhsula uğurla düzəliş etdiniz","Dəyişikliklər uğurla yadda saxlanıldı","success")
+                                } catch  {
+                                    showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                 }
                             }}
                         >
@@ -611,9 +618,10 @@ const SuperAdminProducts = () => {
                                     try {
                                         await deleteProduct(deleteIndex); // məhsulun ID-si backend-ə gedir
                                         setDeleteIndex(null);
-                                        productRefetch(); // məhsul siyahısını yenilə
-                                    } catch (err) {
-                                        console.error("Delete failed:", err);
+                                        productRefetch();
+                                        showPopup("Məhsulu uğurla sildiniz","Seçilmiş məhsul sistemdən silindi","success")
+                                    } catch {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >

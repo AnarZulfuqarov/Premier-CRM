@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {useDeleteVendorMutation, useEditVendorMutation, useGetAllVendorsQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminVendors = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -12,7 +13,7 @@ const SuperAdminVendors = () => {
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [selectedVendor, setSelectedVendor] = useState(null);
     const [newVendorName, setNewVendorName] = useState('');
-
+    const showPopup = usePopup()
     const pageSize = 5;
     const navigate = useNavigate();
 
@@ -167,6 +168,7 @@ const SuperAdminVendors = () => {
                                 setEditModalVisible(false);
                                 setSelectedVendor(null);
                                 refetch();
+                                showPopup("Vendora uğurla düzəliş etdiniz","Dəyişikliklər yadda saxlanıldı və vendor məlumatları yeniləndi.","success")
                             }}
                         >
                             Yadda saxla
@@ -196,6 +198,7 @@ const SuperAdminVendors = () => {
                                     setDeleteModalVisible(false);
                                     setSelectedVendor(null);
                                     refetch();
+                                    showPopup("Vendoru uğurla sildiniz","Seçilmiş vendor sistemdən silindi","success")
                                 }}
                             >
                                 Sil

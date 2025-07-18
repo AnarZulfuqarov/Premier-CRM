@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './index.scss';
 import { NavLink } from "react-router-dom";
 import { useCreateCompanyMutation } from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminCompanyAdd = () => {
     const [rows, setRows] = useState([{ name: '' }]);
@@ -17,7 +18,7 @@ const SuperAdminCompanyAdd = () => {
     const addRow = () => {
         setRows([...rows, { name: '' }]);
     };
-
+    const showPopup = usePopup()
     const handleSubmit = async () => {
         try {
             for (const row of rows) {
@@ -29,9 +30,9 @@ const SuperAdminCompanyAdd = () => {
                 }
             }
             setShowSuccessModal(true);
-        } catch (error) {
-            console.error(error);
-            alert('Bir xəta baş verdi!');
+        } catch {
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+
         }
     };
 

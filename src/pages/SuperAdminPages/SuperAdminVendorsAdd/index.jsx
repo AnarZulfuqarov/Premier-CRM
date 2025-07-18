@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
 import {useCreateVendorsMutation} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 
 const SuperVendorAdd = () => {
@@ -13,7 +14,7 @@ const SuperVendorAdd = () => {
         updatedRows[index][field] = value;
         setRows(updatedRows);
     };
-
+    const showPopup = usePopup()
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
@@ -26,8 +27,8 @@ const SuperVendorAdd = () => {
             }
             setShowSuccessModal(true);
             setRows([{ name: '' }]); // form sıfırlansın
-        } catch (error) {
-            console.error("Vendor əlavə olunarkən xəta baş verdi:", error);
+        } catch {
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
         }
     };
     return (

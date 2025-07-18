@@ -7,18 +7,18 @@ import {
     useEditCompanyMutation,
     useGetAllCompaniesQuery
 } from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminCompanies = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(false);
     const [deleteCompanyId, setDeleteCompanyId] = useState(null);
-    console.log(deleteCompanyId)
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const [editCompanyData, setEditCompanyData] = useState({ id: '', name: '' });
-
+    const showPopup = usePopup()
     const { data: getAllCompanies,refetch  } = useGetAllCompaniesQuery();
     const data = getAllCompanies?.data || [];
     const [edit] = useEditCompanyMutation()
@@ -172,8 +172,10 @@ const SuperAdminCompanies = () => {
                                     setModalVisible(false);
                                     setEditCompanyData({ id: '', name: '' });
                                     refetch();
-                                } catch (err) {
-                                    console.error("Edit xətası:", err);
+                                    showPopup("Şirkətə uğurla düzəliş etdiniz","Dəyişikliklər yadda saxlanıldı","success")
+                                } catch  {
+                                    showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+
                                 }
                             }}
                         >
@@ -198,8 +200,9 @@ const SuperAdminCompanies = () => {
                                         await deleteCompany(deleteCompanyId);
                                         setDeleteCompanyId(null);
                                         refetch();
-                                    } catch (err) {
-                                        console.error("Silinmə xətası:", err);
+                                        showPopup("Şirkəti uğurla sildiniz","Seçilmiş şirkət sistemdən silindi","success")
+                                    } catch {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >

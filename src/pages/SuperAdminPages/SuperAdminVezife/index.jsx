@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {useDeleteJobMutation, useEditJobMutation, useGetAllJobsQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const  SuperAdminVezife = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -11,7 +12,7 @@ const  SuperAdminVezife = () => {
     const [jobToDelete, setJobToDelete] = useState(null);
     const [newJobName, setNewJobName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-
+    const showPopup = usePopup()
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
@@ -163,8 +164,9 @@ const  SuperAdminVezife = () => {
                                     await edit({ id: selectedJob.id, name: newJobName }).unwrap();
                                     setModalVisible(false);
                                     refetch();
-                                } catch (err) {
-                                    console.error("Edit error:", err);
+                                    showPopup("Vəzifəyə düzəliş etdiniz","Dəyişikliklər uğurla yadda saxlanıldı","success")
+                                } catch {
+                                    showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                 }
                             }}
                         >
@@ -196,8 +198,9 @@ const  SuperAdminVezife = () => {
                                         await deleteJob(jobToDelete.id).unwrap();
                                         setJobToDelete(null);
                                         refetch();
-                                    } catch (err) {
-                                        console.error("Delete error:", err);
+                                        showPopup("Vəzifəni uğurla sildiniz","Seçilmiş vəzifə sistemdən silindi","success")
+                                    } catch {
+                                        showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                     }
                                 }}
                             >

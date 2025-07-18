@@ -3,6 +3,7 @@ import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import { FaTimes} from 'react-icons/fa';
 import './index.scss';
 import {useDeleteOrderAdminMutation, useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const OrderHistoryDetailSuperAdmin = () => {
     const {id} = useParams();
@@ -34,6 +35,7 @@ const OrderHistoryDetailSuperAdmin = () => {
     }, []);
     const [deleteOrder] =useDeleteOrderAdminMutation()
     // filtre uygula
+    const showPopup = usePopup()
     const filtered = orderData?.items?.map((item) => {
         const name = item.product?.name || '—';
         const category = item.product?.categoryName || '—';
@@ -215,6 +217,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                             <button className="delete-btn" onClick={() => {
                                 navigate('/superAdmin/history')
                                 deleteOrder(id)
+                                showPopup("Sifarişinizi uğurla sildiniz","Seçilmiş sifariş sistemdən silindi","success")
                             }}>
                                 Sil
                             </button>
