@@ -31,6 +31,9 @@ const OrderForm = () => {
     const sectionId = Cookies.get('sectionId');
     const datepickerRef = useRef(null);
 const showPopup = usePopup()
+    const searchRef = useRef(null);
+
+
     useEffect(() => {
         if (!categories || !selectedCategoryId) return;
 
@@ -73,7 +76,23 @@ const showPopup = usePopup()
     const handleSearchClick = () => {
         setIsSearchOpen(!isSearchOpen);
     };
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setIsSearchOpen(false);
+            }
+        };
 
+        if (isSearchOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSearchOpen]);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -284,7 +303,7 @@ const showPopup = usePopup()
 </svg>
                                                 </span>
                                             {isSearchOpen && (
-                                                <div className="order-form__table-search-box">
+                                                <div className="order-form__table-search-box" ref={searchRef}>
                                                     <input
                                                         type="text"
                                                         placeholder="Məhsul axtar..."
@@ -293,6 +312,7 @@ const showPopup = usePopup()
                                                     />
                                                 </div>
                                             )}
+
                                         </th>
                                         <th>Miqdar</th>
                                         <th>Ölçü vahidi</th>
