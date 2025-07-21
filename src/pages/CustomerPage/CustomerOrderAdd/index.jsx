@@ -295,6 +295,7 @@ const showPopup = usePopup()
                                             )}
                                         </th>
                                         <th>Miqdar</th>
+                                        <th>Ölçü vahidi</th>
                                         <th>Səbət</th>
                                     </tr>
                                     </thead>
@@ -317,6 +318,7 @@ const showPopup = usePopup()
                                                     +
                                                 </button>
                                             </td>
+                                            <td>{product.measure}</td>
                                             <td>
 
 
