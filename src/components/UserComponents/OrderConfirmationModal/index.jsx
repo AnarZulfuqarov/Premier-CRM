@@ -2,7 +2,7 @@ import React from 'react';
 import './index.scss'
 const OrderConfirmationModal = ({ isOpen, onClose, onConfirm, cartItems, description }) => {
     if (!isOpen) return null;
-
+    console.log(cartItems)
     return (
         <div className="order-form__modal-overlay">
             <div className="order-form__modal">
@@ -24,7 +24,7 @@ const OrderConfirmationModal = ({ isOpen, onClose, onConfirm, cartItems, descrip
                         {cartItems.map((item, index) => (
                             <tr key={index}>
                                 <td>{item.name}</td>
-                                <td>{item.quantity} ədəd</td>
+                                <td>{item.quantity} {item.measure}</td>
                             </tr>
                         ))}
                         </tbody>

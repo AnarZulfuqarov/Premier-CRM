@@ -212,8 +212,10 @@ const showPopup = usePopup()
                 updated = [...prev, {
                     name: product.name,
                     quantity: product.quantity,
-                    productId: product.id
+                    productId: product.id,
+                    measure: product.measure // <== ƏLAVƏ OLUNDU
                 }];
+
             }
 
             // 💾 LocalStorage da güncelleniyor
