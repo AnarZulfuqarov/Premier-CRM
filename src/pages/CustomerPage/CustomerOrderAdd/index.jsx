@@ -400,6 +400,7 @@ const showPopup = usePopup()
                                             onChange={(date) => setSelectedDate(date)}
                                             dateFormat="dd/MM/yyyy"
                                             customInput={<CustomDateInput />}
+                                            minDate={new Date()}
                                         />
 
 
