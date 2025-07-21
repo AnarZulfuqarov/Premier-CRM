@@ -127,7 +127,7 @@ const SuperAdminBolme = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <button onClick={() => navigate(`/superAdmin/bolme/${section.id}/persons`)}>Ətraflı</button>
+                                        <button onClick={() => navigate(`/superAdmin/bolme/persons/${section.id}`)}>Ətraflı</button>
                                     </td>
                                 </tr>
                             ))}

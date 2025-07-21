@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './index.scss';
 import {NavLink, useParams} from "react-router-dom";
 import {useCreateSectionsMutation, useGetDepartmentIdQuery} from "../../../services/adminApi.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 
 const SuperAdminBolmeAdd = () => {
@@ -16,7 +17,7 @@ const SuperAdminBolmeAdd = () => {
         updatedRows[index][field] = value;
         setRows(updatedRows);
     };
-
+    const showPopup = usePopup()
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
@@ -26,21 +27,18 @@ const SuperAdminBolmeAdd = () => {
 
             if (validRows.length === 0) return;
 
-            const responses = await Promise.all(
-                validRows.map(row =>
-                    post({ name: row.name, departmentId: id })
-                )
-            );
 
-            const allSuccess = responses.every(res => !res.error);
-            if (allSuccess) {
+
+            const response = await post({ name: row.name, departmentId: id }).unwrap()
+
+            if (response?.statusCode === 201) {
                 setShowSuccessModal(true);
             } else {
-                console.error("Bəzi bölmələr əlavə edilə bilmədi.");
+                showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
             }
 
-        } catch (err) {
-            console.error("Bölmə əlavə edilərkən xəta baş verdi:", err);
+        } catch  {
+            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
         }
     };
 

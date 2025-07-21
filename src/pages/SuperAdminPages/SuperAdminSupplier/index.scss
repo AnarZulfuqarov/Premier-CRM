@@ -282,6 +282,7 @@
             white-space: nowrap;
             position: relative;
             font-size: 14px;
+            font-weight: 500;
 
 
             .search-icon {
@@ -373,7 +374,7 @@
 
 
       .header {
-        font-weight: bold;
+        font-weight: 500;
         padding: 10px 16px;
         border-bottom: 1px solid #ccc;
         text-align: center;
@@ -382,6 +383,7 @@
         align-items: center;
         justify-content: center;
         font-size: 14px;
+
       }
 
       .cell {

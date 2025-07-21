@@ -268,7 +268,7 @@ const router = createBrowserRouter([
                 element: <SuperAdminBolmeAdd/>
             },
             {
-                path: "/superAdmin/bolmePerson",
+                path: "/superAdmin/bolme/persons/:id",
                 element: <SuperAdminBolmePerson/>
             },
             {

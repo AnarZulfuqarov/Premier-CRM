@@ -1,9 +1,11 @@
 import './index.scss';
 import  { useState } from 'react';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
+import {useGetSectionsIdQuery} from "../../../services/adminApi.jsx";
 
 const SuperAdminBolmePerson = () => {
+    const {id} = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(false);
@@ -11,14 +13,9 @@ const SuperAdminBolmePerson = () => {
     const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
-    const orders = Array.from({ length: 30 }, (_, idx) => ({
-        id: `75875058252${idx + 10}`,
-        company: 'Şirvanşah',
-        person: 'Allahverdiyev Ali',
-        amount: 325,
-        orderDate: '16/05/25, 13:45',
-        deliveryDate: '16/05/25, 13:45',
-    }));
+    const {data:getSectionsId} = useGetSectionsIdQuery(id)
+    const orders = getSectionsId?.data?.customers || [];
+
 
     const totalPages = Math.ceil(orders.length / pageSize);
     const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -170,15 +167,15 @@ const SuperAdminBolmePerson = () => {
                             <tbody>
                             {pagedOrders.map((order, idx) => (
                                 <tr key={order.id}>
-                                    <td>Leyla</td>
-                                    <td>Quliyeva</td>
-                                    <td>9N7GG432</td>
-                                    <td>Xadimə</td>
-                                    <td>050 789 33 66</td>
-
+                                    <td>{order.name || '-'}</td>
+                                    <td>{order.surname || '-'}</td>
+                                    <td>{order.finCode || '-'}</td>
+                                    <td>{order.jobName || '-'}</td> {/* Vəzifə alanı yoksa "-" */}
+                                    <td>{order.phoneNumber || '-'}</td>
                                 </tr>
                             ))}
                             </tbody>
+
 
                         </table>
 

@@ -74,6 +74,11 @@ export const api = createApi({
                 url: `/Customers/sections?departmentId=${departmentId}`,
             }),
         }),
+        getSectionsId: builder.query({
+            query: (id) => ({
+                url: `/Sections/${id}`,
+            }),
+        }),
         getAllCompanies: builder.query({
             query: () => ({
                 url: `/Companies`,
@@ -656,6 +661,7 @@ export const {
     useEditJobMutation,
     useDeleteJobMutation,
     useGetJobsIdQuery,
+    useGetSectionsIdQuery,
 
     useGetAllVendorsQuery,
     useCreateVendorsMutation,

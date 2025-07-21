@@ -280,10 +280,7 @@
 
   .order-table-wrapper {
     display: flex;
-    border: 1px solid #ddd;
     background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
     width: 60%;
 
 
@@ -302,7 +299,7 @@
           }
         }
         th {
-          padding: 10px;
+          padding: 8px 16px;
           border: 1px solid #e0e0e0; // border for th
           white-space: nowrap;
 
@@ -311,7 +308,6 @@
 
       tbody {
         tr {
-          height: 60px;
           text-align: center;
 
           &:nth-child(odd) {
@@ -324,7 +320,7 @@
         }
 
         td {
-          padding: 10px;
+          padding: 8px 16px;
           border: 1px solid #e0e0e0; // border for td
           white-space: nowrap;
           vertical-align: middle;
