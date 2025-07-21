@@ -28,13 +28,21 @@ const SuperAdminSupplier = () => {
         phone: s.phoneNumber,
         password: s.password ?? '********'
     })) || [];
+    const columnKeyMap = {
+        'Ad': 'name',
+        'Soyad': 'surname',
+        'fin': 'fin',
+        'Mobil nömrə': 'phone'
+    };
 
     // Filter users based on search term and column
     const filteredUsers = users.filter(user => {
         if (!searchTerm || !searchColumn) return true;
-        const value = user[searchColumn]?.toString().toLowerCase();
+        const key = columnKeyMap[searchColumn]; // düzgün açarı al
+        const value = user[key]?.toString().toLowerCase();
         return value?.includes(searchTerm.toLowerCase());
     });
+
 
     const totalPages = Math.ceil(filteredUsers.length / pageSize);
     const pagedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);

@@ -31,12 +31,22 @@ const SuperAdminPeople = () => {
     useEffect(() => {
         refetch()
     }, [])
+    const columnKeyMap = {
+        'Ad': 'name',
+        'Soyad': 'surname',
+        'fin': 'finCode',
+        'Vəzifə': 'jobName',
+        'Mobil nömrə': 'phoneNumber',
+    };
+
     // Filter users based on search term and column
     const filteredUsers = customers.filter(user => {
         if (!searchTerm || !searchColumn) return true;
-        const value = user[searchColumn]?.toString().toLowerCase();
+        const key = columnKeyMap[searchColumn]; // Uyğun açarı tap
+        const value = user[key]?.toString().toLowerCase();
         return value?.includes(searchTerm.toLowerCase());
     });
+
 
     const totalPages = Math.ceil(filteredUsers.length / pageSize);
     const pagedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
