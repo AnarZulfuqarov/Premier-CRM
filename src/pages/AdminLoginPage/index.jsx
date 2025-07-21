@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import './index.scss';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import {useLoginSuperAdminMutation} from "../../services/adminApi.jsx";
 import {usePopup} from "../../components/Popup/PopupContext.jsx";
@@ -89,7 +89,7 @@ function AdminLogin() {
 
                             <div className="problem">
                                 Şifrəni unutmusunuz?
-                                <NavLink to={'/'} > Bərpa etmək üçün buraya klikləyin.</NavLink>
+                                <Link to='/forgotPassword' > Bərpa etmək üçün buraya klikləyin.</Link>
                             </div>
                         </form>
                     </div>

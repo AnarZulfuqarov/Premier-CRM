@@ -58,6 +58,9 @@ import CustomerNotification from "../pages/NotificationPages/CustomerNotificatio
 import SuperAdminStatistik from "../pages/SuperAdminPages/SuperAdminStatictic/index.jsx";
 import MobileCartPage from "../pages/CustomerPage/CustomerBasketPage/index.jsx";
 import NotFound from "../pages/NotFound/index.jsx";
+import ForgotPassword from "../pages/SuperAdminPages/SuperAdminForgotPassword/index.jsx";
+import ResetPassword from "../pages/SuperAdminPages/SuperAdminResetPassword/index.jsx";
+import SuccessResetPass from "../pages/SuperAdminPages/SuperAdminSuccess/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -181,6 +184,18 @@ const router = createBrowserRouter([
         ]
     },
     {
+        path: "/forgotPassword",
+        element: <ForgotPassword/>
+    },
+    {
+        path: "/resetPassword",
+        element: <ResetPassword/>
+    },
+    {
+        path: "/success",
+        element: <SuccessResetPass/>
+    },
+    {
         path: "/superAdmin",
         element: (
             <ProtectedRoute>
@@ -188,6 +203,7 @@ const router = createBrowserRouter([
             </ProtectedRoute>
         ),
         children: [
+
             {
                 path: "/superAdmin/people",
                 element: <SuperAdminPeople/>

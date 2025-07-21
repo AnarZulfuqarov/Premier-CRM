@@ -1,15 +1,15 @@
-#resetPassword{
+#successResetPass{
   width:100%;
   height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  .resetPassword{
+  .successResetPass{
     padding: 80px 46px;
     gap: 10px;
     border-radius: 6px;
     border: 1px solid #EAEAEA;
-    width: 520px;
+    width: 500px;
     .image{
       width: 155px;
       height: 155px;
@@ -18,7 +18,7 @@
       img{
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
       }
     }
     .content{

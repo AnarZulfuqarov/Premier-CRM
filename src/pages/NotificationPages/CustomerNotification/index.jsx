@@ -17,6 +17,7 @@ const CustomerNotification = () => {
     const notification = getAdminNotificationsSuperAdmin?.data
     const [markAsRead] = useMarkAsReadMutation()
     // Pagination logic
+    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
 
     const filteredNotifications = notification?.filter((n) => {
@@ -99,11 +100,28 @@ const CustomerNotification = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                        <option value="all">Hamısı</option>
-                        <option value="unread">Oxunmamış</option>
-                        <option value="read">Oxunmuş</option>
-                    </select>
+                    <div className="order-history__filter-button">
+                        <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
+                                <path d="M7 14H11V12H7V14ZM3 8H15V6H3V8ZM0 0V2H18V0H0Z" fill="black"/>
+                            </svg>
+                        </button>
+
+                        {showFilterDropdown && (
+                            <div className="filter-dropdown">
+                                <button className={filter === 'all' ? 'active' : ''} onClick={() => { setFilter('all'); setShowFilterDropdown(false); }}>
+                                    Hamısı
+                                </button>
+                                <button className={filter === 'unread' ? 'active' : ''} onClick={() => { setFilter('unread'); setShowFilterDropdown(false); }}>
+                                    <div className="statuss not-completed"></div> Oxunmamış
+                                </button>
+                                <button className={filter === 'read' ? 'active' : ''} onClick={() => { setFilter('read'); setShowFilterDropdown(false); }}>
+                                    <div className="statuss completed"></div> Oxunmuş
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
 
                 </div>
                 <div className="notification-table-wrapper">
