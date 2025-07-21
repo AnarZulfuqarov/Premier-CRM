@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import './index.scss';
-import { useNavigate } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import {useLoginSuperAdminMutation} from "../../services/adminApi.jsx";
 import {usePopup} from "../../components/Popup/PopupContext.jsx";
@@ -88,8 +88,8 @@ function AdminLogin() {
                             {error && <div className="error">Xəta: Məlumatlar səhvdir!</div>}
 
                             <div className="problem">
-                                Problemlə üzləşdiniz?
-                                <a href="mailto:admin@example.com"> Sistem administratoru ilə əlaqə saxlayın</a>
+                                Şifrəni unutmusunuz?
+                                <NavLink to={'/'} > Bərpa etmək üçün buraya klikləyin.</NavLink>
                             </div>
                         </form>
                     </div>

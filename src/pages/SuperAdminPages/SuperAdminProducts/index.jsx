@@ -54,9 +54,11 @@ const SuperAdminProducts = () => {
         productRefetch()
     },[])
 
-    const filteredProducts = products?.filter(products =>
-        products.name.toLowerCase().includes(searchName.toLowerCase())
+    const filteredProducts = products?.filter(product =>
+        product.name.toLowerCase().includes(searchName.toLowerCase()) &&
+        product.categoryName.toLowerCase().includes(searchCategory.toLowerCase())
     ) || [];
+
     const totalProductPages = Math.ceil(filteredProducts.length / pageSize);
     const pagedProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 

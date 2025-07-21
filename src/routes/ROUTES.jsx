@@ -57,6 +57,7 @@ import SupplierNotification from "../pages/NotificationPages/SupplierNotificatio
 import CustomerNotification from "../pages/NotificationPages/CustomerNotification/index.jsx";
 import SuperAdminStatistik from "../pages/SuperAdminPages/SuperAdminStatictic/index.jsx";
 import MobileCartPage from "../pages/CustomerPage/CustomerBasketPage/index.jsx";
+import NotFound from "../pages/NotFound/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -315,7 +316,7 @@ const router = createBrowserRouter([
     },
     {
         path: "*",
-        // element: <NotFound/>
+        element: <NotFound/>
     }
 ]);
 
