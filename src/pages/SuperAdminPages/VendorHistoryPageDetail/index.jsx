@@ -43,7 +43,9 @@ const VendorHistoryDetailSuperAdmin = () => {
         return byName && byCategory;
     });
 
-    const totalPrice = orderData.items.reduce((sum, item) => sum + item.price, 0);
+    const totalPrice = orderData.items?.reduce((sum, item) =>
+        sum + item.suppliedQuantity * (item?.price || 0), 0
+    ) || 0;
 
     return (
         <div className="vendor-history-detail-super-admin-main">
@@ -171,7 +173,7 @@ const VendorHistoryDetailSuperAdmin = () => {
                                     <td>{item.product.categoryName}</td>
                                     <td>{item.requiredQuantity} {item.product.measure}</td>
                                     <td>{item.suppliedQuantity} {item.product.measure}</td>
-                                    <td>{item.price} ₼</td>
+                                    <td>{item.suppliedQuantity * item.price} ₼</td>
                                     <td>{orderData.createdDate}</td>
                                     <td>{item.orderItemDeliveryTime}</td>
                                     <td>{orderData.employeeDelivery ? orderData.orderDeliveryTime : '-'}</td>

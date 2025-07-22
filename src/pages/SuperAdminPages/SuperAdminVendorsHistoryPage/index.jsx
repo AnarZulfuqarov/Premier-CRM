@@ -20,7 +20,9 @@ const VendorHistorySuperAdmin =() => {
             const status = order.employeeDelivery ? 'Tamamlanmış' : 'Sifarişçidən təhvil gözləyən';
             const productNames = order.items?.map(i => i.product?.name).join(', ');
             const quantity = `${new Set(order.items.map(i => i.product?.categoryName)).size} kateqoriya, ${order.items.length} məhsul`;
-            const totalPrice = order.items.reduce((sum, item) => sum + item.price, 0);
+            const totalPrice = order.items?.reduce((sum, item) =>
+                sum + item.suppliedQuantity * (item?.price || 0), 0
+            ) || 0;
             const supplierName = `${order.fighterInfo?.name || ''} ${order.fighterInfo?.surname || ''}`;
             const customerName = `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`;
 
@@ -29,7 +31,7 @@ const VendorHistorySuperAdmin =() => {
                 product: productNames,
                 quantity,
                 status,
-                price: totalPrice,
+                price: totalPrice.toFixed(2),
                 supplier: supplierName,
                 customer: customerName
             };

@@ -34,7 +34,7 @@ const OrderHistoryDetailSuplier = () => {
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const price = `${item.price} ₼`;
+        const price = `${item.suppliedQuantity*item.price} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
@@ -82,7 +82,13 @@ const OrderHistoryDetailSuplier = () => {
                             </p>
                             <p className="order-history-supplier__id">
                                 <span>Ümumi məbləğ:</span>{' '}
-                                {orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼
+
+
+  {
+      `${orderData?.items?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0).toFixed(2)} ₼`
+  }
+
+
                             </p>
                         </div>
                         {isMobile ? ("") : (<div
@@ -224,10 +230,11 @@ const OrderHistoryDetailSuplier = () => {
                         <div className="table-footer sticky-footer">
                             <span>Ümumi məbləğ:</span>
                             <span>
-    {
-        `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
-    }
-  </span>
+  {
+      `${orderData?.items?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0).toFixed(2)} ₼`
+  }
+</span>
+
                         </div>
                     </div>
 

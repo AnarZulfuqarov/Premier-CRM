@@ -24,7 +24,9 @@ const OrderHistorySuperAdmin = () => {
         } else if (order.employeeConfirm && !order.fighterConfirm) {
             status = 'Təchizatçıdan təsdiq gözləyən';
         }
-        const totalPrice = order.items?.reduce((sum, item) => sum + item.price, 0) || 0;
+        const totalPrice = order.items?.reduce((sum, item) =>
+            sum + item.suppliedQuantity * (item?.price || 0), 0
+        ) || 0;
         const productNames = order.items?.map(item => item.product?.name).join(', ');
         const totalQuantity = order.items?.length;
         const customerFullName = `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`;
@@ -38,7 +40,7 @@ const OrderHistorySuperAdmin = () => {
             itemCount: order.items.length,
             categoryCount: uniqueCategories.length,
             status,
-            price: totalPrice,
+            price: totalPrice.toFixed(2),
             customer: customerFullName,
             supplier: supplierFullName
         };

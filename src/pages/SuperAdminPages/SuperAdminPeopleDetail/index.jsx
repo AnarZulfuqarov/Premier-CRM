@@ -41,8 +41,8 @@ const SuperAdminPeopleDetail = () => {
             <div className="super-admin-people-detail">
                 <div className={"headerr"}>
                     <div className={"head"}>
-                        <h2>İstifadəçilərin icazəsi olduğu bölmələr</h2>
-                        <p>Burada istifadəçilərin hansı sistem bölmələrinə giriş və səlahiyyətlərinin olduğunu görə
+                        <h2>Sifarişçilər icazəsi olduğu bölmələr</h2>
+                        <p>Burada sifarişçilərin hansı sistem bölmələrinə giriş və səlahiyyətlərinin olduğunu görə
                             bilərsiniz.</p>
                     </div>
                     <div>
@@ -64,7 +64,7 @@ const SuperAdminPeopleDetail = () => {
                 </div>
                 <div className={"path"}>
                     <h2>
-                        <NavLink className="link" to="/superAdmin/people">— İstifadəçilər</NavLink>{' '}
+                        <NavLink className="link" to="/superAdmin/people">— Sifarişçilər</NavLink>{' '}
                         — {customer?.name} {customer?.surname}
                     </h2>
                 </div>

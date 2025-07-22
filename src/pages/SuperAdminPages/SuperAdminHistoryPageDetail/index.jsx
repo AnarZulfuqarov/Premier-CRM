@@ -41,7 +41,7 @@ const OrderHistoryDetailSuperAdmin = () => {
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const price = `${item.price} ₼`;
+        const price = `${(item.suppliedQuantity * (item.price || 0)).toFixed(2)} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
@@ -86,7 +86,11 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <span>Order ID</span> {orderData?.id}
                             </p>
                             <p className="order-history-super-admin__id">
-                                <span>Ümumi məbləğ:</span> {orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼
+                                <span>Ümumi məbləğ:</span> {
+                                orderData?.items?.reduce((sum, item) =>
+                                    sum + (item.suppliedQuantity * (item?.price || 0)), 0
+                                ).toFixed(2)
+                            } ₼
                             </p>
                         </div>
                         <span
@@ -169,7 +173,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
-                                {status === 'Tamamlanmış' || status === "Sifarişçidən təhvil gözləyən" && (
+                                {status === 'Tamamlanmış'  && (
                                     <th>
                                         İnyovsa Bax
                                     </th>
@@ -188,7 +192,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
                                     <td>{item.received}</td>
-                                    {status === 'Tamamlanmış' || status === "Sifarişçidən təhvil gözləyən" &&(
+                                    {status === 'Tamamlanmış' &&(
                                         <td style={{
                                             textAlign:"center"
                                         }}>
@@ -205,10 +209,11 @@ const OrderHistoryDetailSuperAdmin = () => {
                         <div className="table-footer sticky-footer">
                             <span>Ümumi məbləğ:</span>
                             <span>
-    {
-        `${orderData?.items?.reduce((sum, item) => sum + item.price, 0)} ₼`
-    }
-  </span>
+  {
+      `${orderData?.items?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0).toFixed(2)} ₼`
+  }
+</span>
+
                         </div>
                     </div>
 

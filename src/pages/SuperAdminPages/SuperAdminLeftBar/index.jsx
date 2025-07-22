@@ -50,7 +50,7 @@ const SuperAdminLeftBar = () => {
   <path d="M17.97 20C17.81 17.108 16.925 15 12 15C7.07503 15 6.19003 17.108 6.03003 20" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
 </svg>
                     </span> <NavLink to={'/superAdmin/people'} className="link">
-                    İstifadəçilər
+                    Sifarişçilər
                 </NavLink>
                 </li>
                 <li className={location.pathname === "/superAdmin/supplier" ? "sidebar__menu-item active" : "sidebar__menu-item"}>

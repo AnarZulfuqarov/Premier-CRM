@@ -22,7 +22,9 @@ const OrderHistorySupplier = () => {
                 status = 'Sifarişçidən təhvil gözləyən';
             }
 
-            const totalPrice = order.items?.reduce((sum, item) => sum + item.price, 0) || 0;
+            const totalPrice = order.items?.reduce((sum, item) =>
+                sum + item.suppliedQuantity * (item?.price || 0), 0
+            ) || 0;
             const productNames = order.items?.map(item => item.product?.name).join(', ');
             const totalQuantity = order.items?.length;
 
@@ -37,7 +39,7 @@ const OrderHistorySupplier = () => {
                 itemCount: order.items.length,
                 status,
                 categoryCount: uniqueCategories.length,
-                price: totalPrice,
+                price: totalPrice.toFixed(2),
                 customer: customerFullName,
                 supplier: supplierFullName
             };

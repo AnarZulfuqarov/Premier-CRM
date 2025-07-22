@@ -22,7 +22,6 @@ import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SuperAdminProducts = () => {
     const location = useLocation();
     const { state } = location;
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
@@ -34,7 +33,6 @@ const SuperAdminProducts = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
     const showPopup = usePopup()
     const navigate = useNavigate();
-    const pageSize = 9;
     const {data:getAllProducts,refetch:productRefetch} = useGetAllProductsQuery()
     const products = getAllProducts?.data
     const [edit] = useUpdateProductsMutation()
@@ -59,15 +57,9 @@ const SuperAdminProducts = () => {
         product.categoryName.toLowerCase().includes(searchCategory.toLowerCase())
     ) || [];
 
-    const totalProductPages = Math.ceil(filteredProducts.length / pageSize);
-    const pagedProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
 
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalProductPages; i++) pages.push(i);
-        return pages;
-    };
+
     const {data:getProductAddPending,refetch:addPendingRefetch} = useGetProductAddPendingQuery()
     const addRequests = getProductAddPending?.data
     const {data:getProductDeletePending,refetch:deletePendingRefetch} = useGetProductDeletePendingQuery()
@@ -81,8 +73,6 @@ const SuperAdminProducts = () => {
         ...filteredDeleteRequests?.map(item => ({ ...item, statusType: 'delete' })),
     ];
     const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredProducts || [];
-    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
-    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const {data:getProductUpdatePending,refetch:editRefetch} = useGetProductUpdatePendingQuery()
     const editRequest = getProductUpdatePending?.data
@@ -210,8 +200,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedProducts?.map((item, i) => {
-                                    const absoluteIndex = (currentPage - 1) * pageSize + i;
+                                {filteredProducts?.map((item, i) => {
                                     return (
                                         <tr key={i}>
                                             <td>{item.categoryName}</td>
@@ -322,7 +311,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItemsdelAdd?.map((item, i) => {
+                                {combinedRequests?.map((item, i) => {
                                     const handleConfirm = async () => {
                                         try {
                                             if (item.statusType === 'add') {
@@ -505,26 +494,9 @@ const SuperAdminProducts = () => {
 
 
 
-                <div className="super-admin-products__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalProductPages}>
-                        &gt;
-                    </button>
-                </div>
+
             </div>
 
-            <div className="xett"></div>
             {modalData && activeTab === 'products' && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>

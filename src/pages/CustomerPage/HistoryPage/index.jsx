@@ -28,7 +28,9 @@ const OrderHistory = () => {
             ...new Set(order.items.map(item => item.product?.categoryName).filter(Boolean))
         ];
 
-        const totalPrice = order.items.reduce((sum, item) => sum + (item.price || 0), 0);
+        const totalPrice = order.items?.reduce((sum, item) =>
+            sum + item.suppliedQuantity * (item?.price || 0), 0
+        ) || 0;
         const vendorName = order.fighterInfo ? `${order.fighterInfo.name} ${order.fighterInfo.surname}` : null;
 
         return {
@@ -37,7 +39,7 @@ const OrderHistory = () => {
             itemCount: order.items.length,
             categoryCount: uniqueCategories.length,
             status,
-            totalPrice,
+            price : totalPrice.toFixed(2),
             vendorName,
         };
     }) || [];
@@ -175,7 +177,7 @@ const OrderHistory = () => {
                                    {['Tamamlanmış', 'Təhvil alınmayan'].includes(order.status) && (
 
                                        <p className="order-history__id">
-                                           <span>Ümumi məbləğ:</span> {order.totalPrice} ₼
+                                           <span>Ümumi məbləğ:</span> {order.price} ₼
                                        </p>
 
                                    )}

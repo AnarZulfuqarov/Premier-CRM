@@ -89,13 +89,13 @@ const SuperAdminPeopleDetailAddBolme = () => {
             <div className="super-admin-people-detail-add-bolme">
                 <div className={"headerr"}>
                     <div className={"head"}>
-                        <h2>İstifadəçiyə yeni bölmə əlavə et</h2>
+                        <h2>Sifarişçiyə yeni bölmə əlavə et</h2>
                         <p>Əlavə etmək istədiyiniz bölməni aşağıdan seçin.</p>
                     </div>
                 </div>
                 <div className={"path"}>
                     <h2>
-                        <NavLink className="link" to="/superAdmin/people">— İstifadəçilər</NavLink>{' '}
+                        <NavLink className="link" to="/superAdmin/people">— Sifarişçilər</NavLink>{' '}
                         <NavLink to={`/superAdmin/people/${id}`} className={"link"} >— {customer?.name} {customer?.surname}</NavLink>
                         — Bölmə əlavə et
                     </h2>

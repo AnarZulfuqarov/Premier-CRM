@@ -117,15 +117,15 @@ const SuperAdminPeople = () => {
             <div className="super-admin-people">
                 <div className={"headerr"}>
                     <div className={"head"}>
-                        <h2>İstifadəçilər</h2>
-                        <p>Aşağıdan məhsulları seçərək yeni sifarişinizi tamamlaya bilərsiniz</p>
+                        <h2>Sifarişçilər</h2>
+                        <p>Aşağıdan sifarişçini seçərək yeni bölmə əlavə edə bilərsiniz</p>
                     </div>
                     <div>
                         <button onClick={() => navigate("/superAdmin/personAdd")}>
                             <GoPlusCircle style={{
                                 fontSize: '18px'
                             }}/>
-                            <span>İstifadəçi əlavə et</span></button>
+                            <span>Sifarişçi əlavə et</span></button>
                     </div>
                 </div>
                 <div className="order-table-wrapper">

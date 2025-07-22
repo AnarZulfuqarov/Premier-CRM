@@ -100,7 +100,7 @@ const SuperAdminBolme = () => {
                                         </div>
                                     )}
                                 </th>
-                                <th>İstifadəçi sayı</th>
+                                <th>Sifarişçi sayı</th>
                                 <th>Fəaliyyətlər</th> {/* Yeni sütun */}
                                 <th>Təfərrüat</th>
                             </tr>

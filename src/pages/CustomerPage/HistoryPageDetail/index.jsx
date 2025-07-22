@@ -27,9 +27,11 @@ const OrderHistoryDetail = () => {
         ? `${orderData.fighterInfo.name} ${orderData.fighterInfo.surname}`
         : null;
 
-    const totalPrice = orderData?.items?.reduce((sum, item) => sum + (item.price || 0), 0);
+    const totalPricee = orderData.items?.reduce((sum, item) =>
+        sum + item.suppliedQuantity * (item?.price || 0), 0
+    ) || 0;
     const itemCount = orderData?.items?.length || 0;
-
+    const totalPrice = totalPricee.toFixed(2)
     const uniqueCategories = [
         ...new Set(orderData?.items?.map(item => item.product?.categoryName).filter(Boolean))
     ];
@@ -52,7 +54,7 @@ const OrderHistoryDetail = () => {
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
         const priceTotal = item.price ;
-        const price = `${priceTotal} ₼`;
+        const price = `${item.suppliedQuantity*priceTotal} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;

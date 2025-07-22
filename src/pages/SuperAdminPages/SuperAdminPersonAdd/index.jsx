@@ -82,10 +82,10 @@ const SuperPersonAdd = () => {
             <div className="super-admin-person-add">
                 <div className="headerr">
                     <div className="head">
-                        <h1>İstifadəçi əlavə edilməsi</h1>
+                        <h1>Sifarişçi əlavə edilməsi</h1>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/superAdmin/people">— İstifadəçi</NavLink> — İstifadəçi əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/people">— Sifarişçi</NavLink> — Sifarişçi əlavə edilməsi
                     </h2>
                 </div>
 
@@ -145,19 +145,20 @@ const SuperPersonAdd = () => {
                                     placeholder="Bölmə seç"
                                     options={departments.map(dep => ({
                                         value: dep.id,
-                                        label: dep.name
+                                        label: `${dep.name} (${dep.companyName})`
                                     }))}
                                     value={departments
                                         .filter(dep => row.departments?.includes(dep.id))
                                         .map(dep => ({
                                             value: dep.id,
-                                            label: dep.name
+                                            label: `${dep.name} (${dep.companyName})`
                                         }))
                                     }
                                     onChange={(selectedOptions) =>
                                         handleChange(index, 'departments', selectedOptions.map(opt => opt.value))
                                     }
                                 />
+
                             </td>
 
 
@@ -208,7 +209,7 @@ const SuperPersonAdd = () => {
                                 </div>
                             </div>
                         </div>
-                        <h3>İstifadəçi uğurla əlavə edildi !</h3>
+                        <h3>Sifarişçi uğurla əlavə edildi !</h3>
                         <button className="back-btn" onClick={() => window.location.href = "/superAdmin/people"}>
                             Əsas səhifəyə qayıt
                         </button>

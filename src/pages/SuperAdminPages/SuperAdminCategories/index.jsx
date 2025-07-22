@@ -20,7 +20,6 @@ import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SuperAdminCategories = () => {
     const location = useLocation();
     const { state } = location;
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
@@ -32,7 +31,6 @@ const SuperAdminCategories = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
 
     const navigate = useNavigate();
-    const pageSize = 9;
     //Sorgular
     const {data: getAllCategories , refetch:categoryRefetch} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
@@ -46,8 +44,6 @@ const SuperAdminCategories = () => {
     const filteredCategories = categories?.filter(category =>
         category.name.toLowerCase().includes(searchName.toLowerCase())
     ) || [];
-    const totalCategoryPages = Math.ceil(filteredCategories?.length / pageSize);
-    const pagedCategories = filteredCategories?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
     useEffect(() => {
         if (state?.type === "create" || state?.type === "delete") {
             setActiveTab("requests");
@@ -56,11 +52,7 @@ const SuperAdminCategories = () => {
         }
     }, [state]);
 
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalCategoryPages; i++) pages.push(i);
-        return pages;
-    };
+
     const {data:getCategorieAddPending,refetch:addPendingRefetch} = useGetCategorieAddPendingQuery()
     const addRequests = getCategorieAddPending?.data
     const {data:getCategorieDeletePending,refetch:deletePendingRefetch} = useGetCategorieDeletePendingQuery()
@@ -74,8 +66,6 @@ const SuperAdminCategories = () => {
         ...filteredDeleteRequests?.map(item => ({ ...item, statusType: 'delete' })),
     ];
     const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredCategories || [];
-    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
-    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const {data:getCategorieUpdatePending,refetch:editRefetch} = useGetCategorieUpdatePendingQuery()
     const editRequest = getCategorieUpdatePending?.data
@@ -170,9 +160,8 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedCategories?.map((item, i) => {
+                                {filteredCategories?.map((item, i) => {
 
-                                    const absoluteIndex = (currentPage - 1) * pageSize + i;
                                     return (
                                         <tr key={item.id}>
                                             <td>{item.name}</td>
@@ -251,7 +240,7 @@ const SuperAdminCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItemsdelAdd?.map((item, i) => {
+                                {combinedRequests?.map((item, i) => {
                                     const handleConfirm = async () => {
                                         try {
                                             if (item.statusType === 'add') {
@@ -431,23 +420,7 @@ const SuperAdminCategories = () => {
 
 
 
-                <div className="super-admin-category__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers()?.map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalCategoryPages}>
-                        &gt;
-                    </button>
-                </div>
+
             </div>
 
             <div className="xett"></div>
