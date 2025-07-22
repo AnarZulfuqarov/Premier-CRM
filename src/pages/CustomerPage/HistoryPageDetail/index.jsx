@@ -27,7 +27,7 @@ const OrderHistoryDetail = () => {
         ? `${orderData.fighterInfo.name} ${orderData.fighterInfo.surname}`
         : null;
 
-    const totalPricee = orderData.items?.reduce((sum, item) =>
+    const totalPricee = orderData?.items?.reduce((sum, item) =>
         sum + item.suppliedQuantity * (item?.price || 0), 0
     ) || 0;
     const itemCount = orderData?.items?.length || 0;

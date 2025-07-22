@@ -54,9 +54,25 @@ export const api = createApi({
                 url: `/Customers/getUser`,
             }),
         }),
+
         getUserFighters: builder.query({
             query: () => ({
                 url: `/Fighters/getUser`,
+            }),
+        }),
+        forgotPassword: builder.mutation({
+            query: ({phoneNumber}) => ({
+                url: `/Admins/reset-password/send-link?phoneNumber=${phoneNumber}`,
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        resetPassword: builder.mutation({
+            query: (pass) => ({
+                url: '/Admins/reset-password/confirm',
+                method: 'POST',
+                body: pass,
+                headers: { 'Content-Type': 'application/json' },
             }),
         }),
         getUserCompanies: builder.query({
@@ -745,4 +761,7 @@ export const {
     useGetAdminNotificationsCustomerQuery,
     useGetAdminNotificationsCustomerIdQuery,
     useMarkAsReadMutation,
+
+    useResetPasswordMutation,
+    useForgotPasswordMutation,
 } = api;
