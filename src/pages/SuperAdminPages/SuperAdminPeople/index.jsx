@@ -37,15 +37,23 @@ const SuperAdminPeople = () => {
         'fin': 'finCode',
         'Vəzifə': 'jobName',
         'Mobil nömrə': 'phoneNumber',
+        'Şirkətlər': 'companyNames'
     };
 
     // Filter users based on search term and column
     const filteredUsers = customers.filter(user => {
         if (!searchTerm || !searchColumn) return true;
-        const key = columnKeyMap[searchColumn]; // Uyğun açarı tap
+        const key = columnKeyMap[searchColumn];
+
+        if (key === 'companyNames') {
+            const companyNames = user.sections?.map(sec => sec.companyName.toLowerCase()) || [];
+            return companyNames.some(name => name.includes(searchTerm.toLowerCase()));
+        }
+
         const value = user[key]?.toString().toLowerCase();
         return value?.includes(searchTerm.toLowerCase());
     });
+
 
 
     const totalPages = Math.ceil(filteredUsers.length / pageSize);
@@ -85,7 +93,7 @@ const SuperAdminPeople = () => {
             surname: updatedUser.surname,
             jobId: updatedUser.jobId,
             password: updatedUser.password,
-            finCode: updatedUser.finCode
+            finCode: updatedUser.finCode,
         };
 
         try {
@@ -133,7 +141,7 @@ const SuperAdminPeople = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['Ad', 'Soyad', 'fin', 'Vəzifə', 'Mobil nömrə'].map((column) => (
+                                {['Şirkətlər','Vəzifə','Ad', 'Soyad', 'fin',  'Mobil nömrə'].map((column) => (
                                     <th key={column}>
                                         <div style={{
                                             display: 'flex',
@@ -187,12 +195,21 @@ const SuperAdminPeople = () => {
                             </tr>
                             </thead>
                             <tbody>
+
                             {pagedUsers.map((user) => (
                                 <tr key={user.id}>
+                                    <td className={"firstCell"}>
+                                        <div className="scrolling-company-cell">
+                                            {[...new Set(user.sections?.map(sec => sec.companyName))].join(', ')}
+                                        </div>
+                                    </td>
+
+
+                                    <td>{user.jobName}</td>
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
                                     <td>{user.finCode}</td>
-                                    <td>{user.jobName}</td>
+
                                     <td>{user.phoneNumber}</td>
                                     <td>********</td>
                                 </tr>

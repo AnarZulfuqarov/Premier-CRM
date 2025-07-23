@@ -247,6 +247,29 @@
     display: flex;
     background: #fff;
     overflow: hidden;
+    .firstCell{
+      max-width: 120px; // uyğun ölçü ver
+      overflow: hidden;
+    }
+    .scrolling-company-cell {
+
+      white-space: nowrap;
+      position: relative;
+
+      &:hover {
+        animation: scroll-left 6s linear infinite;
+      }
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
 
     .scrollable-part {
       width: 100%;
@@ -271,6 +294,36 @@
       &::-webkit-scrollbar-thumb:hover {
         background-color: #2e375a;
         cursor: pointer;
+      }
+      .company-cell-with-tooltip {
+        position: relative;
+        cursor: pointer;
+
+        .more-companies-tooltip {
+          position: relative;
+          color: #007bff; // dəyişə bilərsən
+
+          .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.2s ease-in-out;
+            position: absolute;
+            background-color: #f9f9f9;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            top: 20px;
+            left: 0;
+            white-space: nowrap;
+            z-index: 100;
+            color: black;
+          }
+
+          &:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+          }
+        }
       }
 
       table {
@@ -300,8 +353,8 @@
 
             .search-input-wrapper {
               position: absolute;
-              top: 40px;
-              left: 10px;
+              top: 0;
+              left: 0;
               z-index: 10;
               display: flex;
               align-items: center;

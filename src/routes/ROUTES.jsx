@@ -61,6 +61,7 @@ import NotFound from "../pages/NotFound/index.jsx";
 import ForgotPassword from "../pages/SuperAdminPages/SuperAdminForgotPassword/index.jsx";
 import ResetPassword from "../pages/SuperAdminPages/SuperAdminResetPassword/index.jsx";
 import SuccessResetPass from "../pages/SuperAdminPages/SuperAdminSuccess/index.jsx";
+import SuperAdminStatistikTest from "../pages/SuperAdminStaticticTest/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -327,8 +328,8 @@ const router = createBrowserRouter([
         ]
     },
     {
-        path: "/",
-        // element: <Login/>
+        path: "/test",
+        element:<SuperAdminStatistikTest/>
     },
     {
         path: "*",

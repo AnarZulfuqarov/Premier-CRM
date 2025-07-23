@@ -1,0 +1,63 @@
+.chart1-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  width: 360px;
+height: 100%;
+  align-content: center;
+  .card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+
+  .left-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .card-title {
+      color: #181D27;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 24px; /* 150% */
+      margin-bottom: 24px;
+    }
+
+    .total {
+      color: #181D27;
+      font-size: 36px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 44px; /* 122.222% */
+      letter-spacing: -0.72px;
+      margin-bottom: 16px;
+    }
+
+    .change-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+
+      .arrow {
+        font-weight: bold;
+      }
+
+      .percent {
+        font-weight: 500;
+      }
+
+      .compare-text {
+        color: #828282;
+      }
+    }
+  }
+
+  .mini-line-chart-recharts {
+    width: 150px;
+    height: 50px;
+  }
+}
