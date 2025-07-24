@@ -27,20 +27,26 @@ const SuperAdminBolmeAdd = () => {
 
             if (validRows.length === 0) return;
 
-
-
-            const response = await post({ name: row.name, departmentId: id }).unwrap()
-
-            if (response?.statusCode === 201) {
-                setShowSuccessModal(true);
-            } else {
-                showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+            let success = true;
+            for (const row of validRows) {
+                const response = await post({ name: row.name, departmentId: id }).unwrap();
+                if (response?.statusCode !== 201) {
+                    success = false;
+                    break;
+                }
             }
 
-        } catch  {
-            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+            if (success) {
+                setShowSuccessModal(true);
+            } else {
+                showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
+            }
+
+        } catch {
+            showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
         }
     };
+
 
     return (
         <div className="super-admin-bolme-add-main">

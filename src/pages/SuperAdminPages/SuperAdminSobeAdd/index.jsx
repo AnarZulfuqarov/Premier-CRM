@@ -26,19 +26,26 @@ const SuperAdminSobeAdd = () => {
 
             if (validRows.length === 0) return; // boşsa işlem yapma
 
+            let success = true;
+            for (const row of validRows) {
+                const response = await post({ name: row.name, companyId: id }).unwrap();
+                if (response.statusCode !== 201) {
+                    success = false;
+                    break;
+                }
+            }
 
-
-            const response = await  post({ name: row.name, companyId: id }).unwrap()
-            if (response.statusCode === 201) {
+            if (success) {
                 setShowSuccessModal(true);
             } else {
-                showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+                showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
             }
 
         } catch (error) {
-            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+            showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
         }
     };
+
 
 
     return (
