@@ -1,8 +1,9 @@
 .mobile-cart-page {
   padding: 16px;
   background: #fff;
-  min-height: 100vh;
+  height: 85vh;
   box-sizing: border-box;
+  overflow-y: auto;
 .path{
   h2 {
     font-size: 14px;
