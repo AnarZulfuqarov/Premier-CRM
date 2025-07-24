@@ -51,6 +51,8 @@ text-align: center;
 
 .order-form__modal-content {
   margin-bottom: 20px;
+  height: 200px;
+  overflow-y: scroll;
 }
 
 .order-form__modal-table {
@@ -58,6 +60,7 @@ text-align: center;
   border-collapse: collapse;
   border: 1px solid #DCDCDC;
   border-radius: 10px;
+
   th,
   td {
     padding: 10px;
