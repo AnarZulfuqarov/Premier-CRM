@@ -4,22 +4,28 @@ import {
     Line,
     ResponsiveContainer,
 } from "recharts";
-import { useGetTotalOrdersStatikQuery } from "../../../services/adminApi"; // path sənə görə dəyişə bilər
+import { useGetFighterOrderCountStatikQuery } from "../../../services/adminApi";
 import { skipToken } from "@reduxjs/toolkit/query";
 
-const Chart1Card = () => {
+const Chart11Card = () => {
     const companyId = localStorage.getItem("selectedCompanyId");
-    const isValidId = companyId && companyId.length === 36; // basic UUID yoxlaması
+    const fighterId = localStorage.getItem("selectedFighterId");
 
-    const { data, isLoading, isError } = useGetTotalOrdersStatikQuery(
-        isValidId ? companyId : skipToken // skipToken üçün import lazımdır
+    const isValidCompany = companyId && companyId.length === 36;
+    const isValidFighter = fighterId && fighterId.length === 36;
+
+    const queryEnabled = isValidCompany && isValidFighter;
+
+    const { data, isLoading, isError } = useGetFighterOrderCountStatikQuery(
+        queryEnabled ? { fighterId, companyId } : skipToken
     );
 
+    if (!queryEnabled) return <div>Zəhmət olmasa şirkət və təchizatçı seçin</div>;
     if (isLoading) return <div>Yüklənir...</div>;
-    if (isError || !data) return <div>Xəta baş verdi</div>;
+    if (isError || !data?.confirmedOrderCount) return <div>Xəta baş verdi</div>;
 
-    const total = data.totalConfirmedOrders || 0;
-    const percentage = data.percentGrowth || 0;
+    const total = data.confirmedOrderCount.totalCount || 0;
+    const percentage = data.confirmedOrderCount.growthPercentage || 0;
 
     const isUp = percentage > 0;
     const isDown = percentage < 0;
@@ -36,13 +42,12 @@ const Chart1Card = () => {
                     <div className="change-row">
                         <span className="arrow" style={{ color: trendColor }}>{directionSymbol}</span>
                         <span className="percent" style={{ color: trendColor }}>
-              {Math.abs(percentage)}%
-            </span>
+                            {Math.abs(percentage)}%
+                        </span>
                         <span className="compare-text">vs last month</span>
                     </div>
                 </div>
 
-                {/* Sadəcə dekor üçün chart, data olmadan */}
                 <div className="mini-line-chart-recharts">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={[{ value: 1 }, { value: 2 }, { value: 3 }]}>
@@ -61,4 +66,4 @@ const Chart1Card = () => {
     );
 };
 
-export default Chart1Card;
+export default Chart11Card;

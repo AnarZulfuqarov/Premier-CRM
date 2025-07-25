@@ -643,6 +643,52 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        getOrderStatusPercantageStatik: builder.query({
+            query: (companyId) => ({
+                url: `/Statistics/order-status-percentages/${companyId}`,
+            }),
+        }),
+        getTotalOrdersStatik: builder.query({
+            query: (companyId) => ({
+                url: `/Statistics/total-orders/${companyId}`,
+            }),
+        }),
+        getMonthlyOrderStatusStatik: builder.query({
+            query: ({year,companyId}) => ({
+                url: `/Statistics/monthly-order-status/${year}/${companyId}`,
+            }),
+        }),
+        getMonthlyOrderAmountStatik: builder.query({
+            query: ({year,companyId}) => ({
+                url: `/Statistics/monthly-order-amounts/${year}/${companyId}`,
+            }),
+        }),
+        getMonthlyOrderStatik: builder.query({
+            query: ({year,companyId}) => ({
+                url: `/Statistics/monthly-orders/${year}/${companyId}`,
+            }),
+        }),
+        getFighterOrderStatusStatik: builder.query({
+            query: ({fighterId,companyId}) => ({
+                url: `/Statistics/fighter-order-status/${fighterId}/${companyId}`,
+            }),
+        }),
+        getFighterOrderCountStatik: builder.query({
+            query: ({fighterId,companyId}) => ({
+                url: `/Statistics/fighter-order-count/${fighterId}/${companyId}`,
+            }),
+        }),
+        getFighterMonthlyCompletionStatik: builder.query({
+            query: ({fighterId,year,companyId}) => ({
+                url: `/Statistics/fighter-monthly-completion/${fighterId}/${year}/${companyId}`,
+            }),
+        }),
+        getMonthlyProductQuantityStatik: builder.query({
+            query: ({companyId,categoryId,productId,year,}) => ({
+                url: `/Statistics/monthly-product-quantity/${companyId}/${categoryId}/${productId}/${year}`,
+            }),
+        }),
+
     }),
 });
 
@@ -764,4 +810,14 @@ export const {
 
     useResetPasswordMutation,
     useForgotPasswordMutation,
+
+    useGetOrderStatusPercantageStatikQuery,
+    useGetTotalOrdersStatikQuery,
+    useGetMonthlyOrderStatusStatikQuery,
+    useGetMonthlyOrderAmountStatikQuery,
+    useGetMonthlyOrderStatikQuery,
+    useGetFighterOrderStatusStatikQuery,
+    useGetFighterOrderCountStatikQuery,
+    useGetFighterMonthlyCompletionStatikQuery,
+    useGetMonthlyProductQuantityStatikQuery,
 } = api;

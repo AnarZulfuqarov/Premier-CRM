@@ -12,39 +12,97 @@ import drop13 from "/src/assets/statik13.png"
 import drop14 from "/src/assets/statik14.png"
 import drop15 from "/src/assets/statik15.png"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import DoughnutChartCard from "../../components/Statistika/Chart2/index.jsx";
 import Chart1Card from "../../components/Statistika/Chart1/index.jsx";
-import {useGetAllCompaniesQuery} from "../../services/adminApi.jsx";
+import {useGetAllCompaniesQuery, useGetAllFightersQuery} from "../../services/adminApi.jsx";
 import MonthlyOrdersChart from "../../components/Statistika/Cart3/index.jsx";
+import Chart4 from "../../components/Statistika/Cart4/index.jsx";
+import StatusBarChart from "../../components/Statistika/Chart5/index.jsx";
+import ProductChart from "../../components/Statistika/Chart6/index.jsx";
+import StatusBasedBarChart from "../../components/Statistika/Chart7/index.jsx";
+import Chart11Card from "../../components/Statistika/Chart11/index.jsx";
+import DoughnutChartCard2 from "../../components/Statistika/Chart22/index.jsx";
 ChartJS.register(ArcElement, Tooltip, Legend);
 function SuperAdminStatistikTest() {
     const { data: getAllCompanies, isLoading } = useGetAllCompaniesQuery();
     const companies = getAllCompanies?.data;
-    console.log(companies);
-    const [selectedBranch, setSelectedBranch] = useState(""); // id olarak başlat
-    const allData = {
-        2025: [
-            { month: "Yanvar", count: 22 },
-            { month: "Fevral", count: 25 },
-            { month: "Mart", count: 48 },
-            { month: "Aprel", count: 20 },
-            { month: "May", count: 30 },
-            { month: "Iyun", count: 68 },
-            { month: "Iyul", count: 25 },
-            { month: "Avqust", count: 90 },
-            { month: "Sentyabr", count: 80 },
-            { month: "Oktybar", count: 85 },
-            { month: "Noyabr", count: 95 },
-            { month: "Dekabr", count: 150 },
-        ],
-        2024: [
-            { month: "Yanvar", count: 30 },
-            { month: "Fevral", count: 35 },
-        ],
+    const [selectedBranch, setSelectedBranch] = useState("");
+
+    // Component mount olanda localStorage-dan oxu
+    useEffect(() => {
+        const savedCompanyId = localStorage.getItem("selectedCompanyId");
+        if (savedCompanyId) {
+            setSelectedBranch(savedCompanyId);
+        } else if (companies.length > 0) {
+            setSelectedBranch(companies[0].id); // default olaraq ilkini seç
+        }
+    }, [companies]);
+
+    const handleCompanyChange = (e) => {
+        const selectedId = e.target.value;
+        setSelectedBranch(selectedId);
+        localStorage.setItem("selectedCompanyId", selectedId); // localStorage-a yaz
     };
 
+    const { data: allFighters, isLoading: loadingFighters } = useGetAllFightersQuery();
+    const [selectedFighter, setSelectedFighter] = useState(
+        localStorage.getItem("selectedFighterId") || ""
+    );
 
+// dəyişiklik zamanı həm state, həm localStorage yazılır
+    const handleFighterChange = (e) => {
+        const id = e.target.value;
+        setSelectedFighter(id);
+        localStorage.setItem("selectedFighterId", id);
+    };
+    const statusChartData = {
+        2025: [
+            { month: "Yanvar", pending: 28, canceled: 20, completed: 36 },
+            { month: "Fevral", pending: 45, canceled: 20, completed: 60 },
+            { month: "Mart", pending: 28, canceled: 20, completed: 36 },
+            { month: "Aprel", pending: 30, canceled: 20, completed: 36 },
+            { month: "May", pending: 30, canceled: 20, completed: 36 },
+            { month: "İyun", pending: 30, canceled: 20, completed: 36 },
+            { month: "İyul", pending: 45, canceled: 20, completed: 60 },
+            { month: "Avqust", pending: 28, canceled: 20, completed: 36 },
+            { month: "Sentyabr", pending: 45, canceled: 20, completed: 60 },
+            { month: "Oktyabr", pending: 45, canceled: 70, completed: 30 },
+            { month: "Noyabr", pending: 60, canceled: 30, completed: 18 },
+            { month: "Dekabr", pending: 28, canceled: 20, completed: 36 },
+        ],
+    };
+    const productData = {
+        2025: [
+            { month: "Yanvar", count: 38 },
+            { month: "Fevral", count: 58 },
+            { month: "Mart", count: 68 },
+            { month: "Aprel", count: 39 },
+            { month: "May", count: 29 },
+            { month: "İyun", count: 68 },
+            { month: "İyul", count: 38 },
+            { month: "Avqust", count: 58 },
+            { month: "Sentyabr", count: 68 },
+            { month: "Oktyabr", count: 39 },
+            { month: "Noyabr", count: 58 },
+            { month: "Dekabr", count: 0 },
+        ]
+    };
+
+    const barChartData = [
+        { month: "Yanvar", pending: 28, completed: 33 },
+        { month: "Fevral", pending: 46, completed: 58 },
+        { month: "Mart", pending: 18, completed: 38 },
+        { month: "Aprel", pending: 15, completed: 16 },
+        { month: "May", pending: 44, completed: 67 },
+        { month: "İyun", pending: 24, completed: 28 },
+        { month: "İyul", pending: 58, completed: 33 },
+        { month: "Avqust", pending: 28, completed: 33 },
+        { month: "Sentyabr", pending: 49, completed: 61 },
+        { month: "Oktyabr", pending: 14, completed: 15 },
+        { month: "Noyabr", pending: 28, completed: 33 },
+        { month: "Dekabr", pending: 39, completed: 48 },
+    ];
 
     return (
         <div id={"super-admin-static-main"}>
@@ -60,10 +118,7 @@ function SuperAdminStatistikTest() {
                         {isLoading ? (
                             <p>Yüklənir...</p>
                         ) : (
-                            <select
-                                value={selectedBranch}
-                                onChange={(e) => setSelectedBranch(e.target.value)}
-                            >
+                            <select value={selectedBranch} onChange={handleCompanyChange}>
                                 {companies?.map((company) => (
                                     <option key={company.id} value={company.id}>
                                         {company.name}
@@ -76,12 +131,7 @@ function SuperAdminStatistikTest() {
                 </div>
                 <div className={"firstStatik"}>
                     <div className={"chart1"}>
-                        <Chart1Card
-                            title="Ümumi sifarişlər"
-                            total={2420}
-                            percentage={40}
-                            trendData={[100, 150, 120, 180, 220, 200, 240]}
-                        />
+                        <Chart1Card />
                     </div>
 
                     <div className={"chart2"}>
@@ -90,55 +140,73 @@ function SuperAdminStatistikTest() {
                 </div>
                 <div className={'secondStatik'}>
                     <div className={'chart3'}>
-                        <MonthlyOrdersChart allData={allData} />
+                        <MonthlyOrdersChart  />
 
                     </div>
 
                 </div>
                 <div className={'thirdStatik'}>
                     <div className={'chart4'}>
-                        <img src={drop5} alt="Statistikalar"/>
+                        <Chart4 />
                     </div>
-                    <div className={'chart5'}>
-                        <img src={drop6} alt="Statistikalar"/>
-                    </div>
+
                 </div>
                 <div className={'fourStatik'}>
                     <div className={'chart6'}>
-                        <img src={drop7} alt="Statistikalar"/>
+                        <StatusBarChart allData={statusChartData} />
                     </div>
-                    <div className={'chart7'}>
-                        <img src={drop8} alt="Statistikalar"/>
-                    </div>
+
                 </div>
                 <div className={'fifthStatik'}>
-                    <div className={'chart8'}>
-                        <img src={drop9} alt="Statistikalar"/>
+                    <ProductChart allData={productData} />
+                </div>
+                <div className="sixStatik">
+                    <div className="staticHead">
+                        <div className="content">
+                            <h3>Təchizat</h3>
+                            <p>
+                                Bu hissədə təchizat sifarişlərinin vəziyyəti və ümumi həcmi əks olunur.
+                            </p>
+                        </div>
+                        <div className="dropdownSelect">
+                            <select
+                                value={selectedFighter}
+                                onChange={handleFighterChange}
+                                style={{
+                                    border: "1px solid #ccc",
+                                    borderRadius: 6,
+                                    padding: "4px 12px",
+                                    fontSize: 14,
+                                    backgroundColor: "#f5f5f5",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                <option value="">Techizatçı seçin</option>
+                                {allFighters?.data?.map((fighter) => (
+                                    <option key={fighter.id} value={fighter.id}>
+                                        {fighter.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
-                    <div className={'chart9'}>
-                        <img src={drop10} alt="Statistikalar"/>
+
+                    <div className="firstStatik"> {/* reuse the same layout structure */}
+                        <div className="chart2">
+                            <DoughnutChartCard2
+
+                            />
+                        </div>
+
+                        <div className="chart1">
+                            <Chart11Card
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className={'sixStatik'}>
-                    <div className={'chart10'}>
-                        <img src={drop11} alt="Statistikalar"/>
-                    </div>
-                    <div className={"staticc"}>
-                        <div className={'chart11'}>
-                            <img src={drop12} alt="Statistikalar"/>
-                        </div>
-                        <div className={'chart12'}>
-                            <img src={drop13} alt="Statistikalar"/>
-                        </div>
-                    </div>
-                </div>
+
                 <div className={'sevenStatik'}>
-                    <div className={'chart13'}>
-                        <img src={drop14} alt="Statistikalar"/>
-                    </div>
-                    <div className={'chart14'}>
-                        <img src={drop15} alt="Statistikalar"/>
-                    </div>
+                    <StatusBasedBarChart data={barChartData} />
                 </div>
             </div>
         </div>

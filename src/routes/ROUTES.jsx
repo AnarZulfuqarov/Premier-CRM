@@ -323,7 +323,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/superAdmin/statistik",
-                element: <SuperAdminStatistik/>
+                element: <SuperAdminStatistikTest/>
             }
         ]
     },
