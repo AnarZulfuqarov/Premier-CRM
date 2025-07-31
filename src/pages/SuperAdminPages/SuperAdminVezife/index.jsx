@@ -6,14 +6,12 @@ import {useDeleteJobMutation, useEditJobMutation, useGetAllJobsQuery} from "../.
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const  SuperAdminVezife = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const [selectedJob, setSelectedJob] = useState(null);
     const [jobToDelete, setJobToDelete] = useState(null);
     const [newJobName, setNewJobName] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const showPopup = usePopup()
-    const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const {data:getAllJobs,refetch} = useGetAllJobsQuery()
@@ -26,15 +24,6 @@ const  SuperAdminVezife = () => {
     const filteredJobs = jobs.filter((job) =>
         job.name.toLowerCase().includes(searchName.toLowerCase())
     );
-    const totalPages = Math.ceil(filteredJobs.length / pageSize);
-    const pagedJobs = filteredJobs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
 
     return (
         <div className="super-admin-vezife-main">
@@ -84,7 +73,7 @@ const  SuperAdminVezife = () => {
                             </thead>
 
                             <tbody>
-                            {pagedJobs.map((order, idx) => (
+                            {filteredJobs.map((order, idx) => (
                                 <tr key={order.id}>
                                     <td>{order.name}</td>
                                     <td>{order.customers?.length}</td>
@@ -119,25 +108,7 @@ const  SuperAdminVezife = () => {
 
                 </div>
 
-                <div className="super-admin-vezife__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className="xett"></div>
             {modalVisible && (
                 <div className="vendor-edit-modal-overlay" onClick={() => setModalVisible(false)}>
                     <div className="vendor-edit-modal" onClick={(e) => e.stopPropagation()}>

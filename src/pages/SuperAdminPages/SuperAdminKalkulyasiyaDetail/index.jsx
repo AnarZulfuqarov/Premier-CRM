@@ -81,7 +81,6 @@ const SuperAdminKalkulyasiyaDetail = () => {
 
 
             </div>
-            <div className="xett"></div>
         </div>
     );
 };

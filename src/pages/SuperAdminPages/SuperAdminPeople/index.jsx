@@ -13,11 +13,9 @@ import {GoPlusCircle, GoTrash} from "react-icons/go";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminPeople = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchColumn, setSearchColumn] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const pageSize = 8;
     const [deleteIndex, setDeleteIndex] = useState(null);
     const showPopup = usePopup()
     const [editingUser, setEditingUser] = useState(null);
@@ -56,15 +54,6 @@ const SuperAdminPeople = () => {
 
 
 
-    const totalPages = Math.ceil(filteredUsers.length / pageSize);
-    const pagedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
 
     const handleSearchClick = (column) => {
         setSearchColumn(searchColumn === column ? null : column);
@@ -107,7 +96,7 @@ const SuperAdminPeople = () => {
     };
 
     const handleDeleteConfirm = async () => {
-        const userToDelete = pagedUsers[deleteIndex];
+        const userToDelete = filteredUsers[deleteIndex];
         if (!userToDelete) return;
 
         try {
@@ -196,7 +185,7 @@ const SuperAdminPeople = () => {
                             </thead>
                             <tbody>
 
-                            {pagedUsers.map((user) => (
+                            {filteredUsers.map((user) => (
                                 <tr key={user.id}>
                                     <td className={"firstCell"}>
                                         <div className="scrolling-company-cell">
@@ -221,7 +210,7 @@ const SuperAdminPeople = () => {
 
                     <div className="fixed-column">
                         <div className="header">Fəaliyyətlər</div>
-                        {pagedUsers.map((user) => (
+                        {filteredUsers.map((user) => (
                             <div key={user.id} className="cell">
                                 <span
                                     className="action-icon eye"
@@ -239,7 +228,7 @@ const SuperAdminPeople = () => {
                                 <div className={"line"}></div>
                                 <span
                                     className="action-icon delete"
-                                    onClick={() => setDeleteIndex(pagedUsers.findIndex(u => u.id === user.id))}
+                                    onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}
                                 >
                                     <GoTrash/>
                                 </span>
@@ -248,31 +237,8 @@ const SuperAdminPeople = () => {
                     </div>
                 </div>
 
-                <div className="super-admin-people__pagination">
-                    <button
-                        onClick={() => setCurrentPage((p) => p - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => setCurrentPage((p) => p + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className="xett"></div>
+
             {editingUser && (
                 <div className="modal-overlay">
                     <div className="modal-content">

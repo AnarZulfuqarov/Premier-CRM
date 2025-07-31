@@ -6,8 +6,6 @@ import {useNavigate} from "react-router-dom";
 const OrderHistorySupplier = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 3; // Number of orders per page
     const {data:getOrders ,refetch} = useGetOrdersQuery()
     const orderss = getOrders?.data
     const orders = orderss
@@ -61,40 +59,10 @@ const OrderHistorySupplier = () => {
 
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
+    const paginatedOrders = filteredOrders;
 
     // Generate page numbers with ellipsis
-    const getPageNumbers = () => {
-        const pageNumbers = [];
-        const maxVisiblePages = 5; // Show up to 5 page numbers at a time
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, currentPage + 2);
 
-        if (endPage - startPage < maxVisiblePages - 1) {
-            if (startPage === 1) endPage = Math.min(maxVisiblePages, totalPages);
-            else if (endPage === totalPages) startPage = Math.max(1, totalPages - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        if (startPage > 2) pageNumbers.unshift('...');
-        if (startPage > 1) pageNumbers.unshift(1);
-        if (endPage < totalPages - 1) pageNumbers.push('...');
-        if (endPage < totalPages) pageNumbers.push(totalPages);
-
-        return pageNumbers;
-    };
-
-    const handlePageChange = (page) => {
-        if (typeof page === 'number' && page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
     const navigate = useNavigate()
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
     const isMobile = window.innerWidth <= 768;
@@ -152,7 +120,7 @@ const OrderHistorySupplier = () => {
                     </div>
                 </div>
                 <div className="order-history-supplier__list">
-                    {paginatedOrders.map((order, index) => (
+                    {filteredOrders.map((order, index) => (
                         <div key={order.id || index} className="order-history-supplier__item" onClick={()=>navigate(`/supplier/history/${order.id}`)}>
                             <div className={"techizat"}>
                                 <div className={"order-history-supplier__ids"}>
@@ -217,32 +185,7 @@ const OrderHistorySupplier = () => {
                         </div>
                     ))}
                 </div>
-                <div className="order-history-supplier__pagination">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handlePageChange(page)}
-                            disabled={page === '...'}
-                            className={currentPage === page ? 'active' : ''}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages || totalPages === 0}
-                    >
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className={"xett"}></div>
         </div>
     );
 };

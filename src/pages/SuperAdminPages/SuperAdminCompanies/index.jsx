@@ -10,11 +10,9 @@ import {
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminCompanies = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(false);
     const [deleteCompanyId, setDeleteCompanyId] = useState(null);
-    const pageSize = 5;
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const [editCompanyData, setEditCompanyData] = useState({ id: '', name: '' });
@@ -37,12 +35,6 @@ const SuperAdminCompanies = () => {
             departmentCount: item.departments?.length || 0
         }));
 
-    const totalPages = Math.ceil(companies.length / pageSize);
-    const pagedCompanies = companies.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-    const getPageNumbers = () => {
-        return Array.from({ length: totalPages }, (_, i) => i + 1);
-    };
 
     return (
         <div className="super-admin-companies-main">
@@ -92,7 +84,7 @@ const SuperAdminCompanies = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {pagedCompanies.map((company) => (
+                        {companies.map((company) => (
                             <tr key={company.id}>
                                 <td>{company.name}</td>
                                 <td>{company.departmentCount}</td>
@@ -120,23 +112,6 @@ const SuperAdminCompanies = () => {
                     </table>
                 </div>
 
-                <div className="super-admin-companies__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
 
             {/* Modal for edit */}
@@ -213,7 +188,6 @@ const SuperAdminCompanies = () => {
                     </div>
                 </div>
             )}
-            <div className={"xett"}></div>
         </div>
     );
 };

@@ -1,0 +1,131 @@
+.sidebar {
+  height: calc(100dvh - 129px);
+  background-color: #FFFFFF;
+  width: 100%;
+  padding: 16px 12px;
+
+  .sidebar__menu-hr-icon {
+    width: 32px;
+  }
+
+  .sidebar__menu-hr-item {
+    border-left: 4px solid transparent;
+  }
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &__dropdown {
+    position: relative;
+    user-select: none;
+
+    &.active > .sidebar__dropdown-title {
+      color: #007AFF;
+      font-weight: 600;
+    }
+
+    .sidebar__dropdown-arrow {
+      margin-left: auto;
+      transition: transform .2s ease;
+
+      svg {
+        display: block;
+      }
+    }
+
+    &.open .sidebar__dropdown-arrow {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(36, 139, 252, 0.04);
+
+    .sidebar__submenu-item {
+      display: block;
+      font-size: 14px;
+      color: #333;
+      text-decoration: none;
+      padding: 8px 0 8px 48px;
+
+      &.active {
+        color: #007AFF;
+        font-weight: 500;
+        border-left: 4px solid #007AFF;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar__submenu {
+      display: none;
+    }
+  }
+
+  .logOut {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ED0303;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    background: none;
+    border: none;
+    padding: 0 15px;
+  }
+
+  &__menu-hr {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__menu-hr-item {
+    padding: 8px 15px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &.active {
+      border-left: 4px solid #007AFF;
+      background: rgba(36, 139, 252, 0.09);
+    }
+
+    .link {
+      text-decoration: none;
+      color: black;
+      margin-top: 3px;
+    }
+
+  }
+
+  &__menu-hr-icon {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    &__header {
+      display: none;
+    }
+
+    &__menu-hr-item {
+      justify-content: center;
+      padding: 15px;
+
+      span {
+        margin: 0;
+      }
+
+
+    }
+  }
+}

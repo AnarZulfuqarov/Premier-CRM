@@ -5,11 +5,9 @@ import {useDeleteFighterMutation, useEditFighterMutation, useGetAllFightersQuery
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const SuperAdminSupplier = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchColumn, setSearchColumn] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const pageSize = 8;
     const [deleteIndex, setDeleteIndex] = useState(null);
     const showPopup = usePopup()
     const [editingUser, setEditingUser] = useState(null);
@@ -44,14 +42,6 @@ const SuperAdminSupplier = () => {
     });
 
 
-    const totalPages = Math.ceil(filteredUsers.length / pageSize);
-    const pagedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
 
     const handleSearchClick = (column) => {
         setSearchColumn(searchColumn === column ? null : column);
@@ -188,7 +178,7 @@ const SuperAdminSupplier = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedUsers.map((user) => (
+                            {filteredUsers.map((user) => (
                                 <tr key={user.id}>
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
@@ -203,7 +193,7 @@ const SuperAdminSupplier = () => {
 
                     <div className="fixed-column">
                         <div className="header">Fəaliyyətlər</div>
-                        {pagedUsers.map((user) => (
+                        {filteredUsers.map((user) => (
                             <div key={user.id} className="cell">
 
                                 <span
@@ -225,7 +215,7 @@ const SuperAdminSupplier = () => {
                                 </span>
                                 <span
                                     className="action-icon delete"
-                                    onClick={() => setDeleteIndex(pagedUsers.findIndex(u => u.id === user.id))}
+                                    onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -255,31 +245,7 @@ const SuperAdminSupplier = () => {
                     </div>
                 </div>
 
-                <div className="super-admin-supplier__pagination">
-                    <button
-                        onClick={() => setCurrentPage((p) => p - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => setCurrentPage((p) => p + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className="xett"></div>
             {editingUser && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -360,7 +326,7 @@ const SuperAdminSupplier = () => {
                                 className="confirm-btn"
                                 onClick={async () => {
                                     try {
-                                        const phoneNumber = pagedUsers[deleteIndex]?.phone;
+                                        const phoneNumber = filteredUsers[deleteIndex]?.phone;
                                         if (!phoneNumber) {
                                             alert("İstifadəçi ID-si tapılmadı.");
                                             return;

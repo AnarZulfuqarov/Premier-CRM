@@ -16,7 +16,6 @@ import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SupplierProducts = () => {
     const location = useLocation();
     const { state } = location;
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
@@ -27,7 +26,6 @@ const SupplierProducts = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
 
     const navigate = useNavigate();
-    const pageSize = 7;
     const {data:getAllProducts,refetch} = useGetAllProductsQuery()
     const products = getAllProducts?.data
 
@@ -44,15 +42,6 @@ const SupplierProducts = () => {
         return byName && byCat;
     });
 
-    const totalPages = Math.ceil(filteredProducts?.length / pageSize);
-    const pagedItems = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
     const units = ['kg', 'litr', 'ədəd'];
     const {data:getAllCategories} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
@@ -72,9 +61,6 @@ const SupplierProducts = () => {
         ...filteredAddRequests.map(item => ({ ...item, statusType: 'add' })),
         ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
     ];
-    const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredProducts || [];
-    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
-    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const {data:getProductUpdateMyPending} = useGetProductUpdateMyPendingQuery()
     const editRequest = getProductUpdateMyPending?.data
@@ -181,8 +167,8 @@ const SupplierProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItems?.map((item, i) => {
-                                    const absoluteIndex = (currentPage - 1) * pageSize + i;
+                                {filteredProducts?.map((item, i) => {
+                                    const absoluteIndex = i;
                                     return (
                                         <tr key={i}>
                                             <td>{item.categoryName}</td>
@@ -311,7 +297,7 @@ const SupplierProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedItemsdelAdd.map((item, i) => {
+                                {combinedRequests.map((item, i) => {
                                     const isConfirmed = item.statusType === 'add';
                                     const statusText = isConfirmed ? 'Təsdiq gözləyən' : 'Silinmə gözləyən';
 
@@ -449,26 +435,8 @@ const SupplierProducts = () => {
 
 
 
-                <div className="supplier-product__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
 
-            <div className="xett"></div>
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -515,7 +483,7 @@ const SupplierProducts = () => {
                                     setModalData(null);
                                     refetch();
                                     showPopup("Məhsul düzəliş tələbi göndərildi","Seçilmiş məhsul üzrə redaktə tələbiniz uğurla göndərildi və baxılmaq üçün sistemə daxil edildi.",'success')
-                                } catch (err) {
+                                } catch  {
                                     showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
                                 }
                             }}

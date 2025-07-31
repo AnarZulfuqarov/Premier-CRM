@@ -4,9 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {useGetOrdersQuery} from "../../../services/adminApi.jsx";
 
 const ActiveOrders = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
-    const pageSize = 9;
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 576);
 
     useEffect(() => {
@@ -40,11 +38,7 @@ const ActiveOrders = () => {
 
 
 
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
+
     const [searchCompany, setSearchCompany] = useState('');
     const [searchPerson, setSearchPerson] = useState('');
     const [isCompanySearchOpen, setIsCompanySearchOpen] = useState(false);
@@ -55,8 +49,6 @@ const ActiveOrders = () => {
         return companyMatch && personMatch;
     });
 
-    const totalPages = Math.ceil(filteredOrders.length / pageSize);
-    const pagedOrders = filteredOrders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     return (
         <div className="active-order-main">
@@ -118,9 +110,9 @@ const ActiveOrders = () => {
                             </thead>
 
                             <tbody>
-                            {pagedOrders.map((order, idx) => (
+                            {filteredOrders.map((order, idx) => (
                                 <tr key={order.id}>
-                                    <td>{(currentPage - 1) * pageSize + idx + 1}</td>
+                                    <td>{ idx + 1}</td>
                                     <td>{order.amount}</td>
                                     <td>{order.person}</td>
                                     <td>{order.orderDate}</td>
@@ -133,7 +125,7 @@ const ActiveOrders = () => {
 
                     <div className="fixed-column">
                         <div className="header">Sifariş detalları</div>
-                        {pagedOrders.map((order) => (
+                        {filteredOrders.map((order) => (
                             <div key={order.id} className="cell">
                                 <button onClick={() => navigate(`/supplier/activeOrder/${order.id}`)}>
                                     {isMobile ? <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -146,25 +138,7 @@ const ActiveOrders = () => {
                     </div>
                 </div>
 
-                <div className="active-order__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className="xett"></div>
         </div>
     );
 };

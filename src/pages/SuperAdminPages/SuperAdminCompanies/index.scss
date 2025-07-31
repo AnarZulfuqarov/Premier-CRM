@@ -231,6 +231,8 @@
     display: flex;
     background: #fff;
     width: 40%;
+    max-height: 600px; // Yüksəklik istəyə uyğun dəyişdirilə bilər
+    overflow-y: auto;
 
 
 

@@ -16,7 +16,6 @@ import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 const SupplierCategories = () => {
     const location = useLocation();
     const { state } = location;
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
@@ -34,7 +33,6 @@ const SupplierCategories = () => {
         }
     }, [state]);
     const navigate = useNavigate();
-    const pageSize = 9;
     //Sorgular
     const {data: getAllCategories , refetch} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
@@ -45,18 +43,11 @@ const SupplierCategories = () => {
         refetch()
     },[])
 
+
     const filteredCategories = categories?.filter(category =>
         category.name.toLowerCase().includes(searchName.toLowerCase())
     ) || [];
-    const totalCategoryPages = Math.ceil(filteredCategories.length / pageSize);
-    const pagedCategories = filteredCategories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalCategoryPages; i++) pages.push(i);
-        return pages;
-    };
 
     const {data:getCategorieAddMyPending} = useGetCategorieAddMyPendingQuery()
     const addRequests = getCategorieAddMyPending?.data
@@ -71,8 +62,7 @@ const SupplierCategories = () => {
         ...filteredDeleteRequests.map(item => ({ ...item, statusType: 'delete' })),
     ];
     const currentDataSet = activeTab === 'requests' ? combinedRequests : filteredCategories || [];
-    const totalPagesdelAdd = Math.ceil(currentDataSet.length / pageSize);
-    const pagedItemsdelAdd = currentDataSet.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const pagedItemsdelAdd = currentDataSet
 
     const {data:getCategorieUpdateMyPending} = useGetCategorieUpdateMyPendingQuery()
     const editRequest = getCategorieUpdateMyPending?.data
@@ -162,8 +152,8 @@ const SupplierCategories = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {pagedCategories.map((item, i) => {
-                                    const absoluteIndex = (currentPage - 1) * pageSize + i;
+                                {filteredCategories.map((item, i) => {
+                                    const absoluteIndex =  i;
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
@@ -392,26 +382,8 @@ const SupplierCategories = () => {
 
 
 
-                <div className="supplier-category__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalCategoryPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
 
-            <div className="xett"></div>
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>

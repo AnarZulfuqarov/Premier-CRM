@@ -245,6 +245,8 @@
     .scrollable-part {
       width: 100%;
       overflow-x: auto;
+      max-height: 600px; // və ya uyğun ölçü
+      overflow-y: auto;
 
       &::-webkit-scrollbar {
         height: 4px;

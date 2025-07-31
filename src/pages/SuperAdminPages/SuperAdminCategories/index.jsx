@@ -161,7 +161,7 @@ const SuperAdminCategories = () => {
                                 </thead>
                                 <tbody>
                                 {filteredCategories?.map((item, i) => {
-
+                                    const absoluteIndex = i
                                     return (
                                         <tr key={item.id}>
                                             <td>{item.name}</td>

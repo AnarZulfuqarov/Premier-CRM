@@ -201,6 +201,7 @@ const SuperAdminProducts = () => {
                                 </thead>
                                 <tbody>
                                 {filteredProducts?.map((item, i) => {
+                                    const absoluteIndex = i
                                     return (
                                         <tr key={i}>
                                             <td>{item.categoryName}</td>

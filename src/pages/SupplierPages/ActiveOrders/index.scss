@@ -59,8 +59,10 @@
   }
 
   .order-table-wrapper {
-    display: flex;
     background: #fff;
+    max-height: 600px; // və ya uyğun ölçü
+    overflow-y: auto;
+    display: flex;
     .search-icon {
       cursor: pointer;
       margin-left: 6px;
@@ -250,7 +252,9 @@
 
     .order-table-wrapper {
       flex-direction: row; // row olaraq qalacaq (important!)
-
+      max-height: 400px; // və ya uyğun ölçü
+      overflow-y: auto;
+      display: flex;
       .scrollable-part {
         width: calc(100% - 60px); // solda qalan hissə
         overflow-x: auto;

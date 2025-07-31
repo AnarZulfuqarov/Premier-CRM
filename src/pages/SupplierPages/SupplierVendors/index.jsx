@@ -5,9 +5,8 @@ import {FaTimes} from "react-icons/fa";
 import {useGetAllVendorsQuery} from "../../../services/adminApi.jsx";
 
 const SupplierVendors = () => {
-    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
-    const pageSize = 5;
+
     const [searchName, setSearchName] = useState('');
     const [activeSearch, setActiveSearch] = useState(null);
     const {data:getAllVendors} = useGetAllVendorsQuery()
@@ -16,18 +15,7 @@ const SupplierVendors = () => {
         vendor.name.toLowerCase().includes(searchName.toLowerCase())
     );
 
-    const totalPages = Math.ceil(filteredVendors?.length / pageSize);
-    const pagedVendors = filteredVendors?.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
 
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
 
     return (
         <div className="supplier-vendors-main">
@@ -69,7 +57,7 @@ const SupplierVendors = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedVendors?.map((vendor) => (
+                            {filteredVendors?.map((vendor) => (
                                 <tr key={vendor.id}>
                                     <td>{vendor.name}</td>
                                     <td>{vendor.totalSale} ₼</td>
@@ -86,25 +74,7 @@ const SupplierVendors = () => {
 
                 </div>
 
-                <div className="supplier-vendors__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className="xett"></div>
         </div>
     );
 };

@@ -55,13 +55,18 @@ import ProtectedRouteCustomer from "../ProtectedRouteCustomer.jsx";
 import ProtectedRouteSupplier from "../ProtectedRouteSupplier.jsx";
 import SupplierNotification from "../pages/NotificationPages/SupplierNotification/index.jsx";
 import CustomerNotification from "../pages/NotificationPages/CustomerNotification/index.jsx";
-import SuperAdminStatistik from "../pages/SuperAdminPages/SuperAdminStatictic/index.jsx";
 import MobileCartPage from "../pages/CustomerPage/CustomerBasketPage/index.jsx";
 import NotFound from "../pages/NotFound/index.jsx";
 import ForgotPassword from "../pages/SuperAdminPages/SuperAdminForgotPassword/index.jsx";
 import ResetPassword from "../pages/SuperAdminPages/SuperAdminResetPassword/index.jsx";
 import SuccessResetPass from "../pages/SuperAdminPages/SuperAdminSuccess/index.jsx";
 import SuperAdminStatistikTest from "../pages/SuperAdminStaticticTest/index.jsx";
+import HrPage from "../pages/HRPages/HrPage/index.jsx";
+import HrPeople from "../pages/HRPages/HrPeople/index.jsx";
+import HrEmployment from "../pages/HRPages/HrEmployment/index.jsx";
+import HrDirector from "../pages/HRPages/HrDirector/index.jsx";
+import HrDirectorAdd from "../pages/HRPages/HrDirectorAdd/index.jsx";
+import HrSalary from "../pages/HRPages/HrSalary/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -131,7 +136,9 @@ const router = createBrowserRouter([
     {
         path: "/supplier",
         element: (
+            <ProtectedRouteSupplier>
             <SupplierPage/>
+            </ProtectedRouteSupplier>
         ),
         children: [
             {
@@ -334,6 +341,32 @@ const router = createBrowserRouter([
     {
         path: "*",
         element: <NotFound/>
+    },
+    {
+        path:"/hr",
+        element: <HrPage/>,
+        children:[
+            {
+                path: "/hr/people",
+                element: <HrPeople/>
+            },
+            {
+                path: "/hr/employment",
+                element: <HrEmployment/>
+            },
+            {
+                path: "/hr/director",
+                element: <HrDirector/>
+            },
+            {
+                path: "/hr/directorAdd",
+                element: <HrDirectorAdd/>
+            },
+            {
+                path: "/hr/salary",
+                element: <HrSalary/>
+            }
+        ]
     }
 ]);
 

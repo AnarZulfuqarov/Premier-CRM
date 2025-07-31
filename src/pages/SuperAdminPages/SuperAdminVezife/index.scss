@@ -231,7 +231,8 @@
     display: flex;
     background: #fff;
     width: 35%;
-
+    max-height: 600px; // və ya sənin layout-a uyğun dəyər
+    overflow-y: auto;
 
 
       table {
