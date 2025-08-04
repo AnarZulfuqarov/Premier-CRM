@@ -57,7 +57,7 @@ const SuperAdminSobeAdd = () => {
                     </div>
                     <h2>
                         <NavLink className="link" to="/superAdmin/companies">— Şirkətlər</NavLink>
-                        <NavLink className="link" to={`/superAdmin/company/${id}/sobe`}>—
+                        <NavLink className="link" to={`/superAdmin/companies/${id}/sobe`}>—
                             Şöbə</NavLink> — Şöbə əlavə edilməsi
                     </h2>
                 </div>
@@ -125,7 +125,7 @@ const SuperAdminSobeAdd = () => {
                             </div>
                         </div>
                         <h3>Şöbə uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => navigate(`/superAdmin/company/${id}/sobe`)}>
+                        <button className="back-btn" onClick={() => navigate(`/superAdmin/companies/${id}/sobe`)}>
                             Əsas səhifəsinə qayıt
                         </button>
                     </div>

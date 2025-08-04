@@ -20,7 +20,7 @@ const SuperAdminNavbar = () => {
     const {data: getAdminNotificationsSuperAdmin} = useGetAdminNotificationsSuperAdminQuery()
     const notification = getAdminNotificationsSuperAdmin?.data
     const hasUnread = notification?.some(item => item.isRead === false);
-
+    console.log(hasUnread)
     const handlePasswordSubmit = (e) => {
         e.preventDefault();
         // Burada validasyon yapabilirsiniz
@@ -38,10 +38,14 @@ const SuperAdminNavbar = () => {
 
                 <div className={"navbar_right"}>
                     <div className={"notification"} onClick={() => navigate("/superAdmin/notification")}>
-                        <MdNotificationsNone style={{
-                            fontSize: "18px",
-                        }}/>
-                        {hasUnread && <div className="notification_red"></div>}
+                        <div style={{
+                            position:'relative'
+                        }}>
+                            <MdNotificationsNone style={{
+                                fontSize: "18px",
+                            }}/>
+                            {hasUnread && <div className="notification_red"></div>}
+                        </div>
                         <div>
                             <h6>Bildirişlər</h6>
                         </div>

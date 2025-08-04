@@ -57,9 +57,9 @@ const SuperAdminBolmeAdd = () => {
                     </div>
                     <h2>
                         <NavLink className="link" to="/superAdmin/companies">— Şirkətlər</NavLink>
-                        <NavLink className="link" to={`/superAdmin/company/${department?.companyId}/sobe`}>—
+                        <NavLink className="link" to={`/superAdmin/companies/${department?.companyId}/sobe`}>—
                             Şöbə</NavLink>
-                        <NavLink className="link" to={`/superAdmin/sobe/${id}/bolme`}>— Bölmə</NavLink>
+                        <NavLink className="link" to={`/superAdmin/companies/sobe/${id}/bolme`}>— Bölmə</NavLink>
                         — Bölmə əlavə edilməsi
                     </h2>
                 </div>
@@ -129,7 +129,7 @@ const SuperAdminBolmeAdd = () => {
                         <h3>Bölmə uğurla əlavə edildi !</h3>
                         <button
                             className="back-btn"
-                            onClick={() => window.location.href = `/superAdmin/sobe/${id}/bolme`}
+                            onClick={() => window.location.href = `/superAdmin/companies/sobe/${id}/bolme`}
                         >
                             Bölmə siyahısına qayıt
                         </button>

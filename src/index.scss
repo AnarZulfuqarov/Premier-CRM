@@ -17,6 +17,10 @@ html {
   scroll-behavior: smooth;
 
 }
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 //@media (min-resolution: 120dpi) and (max-resolution: 144dpi) {
 //    html {

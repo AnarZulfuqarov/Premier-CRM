@@ -16,7 +16,7 @@ const ActiveOrdersDetail = () => {
     const [confirmedRows, setConfirmedRows] = useState({});
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedPreview, setSelectedPreview] = useState(null); // ✅ yeni
     const printRef = useRef(null);
     const {data: getAllVendors} = useGetAllVendorsQuery()
     const vendors = getAllVendors?.data
@@ -57,17 +57,19 @@ const ActiveOrdersDetail = () => {
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
 
-        const imageFiles = files.filter(file =>
-            file.type.startsWith('image/')
-        );
-
-        const newPreviews = imageFiles.map(file => ({
+        const newPreviews = files.map(file => ({
             file,
-            previewUrl: URL.createObjectURL(file),
+            previewUrl: file.type.startsWith('image/')
+                ? URL.createObjectURL(file)
+                : file.type === 'application/pdf'
+                    ? URL.createObjectURL(file)
+                    : null,
+            type: file.type
         }));
 
         setUploadedFiles(prev => [...prev, ...newPreviews]);
     };
+
     const handleRemoveImage = (indexToRemove) => {
         setUploadedFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
@@ -521,37 +523,77 @@ const ActiveOrdersDetail = () => {
                     <div className="modal-box" style={{width: '600px'}}>
                         <h3>Yüklənmiş sənədlər</h3>
                         <div className="image-preview-grid">
-                            {uploadedFiles.map((file, index) => (
-                                <div key={index} className="image-thumb">
-                                    <img
-                                        src={file.previewUrl}
-                                        alt={`preview-${index}`}
-                                        onClick={() => setSelectedImage(file.previewUrl)}
-                                    />
-                                    <div className="image-thumb-footer">
-                                        <span>{index + 1}-ci</span>
-                                        <button className="remove-btn" onClick={() => handleRemoveImage(index)}>❌
-                                        </button>
+                            <div className="image-preview-grid">
+                                {uploadedFiles.map((file, index) => (
+                                    <div key={index} className="image-thumb">
+                                        {file.type === 'application/pdf' ? (
+                                            <div
+                                                onClick={() => window.open(file.previewUrl, '_blank')}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '150px',
+                                                    border: '1px solid #ccc',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#f9f9f9',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                📄 PDF sənədi #{index + 1}
+                                            </div>
+                                        ) : (
+                                            <img
+                                                src={file.previewUrl}
+                                                alt={`preview-${index}`}
+                                                onClick={() =>
+                                                    setSelectedPreview({
+                                                        url: file.previewUrl,
+                                                        type: 'image'
+                                                    })
+                                                }
+                                            />
+                                        )}
+
+                                        <div className="image-thumb-footer">
+                                            <span>{index + 1}-ci</span>
+                                            <button className="remove-btn" onClick={() => handleRemoveImage(index)}>❌</button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
+
+
+
 
                         </div>
                         <button onClick={() => setShowPreviewModal(false)}>Bağla</button>
                     </div>
                 </div>
             )}
-            {selectedImage && (
-                <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+            {selectedPreview && (
+                <div className="modal-overlay" onClick={() => setSelectedPreview(null)}>
                     <div className="modal-box" style={{maxWidth: '90%', maxHeight: '90%'}}>
-                        <img
-                            src={selectedImage}
-                            alt="böyük şəkil"
-                            style={{maxWidth: '100%', maxHeight: '80vh', display: 'block', margin: '0 auto'}}
-                        />
+                        {selectedPreview.type === 'pdf' ? (
+                            <iframe
+                                src={selectedPreview.url}
+                                title="PDF Preview"
+                                width="100%"
+                                height="90%"
+                                style={{border: 'none'}}
+                            />
+                        ) : (
+                            <img
+                                src={selectedPreview.url}
+                                alt="Böyük şəkil"
+                                style={{maxWidth: '100%', maxHeight: '80vh', display: 'block', margin: '0 auto'}}
+                            />
+                        )}
                     </div>
                 </div>
             )}
+
+
 
         </div>
     );

@@ -113,32 +113,7 @@ const VendorHistorySuperAdmin =() => {
                         </div>
                     ))}
                 </div>
-                <div className="vendor-detail-super-admin__pagination">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handlePageChange(page)}
-                            disabled={page === '...'}
-                            className={currentPage === page ? 'active' : ''}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages || totalPages === 0}
-                    >
-                        &gt;
-                    </button>
-                </div>
             </div>
-            <div className={"xett"}></div>
         </div>
     );
 };

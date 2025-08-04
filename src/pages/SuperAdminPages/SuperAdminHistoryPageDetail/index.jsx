@@ -237,14 +237,39 @@ const OrderHistoryDetailSuperAdmin = () => {
                     <div className="overhead-modal" onClick={e => e.stopPropagation()}>
                         <h3>İnvoys Şəkilləri</h3>
                         <div className="overhead-images">
-                            {orderData?.overheadNames?.map((img, i) => (
-                                <img
-                                    key={i}
-                                    src={img}
-                                    alt={`overhead-${i}`}
-                                    onClick={() => setSelectedOverheadImage(img)}
-                                />
-                            ))}
+                            {orderData?.overheadNames?.map((file, i) => {
+                                const isPDF = file.toLowerCase().endsWith('.pdf');
+                                return (
+                                    <div key={i} className="overhead-file">
+                                        {isPDF ? (
+                                            <div
+                                                className="pdf-thumbnail"
+                                                onClick={() => window.open(file, '_blank')}
+                                                style={{
+                                                    width: '120px',
+                                                    height: '150px',
+                                                    border: '1px solid #ccc',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: '#f8f8f8',
+                                                    fontSize: '14px'
+                                                }}
+                                            >
+                                                📄 PDF #{i + 1}
+                                            </div>
+                                        ) : (
+                                            <img
+                                                src={file}
+                                                alt={`overhead-${i}`}
+                                                onClick={() => setSelectedOverheadImage(file)}
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })}
+
                         </div>
                     </div>
                 </div>

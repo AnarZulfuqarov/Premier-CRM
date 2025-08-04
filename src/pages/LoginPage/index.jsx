@@ -19,23 +19,33 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 🔴 1. Eski cookie'leri temizle
+        Cookies.remove('role');
+        Cookies.remove('supplierToken');
+        Cookies.remove('ordererToken');
+        Cookies.remove('superAdminToken');
+
         try {
             const response = await loginUser({ phoneNumber, password });
 
             if ('data' in response) {
                 const { token, role } = response.data.data;
 
+                // ✅ 2. Yeni verileri set et
                 Cookies.set('role', role);
-                showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
+
                 if (role === 'Fighter') {
                     Cookies.set('supplierToken', token);
+                    showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
                     navigate('/supplier/activeOrder');
                 } else if (role === 'Customer') {
                     Cookies.set('ordererToken', token);
+                    showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
                     navigate('/choose-company');
                 } else {
                     showPopup('Naməlum rol', 'Təyin olunmamış rol: ' + role, 'warning');
                 }
+                localStorage.setItem('auth-change', Date.now());
             } else {
                 showPopup('Giriş uğursuz oldu', 'Məlumatları yoxlayın.', 'error');
             }
@@ -44,6 +54,7 @@ function Login() {
             showPopup('Xəta baş verdi', 'Sistem daxil olarkən problem oldu.', 'error');
         }
     };
+
 
 
     return (

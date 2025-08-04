@@ -44,7 +44,7 @@ const SuperAdminCompanies = () => {
                         <h2>Şirkətlər</h2>
                         <p>Şirkət siyahısına baxın, dəyişikliklər edin və yeni şirkət əlavə edin</p>
                     </div>
-                    <button onClick={() => navigate("/superAdmin/companyAdd")}>
+                    <button onClick={() => navigate("/superAdmin/companies/companyAdd")}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                             <path d="M12 23C6.21 23 1.5 18.29 1.5 12.5C1.5 6.71 6.21 2 12 2C17.79 2 22.5 6.71 22.5 12.5C22.5 18.29 17.79 23 12 23ZM12 3.5C7.035 3.5 3 7.535 3 12.5C3 17.465 7.035 21.5 12 21.5C16.965 21.5 21 17.465 21 12.5C21 7.535 16.965 3.5 12 3.5Z" fill="white" />
                             <path d="M12 17.75C11.58 17.75 11.25 17.42 11.25 17V8C11.25 7.58 11.58 7.25 12 7.25C12.42 7.25 12.75 7.58 12.75 8V17C12.75 17.42 12.42 17.75 12 17.75Z" fill="white" />
@@ -104,7 +104,7 @@ const SuperAdminCompanies = () => {
                                     </div>
                                 </td>
                                 <td>
-                                    <button onClick={() => navigate(`/superAdmin/company/${company.id}/sobe`)}>Ətraflı</button>
+                                    <button onClick={() => navigate(`/superAdmin/companies/${company.id}/sobe`)}>Ətraflı</button>
                                 </td>
                             </tr>
                         ))}

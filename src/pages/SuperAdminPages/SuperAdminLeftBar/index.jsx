@@ -24,6 +24,7 @@ const SuperAdminLeftBar = () => {
             const name = cookie.split("=")[0].trim();
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
         });
+        localStorage.setItem('auth-change', Date.now());
         showPopup("Sistemdən çıxış edildi","Hesabdan uğurla çıxış etdiniz.","success")
         // Ana səhifəyə yönləndir
         navigate('/');
@@ -42,7 +43,7 @@ const SuperAdminLeftBar = () => {
                     Statistikalar
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/people" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/people")   ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z" stroke="black" stroke-width="1.5"/>
@@ -53,7 +54,7 @@ const SuperAdminLeftBar = () => {
                     Sifarişçilər
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/supplier" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/supplier") ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M21.228 18C22.206 18 23 18.794 23 19.773V19.875C23 21.431 21.714 23 18.5 23C15.286 23 14 21.437 14 19.875V19.773C14 18.793 14.793 18 15.773 18H21.228ZM16.25 2C16.4489 2 16.6397 2.07902 16.7803 2.21967C16.921 2.36032 17 2.55109 17 2.75V4H17.75C18.0455 4 18.3381 4.0582 18.611 4.17127C18.884 4.28434 19.1321 4.45008 19.341 4.65901C19.5499 4.86794 19.7157 5.11598 19.8287 5.38896C19.9418 5.66194 20 5.95453 20 6.25V11.336C19.5311 11.1142 19.0187 10.9995 18.5 11V6.25C18.5 6.05109 18.421 5.86032 18.2803 5.71967C18.1397 5.57902 17.9489 5.5 17.75 5.5H6.25C6.05109 5.5 5.86032 5.57902 5.71967 5.71967C5.57902 5.86032 5.5 6.05109 5.5 6.25V19.75C5.5 20.164 5.836 20.5 6.25 20.5H13.053C13.1424 21.0394 13.3515 21.552 13.665 22H6.25C5.65326 22 5.08097 21.7629 4.65901 21.341C4.23705 20.919 4 20.3467 4 19.75V6.25C4 5.65326 4.23705 5.08097 4.65901 4.65901C5.08097 4.23705 5.65326 4 6.25 4H7V2.75C7 2.55109 7.07902 2.36032 7.21967 2.21967C7.36032 2.07902 7.55109 2 7.75 2C7.94891 2 8.13968 2.07902 8.28033 2.21967C8.42098 2.36032 8.5 2.55109 8.5 2.75V4H11.25V2.75C11.25 2.55109 11.329 2.36032 11.4697 2.21967C11.6103 2.07902 11.8011 2 12 2C12.1989 2 12.3897 2.07902 12.5303 2.21967C12.671 2.36032 12.75 2.55109 12.75 2.75V4H15.5V2.75C15.5 2.55109 15.579 2.36032 15.7197 2.21967C15.8603 2.07902 16.0511 2 16.25 2ZM11.327 16.004C11.5115 16.0231 11.6824 16.11 11.8067 16.2478C11.9309 16.3855 11.9996 16.5645 11.9996 16.75C11.9996 16.9355 11.9309 17.1145 11.8067 17.2522C11.6824 17.39 11.5115 17.4769 11.327 17.496L11.25 17.5H8.25C8.05109 17.5 7.86032 17.421 7.71967 17.2803C7.57902 17.1397 7.5 16.9489 7.5 16.75C7.5 16.5511 7.57902 16.3603 7.71967 16.2197C7.86032 16.079 8.05109 16 8.25 16H11.25L11.327 16.004ZM18.5 12C19.163 12 19.7989 12.2634 20.2678 12.7322C20.7366 13.2011 21 13.837 21 14.5C21 15.163 20.7366 15.7989 20.2678 16.2678C19.7989 16.7366 19.163 17 18.5 17C17.837 17 17.2011 16.7366 16.7322 16.2678C16.2634 15.7989 16 15.163 16 14.5C16 13.837 16.2634 13.2011 16.7322 12.7322C17.2011 12.2634 17.837 12 18.5 12ZM14.25 12C14.4489 12 14.6397 12.079 14.7803 12.2197C14.921 12.3603 15 12.5511 15 12.75C15 12.9489 14.921 13.1397 14.7803 13.2803C14.6397 13.421 14.4489 13.5 14.25 13.5H8.25C8.05109 13.5 7.86032 13.421 7.71967 13.2803C7.57902 13.1397 7.5 12.9489 7.5 12.75C7.5 12.5511 7.57902 12.3603 7.71967 12.2197C7.86032 12.079 8.05109 12 8.25 12H14.25ZM15.75 8C15.9489 8 16.1397 8.07902 16.2803 8.21967C16.421 8.36032 16.5 8.55109 16.5 8.75C16.5 8.94891 16.421 9.13968 16.2803 9.28033C16.1397 9.42098 15.9489 9.5 15.75 9.5H8.25C8.05109 9.5 7.86032 9.42098 7.71967 9.28033C7.57902 9.13968 7.5 8.94891 7.5 8.75C7.5 8.55109 7.57902 8.36032 7.71967 8.21967C7.86032 8.07902 8.05109 8 8.25 8H15.75Z" fill="#171717"/>
@@ -139,7 +140,7 @@ const SuperAdminLeftBar = () => {
                         </ul>
                     )}
                 </li>
-                <li className={location.pathname === "/superAdmin/companies" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/companies") ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M10.5 6H9.5C9.22386 6 9 6.22386 9 6.5V7.5C9 7.77614 9.22386 8 9.5 8H10.5C10.7761 8 11 7.77614 11 7.5V6.5C11 6.22386 10.7761 6 10.5 6Z" fill="black"/>
@@ -154,7 +155,7 @@ const SuperAdminLeftBar = () => {
                     Şirkətlər
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/vezife" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/vezife")   ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <g clip-path="url(#clip0_240_10035)">
@@ -170,7 +171,7 @@ const SuperAdminLeftBar = () => {
                     Vəzifə
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/history" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/history")  ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path
@@ -182,7 +183,7 @@ const SuperAdminLeftBar = () => {
                     Tarixcə
                 </NavLink>
                 </li>
-                <li className={location.pathname === "/superAdmin/kalkulyasiya" ? "sidebar__menu-item active" : "sidebar__menu-item"}>
+                <li className={location.pathname.startsWith("/superAdmin/kalkulyasiya")  ? "sidebar__menu-item active" : "sidebar__menu-item"}>
                     <span className="sidebar__menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
   <path d="M18 8H14M16 6V10M18 17.5H14M18 14.5H14M10 17.5L8.25 15.75M8.25 15.75L6.5 14M8.25 15.75L10 14M8.25 15.75L6.5 17.5M10 8H6M21.5 12.95V11.05C21.5 7.02 21.5 5.004 20.109 3.752C18.718 2.5 16.479 2.5 12 2.5C7.522 2.5 5.282 2.5 3.891 3.752C2.5 5.004 2.5 7.02 2.5 11.05V12.95C2.5 16.98 2.5 18.996 3.891 20.248C5.282 21.5 7.521 21.5 12 21.5C16.478 21.5 18.718 21.5 20.109 20.248C21.5 18.996 21.5 16.98 21.5 12.95Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

@@ -3,9 +3,12 @@ import Cookies from 'js-cookie';
 
 const ProtectedRoute = ({ children }) => {
     const token = Cookies.get('superAdminToken');
-    if (!token || token === 'null') {
+    const role = Cookies.get('role');
+
+    if (!token || token === 'null' || role !== 'SuperAdmin') {
         return <Navigate to="/" replace />;
     }
+
     return children;
 };
 

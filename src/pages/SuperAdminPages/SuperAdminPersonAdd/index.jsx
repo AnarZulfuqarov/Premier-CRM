@@ -45,11 +45,12 @@ const SuperPersonAdd = () => {
                     password: row.password,
                     finCode: row.fin,
                     jobId: selectedJob?.id || '',
-                    phoneNumber: row.phone,
+                    phoneNumber: row.phone.replace(/[\s-]/g, ''), // <-- numarayı birleştir
                     sectionIds: selectedSectionIds
                 };
 
-               await post(payload).unwrap();
+
+                await post(payload).unwrap();
 
                 // Əgər backend-dən gələn cavab uğurlu deyilsə
 
@@ -139,7 +140,7 @@ const SuperPersonAdd = () => {
                                     placeholder="Vəzifə seç"
                                 />
                             </td>
-                            <td>
+                            <td className={"selectt"}>
                                 <Select
                                     isMulti
                                     placeholder="Bölmə seç"

@@ -118,7 +118,7 @@ const SuperAdminPeople = () => {
                         <p>Aşağıdan sifarişçini seçərək yeni bölmə əlavə edə bilərsiniz</p>
                     </div>
                     <div>
-                        <button onClick={() => navigate("/superAdmin/personAdd")}>
+                        <button onClick={() => navigate("/superAdmin/people/personAdd")}>
                             <GoPlusCircle style={{
                                 fontSize: '18px'
                             }}/>
@@ -188,7 +188,9 @@ const SuperAdminPeople = () => {
                             {filteredUsers.map((user) => (
                                 <tr key={user.id}>
                                     <td className={"firstCell"}>
-                                        <div className="scrolling-company-cell">
+                                        <div  className={
+                                            (user.sections?.length > 2 ? "scrolling-company-cell" : "")
+                                        }>
                                             {[...new Set(user.sections?.map(sec => sec.companyName))].join(', ')}
                                         </div>
                                     </td>

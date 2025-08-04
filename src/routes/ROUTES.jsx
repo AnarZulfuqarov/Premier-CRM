@@ -217,7 +217,7 @@ const router = createBrowserRouter([
                 element: <SuperAdminPeople/>
             },
             {
-                path: "/superAdmin/personAdd",
+                path: "/superAdmin/people/personAdd",
                 element: <SuperPersonAdd/>
             },
             {
@@ -273,27 +273,27 @@ const router = createBrowserRouter([
                 element: <SuperAdminCompanies/>
             },
             {
-                path: "/superAdmin/companyAdd",
+                path: "/superAdmin/companies/companyAdd",
                 element: <SuperAdminCompanyAdd/>
             },
             {
-                path: "/superAdmin/company/:id/sobe",
+                path: "/superAdmin/companies/:id/sobe",
                 element: <SuperAdminSobe/>
             },
             {
-                path: "/superAdmin/company/:id/sobeAdd",
+                path: "/superAdmin/companies/:id/sobeAdd",
                 element: <SuperAdminSobeAdd/>
             },
             {
-                path: "/superAdmin/sobe/:id/bolme",
+                path: "/superAdmin/companies/sobe/:id/bolme",
                 element: <SuperAdminBolme/>
             },
             {
-                path: "/superAdmin/sobe/:id/bolmeAdd",
+                path: "/superAdmin/companies/sobe/:id/bolmeAdd",
                 element: <SuperAdminBolmeAdd/>
             },
             {
-                path: "/superAdmin/bolme/persons/:id",
+                path: "/superAdmin/companies/bolme/persons/:id",
                 element: <SuperAdminBolmePerson/>
             },
             {

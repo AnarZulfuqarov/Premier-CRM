@@ -32,7 +32,7 @@ const OrderForm = () => {
     const datepickerRef = useRef(null);
 const showPopup = usePopup()
     const searchRef = useRef(null);
-
+    const showPopup = usePopup()
 
     useEffect(() => {
         if (!categories || !selectedCategoryId) return;
@@ -149,7 +149,7 @@ const showPopup = usePopup()
             setIsSuccessModalOpen(true);
             setCartItems([]);
         } catch (error) {
-            console.error("Sifariş göndərilərkən xəta:", error);
+            showPopup('Xəta', error?.data?.message || 'Sifariş göndərilə bilmədi', 'error');
         }
     };
 

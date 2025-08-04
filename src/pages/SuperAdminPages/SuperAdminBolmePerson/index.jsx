@@ -15,7 +15,7 @@ const SuperAdminBolmePerson = () => {
     const [activeSearch, setActiveSearch] = useState(null);
     const {data:getSectionsId} = useGetSectionsIdQuery(id)
     const orders = getSectionsId?.data?.customers || [];
-
+    const department = getSectionsId?.data
 
     const totalPages = Math.ceil(orders.length / pageSize);
     const pagedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -31,9 +31,9 @@ const SuperAdminBolmePerson = () => {
             <div className="super-admin-bolmePerson">
                 <div className={"root"}>
                     <h2 >
-                        <NavLink className="link" to="/admin/history">— Şirkətlər</NavLink>{' '}
-                        <NavLink className="link" to="/admin/history">— Şöbə</NavLink>
-                        <NavLink className="link" to="/admin/history">— Bölmə</NavLink>
+                        <NavLink className="link" to="/superAdmin/companies">— Şirkətlər</NavLink>{' '}
+                        <NavLink className="link" to={`/superAdmin/companies/${department?.companyId}/sobe`}>— Şöbə</NavLink>
+                        <NavLink className="link" to={`/superAdmin/companies/sobe/${department?.departmentId}/bolme`}>— Bölmə</NavLink>
                         — Sifarişçi
                     </h2>
                 </div>
@@ -47,13 +47,13 @@ const SuperAdminBolmePerson = () => {
                 </div>
                 <div className={"paths"}>
                     <div className={'path1'}>
-                        <h3>Şirkətin adı:</h3> <span>Şirvanşah</span>
+                        <h3>Şirkətin adı:</h3> <span>{department?.companyName}</span>
                     </div>
                     <div className={'path2'}>
-                        <h3>Şöbə adı:</h3> <span>Restoran</span>
+                        <h3>Şöbə adı:</h3> <span>{department?.departmentName}</span>
                     </div>
                     <div className={'path3'}>
-                        <h3>Bölmə adı:</h3> <span>Mətbəx</span>
+                        <h3>Bölmə adı:</h3> <span>{department?.name}</span>
                     </div>
                 </div>
                 <div className="order-table-wrapper">

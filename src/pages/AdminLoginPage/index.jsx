@@ -17,12 +17,23 @@ function AdminLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 🔴 1. Eski cookie'leri temizle
+        Cookies.remove('role');
+        Cookies.remove('superAdminToken');
+        Cookies.remove('supplierToken');
+        Cookies.remove('ordererToken');
+
         try {
             const response = await loginSuperAdmin({ phoneNumber, password });
-            showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
-            if ('data' in response ) {
-                Cookies.set('superAdminToken', response.data.data.token);
-                Cookies.set('role', response.data.data.role);
+
+            if ('data' in response) {
+                const { token, role } = response.data.data;
+
+                // ✅ 2. Yeni verileri set et
+                Cookies.set('superAdminToken', token);
+                Cookies.set('role', role);
+
+                showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
                 navigate('/superAdmin/people');
             } else {
                 showPopup('Giriş uğursuz oldu', 'Məlumatları yoxlayın.', 'error');
@@ -32,6 +43,7 @@ function AdminLogin() {
             showPopup('Xəta baş verdi', 'Sistem daxil olarkən problem oldu.', 'error');
         }
     };
+
 
     return (
         <div id="login">
@@ -84,9 +96,6 @@ function AdminLogin() {
                             <button type="submit" className="submit" disabled={isLoading}>
                                 {isLoading ? 'Yoxlanılır...' : 'Giriş et'}
                             </button>
-
-                            {error && <div className="error">Xəta: Məlumatlar səhvdir!</div>}
-
                             <div className="problem">
                                 Şifrəni unutmusunuz?
                                 <Link to='/forgotPassword' > Bərpa etmək üçün buraya klikləyin.</Link>

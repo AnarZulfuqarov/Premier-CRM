@@ -3,9 +3,13 @@ import Cookies from 'js-cookie';
 
 const ProtectedRouteSupplier = ({ children }) => {
     const token = Cookies.get('supplierToken');
-    if (!token || token === 'null') {
+    const role = Cookies.get('role');
+
+    // 🔐 Token yoksa veya rol yanlışsa yönlendir
+    if (!token || token === 'null' || role !== 'Fighter') {
         return <Navigate to="/" replace />;
     }
+
     return children;
 };
 
