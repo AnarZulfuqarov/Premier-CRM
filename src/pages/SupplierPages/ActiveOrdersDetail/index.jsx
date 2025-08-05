@@ -24,7 +24,8 @@ const ActiveOrdersDetail = () => {
     const pageSize = 9;
     const {data: getMyOrdersId} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data;
-    const [complateOrder] = useOrderComplateMutation()
+    const [complateOrder, { isLoading }] = useOrderComplateMutation();
+
     const showPopup = usePopup();
     const filtered = orderData?.items?.map((item) => {
         return {
@@ -167,8 +168,13 @@ const ActiveOrdersDetail = () => {
                                     // 🔴 Error
                                     showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
                                 }
-                            }}>
-                                Sifarişi tamamla
+                            }}
+                                    disabled={isLoading}
+                                    style={{
+                                        background: isLoading ? '#7b7b7b' : '#384871',
+                                        cursor: isLoading ? 'not-allowed' : 'pointer',
+                                    }}>
+                                {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                             </button>
                         )}</>
                     )}
@@ -249,8 +255,13 @@ const ActiveOrdersDetail = () => {
                                         // 🔴 Error
                                         showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
                                     }
-                                }}>
-                                    Sifarişi tamamla
+                                }}
+                                        disabled={isLoading}
+                                        style={{
+                                            background: isLoading ? '#7b7b7b' : '#384871',
+                                            cursor: isLoading ? 'not-allowed' : 'pointer',
+                                        }}>
+                                    {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                                 </button>
                             )}
                             <button className={"printBtn"} onClick={handlePrint}>

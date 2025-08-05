@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import './index.scss';
 import {useNavigate} from "react-router-dom";
-import { useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {useGetAllCompaniesQuery, useGetOrdersQuery} from "../../../services/adminApi.jsx";
 
 const OrderHistorySuperAdmin = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const navigate = useNavigate();
+    const {data:getAllCompanies} = useGetAllCompaniesQuery()
+    const companies = getAllCompanies?.data
+    const [selectedCompany, setSelectedCompany] = useState('all');
+
     const {data:getMyOrders,refetch} = useGetOrdersQuery()
     const orderss = getMyOrders?.data
     useEffect(() => {
@@ -14,7 +18,6 @@ const OrderHistorySuperAdmin = () => {
     }, [orderss]);
     const orders = orderss?.map((order) => {
         let status = '';
-
         if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
             status = 'Tamamlanmış';
         } else if (order.employeeConfirm && order.fighterConfirm) {
@@ -40,22 +43,29 @@ const OrderHistorySuperAdmin = () => {
             status,
             price: totalPrice.toFixed(2),
             customer: customerFullName,
-            supplier: supplierFullName
+            supplier: supplierFullName,
+            order
         };
     }) || [];
-
 
     const filteredOrders = orders.filter((order) => {
         const matchesSearch =
             order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
+
         const matchesFilter =
             filter === 'all' ||
             (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış') ||
-            (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən');
-        return matchesSearch && matchesFilter;
+            (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
+            (filter === 'completed' && order.status === 'Tamamlanmış');
+
+        const matchesCompany =
+            selectedCompany === 'all' ||
+            order?.order?.section?.companyName === selectedCompany;
+        return matchesSearch && matchesFilter && matchesCompany;
     });
+
+
 
     // Pagination logic
 
@@ -74,6 +84,18 @@ const OrderHistorySuperAdmin = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                    <div className="company-select">
+                        <label>Şirkət seçin:</label>
+                        <select
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                        >
+                            <option value="all">Hamısı</option>
+                            {companies?.map(company => (
+                                <option key={company.id} value={company.name}>{company.name}</option>
+                            ))}
+                        </select>
+                    </div>
 
                     <div className="order-history__filter-button">
                         <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>

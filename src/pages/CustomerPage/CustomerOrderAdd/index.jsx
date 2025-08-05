@@ -30,7 +30,6 @@ const OrderForm = () => {
     const [postOrder] = useCreateOrdersMutation()
     const sectionId = Cookies.get('sectionId');
     const datepickerRef = useRef(null);
-const showPopup = usePopup()
     const searchRef = useRef(null);
     const showPopup = usePopup()
 

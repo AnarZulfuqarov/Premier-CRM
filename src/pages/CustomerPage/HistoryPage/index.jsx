@@ -35,7 +35,13 @@ const OrderHistory = () => {
 
         return {
             id: order.id,
-            product: order.items.map(item => item.product?.name).join(', '),
+            product: (() => {
+                const names = order.items.map(item => item.product?.name).filter(Boolean);
+                const maxDisplay = 2; // Maksimum gösterilecek ürün ismi sayısı
+                return names.length > maxDisplay
+                    ? names.slice(0, maxDisplay).join(', ') + '...'
+                    : names.join(', ');
+            })(),
             itemCount: order.items.length,
             categoryCount: uniqueCategories.length,
             status,

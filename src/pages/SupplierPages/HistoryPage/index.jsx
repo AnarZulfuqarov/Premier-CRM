@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import './index.scss';
-import {useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {useGetAllCompaniesQuery, useGetOrdersQuery} from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
 
 const OrderHistorySupplier = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
+    const {data:getAllCompanies} = useGetAllCompaniesQuery()
+    const companies = getAllCompanies?.data
+    const [selectedCompany, setSelectedCompany] = useState('');
+
     const {data:getOrders ,refetch} = useGetOrdersQuery()
     const orderss = getOrders?.data
     const orders = orderss
@@ -33,13 +37,20 @@ const OrderHistorySupplier = () => {
             ];
             return {
                 id: order.id,
-                product: productNames,
+                product: (() => {
+                    const names = order.items.map(item => item.product?.name).filter(Boolean);
+                    const maxDisplay = 2; // Maksimum gösterilecek ürün ismi sayısı
+                    return names.length > maxDisplay
+                        ? names.slice(0, maxDisplay).join(', ') + '...'
+                        : names.join(', ');
+                })(),
                 itemCount: order.items.length,
                 status,
                 categoryCount: uniqueCategories.length,
                 price: totalPrice.toFixed(2),
                 customer: customerFullName,
-                supplier: supplierFullName
+                supplier: supplierFullName,
+                order
             };
         }) || [];
 
@@ -50,12 +61,19 @@ const OrderHistorySupplier = () => {
         const matchesSearch =
             order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
+
         const matchesFilter =
             filter === 'all' ||
             (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
             (filter === 'completed' && order.status === 'Tamamlanmış');
-        return matchesSearch && matchesFilter;
+
+        const matchesCompany =
+            selectedCompany === 'all' ||
+            order?.order?.section?.companyName === selectedCompany;
+
+        return matchesSearch && matchesFilter && matchesCompany;
     });
+
 
 
     // Pagination logic
@@ -78,7 +96,18 @@ const OrderHistorySupplier = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-
+                    <div className="company-select">
+                        <label>Şirkət seçin:</label>
+                        <select
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                        >
+                            <option value="all">Hamısı</option>
+                            {companies?.map(company => (
+                                <option key={company.id} value={company.name}>{company.name}</option>
+                            ))}
+                        </select>
+                    </div>
                     <div className="order-history__filter-button">
                         <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">

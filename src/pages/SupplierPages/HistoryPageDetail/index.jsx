@@ -34,7 +34,8 @@ const OrderHistoryDetailSuplier = () => {
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const price = `${item.suppliedQuantity*item.price} ₼`;
+        const price = `${item.suppliedQuantity * item.price} ₼`;
+        const priceEach = `${item.price} ₼`; // ✅ yeni hissə
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
@@ -45,6 +46,7 @@ const OrderHistoryDetailSuplier = () => {
             required,
             provided,
             price,
+            priceEach, // ✅ yeni hissə
             created,
             delivery,
             received
@@ -54,6 +56,7 @@ const OrderHistoryDetailSuplier = () => {
         const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
     }) || [];
+
 
     const isMobile = window.innerWidth <= 768;
     return (
@@ -196,6 +199,7 @@ const OrderHistoryDetailSuplier = () => {
                                 <th>Tələb olunan miqdar</th>
                                 <th>Təmin olunan miqdar</th>
                                 <th>Sifarişin məbləği</th>
+                                <th>Qiyməti</th>
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
@@ -218,6 +222,7 @@ const OrderHistoryDetailSuplier = () => {
                                         <td>{item.required}</td>
                                         <td>{item.provided}</td>
                                         <td>{item.price}</td>
+                                        <td>{item.priceEach}</td>
                                         <td>{item.created}</td>
                                         <td>{item.delivery}</td>
                                         <td>{item.received}</td>

@@ -53,17 +53,20 @@ const OrderHistoryDetail = () => {
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const priceTotal = item.price ;
-        const price = `${item.suppliedQuantity*priceTotal} ₼`;
+        const priceTotal = item.price;
+        const price = `${item.suppliedQuantity * priceTotal} ₼`;
+        const priceEach = `${priceTotal} ₼`; // ✅ Yeni sahə əlavə edildi
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
+
         return {
             name,
             category,
             required,
             provided,
             price,
+            priceEach, // ✅ əlavə edildi
             created,
             delivery,
             received
@@ -73,6 +76,7 @@ const OrderHistoryDetail = () => {
         const byCat = item.category?.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
     }) || [];
+
 
     const [deleteOrder, { isSuccess }] = useDeleteOrderMutation();
 
@@ -185,6 +189,7 @@ const OrderHistoryDetail = () => {
                                 <th>Tələb olunan miqdar</th>
                                 {status !== 'Təchizatçıdan təsdiq gözləyən' && <th>Təmin olunan miqdar</th>}
                                 {status !== 'Təchizatçıdan təsdiq gözləyən' && <th>Sifarişin məbləği</th>}
+                                {status !== 'Təchizatçıdan təsdiq gözləyən' && <th>Qiyməti</th>}
                                 <th>Sifarişin yaradılma tarixi</th>
                                 {status !== 'Tamamlanmış' && <th>Çatdırılacaq tarixi</th>}
                                 {status === 'Tamamlanmış' && <th>Təhvil alınma tarixi</th>}
@@ -200,6 +205,7 @@ const OrderHistoryDetail = () => {
                                     <td>{item.required}</td>
                                     {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.provided}</td>}
                                     {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.price}</td>}
+                                    {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.priceEach}</td>} {/* ✅ */}
                                     <td>{item.created}</td>
                                     {status !== 'Tamamlanmış' && <td>{item.delivery}</td>}
                                     {status === 'Tamamlanmış' && <td>{item.received}</td>}

@@ -41,7 +41,8 @@ const OrderHistoryDetailSuperAdmin = () => {
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
-        const price = `${(item.suppliedQuantity * (item.price || 0)).toFixed(2)} ₼`;
+        const priceEach = `${(item?.price || 0).toFixed(2)} ₼`; // ✅ yeni sahə
+        const price = `${(item.suppliedQuantity * (item?.price || 0)).toFixed(2)} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
@@ -52,15 +53,13 @@ const OrderHistoryDetailSuperAdmin = () => {
             required,
             provided,
             price,
+            priceEach, // ✅ əlavə etdik
             created,
             delivery,
             received
         };
-    }).filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.category.toLowerCase().includes(searchCategory.toLowerCase());
-        return byName && byCat;
-    }) || [];
+    })
+
     const navigate = useNavigate()
     return (
         <div className="order-history-detail-super-admin-main">
@@ -170,6 +169,8 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <th>Tələb olunan miqdar</th>
                                 <th>Təmin olunan miqdar</th>
                                 <th>Sifarişin məbləği</th>
+                                <th>Qiyməti</th> {/* ✅ Yeni sütun */}
+
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
@@ -189,6 +190,8 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.required}</td>
                                     <td>{item.provided}</td>
                                     <td>{item.price}</td>
+                                    <td>{item.priceEach}</td> {/* ✅ Yeni hüceyrə */}
+
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
                                     <td>{item.received}</td>

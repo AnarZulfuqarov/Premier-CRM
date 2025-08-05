@@ -177,7 +177,7 @@
       padding: 10px 17px;
       justify-content: space-between;
       align-items: center;
-      gap: 50px;
+      gap: 45px;
       border-radius: 7px;
       border: 1px solid #9C9C9C;
       background: #FFF;
@@ -206,6 +206,11 @@
         line-height: normal;
 
 
+    }
+    .complateBtn:disabled{
+      background-color: #7b7b7b !important;
+      cursor: not-allowed;
+      opacity: 0.8
     }
     @media screen and (max-width: 576px){
       button{

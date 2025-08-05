@@ -104,7 +104,25 @@
       font-size: 14px;
       outline: none;
     }
+    .company-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
 
+      label {
+        font-size: 14px;
+        color: #555;
+      }
+
+      select {
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        background: #fff;
+        cursor: pointer;
+      }
+    }
     select {
       padding: 10px;
       border: 1px solid #ddd;

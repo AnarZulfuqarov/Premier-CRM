@@ -25,7 +25,8 @@ const SuperAdminCategoryAdd = () => {
             const promises = rows.map(row => post({ name: row.name }));
             await Promise.all(promises); // hamısı tamamlandıqda davam et
             setShowSuccessModal(true);
-        } catch (error) {
+            setRows([{name: '', category: '', unit: ''}]); // ✅ inputları sıfırla
+        } catch {
             showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
 
             // Burada error modalı da göstərə bilərsən

@@ -7,6 +7,7 @@ import "./index.scss"
 import OrderConfirmationModal from '../../../components/UserComponents/OrderConfirmationModal';
 import OrderSuccessModal from '../../../components/UserComponents/OrderSuccessModal';
 import {useCreateOrdersMutation} from '../../../services/adminApi';
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const MobileCartPage = () => {
     const { state } = useLocation();
@@ -15,6 +16,7 @@ const MobileCartPage = () => {
 
     const navigate = useNavigate();
     const [postOrder] = useCreateOrdersMutation();
+    const showPopup = usePopup();
 
     const [cartItems, setCartItems] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -52,15 +54,16 @@ const MobileCartPage = () => {
         };
 
         try {
-            await postOrder(payload);
+            await postOrder(payload).unwrap(); // unwrap ile hata daha net yakalanır
             setIsConfirmationModalOpen(false);
             setIsSuccessModalOpen(true);
-            localStorage.removeItem('cartData'); // 🧹 Temizle
-
+            localStorage.removeItem('cartData');
         } catch (err) {
             console.error('Sifariş xətası:', err);
+            showPopup('Xəta', err?.data?.message || 'Sifariş göndərilə bilmədi', 'error');
         }
     };
+
     const handleDeleteItem = (index) => {
         setCartItems((prevItems) => prevItems.filter((_, i) => i !== index));
     };
