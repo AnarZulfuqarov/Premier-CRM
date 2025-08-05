@@ -183,7 +183,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {filtered.map((item, i) => (
+                            {filtered?.map((item, i) => (
                                 <tr key={i}>
                                     <td>{item.name}</td>
                                     <td>{item.category}</td>

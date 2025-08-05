@@ -25,7 +25,9 @@ const CustomDropdown = ({ options, selected, onSelect, placeholder = "Seçin" })
         <div className="custom-dropdown" ref={dropdownRef}>
             <div className="custom-dropdown-header" onClick={() => setOpen(!open)}>
                 {selectedLabel ? (
-                    <span>{selectedLabel}</span>
+                    <div className="scrolling-text-wrapper">
+                        <span className="scrolling-text">{selectedLabel}</span>
+                    </div>
                 ) : (
                     <span className="placeholder">{placeholder}</span>
                 )}

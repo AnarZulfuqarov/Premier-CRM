@@ -141,10 +141,32 @@
       outline: none;
       border:none;
     }
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      input {
+        padding-right: 40px; // göz iconu üçün yer
+      }
+
+      .eye-icon {
+        position: absolute;
+        right: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        color: #666;
+        user-select: none;
+      }
+    }
+
     .selectt{
       max-width: 200px;
     }
-
+    .vezife{
+      width: 150px;
+     max-width: 150px;
+    }
     .add-row-btn {
       width: 100%;
       padding: 8px 16px;

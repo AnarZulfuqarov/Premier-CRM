@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
-    useChangePasswordCustomersMutation, useGetAdminNotificationsCustomerQuery,
+    useChangePasswordCustomersMutation, useGetAdminNotificationsCustomerIdQuery, useGetAdminNotificationsCustomerQuery,
     useGetUserQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
@@ -15,9 +15,10 @@ const SupplierNavbar = ({ onToggleSidebar }) => {
     const {data:getUser} = useGetUserQuery()
     const user = getUser?.data
     // input’lar için state
-    const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationsCustomerQuery()
+    const {data:getAdminNotificationsSuperAdmin,refetch} = useGetAdminNotificationsCustomerIdQuery(user?.id)
     const notification = getAdminNotificationsSuperAdmin?.data
     const hasUnread = notification?.some(item => item.isRead === false);
+    console.log(notification)
     const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
     const [newPass2, setNewPass2] = useState('');

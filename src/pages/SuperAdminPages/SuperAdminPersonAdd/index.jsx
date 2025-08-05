@@ -5,6 +5,7 @@ import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.js
 import {useCreateCustomersMutation, useGetAllJobsQuery, useGetAllSectionsQuery} from "../../../services/adminApi.jsx";
 import Select from 'react-select';
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
+import {Eye, EyeOff} from "lucide-react";
 
 const SuperPersonAdd = () => {
     const [rows, setRows] = useState([
@@ -14,6 +15,7 @@ const SuperPersonAdd = () => {
     const showPopup = usePopup()
     const {data: getAllJobs} = useGetAllJobsQuery();
     const {data: getAllSections} = useGetAllSectionsQuery();
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const positions = getAllJobs?.data || [];
     const departments = getAllSections?.data || [];
@@ -45,26 +47,26 @@ const SuperPersonAdd = () => {
                     password: row.password,
                     finCode: row.fin,
                     jobId: selectedJob?.id || '',
-                    phoneNumber: row.phone.replace(/[\s-]/g, ''), // <-- numarayı birleştir
+                    phoneNumber: row.phone.replace(/[\s-]/g, ''),
                     sectionIds: selectedSectionIds
                 };
 
-
-                await post(payload).unwrap();
-
-                // Əgər backend-dən gələn cavab uğurlu deyilsə
-
+                await post(payload).unwrap(); // unwrap error throw edir
             }
 
-            // Hər şey uğurlu oldusa modal aç
             setShowSuccessModal(true);
             setRows([{
                 name: '', surname: '', fin: '', position: '', departments: [], password: '', phone: ''
             }]);
-        } catch  {
-            showPopup("Xəta baş verdi", "İstifadəçi əlavə olunmadı", "error")
+        } catch (error) {
+            const errorMessage =
+                error?.data?.error ||
+                error?.error ||
+                "İstifadəçi əlavə olunarkən xəta baş verdi";
+            showPopup("Xəta baş verdi", errorMessage, "error");
         }
     };
+
     const isFormValid = () => {
         return rows.every(row =>
             row.name.trim() &&
@@ -132,7 +134,7 @@ const SuperPersonAdd = () => {
                                     required
                                 />
                             </td>
-                            <td>
+                            <td className={"vezife"}>
                                 <CustomDropdown
                                     options={positions.map(p => p.name)}
                                     selected={row.position}
@@ -158,19 +160,45 @@ const SuperPersonAdd = () => {
                                     onChange={(selectedOptions) =>
                                         handleChange(index, 'departments', selectedOptions.map(opt => opt.value))
                                     }
+                                    menuPlacement="auto" // açılma yönü avtomatik
+                                    maxMenuHeight={150} // açılan menyunun maksimum hündürlüyü
+                                    styles={{
+                                        multiValue: (base) => ({
+                                            ...base,
+                                            maxWidth: '100%',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                        }),
+                                        valueContainer: (base) => ({
+                                            ...base,
+                                            maxHeight: '70px', // görünən hissəni məhdudlaşdır
+                                            overflowY: 'auto',
+                                        }),
+                                    }}
                                 />
+
 
                             </td>
 
 
                             <td>
-                                <input
-                                    type="password"
-                                    placeholder="Şifrə daxil et"
-                                    value={row.password}
-                                    onChange={(e) => handleChange(index, 'password', e.target.value)}
-                                    required
-                                />
+                                <div className="password-input-wrapper">
+                                    <input
+                                        type={passwordVisible ? 'text' : 'password'}
+                                        placeholder="Şifrə daxil et"
+                                        value={row.password}
+                                        onChange={(e) => handleChange(index, 'password', e.target.value)}
+                                        required
+                                    />
+                                    <span
+                                        className="eye-icon"
+                                        onClick={() => setPasswordVisible(!passwordVisible)}
+                                    >
+        {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+    </span>
+                                </div>
+
                             </td>
                             <td>
                                 <input

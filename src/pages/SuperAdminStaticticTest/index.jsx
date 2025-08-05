@@ -1,16 +1,5 @@
 import "./index.scss"
-import drop4 from "/src/assets/statik4.png"
-import drop5 from "/src/assets/statik5.png"
-import drop6 from "/src/assets/statik6.png"
-import drop7 from "/src/assets/statik7.png"
-import drop8 from "/src/assets/statik8.png"
-import drop9 from "/src/assets/statik9.png"
-import drop10 from "/src/assets/statik10.png"
-import drop11 from "/src/assets/statik11.png"
-import drop12 from "/src/assets/statik12.png"
-import drop13 from "/src/assets/statik13.png"
-import drop14 from "/src/assets/statik14.png"
-import drop15 from "/src/assets/statik15.png"
+
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import {useEffect, useState} from "react";
 import DoughnutChartCard from "../../components/Statistika/Chart2/index.jsx";
@@ -34,7 +23,7 @@ function SuperAdminStatistikTest() {
         const savedCompanyId = localStorage.getItem("selectedCompanyId");
         if (savedCompanyId) {
             setSelectedBranch(savedCompanyId);
-        } else if (companies.length > 0) {
+        } else if (companies?.length > 0) {
             setSelectedBranch(companies[0].id); // default olaraq ilkini seç
         }
     }, [companies]);

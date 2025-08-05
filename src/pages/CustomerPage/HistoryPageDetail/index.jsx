@@ -55,10 +55,12 @@ const OrderHistoryDetail = () => {
         const provided = `${item.suppliedQuantity} ${item.product?.measure || ''}`;
         const priceTotal = item.price;
         const price = `${item.suppliedQuantity * priceTotal} ₼`;
-        const priceEach = `${priceTotal} ₼`; // ✅ Yeni sahə əlavə edildi
+        const priceEach = `${priceTotal} ₼`;
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
+
+        const isIncomplete = item.suppliedQuantity < item.requiredQuantity;
 
         return {
             name,
@@ -66,16 +68,18 @@ const OrderHistoryDetail = () => {
             required,
             provided,
             price,
-            priceEach, // ✅ əlavə edildi
+            priceEach,
             created,
             delivery,
-            received
+            received,
+            isIncomplete, // ✅ əlavə edildi
         };
     }).filter(item => {
         const byName = item.name?.toLowerCase().includes(searchName.toLowerCase());
         const byCat = item.category?.toLowerCase().includes(searchCategory.toLowerCase());
         return byName && byCat;
     }) || [];
+
 
 
     const [deleteOrder, { isSuccess }] = useDeleteOrderMutation();
@@ -199,19 +203,20 @@ const OrderHistoryDetail = () => {
 
                             <tbody>
                             {filtered.map((item, i) => (
-                                <tr key={i}>
+                                <tr key={i} className={item.isIncomplete ? 'row-incomplete' : ''}>
                                     <td>{item.name}</td>
                                     <td>{item.category}</td>
                                     <td>{item.required}</td>
                                     {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.provided}</td>}
                                     {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.price}</td>}
-                                    {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.priceEach}</td>} {/* ✅ */}
+                                    {status !== 'Təchizatçıdan təsdiq gözləyən' && <td>{item.priceEach}</td>}
                                     <td>{item.created}</td>
                                     {status !== 'Tamamlanmış' && <td>{item.delivery}</td>}
                                     {status === 'Tamamlanmış' && <td>{item.received}</td>}
                                 </tr>
                             ))}
                             </tbody>
+
 
                         </table>
 

@@ -59,7 +59,7 @@ const CalculationTable = ({ type, selectedDate, data = [],companyId }) => {
                             {isEditing ? (
                                 <input
                                     type="number"
-                                    value={initialAmount}
+                                    value={initialAmount === 0 ? '' : initialAmount}
                                     onChange={(e) => setInitialAmount(Number(e.target.value))}
                                     onBlur={handleSave}
                                     autoFocus
