@@ -8,7 +8,7 @@ const OrderHistorySupplier = () => {
     const [filter, setFilter] = useState('all');
     const {data:getAllCompanies} = useGetAllCompaniesQuery()
     const companies = getAllCompanies?.data
-    const [selectedCompany, setSelectedCompany] = useState('');
+    const [selectedCompany, setSelectedCompany] = useState('all');
 
     const {data:getOrders ,refetch} = useGetOrdersQuery()
     const orderss = getOrders?.data
