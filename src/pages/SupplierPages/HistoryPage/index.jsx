@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './index.scss';
-import {useGetAllCompaniesQuery, useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {
+    useGetAllCompaniesQuery,
+    useGetOrderByPageByCompanyQuery,
+    useGetOrderByPageQuery,
+} from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
 
 const OrderHistorySupplier = () => {
@@ -9,9 +13,42 @@ const OrderHistorySupplier = () => {
     const {data:getAllCompanies} = useGetAllCompaniesQuery()
     const companies = getAllCompanies?.data
     const [selectedCompany, setSelectedCompany] = useState('all');
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
 
-    const {data:getOrders ,refetch} = useGetOrdersQuery()
-    const orderss = getOrders?.data
+    const commonParams = { page, pageSize, companyName: selectedCompany };
+
+    const { data: pagedOrdersData, isFetching } =
+        selectedCompany === 'all'
+            ? useGetOrderByPageQuery({ page, pageSize })
+            : useGetOrderByPageByCompanyQuery(commonParams);
+    useEffect(() => {
+        setAllOrders([]);
+        setPage(1);
+    }, [selectedCompany]);
+
+    const [allOrders, setAllOrders] = useState([]);
+    useEffect(() => {
+        if (pagedOrdersData?.data?.length) {
+            setAllOrders(prev => [...prev, ...pagedOrdersData.data]);
+        }
+    }, [pagedOrdersData]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+                !isFetching
+            ) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isFetching]);
+
+    const orderss = allOrders
     const orders = orderss
         ?.filter(order => order.employeeConfirm && order.fighterConfirm) // Yalnız təsdiqlənənlər
         .map(order => {

@@ -84,8 +84,13 @@ const SupplierNotification = () => {
                         id: n.categoryId
                     }
                 });
-            }else if (n.type === "order_created"){
-                navigate("/supplier/activeOrder")
+            }else if (n.type === "order_created" && n.orderId) {
+                console.log(n)
+                if (n.status == true) {
+                    navigate(`/supplier/history/${n.orderId}`);
+                }else {
+                    navigate(`/supplier/activeOrder/${n.orderId}`);
+                }
             }
         } catch (error) {
             console.error("Bildiriş oxunarkən xəta baş verdi:", error);

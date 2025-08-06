@@ -688,7 +688,21 @@ export const api = createApi({
                 url: `/Statistics/monthly-product-quantity/${companyId}/${categoryId}/${productId}/${year}`,
             }),
         }),
-
+        getOrderByPage: builder.query({
+            query: ({page,pageSize}) => ({
+                url: `/Orders/paged?page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
+        getOrderByPageByCompany: builder.query({
+            query: ({companyName,page,pageSize}) => ({
+                url: `/Orders/paged?companyName=${companyName}&page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
+        getProductByPage: builder.query({
+            query: ({page,pageSize}) => ({
+                url: `/Products/paged?page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
     }),
 });
 
@@ -820,4 +834,8 @@ export const {
     useGetFighterOrderCountStatikQuery,
     useGetFighterMonthlyCompletionStatikQuery,
     useGetMonthlyProductQuantityStatikQuery,
+
+    useGetOrderByPageQuery,
+    useGetOrderByPageByCompanyQuery,
+    useGetProductByPageQuery
 } = api;

@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import './index.scss';
 import {useNavigate} from "react-router-dom";
-import {useGetAllCompaniesQuery, useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {useGetAllCompaniesQuery, useGetOrdersQuery,useGetOrderByPageByCompanyQuery,
+    useGetOrderByPageQuery} from "../../../services/adminApi.jsx";
 
 const OrderHistorySuperAdmin = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -10,9 +11,41 @@ const OrderHistorySuperAdmin = () => {
     const {data:getAllCompanies} = useGetAllCompaniesQuery()
     const companies = getAllCompanies?.data
     const [selectedCompany, setSelectedCompany] = useState('all');
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+    const [allOrders, setAllOrders] = useState([]);
 
-    const {data:getMyOrders,refetch} = useGetOrdersQuery()
-    const orderss = getMyOrders?.data
+    const commonParams = { page, pageSize, companyName: selectedCompany };
+
+    const { data: pagedOrdersData, isFetching ,refetch} =
+        selectedCompany === 'all'
+            ? useGetOrderByPageQuery({ page, pageSize })
+            : useGetOrderByPageByCompanyQuery(commonParams);
+    useEffect(() => {
+        setAllOrders([]);
+        setPage(1);
+    }, [selectedCompany]);
+    useEffect(() => {
+        if (pagedOrdersData?.data?.length) {
+            setAllOrders(prev => [...prev, ...pagedOrdersData.data]);
+        }
+    }, [pagedOrdersData]);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+                !isFetching
+            ) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isFetching]);
+
+    const orderss = selectedCompany === 'all' ? pagedOrdersData?.data : allOrders;
+
     useEffect(() => {
         refetch()
     }, [orderss]);

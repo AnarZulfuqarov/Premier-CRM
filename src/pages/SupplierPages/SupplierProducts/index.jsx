@@ -6,7 +6,7 @@ import {
     useDeleteProductsMutation,
     useGetAllCategoriesQuery,
     useGetAllProductsQuery,
-    useGetProductAddMyPendingQuery,
+    useGetProductAddMyPendingQuery, useGetProductByPageQuery,
     useGetProductDeleteMyPendingQuery,
     useGetProductUpdateMyPendingQuery,
     useUpdateProductsMutation
@@ -24,10 +24,41 @@ const SupplierProducts = () => {
     const showPopup = usePopup()
     const [activeTab, setActiveTab] = useState('products'); // Sekme kontrolü eklendi
     const [deleteIndex, setDeleteIndex] = useState(null);
+    const [page, setPage] = useState(1);
+    const [productList, setProductList] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
 
     const navigate = useNavigate();
-    const {data:getAllProducts,refetch} = useGetAllProductsQuery()
-    const products = getAllProducts?.data
+    const {
+        data: pagedData,
+        isFetching,
+        isLoading,
+    } = useGetProductByPageQuery({ page, pageSize: 10 });
+    useEffect(() => {
+        if (pagedData?.data) {
+            setProductList((prev) => [...prev, ...pagedData.data]);
+            if (pagedData.data.length < 10) {
+                setHasMore(false);
+            }
+        }
+    }, [pagedData]);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + document.documentElement.scrollTop + 100 >=
+                document.documentElement.offsetHeight &&
+                !isFetching &&
+                hasMore
+            ) {
+                setPage((prev) => prev + 1);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isFetching, hasMore]);
+
+
 
     useEffect(() => {
         if (state?.type === "create" || state?.type === "delete") {
@@ -36,11 +67,7 @@ const SupplierProducts = () => {
             setActiveTab("edit");
         }
     }, [state]);
-    const filteredProducts = products?.filter(item => {
-        const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
-        const byCat = item.categoryName.toLowerCase().includes(searchCategory.toLowerCase());
-        return byName && byCat;
-    });
+
 
     const units = ['kg', 'litr', 'ədəd'];
     const {data:getAllCategories} = useGetAllCategoriesQuery()
@@ -167,7 +194,7 @@ const SupplierProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {filteredProducts?.map((item, i) => {
+                                {productList?.map((item, i) => {
                                     const absoluteIndex = i;
                                     return (
                                         <tr key={i}>

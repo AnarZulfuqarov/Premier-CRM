@@ -140,7 +140,13 @@
   .order-history-detail__table {
   margin: 0;
     width: 100%;
-
+    .row-incomplete {
+      background-color: rgba(255, 0, 0, 0.08) !important; // Açıq qırmızı fon
+      td {
+        color: #c10000 !important; // Yazılar da qırmızı olsun
+        font-weight: 500;
+      }
+    }
     th, td {
       padding: 8px 16px;
       border: 1px solid #ddd;
@@ -461,18 +467,13 @@
     .order-history-detail__table {
       min-width: 600px;
 
-      .row-incomplete {
-        background-color: rgba(255, 0, 0, 0.08); // Açıq qırmızı fon
-        td {
-          color: #c10000 !important; // Yazılar da qırmızı olsun
-          font-weight: 500;
-        }
-      }
+
 
       th, td {
         padding: 8px;
         font-size: 13px;
       }
+
     }
 
     .table-footer {
