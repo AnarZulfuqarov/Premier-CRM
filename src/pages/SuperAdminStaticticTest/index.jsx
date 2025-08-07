@@ -21,12 +21,18 @@ function SuperAdminStatistikTest() {
     // Component mount olanda localStorage-dan oxu
     useEffect(() => {
         const savedCompanyId = localStorage.getItem("selectedCompanyId");
-        if (savedCompanyId) {
-            setSelectedBranch(savedCompanyId);
-        } else if (companies?.length > 0) {
-            setSelectedBranch(companies[0].id); // default olaraq ilkini seç
+
+        if (companies?.length > 0) {
+            if (savedCompanyId) {
+                setSelectedBranch(savedCompanyId);
+            } else {
+                const firstCompanyId = companies[0].id;
+                setSelectedBranch(firstCompanyId);
+                localStorage.setItem("selectedCompanyId", firstCompanyId);
+            }
         }
     }, [companies]);
+
 
     const handleCompanyChange = (e) => {
         const selectedId = e.target.value;
@@ -45,53 +51,6 @@ function SuperAdminStatistikTest() {
         setSelectedFighter(id);
         localStorage.setItem("selectedFighterId", id);
     };
-    const statusChartData = {
-        2025: [
-            { month: "Yanvar", pending: 28, canceled: 20, completed: 36 },
-            { month: "Fevral", pending: 45, canceled: 20, completed: 60 },
-            { month: "Mart", pending: 28, canceled: 20, completed: 36 },
-            { month: "Aprel", pending: 30, canceled: 20, completed: 36 },
-            { month: "May", pending: 30, canceled: 20, completed: 36 },
-            { month: "İyun", pending: 30, canceled: 20, completed: 36 },
-            { month: "İyul", pending: 45, canceled: 20, completed: 60 },
-            { month: "Avqust", pending: 28, canceled: 20, completed: 36 },
-            { month: "Sentyabr", pending: 45, canceled: 20, completed: 60 },
-            { month: "Oktyabr", pending: 45, canceled: 70, completed: 30 },
-            { month: "Noyabr", pending: 60, canceled: 30, completed: 18 },
-            { month: "Dekabr", pending: 28, canceled: 20, completed: 36 },
-        ],
-    };
-    const productData = {
-        2025: [
-            { month: "Yanvar", count: 38 },
-            { month: "Fevral", count: 58 },
-            { month: "Mart", count: 68 },
-            { month: "Aprel", count: 39 },
-            { month: "May", count: 29 },
-            { month: "İyun", count: 68 },
-            { month: "İyul", count: 38 },
-            { month: "Avqust", count: 58 },
-            { month: "Sentyabr", count: 68 },
-            { month: "Oktyabr", count: 39 },
-            { month: "Noyabr", count: 58 },
-            { month: "Dekabr", count: 0 },
-        ]
-    };
-
-    const barChartData = [
-        { month: "Yanvar", pending: 28, completed: 33 },
-        { month: "Fevral", pending: 46, completed: 58 },
-        { month: "Mart", pending: 18, completed: 38 },
-        { month: "Aprel", pending: 15, completed: 16 },
-        { month: "May", pending: 44, completed: 67 },
-        { month: "İyun", pending: 24, completed: 28 },
-        { month: "İyul", pending: 58, completed: 33 },
-        { month: "Avqust", pending: 28, completed: 33 },
-        { month: "Sentyabr", pending: 49, completed: 61 },
-        { month: "Oktyabr", pending: 14, completed: 15 },
-        { month: "Noyabr", pending: 28, completed: 33 },
-        { month: "Dekabr", pending: 39, completed: 48 },
-    ];
 
     return (
         <div id={"super-admin-static-main"}>
@@ -142,12 +101,12 @@ function SuperAdminStatistikTest() {
                 </div>
                 <div className={'fourStatik'}>
                     <div className={'chart6'}>
-                        <StatusBarChart allData={statusChartData} />
+                        <StatusBarChart  />
                     </div>
 
                 </div>
                 <div className={'fifthStatik'}>
-                    <ProductChart allData={productData} />
+                    <ProductChart  />
                 </div>
                 <div className="sixStatik">
                     <div className="staticHead">
@@ -195,7 +154,7 @@ function SuperAdminStatistikTest() {
                 </div>
 
                 <div className={'sevenStatik'}>
-                    <StatusBasedBarChart data={barChartData} />
+                    <StatusBasedBarChart  />
                 </div>
             </div>
         </div>

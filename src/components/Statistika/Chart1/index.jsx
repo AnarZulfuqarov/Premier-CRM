@@ -14,9 +14,10 @@ const Chart1Card = () => {
     const { data, isLoading, isError } = useGetTotalOrdersStatikQuery(
         isValidId ? companyId : skipToken // skipToken üçün import lazımdır
     );
-
+    console.log(data)
     if (isLoading) return <div>Yüklənir...</div>;
     if (isError || !data) return <div>Xəta baş verdi</div>;
+    if (!isValidId) return <div>Zəhmət olmasa şirkət seçin</div>;
 
     const total = data.totalConfirmedOrders || 0;
     const percentage = data.percentGrowth || 0;
