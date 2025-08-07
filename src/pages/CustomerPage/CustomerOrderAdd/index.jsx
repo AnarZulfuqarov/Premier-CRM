@@ -143,13 +143,19 @@ const OrderForm = () => {
         };
 
         try {
-            await postOrder(payload);
+            await postOrder(payload).unwrap(); // <- ✅ unwrap vacibdir
+
             setIsConfirmationModalOpen(false);
             setIsSuccessModalOpen(true);
             setCartItems([]);
         } catch (error) {
-            showPopup('Xəta', error?.data?.message || 'Sifariş göndərilə bilmədi', 'error');
+            showPopup(
+                'Xəta',
+                error?.data?.message || 'Sifariş göndərilə bilmədi',
+                'error'
+            );
         }
+
     };
 
 

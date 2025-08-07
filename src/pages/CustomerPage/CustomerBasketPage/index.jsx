@@ -54,10 +54,16 @@ const MobileCartPage = () => {
         };
 
         try {
-            await postOrder(payload).unwrap(); // unwrap ile hata daha net yakalanır
+            await postOrder(payload).unwrap();
             setIsConfirmationModalOpen(false);
             setIsSuccessModalOpen(true);
             localStorage.removeItem('cartData');
+
+// 🧹 Form məlumatlarını təmizlə
+            setCartItems([]);
+            setSelectedDate(null);
+            setDescription('');
+
         } catch (err) {
             console.error('Sifariş xətası:', err);
             showPopup('Xəta', err?.data?.message || 'Sifariş göndərilə bilmədi', 'error');
