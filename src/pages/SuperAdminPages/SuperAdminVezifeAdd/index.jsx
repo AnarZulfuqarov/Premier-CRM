@@ -30,6 +30,7 @@ const SuperAdminVezifeAdd = () => {
                 }
             }
             setShowSuccessModal(true);
+            setRows([{ name: '' }]);
         } catch  {
             showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
 

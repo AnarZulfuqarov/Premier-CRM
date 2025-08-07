@@ -703,6 +703,33 @@ export const api = createApi({
                 url: `/Products/paged?page=${page}&pageSize=${pageSize}`,
             }),
         }),
+        getAllAccountants: builder.query({
+            query: () => ({
+                url: `/Accountants`,
+            }),
+        }),
+        createAccountants: builder.mutation({
+            query: (accountant) => ({
+                url: '/Accountants',
+                method: 'POST',
+                body: accountant,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+        deleteAccountant: builder.mutation({
+            query: (id) => ({
+                url: `/Accountants/${id}`,
+                method: 'DELETE',
+            }),
+        }),
+        editAccountant: builder.mutation({
+            query: (accountant) => ({
+                url: '/Accountants',
+                method: 'PUT',
+                body: accountant,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
     }),
 });
 
@@ -837,5 +864,11 @@ export const {
 
     useGetOrderByPageQuery,
     useGetOrderByPageByCompanyQuery,
-    useGetProductByPageQuery
+    useGetProductByPageQuery,
+
+    useGetAllAccountantsQuery,
+    useCreateAccountantsMutation,
+    useDeleteAccountantMutation,
+    useEditAccountantMutation,
+
 } = api;

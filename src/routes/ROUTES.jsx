@@ -67,6 +67,8 @@ import HrEmployment from "../pages/HRPages/HrEmployment/index.jsx";
 import HrDirector from "../pages/HRPages/HrDirector/index.jsx";
 import HrDirectorAdd from "../pages/HRPages/HrDirectorAdd/index.jsx";
 import HrSalary from "../pages/HRPages/HrSalary/index.jsx";
+import SuperAdminAccounter from "../pages/SuperAdminPages/SuperAdminAccounter/index.jsx";
+import SuperAccounterAdd from "../pages/SuperAdminPages/SuperAdminAccounterAdd/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -227,6 +229,14 @@ const router = createBrowserRouter([
             {
                 path: "/superAdmin/supplierAdd",
                 element: <SuperSupplierAdd/>
+            },
+            {
+                path: "/superAdmin/accounter",
+                element: <SuperAdminAccounter/>
+            },
+            {
+                path: "/superAdmin/accounterAdd",
+                element: <SuperAccounterAdd/>
             },
             {
                 path: "/superAdmin/people/:id",

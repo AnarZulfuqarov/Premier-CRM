@@ -59,6 +59,7 @@ const ActiveOrdersDetail = () => {
         const files = Array.from(e.target.files);
 
         const newPreviews = files.map(file => ({
+            key: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
             file,
             previewUrl: file.type.startsWith('image/')
                 ? URL.createObjectURL(file)
@@ -69,7 +70,12 @@ const ActiveOrdersDetail = () => {
         }));
 
         setUploadedFiles(prev => [...prev, ...newPreviews]);
+
+        // 🧠 Bu sətir vacibdir:
+        e.target.value = null;
     };
+
+
 
     const handleRemoveImage = (indexToRemove) => {
         setUploadedFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
@@ -536,7 +542,7 @@ const ActiveOrdersDetail = () => {
                         <div className="image-preview-grid">
                             <div className="image-preview-grid">
                                 {uploadedFiles.map((file, index) => (
-                                    <div key={index} className="image-thumb">
+                                    <div key={file.key} className="image-thumb">
                                         {file.type === 'application/pdf' ? (
                                             <div
                                                 onClick={() => window.open(file.previewUrl, '_blank')}

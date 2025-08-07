@@ -1,13 +1,13 @@
 import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
-import {useCreateFightersMutation} from "../../../services/adminApi.jsx";
+import {useCreateAccountantsMutation} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 
 
-const SuperSupplierAdd = () => {
-    const [postSupplier] = useCreateFightersMutation()
+const SuperAccounterAdd = () => {
+    const [postSupplier] = useCreateAccountantsMutation()
     const showPopup = usePopup();
     const [rows, setRows] = useState([
         { name: '', surname: '', finCode: '', password: '', phoneNumber: '' }
@@ -33,14 +33,15 @@ const SuperSupplierAdd = () => {
 
 
     return (
-        <div className="super-admin-supplier-add-main">
-            <div className="super-admin-supplier-add">
+        <div className="super-admin-accounter-add-main">
+            <div className="super-admin-accounter-add">
                 <div className="headerr">
                     <div className="head">
-                        <h1>Təchizatçı əlavə edilməsi</h1>
+                        <h1>Mühasib əlavə et</h1>
+                        <p>Yeni mühasibat əməkdaşını sistemə əlavə etmək üçün tələb olunan məlumatları doldurun.</p>
                     </div>
                     <h2>
-                        <NavLink className="link" to="/superAdmin/supplier">— Təchizatçı</NavLink> — Təchizatçı əlavə edilməsi
+                        <NavLink className="link" to="/superAdmin/accounter">— Mühasibatlıq</NavLink> — Mühasib əlavə et
                     </h2>
                 </div>
 
@@ -170,7 +171,7 @@ const SuperSupplierAdd = () => {
                             </div>
                         </div>
                         <h3>Təchizatçı uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/supplier"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/accountant"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>
@@ -181,4 +182,4 @@ const SuperSupplierAdd = () => {
     );
 };
 
-export default SuperSupplierAdd;
+export default SuperAccounterAdd;

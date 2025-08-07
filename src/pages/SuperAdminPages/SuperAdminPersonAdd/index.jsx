@@ -27,11 +27,6 @@ const SuperPersonAdd = () => {
         setRows(updatedRows);
     };
 
-    const addRow = () => {
-        setRows([...rows, {
-            name: '', surname: '', fin: '', position: '', department: '', password: '', phone: ''
-        }]);
-    };
     const handleSubmit = async () => {
         try {
             for (const row of rows) {
@@ -203,11 +198,19 @@ const SuperPersonAdd = () => {
                             <td>
                                 <input
                                     type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     placeholder="Nömrə daxil et"
                                     value={row.phone}
-                                    onChange={(e) => handleChange(index, 'phone', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (/^\d*$/.test(value)) { // yalnız rəqəmlər (0-9)
+                                            handleChange(index, 'phone', value);
+                                        }
+                                    }}
                                     required
                                 />
+
                             </td>
                         </tr>
                     ))}
