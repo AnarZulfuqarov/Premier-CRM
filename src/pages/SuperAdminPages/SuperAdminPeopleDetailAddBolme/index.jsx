@@ -9,7 +9,6 @@ import {
 
 const SuperAdminPeopleDetailAddBolme = () => {
     const {id} = useParams();
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
     const [deleteIndex, setDeleteIndex] = useState(null);
@@ -18,7 +17,6 @@ const SuperAdminPeopleDetailAddBolme = () => {
     const [initialSectionIds, setInitialSectionIds] = useState([]);
 
     const navigate = useNavigate();
-    const pageSize = 9;
     const {data: getByIdCustomers,refetch} = useGetByIdCustomersQuery(id);
     const customer = getByIdCustomers?.data;
 
@@ -32,15 +30,7 @@ const SuperAdminPeopleDetailAddBolme = () => {
         return byName && byCat;
     });
 
-    const totalPages = Math.ceil(filtered.length / pageSize);
-    const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
     useEffect(() => {
         if (customer?.sections) {
             const ids = customer.sections.map(s => s.id);
@@ -103,7 +93,7 @@ const SuperAdminPeopleDetailAddBolme = () => {
                 <div style={{ marginBottom: '16px' }}>
                     <input
                         type="text"
-                        placeholder="Bölmə axtar....."
+                        placeholder="Bölmə axtar..."
                         style={{
                             width: '60%',
                             padding: '10px',
@@ -111,8 +101,11 @@ const SuperAdminPeopleDetailAddBolme = () => {
                             border: '1px solid #ccc',
                             fontSize: '14px',
                         }}
+                        value={searchName}
+                        onChange={(e) => setSearchName(e.target.value)}
                     />
                 </div>
+
 
                 <div className="table-wrapper">
                     <div className="table-scroll">
@@ -127,9 +120,9 @@ const SuperAdminPeopleDetailAddBolme = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedItems.map((section, index) => (
+                            {filtered.map((section, index) => (
                                 <tr key={section.id}>
-                                    <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                                    <td>{index + 1}</td>
                                     <td>{section.departmentName}</td>
                                     <td>{section.name}</td>
                                     <td>{section.companyName}</td>
@@ -149,39 +142,18 @@ const SuperAdminPeopleDetailAddBolme = () => {
 
 
                         </table>
-                        <div style={{ marginTop: '24px' }}>
-                            <button
-
-                                className={"submitBolme"}
-                                onClick={handleSubmit}
-                            >
+                        <div className="fixed-submit-btn">
+                            <button className="submitBolme" onClick={handleSubmit}>
                                 Təsdiqlə
                             </button>
                         </div>
+
                     </div>
                 </div>
 
 
-                <div className="super-admin-people-detail-add-bolme__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
-                </div>
             </div>
 
-            <div className="xett"></div>
 
             {deleteIndex !== null && (
                 <div className="modal-overlay" onClick={() => setDeleteIndex(null)}>

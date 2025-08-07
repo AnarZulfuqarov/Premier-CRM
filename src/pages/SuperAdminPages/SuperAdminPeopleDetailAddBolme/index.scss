@@ -233,42 +233,7 @@
 
   }
 
-  &__pagination {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    gap: 5px;
-    position: absolute;
-    bottom: 26px;
-    right: 16px;
 
-    button {
-      padding: 8px 12px;
-      background: #fff;
-      color: #333;
-      cursor: pointer;
-      font-size: 14px;
-      min-width: 40px;
-      border-radius: 3px;
-      border: 1px solid #e3e3e3;
-
-      &:disabled {
-        background: #f1f1f1;
-        cursor: not-allowed;
-        color: #999;
-      }
-
-      &:hover:not(:disabled):not(.active) {
-        background: #f9f9f9;
-      }
-
-      &.active {
-        color: #fff;
-        font-weight: 500;
-        background: #384871;
-      }
-    }
-  }
   .table-wrapper {
     flex: 1;
     display: flex;
@@ -286,6 +251,26 @@
   cursor: pointer;
   width: 60%;
 }
+  .fixed-submit-btn {
+    position: fixed;
+    bottom: 140px;
+    left: 49%;
+    transform: translateX(-50%);
+    width: 60%;
+    z-index: 1000;
+
+    .submitBolme {
+      width: 100%;
+      background: #384871;
+      color: #fff;
+      padding: 12px 40px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  }
+
   .table-scroll {
     height: calc(50vh - 129px);
     overflow: auto;
