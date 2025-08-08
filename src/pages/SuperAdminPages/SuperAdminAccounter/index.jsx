@@ -1,9 +1,9 @@
 import './index.scss';
-import React, {useEffect, useState} from 'react';
+import  {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    useDeleteFighterMutation,
-    useEditFighterMutation,
+    useDeleteAccountantMutation,
+     useEditAccountantMutation,
     useGetAllAccountantsQuery,
 } from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
@@ -18,8 +18,8 @@ const SuperAdminAccounter
     const [editingUser, setEditingUser] = useState(null);
     const {data:getAllFighters,refetch} = useGetAllAccountantsQuery()
     const supliers = getAllFighters?.data
-    const [editFighter] = useEditFighterMutation();
-    const [deleteFighter] = useDeleteFighterMutation();
+    const [editFighter] = useEditAccountantMutation();
+    const [deleteFighter] = useDeleteAccountantMutation();
     useEffect(() => {
         refetch();
     },[])

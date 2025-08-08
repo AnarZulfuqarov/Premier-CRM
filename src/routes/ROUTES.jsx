@@ -69,6 +69,8 @@ import HrDirectorAdd from "../pages/HRPages/HrDirectorAdd/index.jsx";
 import HrSalary from "../pages/HRPages/HrSalary/index.jsx";
 import SuperAdminAccounter from "../pages/SuperAdminPages/SuperAdminAccounter/index.jsx";
 import SuperAccounterAdd from "../pages/SuperAdminPages/SuperAdminAccounterAdd/index.jsx";
+import AccounterPage from "../pages/AccounterPages/AccounterPage/index.jsx";
+import OrderHistoryAccounter from "../pages/AccounterPages/HistoryPage/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -377,7 +379,56 @@ const router = createBrowserRouter([
                 element: <HrSalary/>
             }
         ]
-    }
+    },
+    {
+        path: "/accounter",
+        element: (
+                <AccounterPage/>
+        ),
+        children: [
+
+            {
+                path: "/accounter/history",
+                element: <OrderHistoryAccounter/>
+            },
+            {
+                path: "/accounter/history/:id",
+                element: <OrderHistoryDetailSuplier/>
+            },
+            {
+                path: "/accounter/products/products",
+                element: <SupplierProducts/>
+            },
+            {
+                path: "/accounter/productAdd",
+                element: <SupplierProductAdd/>
+            },
+            {
+                path: "/accounter/products/categories",
+                element: <SupplierCategories/>
+            },
+            {
+                path: "/accounter/categoryAdd",
+                element: <SupplierCategoryAdd/>
+            },
+            {
+                path: "/accounter/products/vendors",
+                element: <SupplierVendors/>
+            },
+            {
+                path: "/accounter/vendor/:id",
+                element: <VendorHistorySupplier/>
+            },
+            {
+                path: "/accounter/vendor/:vendorId/:id",
+                element: <VendorHistoryDetailSuplier/>
+            },
+            {
+                path: "/accounter/notification",
+                element: <SupplierNotification/>
+            },
+        ]
+    },
 ]);
 
 export default router;

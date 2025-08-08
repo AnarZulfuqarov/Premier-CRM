@@ -730,6 +730,16 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        getOrderByPageAccounter: builder.query({
+            query: ({page,pageSize}) => ({
+                url: `/Orders/accountant/paged?page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
+        getOrderByPageByCompanyAccounter: builder.query({
+            query: ({companyName,page,pageSize}) => ({
+                url: `/Orders/paged?companyName=${companyName}&page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
     }),
 });
 
@@ -870,5 +880,7 @@ export const {
     useCreateAccountantsMutation,
     useDeleteAccountantMutation,
     useEditAccountantMutation,
+    useGetOrderByPageAccounterQuery,
+    useGetOrderByPageByCompanyAccounterQuery,
 
 } = api;

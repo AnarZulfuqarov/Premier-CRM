@@ -1,0 +1,470 @@
+.order-history-accounter-main{
+  position: relative;
+  .xett{
+    width: 100%;
+    height: 4px;
+    background: #F6F6F6;
+    position: absolute;
+    bottom: 100px;
+  }
+}
+.order-history__filter-button {
+  position: relative;
+
+  .filter-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .filter-dropdown {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
+    button {
+      width: 250px;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      .statuss{
+        display: flex;
+        width: 20px;
+        height: 20px;
+        padding: 4.971px 4.143px;
+        justify-content: center;
+        align-items: center;
+        gap: 8.286px;
+        border-radius: 50%;
+        &.pending{
+          background: #FDEDC8;
+        }
+        &.completed{
+          background: #2FC25B;
+        }
+        &.unpaid{
+          background: #FF5858;
+        }
+        &.paid{
+          background: #BBFFB5;
+        }
+      }
+
+      &:hover {
+        background: #f5f5f5;
+      }
+
+      &.active {
+        font-weight: 600;
+        background: #f0f0f0;
+      }
+    }
+  }
+}
+.order-history-accounter {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  height: calc(100vh - 129px);
+  overflow: hidden;
+  position: relative;
+
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+    .company-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      label {
+        font-size: 14px;
+        color: #555;
+      }
+
+      select {
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        background: #fff;
+        cursor: pointer;
+      }
+    }
+    select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 480px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #007AFF;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+
+  &__item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
+
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #DCDCDC;
+    background: #FFF;
+    height: 42px;
+    padding: 0px 10px 0px 11px;
+
+    p {
+      margin: 0;
+      color: #0C0C0C;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: normal;
+
+      .quantity-count {
+        font-weight: 400;
+        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
+      }
+
+      .quantity-label {
+        font-weight: 400;
+        color: #979797; // Açıq boz (yazı hissəsi üçün)
+      }
+    }
+  }
+  .techizat{
+    .order-history-accounter__ids{
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .order-history-accounter__id {
+      color: #272727;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+
+      span {
+        color: #979797;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        margin-right: 12px;
+      }
+    }
+  }
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    p {
+      margin: 5px 0;
+      color: #333;
+    }
+    .order-history-accounter__ids{
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .order-history-accounter__id {
+      color: #272727;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+
+      span {
+        color: #979797;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        margin-right: 12px;
+      }
+    }
+  }
+
+  &__status {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.pending {
+      border-radius: 16px;
+      background: #FFF5F5;
+      border: 1px solid #FFC31C;
+      background: rgba(255, 229, 159, 0.25);
+    }
+
+    &.completed {
+      border-radius: 16px;
+      border: 1px solid #2FC25B;
+      background: #E7FFE5;
+    }
+
+    &.unpaid {
+      border-radius: 16px;
+      background: rgba(255, 229, 159, 0.25);
+      border: 1px solid #FBB;
+      background: #FFF5F5;
+    }
+    &.paid {
+      border-radius: 16px;
+      background: rgba(255, 229, 159, 0.25);
+      border: 1px solid #BBFFB5;
+      background: #f8fff5;
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    button {
+      padding: 8px 12px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      font-size: 14px;
+      min-width: 40px;
+      text-align: center;
+      border-radius: 3px;
+      border: 1px solid #E3E3E3;
+
+      &:disabled {
+        background: #f1f1f1;
+        cursor: not-allowed;
+        color: #999;
+      }
+
+      &:hover:not(:disabled):not(.active) {
+        background: #f9f9f9;
+      }
+
+      &.active {
+        color: #fff;
+        font-weight: 500;
+        border-radius: 3px;
+        background: #384871;
+      }
+
+      &:first-child, &:last-child {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+  }
+}
+@media (max-width: 576px) {
+  .order-history-accounter {
+    padding: 16px;
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    &__controls {
+      gap: 8px;
+      margin-bottom: 24px;
+
+      input {
+        font-size: 13px;
+        padding: 8px;
+      }
+    }
+
+    .order-history__filter-button {
+      align-self: flex-end;
+
+      .filter-icon {
+        padding: 6px;
+
+        svg {
+          width: 16px;
+          height: 12px;
+        }
+      }
+
+      .filter-dropdown {
+        right: 0;
+        width: 250px;
+
+        button {
+          font-size: 13px;
+          padding: 8px 12px;
+        }
+      }
+    }
+
+    &__list {
+      gap: 12px;
+      max-height: 400px;
+    }
+
+    &__item {
+      padding: 12px;
+    }
+
+    .techizat .order-history-accounter__ids,
+    &__details .order-history-accounter__ids {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .price-status {
+      margin-left: 8px;
+      font-size: 14px;
+      font-weight: 500;
+
+      &.paid { color: #7BE27B; }     // açıq yaşıl
+      &.unpaid { color: #FF5858; }   // qırmızı
+    }
+
+    .order-history-accounter__id {
+      font-size: 13px;
+
+      span {
+        font-size: 14px;
+        margin-right: 8px;
+      }
+    }
+
+    &__details {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 20px;
+
+      .order-history-accounter__status {
+        margin-top: 8px;
+      }
+    }
+
+    &__data {
+      align-items: center;
+      gap: 4px;
+      padding: 8px 10px;
+
+      p {
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      .quantity-count {
+        font-weight: 500;
+      }
+
+      .quantity-label {
+        font-size: 12px;
+      }
+    }
+
+    &__pagination {
+      position: static;
+      justify-content: end;
+      margin-top: 20px;
+
+      button {
+        font-size: 13px;
+        min-width: 32px;
+        padding: 6px 10px;
+      }
+    }
+  }
+
+  .order-history-main-supplier {
+    .xett {
+      bottom: 80px;
+    }
+  }
+}

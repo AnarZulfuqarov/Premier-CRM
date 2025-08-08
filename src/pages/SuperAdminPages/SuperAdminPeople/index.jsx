@@ -53,8 +53,6 @@ const SuperAdminPeople = () => {
     });
 
 
-
-
     const handleSearchClick = (column) => {
         setSearchColumn(searchColumn === column ? null : column);
         setSearchTerm('');
@@ -89,9 +87,9 @@ const SuperAdminPeople = () => {
             await editCustomer(payload).unwrap();
             setEditingUser(null);
             refetch();
-            showPopup("İstifadəçiyə uğurla düzəliş etdiniz","Dəyişikliklər yadda saxlanıldı","success")
+            showPopup("İstifadəçiyə uğurla düzəliş etdiniz", "Dəyişikliklər yadda saxlanıldı", "success")
         } catch (error) {
-            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+            showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error")
         }
     };
 
@@ -103,9 +101,9 @@ const SuperAdminPeople = () => {
             await deleteCustomer(userToDelete.id).unwrap();
             setDeleteIndex(null);
             refetch();
-            showPopup("İstifadəçini uğurla sildiniz","Seçilmiş istifadəçi sistemdən silindi","success")
+            showPopup("İstifadəçini uğurla sildiniz", "Seçilmiş istifadəçi sistemdən silindi", "success")
         } catch (err) {
-            showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
+            showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error")
         }
     };
 
@@ -130,7 +128,7 @@ const SuperAdminPeople = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['Şirkətlər','Vəzifə','Ad', 'Soyad', 'fin',  'Mobil nömrə'].map((column) => (
+                                {['Şirkətlər', 'Vəzifə', 'Ad', 'Soyad', 'fin', 'Mobil nömrə'].map((column) => (
                                     <th key={column}>
                                         <div style={{
                                             display: 'flex',
@@ -181,6 +179,7 @@ const SuperAdminPeople = () => {
                                     </th>
                                 ))}
                                 <th>Şifrə</th>
+                                <th className="sticky-col header-sticky">Fəaliyyətlər</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -188,7 +187,7 @@ const SuperAdminPeople = () => {
                             {filteredUsers.map((user) => (
                                 <tr key={user.id}>
                                     <td className={"firstCell"}>
-                                        <div  className={
+                                        <div className={
                                             (user.sections?.length > 2 ? "scrolling-company-cell" : "")
                                         }>
                                             {[...new Set(user.sections?.map(sec => sec.companyName))].join(', ')}
@@ -203,6 +202,28 @@ const SuperAdminPeople = () => {
 
                                     <td>{user.phoneNumber}</td>
                                     <td>********</td>
+                                    <td className="sticky-col">
+                                        <div className="actions-cell">
+            <span
+                className="action-icon eye"
+                onClick={() => navigate(`/superAdmin/people/${user.id}`)}
+            >
+                                            <MdOutlineRemoveRedEye/>
+                                        </span>
+                                            <div className="line"/>
+                                            <span
+                                                className="action-icon edit"
+                                                onClick={() => handleEdit(user.id)}
+                                            ><LuPencil/>
+                                        </span>
+                                            <div className="line"/>
+                                            <span
+                                                className="action-icon delete"
+                                                onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}
+                                            >  <GoTrash/>
+                                        </span>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -210,33 +231,33 @@ const SuperAdminPeople = () => {
                         </table>
                     </div>
 
-                    <div className="fixed-column">
-                        <div className="header">Fəaliyyətlər</div>
-                        {filteredUsers.map((user) => (
-                            <div key={user.id} className="cell">
-                                <span
-                                    className="action-icon eye"
-                                    onClick={() => navigate(`/superAdmin/people/${user.id}`)}
-                                >
-                                    <MdOutlineRemoveRedEye/>
-                                </span>
-                                <div className={"line"}></div>
-                                <span
-                                    className="action-icon edit"
-                                    onClick={() => handleEdit(user.id)}
-                                >
-                                    <LuPencil/>
-                                </span>
-                                <div className={"line"}></div>
-                                <span
-                                    className="action-icon delete"
-                                    onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}
-                                >
-                                    <GoTrash/>
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+                    {/*<div className="fixed-column">*/}
+                    {/*    <div className="header">Fəaliyyətlər</div>*/}
+                    {/*    {filteredUsers.map((user) => (*/}
+                    {/*        <div key={user.id} className="cell">*/}
+                    {/*            <span*/}
+                    {/*                className="action-icon eye"*/}
+                    {/*                onClick={() => navigate(`/superAdmin/people/${user.id}`)}*/}
+                    {/*            >*/}
+                    {/*                <MdOutlineRemoveRedEye/>*/}
+                    {/*            </span>*/}
+                    {/*            <div className={"line"}></div>*/}
+                    {/*            <span*/}
+                    {/*                className="action-icon edit"*/}
+                    {/*                onClick={() => handleEdit(user.id)}*/}
+                    {/*            >*/}
+                    {/*                <LuPencil/>*/}
+                    {/*            </span>*/}
+                    {/*            <div className={"line"}></div>*/}
+                    {/*            <span*/}
+                    {/*                className="action-icon delete"*/}
+                    {/*                onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}*/}
+                    {/*            >*/}
+                    {/*                <GoTrash/>*/}
+                    {/*            </span>*/}
+                    {/*        </div>*/}
+                    {/*    ))}*/}
+                    {/*</div>*/}
                 </div>
 
             </div>
