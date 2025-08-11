@@ -99,10 +99,12 @@ const SuperAdminProducts = () => {
         el.addEventListener('scroll', onScroll);
         return () => el.removeEventListener('scroll', onScroll);
     }, [isFetching, hasMore]);
-    const filteredProducts = products?.filter(product =>
-        product.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        product.categoryName.toLowerCase().includes(searchCategory.toLowerCase())
-    ) || [];
+    const filteredProducts =
+        (productList || []).filter(p =>
+            (p.name || "").toLowerCase().includes(searchName.toLowerCase()) &&
+            (p.categoryName || "").toLowerCase().includes(searchCategory.toLowerCase())
+        );
+
 
 
 
@@ -247,7 +249,7 @@ const SuperAdminProducts = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {productList?.map((item, i) => {
+                                {filteredProducts?.map((item, i) => {
                                     const absoluteIndex = i
                                     return (
                                         <tr key={i}>

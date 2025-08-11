@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './index.scss';
 import {useNavigate} from "react-router-dom";
 import {useGetAllCompaniesQuery, useGetOrdersQuery,useGetOrderByPageByCompanyQuery,
@@ -25,24 +25,40 @@ const OrderHistorySuperAdmin = () => {
         setAllOrders([]);
         setPage(1);
     }, [selectedCompany]);
+
+    const listRef = useRef(null);
+    const [hasMore, setHasMore] = useState(true);
+
     useEffect(() => {
-        if (pagedOrdersData?.data?.length) {
-            setAllOrders(prev => [...prev, ...pagedOrdersData.data]);
-        }
-    }, [pagedOrdersData]);
-    useEffect(() => {
-        const handleScroll = () => {
-            if (
-                window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
-                !isFetching
-            ) {
+        const el = listRef.current;
+        if (!el) return;
+
+        const onScroll = () => {
+            const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+            if (nearBottom && !isFetching && hasMore) {
                 setPage(prev => prev + 1);
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [isFetching]);
+        el.addEventListener('scroll', onScroll);
+        return () => el.removeEventListener('scroll', onScroll);
+    }, [isFetching, hasMore]);
+
+// Hər səhifə gələndə listə əlavə et və "hasMore"u güncəllə
+    useEffect(() => {
+        const pageData = pagedOrdersData?.data ?? [];
+        if (pageData.length) {
+            setAllOrders(prev => {
+                // duplikatları önlə (id ilə)
+                const seen = new Set(prev.map(o => o.id));
+                const next = pageData.filter(o => !seen.has(o.id));
+                return [...prev, ...next];
+            });
+            if (pageData.length < pageSize) setHasMore(false);
+        } else if (page > 1) {
+            setHasMore(false);
+        }
+    }, [pagedOrdersData]);
 
     const orderss = selectedCompany === 'all' ? pagedOrdersData?.data : allOrders;
 
@@ -179,7 +195,7 @@ const OrderHistorySuperAdmin = () => {
                         )}
                     </div>
                 </div>
-                <div className="order-history-super-admin__list">
+                <div className="order-history-super-admin__list" ref={listRef}>
                     {filteredOrders.map((order, index) => (
                         <div key={order.id || index} className="order-history-super-admin__item" onClick={()=>navigate(`/superAdmin/history/${order.id}`)}>
                             <div className={"techizat"}>
