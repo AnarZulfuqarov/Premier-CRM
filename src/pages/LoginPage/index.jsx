@@ -23,6 +23,7 @@ function Login() {
         Cookies.remove('role');
         Cookies.remove('supplierToken');
         Cookies.remove('ordererToken');
+        Cookies.remove('accountToken');
         Cookies.remove('superAdminToken');
 
         try {
@@ -42,6 +43,10 @@ function Login() {
                     Cookies.set('ordererToken', token);
                     showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
                     navigate('/choose-company');
+                } else if (role === 'Accountant') {
+                    Cookies.set('accountToken', token);
+                    showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
+                    navigate('/accounter/history');
                 } else {
                     showPopup('Naməlum rol', 'Təyin olunmamış rol: ' + role, 'warning');
                 }

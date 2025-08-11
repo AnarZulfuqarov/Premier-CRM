@@ -20,6 +20,9 @@ export const api = createApi({
                 case "Customer":
                     token = Cookies.get("ordererToken");
                     break;
+                case "Accountant":
+                    token = Cookies.get("accountToken");
+                    break;
                 default:
                     token = null;
             }

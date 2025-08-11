@@ -1,5 +1,5 @@
 import './index.scss';
-import  {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {
@@ -83,7 +83,22 @@ const SuperAdminProducts = () => {
     useEffect(() => {
         productRefetch()
     },[])
+    const scrollRef = useRef(null);
 
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        const onScroll = () => {
+            const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+            if (nearBottom && !isFetching && hasMore) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        el.addEventListener('scroll', onScroll);
+        return () => el.removeEventListener('scroll', onScroll);
+    }, [isFetching, hasMore]);
     const filteredProducts = products?.filter(product =>
         product.name.toLowerCase().includes(searchName.toLowerCase()) &&
         product.categoryName.toLowerCase().includes(searchCategory.toLowerCase())
@@ -157,7 +172,7 @@ const SuperAdminProducts = () => {
                 </div>
                 {activeTab === 'products' && (
                     <div className="table-wrapper">
-                        <div className="table-scroll">
+                        <div className="table-scroll" ref={scrollRef}>
                             <table className="order-history-detail-supplier__table">
                                 <thead>
                                 <tr>

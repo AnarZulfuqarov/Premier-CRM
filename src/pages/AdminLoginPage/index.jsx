@@ -22,6 +22,7 @@ function AdminLogin() {
         Cookies.remove('superAdminToken');
         Cookies.remove('supplierToken');
         Cookies.remove('ordererToken');
+        Cookies.remove('accountToken');
 
         try {
             const response = await loginSuperAdmin({ phoneNumber, password });

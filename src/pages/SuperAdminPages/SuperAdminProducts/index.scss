@@ -330,6 +330,7 @@
       width: 100%;
       overflow-x: auto;
 
+
       &::-webkit-scrollbar {
         height: 8px;
         cursor: pointer;
@@ -484,11 +485,12 @@
     flex-direction: column;
     background: #fff;
     width: 100%;
+
   }
 
   .table-scroll {
-    height: calc(75vh - 129px);
-    overflow: auto;
+    height: calc(50vh - 129px);
+    overflow: auto !important;
   }
   .table-scroll::-webkit-scrollbar {
     width: 2px;   /* dikey scroll çubuğu kalınlığı */
