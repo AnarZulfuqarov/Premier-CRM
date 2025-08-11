@@ -507,7 +507,16 @@
 
   .order-history-detail-supplier__table {
     margin: 0;
+    tr {
 
+      &:nth-child(odd) {
+        background-color: #ffffff;
+      }
+
+      &:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    }
     th, td {
       padding: 8px 16px;
       border: 1px solid #ddd;

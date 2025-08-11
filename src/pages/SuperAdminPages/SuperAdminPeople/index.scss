@@ -279,6 +279,7 @@
 
       &::-webkit-scrollbar {
         height: 8px;
+        width: 4px;
         cursor: pointer;
       }
 
@@ -291,6 +292,7 @@
         background-color: #384871;
         border-radius: 4px;
         cursor: pointer;
+
       }
 
       &::-webkit-scrollbar-thumb:hover {
@@ -393,7 +395,7 @@
         tbody {
           tr {
             text-align: center;
-
+            font-size: 12px;
             &:nth-child(odd) {
               background-color: #ffffff;
             }
@@ -441,7 +443,6 @@
          &:hover { transform: scale(1.2); }
 
          &.eye { color: #007bff; }
-         &.edit { color: #ffc107; }
          &.delete { color: #dc3545; }
        }
 

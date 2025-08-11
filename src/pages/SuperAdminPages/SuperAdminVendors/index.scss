@@ -249,6 +249,7 @@
             white-space: nowrap;
             text-align: center;
             font-size: 14px;
+            font-weight: 500;
           }
           .th-label{
             display: flex;
@@ -262,7 +263,6 @@
 
         tbody {
           tr {
-              text-align: center;
 
             &:nth-child(odd) {
               background-color: #ffffff;
@@ -275,11 +275,10 @@
 
           td {
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 12px;
             border: 1px solid #e0e0e0; // border for td
             white-space: nowrap;
             vertical-align: middle;
-            text-align: center;
             button{
               display: flex;
               width: 86px;
@@ -290,13 +289,19 @@
               border: 1px solid #384871;
               background: #F0F7FF;
               color: #384871;
-              font-size: 14px;
+              font-size: 12px;
               font-style: normal;
               font-weight: 400;
               line-height: normal;
               letter-spacing: 0.056px;
               margin: 0 auto;
             }
+          }
+          td:last-child {
+            padding: 4px 8px;
+          }
+          td:nth-child(2) {
+            text-align: center;
           }
         }
       }

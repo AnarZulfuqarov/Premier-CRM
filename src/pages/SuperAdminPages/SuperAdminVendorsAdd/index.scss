@@ -130,12 +130,14 @@
     background-color: #F5FAFF;
     padding: 16px;
     border: 1px solid #eee;
+    font-weight: 500;
 
   }
      td {
       border: 1px solid #eee;
       padding: 10px;
       text-align: left;
+       font-size: 14px;
     }
 
     input, select {
@@ -153,6 +155,11 @@
       color: #555;
       cursor: pointer;
       font-size: 14px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
     }
     td:last-child {
       text-align: center;

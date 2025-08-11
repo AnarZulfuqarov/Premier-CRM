@@ -117,7 +117,7 @@ const SuperAdminCategories = () => {
                     </div>
                 </div>
                 {activeTab === 'products' && (
-                    <div className="table-wrapper">
+                    <div className="order-table-wrapper">
                         <div className="table-scroll">
                             <table className="order-history-detail-supplier__table">
                                 <thead>
