@@ -141,6 +141,26 @@
       outline: none;
       border:none;
     }
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      outline: none;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+      option {
+        padding: 8px;
+        background-color: #fff;
+        color: #333;
+      }
+      &:focus {
+        border-color: #2F3A5A;
+      }
+    }
     .password-input-wrapper {
       position: relative;
       display: flex;

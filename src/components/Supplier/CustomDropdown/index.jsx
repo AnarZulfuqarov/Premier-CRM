@@ -4,7 +4,7 @@ import './index.scss';
 const CustomDropdown = ({ options, selected, onSelect, placeholder = "Seçin" }) => {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef();
-
+    console.log(options);
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {

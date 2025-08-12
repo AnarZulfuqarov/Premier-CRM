@@ -3,23 +3,8 @@ import './App.css';
 import Cookies from 'js-cookie';
 import router from './routes/ROUTES';
 import { useEffect } from 'react';
-import { useGetUserFightersQuery, useGetUserQuery } from "./services/adminApi.jsx";
 
 const AuthSyncListener = () => {
-    const { data: getUser, error: userError } = useGetUserQuery();
-    const { data: getUserFighters, error: fightersError } = useGetUserFightersQuery();
-
-    useEffect(() => {
-        // Error varsa və status 401 və ya 403-dürsə tokeni sil
-        if (
-            (userError && (userError.status === 400 || userError.status === 400)) ||
-            (fightersError && (fightersError.status === 400 || fightersError.status === 400))
-        ) {
-            Cookies.remove('superAdminToken');
-            localStorage.setItem('auth-change', Date.now()); // diger tablar ucun trigger
-            window.location.reload(); // indiki tabda refresh
-        }
-    }, [userError, fightersError]);
 
     useEffect(() => {
         const handleStorageChange = (e) => {

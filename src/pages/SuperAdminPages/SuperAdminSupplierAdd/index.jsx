@@ -1,16 +1,19 @@
 import {useState} from 'react';
 import './index.scss';
 import {NavLink} from "react-router-dom";
-import {useCreateFightersMutation} from "../../../services/adminApi.jsx";
+import {useCreateFightersMutation, useGetAllCompaniesQuery} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
+import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 
 
 
 const SuperSupplierAdd = () => {
     const [postSupplier] = useCreateFightersMutation()
     const showPopup = usePopup();
+    const {data:getAllCompanies} = useGetAllCompaniesQuery()
+    const companies = getAllCompanies?.data
     const [rows, setRows] = useState([
-        { name: '', surname: '', finCode: '', password: '', phoneNumber: '' }
+        { name: '', surname: '', finCode: '', password: '', phoneNumber: '', companyId: '' }  // Add companyId to row state
     ]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -27,7 +30,8 @@ const SuperSupplierAdd = () => {
             row.surname.trim() &&
             row.finCode.trim() &&
             row.password.trim() &&
-            row.phoneNumber.trim()
+            row.phoneNumber.trim() &&
+            row.companyId.trim()  // Check if companyId is selected
         );
     };
 
@@ -49,6 +53,7 @@ const SuperSupplierAdd = () => {
                     <tr>
                         <th>Ad</th>
                         <th>Soyad</th>
+                        <th>Şirkət</th>
                         <th>FIN</th>
                         <th>Şifrə</th>
                         <th>Nömrə</th>
@@ -74,6 +79,18 @@ const SuperSupplierAdd = () => {
                                     onChange={(e) => handleChange(index, 'surname', e.target.value)}
                                     required
                                 />
+                            </td>
+                            <td>
+                                <select
+                                    value={row.companyId}
+                                    onChange={(e) => handleChange(index, 'companyId', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Şirkət seçin</option>
+                                    {companies?.map(company => (
+                                        <option key={company.id} value={company.id}>{company.name}</option>
+                                    ))}
+                                </select>
                             </td>
                             <td>
                                 <input
