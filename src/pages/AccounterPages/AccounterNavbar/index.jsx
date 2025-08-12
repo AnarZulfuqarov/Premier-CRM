@@ -3,7 +3,7 @@ import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
     useChangePasswordFightersMutation, useGetAdminNotificationsFighterQuery,
-    useGetUserFightersQuery
+    useGetUserAccountantsQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
 
@@ -16,7 +16,7 @@ const AccounterNavbar = ({ setSidebarOpen }) => {
     const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationsFighterQuery()
     const notification = getAdminNotificationsSuperAdmin?.data
     const hasUnread = notification?.some(item => item.isRead === false);
-        const {data:getUser} = useGetUserFightersQuery()
+        const {data:getUser} = useGetUserAccountantsQuery()
         const user = getUser?.data
         // input’lar için state
         const [oldPass, setOldPass] = useState('');

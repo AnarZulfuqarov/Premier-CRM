@@ -46,7 +46,6 @@ const OrderHistoryDetailSuperAdmin = () => {
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
-
         return {
             name,
             category,
@@ -56,7 +55,7 @@ const OrderHistoryDetailSuperAdmin = () => {
             priceEach, // ✅ əlavə etdik
             created,
             delivery,
-            received
+            received,
         };
     })
 
@@ -112,6 +111,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                         <table className="order-history-detail-super-admin__table">
                             <thead>
                             <tr>
+                                <th>Şirkət adı</th>
                                 <th>
                                     {activeSearch === 'name' ? (
                                         <div className="th-search">
@@ -185,6 +185,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                             <tbody>
                             {filtered?.map((item, i) => (
                                 <tr key={i}>
+                                    <td>{orderData?.section?.companyName}</td>
                                     <td>{item.name}</td>
                                     <td>{item.category}</td>
                                     <td>{item.required}</td>

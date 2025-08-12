@@ -63,6 +63,11 @@ export const api = createApi({
                 url: `/Fighters/getUser`,
             }),
         }),
+        getUserAccountants: builder.query({
+            query: () => ({
+                url: `/Accountants/getUser`,
+            }),
+        }),
         forgotPassword: builder.mutation({
             query: ({phoneNumber}) => ({
                 url: `/Admins/reset-password/send-link?phoneNumber=${phoneNumber}`,
@@ -885,5 +890,7 @@ export const {
     useEditAccountantMutation,
     useGetOrderByPageAccounterQuery,
     useGetOrderByPageByCompanyAccounterQuery,
+
+    useGetUserAccountantsQuery,
 
 } = api;

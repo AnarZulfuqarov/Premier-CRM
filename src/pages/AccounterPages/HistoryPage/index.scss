@@ -7,6 +7,7 @@
     position: absolute;
     bottom: 100px;
   }
+
 }
 .order-history__filter-button {
   position: relative;
@@ -81,7 +82,15 @@
   height: calc(100vh - 129px);
   overflow: hidden;
   position: relative;
-
+  .price-status{
+    margin-left: 8px;
+    &.paid{
+      color:#2FC25B ;
+    }
+    &.unpaid{
+      color:#ED0303 ;
+    }
+  }
 
   h2 {
     font-size: 24px;
@@ -158,6 +167,7 @@
     &::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+
   }
 
   &__item {
@@ -225,9 +235,11 @@
         font-weight: 400;
         line-height: normal;
         margin-right: 12px;
+
       }
     }
   }
+
   &__details {
     display: flex;
     justify-content: space-between;
@@ -257,7 +269,9 @@
         font-weight: 400;
         line-height: normal;
         margin-right: 12px;
+
       }
+
     }
   }
 
