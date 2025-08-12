@@ -168,8 +168,8 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 </th>
                                 <th>Tələb olunan miqdar</th>
                                 <th>Təmin olunan miqdar</th>
-                                <th>Sifarişin məbləği</th>
                                 <th>Qiyməti</th> {/* ✅ Yeni sütun */}
+                                <th>Sifarişin məbləği</th>
 
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
@@ -190,8 +190,8 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.category}</td>
                                     <td>{item.required}</td>
                                     <td>{item.provided}</td>
-                                    <td>{item.price}</td>
                                     <td>{item.priceEach}</td> {/* ✅ Yeni hüceyrə */}
+                                    <td>{item.price}</td>
 
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
