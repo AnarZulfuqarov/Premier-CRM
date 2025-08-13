@@ -1,18 +1,19 @@
 import './index.scss';
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import {useGetOrderCompanyByPageQuery, useGetOrdersQuery} from "../../../services/adminApi.jsx";
+import Cookies from "js-cookie";
 
 const ActiveOrders = () => {
     const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 576);
-
+    const id = Cookies.get("companyId");
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 576);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-    const {data: getOrders, refetch} = useGetOrdersQuery()
+    const {data: getOrders, refetch} = useGetOrderCompanyByPageQuery(id)
     const orderss = getOrders?.data
     const orders = orderss
         ?.filter(order => {

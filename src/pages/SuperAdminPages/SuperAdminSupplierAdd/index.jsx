@@ -145,7 +145,8 @@ const SuperSupplierAdd = () => {
                                     surname: row.surname,
                                     password: row.password,
                                     finCode: row.finCode,
-                                    phoneNumber: row.phoneNumber
+                                    phoneNumber: row.phoneNumber,
+                                    companyIds: [row.companyId]
                                 }).unwrap();
 
 

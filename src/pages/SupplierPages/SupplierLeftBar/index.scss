@@ -42,6 +42,7 @@
       color: #333;
       text-decoration: none;
       padding: 8px 0 8px 48px;
+
       &.active {
         color: #007AFF;
         font-weight: 500;
@@ -88,6 +89,26 @@
     .link {
       text-decoration: none;
       color: black;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      .countO{
+        display: flex;
+        width: 19px;
+        height: 19px;
+        padding: 4px 5px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;border-radius: 9px;
+        background: #007AFF;
+        color: #FFF;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
     }
 
   }

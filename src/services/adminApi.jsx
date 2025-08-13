@@ -60,7 +60,7 @@ export const api = createApi({
 
         getUserFighters: builder.query({
             query: () => ({
-                url: `/Fighters/getUser`,
+                url: `/Fighters/me`,
             }),
         }),
         getUserAccountants: builder.query({
@@ -377,6 +377,11 @@ export const api = createApi({
                 url: `/Fighters/${id}`,
             }),
         }),
+        getByIdFightersCompanies: builder.query({
+            query: () => ({
+                url: `/Fighters/companies`,
+            }),
+        }),
         createFighters: builder.mutation({
             query: (fighter) => ({
                 url: '/Fighters/register',
@@ -386,9 +391,25 @@ export const api = createApi({
             }),
         }),
         deleteFighter: builder.mutation({
-            query: (email) => ({
-                url: `/Fighters/${email}`,
+            query: (phoneNumber) => ({
+                url: `/Fighters/by-phone/${phoneNumber}`,
                 method: 'DELETE',
+            }),
+        }),
+        deleteFighterBolme: builder.mutation({
+            query: ({fighterId,companyId}) => ({
+                url: `/Fighters/${fighterId}/companies/${companyId}`,
+                method: 'DELETE',
+            }),
+        }),
+        addBolmeFighters: builder.mutation({
+            query: (body) => ({
+                url: `/Fighters/companies`,
+                method: 'POST',
+                body,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             }),
         }),
         editFighter: builder.mutation({
@@ -701,6 +722,16 @@ export const api = createApi({
                 url: `/Orders/paged?page=${page}&pageSize=${pageSize}`,
             }),
         }),
+        getOrderCompanyByPage: builder.query({
+            query: (companyId) => ({
+                url: `/Orders/active-by-company?companyId=${companyId}`,
+            }),
+        }),
+        getOrderCompanyInComplete: builder.query({
+            query: (companyId) => ({
+                url: `/Orders/incomplete-by-company?companyId=${companyId}`,
+            }),
+        }),
         getOrderByPageByCompany: builder.query({
             query: ({companyName,page,pageSize}) => ({
                 url: `/Orders/paged?companyName=${companyName}&page=${page}&pageSize=${pageSize}`,
@@ -741,6 +772,11 @@ export const api = createApi({
         getOrderByPageAccounter: builder.query({
             query: ({page,pageSize}) => ({
                 url: `/Orders/accountant/paged?page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
+        getOrderByPageFighter: builder.query({
+            query: ({fighterId,companyId}) => ({
+                url: `/Orders/by-fighter-and-company?fighterId=${fighterId}&companyId=${companyId}`,
             }),
         }),
         getOrderByPageByCompanyAccounter: builder.query({
@@ -815,6 +851,9 @@ export const {
     useDeleteFighterMutation,
     useEditFighterMutation,
     useGetByIdFightersQuery,
+    useDeleteFighterBolmeMutation,
+    useAddBolmeFightersMutation,
+    useGetByIdFightersCompaniesQuery,
 
     useCreateOrdersMutation,
     useGetMyOrdersQuery,
@@ -892,5 +931,7 @@ export const {
     useGetOrderByPageByCompanyAccounterQuery,
 
     useGetUserAccountantsQuery,
-
+    useGetOrderCompanyByPageQuery,
+    useGetOrderCompanyInCompleteQuery,
+    useGetOrderByPageFighterQuery,
 } = api;

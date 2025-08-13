@@ -71,6 +71,11 @@ import SuperAdminAccounter from "../pages/SuperAdminPages/SuperAdminAccounter/in
 import SuperAccounterAdd from "../pages/SuperAdminPages/SuperAdminAccounterAdd/index.jsx";
 import AccounterPage from "../pages/AccounterPages/AccounterPage/index.jsx";
 import OrderHistoryAccounter from "../pages/AccounterPages/HistoryPage/index.jsx";
+import SuperAdminSupplierDetail from "../pages/SuperAdminPages/SuperAdminSupplierDetail/index.jsx";
+import SuperAdminSupplierDetailAddBolme from "../pages/SuperAdminPages/SuperAdminSupplierDetailAddBolme/index.jsx";
+import CompanyPageFighter from "../pages/SupplierPages/CompanyPageFighte/index.jsx";
+import InCompleteOrders from "../pages/SupplierPages/InCompleteOrders/index.jsx";
+import InCompleteOrdersDetail from "../pages/SupplierPages/InCompleteOrdersDetail/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -88,6 +93,14 @@ const router = createBrowserRouter([
             <ProtectedRouteCustomer>
                 <CompanyPage/>
             </ProtectedRouteCustomer>
+        )
+    },
+    {
+        path:"/choose-company-fighter",
+        element:(
+            <ProtectedRouteSupplier>
+                <CompanyPageFighter/>
+            </ProtectedRouteSupplier>
         )
     },
     {
@@ -150,8 +163,16 @@ const router = createBrowserRouter([
                 element: <ActiveOrders/>
             },
             {
+                path: "/supplier/inComplete",
+                element: <InCompleteOrders/>
+            },
+            {
                 path: "/supplier/activeOrder/:id",
                 element: <ActiveOrdersDetail/>
+            },
+            {
+                path: "/supplier/inComplete/:id",
+                element: <InCompleteOrdersDetail/>
             },
             {
                 path: "/supplier/history",
@@ -245,8 +266,16 @@ const router = createBrowserRouter([
                 element: <SuperAdminPeopleDetail/>
             },
             {
+                path: "/superAdmin/supplier/:id",
+                element: <SuperAdminSupplierDetail/>
+            },
+            {
                 path: "/superAdmin/people/:id/bolmeAdd",
                 element: <SuperAdminPeopleDetailAddBolme/>
+            },
+            {
+                path: "/superAdmin/supplier/:id/bolmeAdd",
+                element: <SuperAdminSupplierDetailAddBolme/>
             },
             {
                 path: "/superAdmin/products/products",

@@ -1,0 +1,244 @@
+/* index.scss */
+#company {
+  padding: 50px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .header {
+    text-align: center;
+    visibility: hidden;
+  }
+  .company-panel {
+    display: flex;
+    justify-content: center;
+
+
+
+    .company-form {
+      background-color: #fff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 667px;
+      padding: 40px 20px;
+
+      .title {
+        text-align: center;
+        margin-bottom: 2rem;
+
+        h1 {
+          color: #000;
+          font-size: 32px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+        p {
+          color: #7d7d7d;
+          font-size: 18px;
+          line-height: 24px;
+          margin-bottom: 48px;
+        }
+      }
+
+      .choose {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 20px;
+        justify-items: center;
+        margin-bottom: 1rem;
+
+        .company {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px;
+          border: 1px solid #003167;
+          border-radius: 6px;
+          background: #fff;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          width: 100%;
+          max-width: 151px;
+
+          img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+          }
+          p {
+            color: #2A2A2A;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+          }
+
+          &:hover {
+            background: #FBFDFF;
+            border-color: #006FE8;
+          }
+          &.selected {
+            background: #FBFDFF;
+            border-color: #006FE8;
+          }
+        }
+      }
+
+      .submit {
+        width: 100%;
+        height: 50px;
+        border: none;
+        border-radius: 8px;
+        background: #384871;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .copyRight p,
+    .terms p {
+      color: #969696;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #company {
+    padding: 40px 20px;
+
+    .company-panel {
+      margin-bottom: 80px;
+
+      .header {
+        margin-bottom: 80px;
+      }
+
+      .company-form {
+        padding: 20px;
+
+        .title {
+          h1 {
+            font-size: 28px;
+          }
+          p {
+            font-size: 16px;
+            margin-bottom: 32px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  #company {
+    padding: 40px 16px !important;
+    .company-panel {
+      .company-form {
+        .choose {
+          width: 80%;
+          margin: 0 auto 16px;
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    }
+
+    .footer {
+      padding: 10px;
+    }
+  }
+}
+@media (max-width: 576px) {
+  #company {
+    padding: 20px 10px;
+
+    .header {
+      margin-bottom: 40px;
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .company-panel {
+      .company-form {
+        padding: 16px;
+
+        .title {
+          h1 {
+            font-size: 24px;
+          }
+
+          p {
+            font-size: 14px;
+            line-height: 20px;
+            margin-bottom: 24px;
+          }
+        }
+
+        .choose {
+          grid-template-columns: 1fr;
+          gap: 12px;
+
+          .company {
+            max-width: 100%;
+            padding: 16px;
+
+            img {
+              width: 36px;
+              height: 36px;
+              margin-bottom: 8px;
+            }
+
+            p {
+              font-size: 14px;
+            }
+          }
+        }
+
+        .submit {
+          font-size: 14px;
+          height: 42px;
+        }
+      }
+    }
+
+    .footer {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      gap: 8px;
+
+      .copyRight p,
+      .terms p {
+        font-size: 13px;
+        margin: 0;
+      }
+    }
+  }
+}
+

@@ -38,7 +38,7 @@ function Login() {
                 if (role === 'Fighter') {
                     Cookies.set('supplierToken', token);
                     showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
-                    navigate('/supplier/activeOrder');
+                    navigate('/choose-company-fighter');
                 } else if (role === 'Customer') {
                     Cookies.set('ordererToken', token);
                     showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');

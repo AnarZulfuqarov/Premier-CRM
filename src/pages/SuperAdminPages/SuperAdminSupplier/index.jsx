@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useDeleteFighterMutation, useEditFighterMutation, useGetAllFightersQuery} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
+import {MdOutlineRemoveRedEye} from "react-icons/md";
 
 const SuperAdminSupplier = () => {
     const [searchColumn, setSearchColumn] = useState(null);
@@ -24,9 +25,11 @@ const SuperAdminSupplier = () => {
         surname: s.surname,
         fin: s.finCode,
         phone: s.phoneNumber,
-        password: s.password ?? '********'
+        password: s.password ?? '********',
+        companyDtos: s.companyDtos || []
     })) || [];
     const columnKeyMap = {
+        'Şirkətlər': 'companyDtos',
         'Ad': 'name',
         'Soyad': 'surname',
         'fin': 'fin',
@@ -36,11 +39,15 @@ const SuperAdminSupplier = () => {
     // Filter users based on search term and column
     const filteredUsers = users.filter(user => {
         if (!searchTerm || !searchColumn) return true;
-        const key = columnKeyMap[searchColumn]; // düzgün açarı al
+        const key = columnKeyMap[searchColumn];
+        if (key === 'companyDtos') {
+            const companyNames = user.companyDtos.map(company => company.name).join(', ').toLowerCase();
+            return companyNames.includes(searchTerm.toLowerCase());
+        }
+        
         const value = user[key]?.toString().toLowerCase();
         return value?.includes(searchTerm.toLowerCase());
     });
-
 
 
     const handleSearchClick = (column) => {
@@ -121,7 +128,7 @@ const SuperAdminSupplier = () => {
                         <table>
                             <thead>
                             <tr>
-                                {['Ad', 'Soyad', 'fin', 'Mobil nömrə']. map((column) => (
+                                {['Şirkətlər','Ad', 'Soyad', 'fin', 'Mobil nömrə']. map((column) => (
                                     <th key={column}>
                                         {column.charAt(0).toUpperCase() + column.slice(1)}
                                         <span
@@ -180,6 +187,11 @@ const SuperAdminSupplier = () => {
                             <tbody>
                             {filteredUsers.map((user) => (
                                 <tr key={user.id}>
+                                    <td className="firstCell">
+                                        <div className={(user.companyDtos?.length > 2 ? "scrolling-company-cell" : "")}>
+                                            {[...new Set(user.companyDtos?.map(company => company.name))].join(', ') || 'No companies'}
+                                        </div>
+                                    </td>
                                     <td>{user.name}</td>
                                     <td>{user.surname}</td>
                                     <td>{user.fin}</td>
@@ -195,7 +207,12 @@ const SuperAdminSupplier = () => {
                         <div className="header">Fəaliyyətlər</div>
                         {filteredUsers.map((user) => (
                             <div key={user.id} className="cell">
-
+<span
+    className="action-icon eye"
+    onClick={() => navigate(`/superAdmin/supplier/${user.id}`)}
+>
+                                            <MdOutlineRemoveRedEye/>
+                                        </span>
                                 <span
                                     className="action-icon edit"
                                     onClick={() => handleEdit(user.id)}
