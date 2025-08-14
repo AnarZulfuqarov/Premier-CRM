@@ -789,6 +789,11 @@ export const api = createApi({
                 url: `/Orders/paged-by-fighter-and-company?fighterId=${fighterId}&companyId=${companyId}&page=${page}&pageSize=${pageSize}`,
             }),
         }),
+        getAdminNotificationFighter: builder.query({
+            query: ({fighterId,companyId}) => ({
+                url: `/AdminNotifications/${fighterId}/${companyId}`,
+            }),
+        }),
     }),
 });
 
@@ -940,4 +945,5 @@ export const {
     useGetOrderCompanyInCompleteQuery,
     useGetOrderByPageFighterQuery,
     useGetOrderByPageByCompanyFighterQuery,
+    useGetAdminNotificationFighterQuery,
 } = api;

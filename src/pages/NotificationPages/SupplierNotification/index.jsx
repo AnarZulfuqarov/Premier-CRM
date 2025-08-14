@@ -1,17 +1,23 @@
 import {useState} from 'react';
 import './index.scss';
 import {
-    useGetAdminNotificationsFighterQuery,
+    useGetAdminNotificationFighterQuery,
+     useGetUserFightersQuery,
     useMarkAsReadMutation
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const SupplierNotification = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6; // Number of orders per page
-    const {data:getAdminNotificationsFighter,refetch} = useGetAdminNotificationsFighterQuery()
+    const companyId = Cookies.get("companyId");
+    const {data:getUserFighters} = useGetUserFightersQuery()
+    const user = getUserFighters?.data
+    const fighterId = user?.id
+    const {data:getAdminNotificationsFighter,refetch} = useGetAdminNotificationFighterQuery({fighterId,companyId})
     const notification = getAdminNotificationsFighter?.data
     const [markAsRead] = useMarkAsReadMutation()
     // Pagination logic
