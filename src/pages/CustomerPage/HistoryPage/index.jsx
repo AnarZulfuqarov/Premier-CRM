@@ -17,27 +17,36 @@ const OrderHistory = () => {
     const orders = orderss?.map((order) => {
         let status = '';
         if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
-            status = 'Tamamlanmış';
+            const hasIncompleteItems = order.items.some(
+                (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
+            );
+            status = hasIncompleteItems ? 'Natamam sifariş' : 'Tamamlanmış';
         } else if (order.employeeConfirm && order.fighterConfirm) {
-            status = 'Təhvil alınmayan';
+            const hasIncompleteItems = order.items.some(
+                (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
+            );
+            status = hasIncompleteItems ? 'Natamam sifariş' : 'Təhvil alınmayan';
         } else if (order.employeeConfirm && !order.fighterConfirm) {
             status = 'Təchizatçıdan təsdiq gözləyən';
         }
 
         const uniqueCategories = [
-            ...new Set(order.items.map(item => item.product?.categoryName).filter(Boolean))
+            ...new Set(order.items.map((item) => item.product?.categoryName).filter(Boolean)),
         ];
 
-        const totalPrice = order.items?.reduce((sum, item) =>
-            sum + item.suppliedQuantity * (item?.price || 0), 0
+        const totalPrice = order.items?.reduce(
+            (sum, item) => sum + item.suppliedQuantity * (item?.price || 0),
+            0
         ) || 0;
-        const vendorName = order.fighterInfo ? `${order.fighterInfo.name} ${order.fighterInfo.surname}` : null;
+        const vendorName = order.fighterInfo
+            ? `${order.fighterInfo.name} ${order.fighterInfo.surname}`
+            : null;
 
         return {
             id: order.id,
             product: (() => {
-                const names = order.items.map(item => item.product?.name).filter(Boolean);
-                const maxDisplay = 2; // Maksimum gösterilecek ürün ismi sayısı
+                const names = order.items.map((item) => item.product?.name).filter(Boolean);
+                const maxDisplay = 2;
                 return names.length > maxDisplay
                     ? names.slice(0, maxDisplay).join(', ') + '...'
                     : names.join(', ');
@@ -45,7 +54,7 @@ const OrderHistory = () => {
             itemCount: order.items.length,
             categoryCount: uniqueCategories.length,
             status,
-            price : totalPrice.toFixed(2),
+            price: totalPrice.toFixed(2),
             vendorName,
         };
     }) || [];
@@ -54,13 +63,14 @@ const OrderHistory = () => {
 
     const filteredOrders = orders.filter((order) => {
         const matchesSearch =
-            order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.product.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesFilter =
             filter === 'all' ||
             (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən') ||
             (filter === 'completed' && order.status === 'Tamamlanmış') ||
-            (filter === 'not-completed' && order.status === 'Təhvil alınmayan');
+            (filter === 'not-completed' && order.status === 'Təhvil alınmayan') ||
+            (filter === 'incomplete' && order.status === 'Natamam sifariş');
         return matchesSearch && matchesFilter;
     });
 
@@ -138,7 +148,7 @@ const OrderHistory = () => {
                                         setShowFilterDropdown(false);
                                     }}
                                 >
-                                  <div className={"statuss pending"}></div>  Təchizatçıdan təsdiq gözləyən
+                                    <div className="statuss pending"></div> Təchizatçıdan təsdiq gözləyən
                                 </button>
                                 <button
                                     className={filter === 'completed' ? 'active' : ''}
@@ -147,7 +157,7 @@ const OrderHistory = () => {
                                         setShowFilterDropdown(false);
                                     }}
                                 >
-                                   <div className={"statuss completed"}></div> Tamamlanmış
+                                    <div className="statuss completed"></div> Tamamlanmış
                                 </button>
                                 <button
                                     className={filter === 'not-completed' ? 'active' : ''}
@@ -156,7 +166,16 @@ const OrderHistory = () => {
                                         setShowFilterDropdown(false);
                                     }}
                                 >
-                                   <div className={"statuss not-completed"}></div> Təhvil alınmayan
+                                    <div className="statuss not-completed"></div> Təhvil alınmayan
+                                </button>
+                                <button
+                                    className={filter === 'incomplete' ? 'active' : ''}
+                                    onClick={() => {
+                                        setFilter('incomplete');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                >
+                                    <div className="statuss incomplete"></div> Natamam sifariş
                                 </button>
                             </div>
                         )}
@@ -180,7 +199,7 @@ const OrderHistory = () => {
                                    <span>Order ID</span> {order.id}
                                </p>
 
-                                   {['Tamamlanmış', 'Təhvil alınmayan'].includes(order.status) && (
+                                   {['Tamamlanmış', 'Təhvil alınmayan','Natamam sifariş'].includes(order.status) && (
 
                                        <p className="order-history__id">
                                            <span>Ümumi məbləğ:</span> {order.price} ₼
@@ -190,15 +209,19 @@ const OrderHistory = () => {
 
                                </div>
 
-                                <span className={`order-history__status ${
-                                    order.status === 'Tamamlanmış'
-                                        ? 'completed'
-                                        : order.status === 'Təchizatçıdan təsdiq gözləyən'
-                                            ? 'pending'
-                                            : 'not-completed'
-                                }`}>
-    {order.status}
-  </span>
+                                <span
+                                    className={`order-history__status ${
+                                        order.status === 'Tamamlanmış'
+                                            ? 'completed'
+                                            : order.status === 'Təchizatçıdan təsdiq gözləyən'
+                                                ? 'pending'
+                                                : order.status === 'Təhvil alınmayan'
+                                                    ? 'not-completed'
+                                                    : 'incomplete'
+                                    }`}
+                                >
+  {order.status}
+</span>
                             </div>
 
                             <div className="order-history__data">

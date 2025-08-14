@@ -17,9 +17,17 @@ const OrderHistoryDetail = () => {
     let status = '';
 
     if (orderData?.employeeConfirm && orderData?.fighterConfirm && orderData?.employeeDelivery) {
-        status = 'Tamamlanmış';
+        // Check for incomplete items in completed orders
+        const hasIncompleteItems = orderData?.items?.some(
+            (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
+        );
+        status = hasIncompleteItems ? 'Natamam sifariş' : 'Tamamlanmış';
     } else if (orderData?.employeeConfirm && orderData?.fighterConfirm) {
-        status = 'Təhvil alınmayan';
+        // Check for incomplete items in not-delivered orders
+        const hasIncompleteItems = orderData?.items?.some(
+            (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
+        );
+        status = hasIncompleteItems ? 'Natamam sifariş' : 'Təhvil alınmayan';
     } else if (orderData?.employeeConfirm && !orderData?.fighterConfirm) {
         status = 'Təchizatçıdan təsdiq gözləyən';
     }
@@ -117,7 +125,7 @@ const OrderHistoryDetail = () => {
                                 <p className="order-history-detail__id">
                                     <span>Order ID</span> {orderData?.id}
                                 </p>
-                                {['Tamamlanmış', 'Təhvil alınmayan'].includes(status) && (
+                                {['Tamamlanmış', 'Təhvil alınmayan','Natamam sifariş'].includes(status) && (
 
                                         <p className={"order-history-detail__id"}>
                                             <span>Ümumi məbləğ:</span> {totalPrice} ₼
@@ -126,7 +134,13 @@ const OrderHistoryDetail = () => {
                                 )}
                             </div>
                             <span
-                                className={`order-history-detail__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'not-completed'}`}>
+                                className={`order-history-detail__status ${
+                                    status === 'Tamamlanmış' ? 'completed' :
+                                        status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' :
+                                            status === 'Təhvil alınmayan' ? 'not-completed' :
+                                                status === 'Natamam sifariş' ? 'incomplete' : ''
+                                }`}
+                            >
   {status}
 </span>
                         </div>
@@ -250,7 +264,7 @@ const OrderHistoryDetail = () => {
                         </div>
                     )}
 
-                    {status === 'Təhvil alınmayan' && (
+                    {status === 'Təhvil alınmayan' || status === "Natamam sifariş" && (
                         <div className="order-history-detail__actions">
                             <span>Sifariş hazırdır. Təhvil almağı təsdiq edin.</span>
                             <button

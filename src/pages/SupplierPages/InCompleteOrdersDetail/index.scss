@@ -393,6 +393,11 @@
     background: #fff;
     width: 83.2%;
   }
+  .disabled-row {
+    background-color: #f0f0f0; /* Light gray background */
+    cursor: not-allowed; /* Disabled cursor */
+    opacity: 0.6; /* Slightly faded */
+  }
 
   .table-scroll {
     height: calc(50vh - 129px);

@@ -288,7 +288,11 @@
       border: 1px solid #FFC31C;
       background: rgba(255, 229, 159, 0.25);
     }
-
+    &.incomplete {
+      border-radius: 16px;
+      border: 1px solid #E1FF00;
+      background: rgba(225, 255, 0, 0.20);
+    }
     &.completed {
       border-radius: 16px;
       border: 1px solid #31AC2E;

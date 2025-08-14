@@ -295,24 +295,32 @@ const InCompleteOrdersDetail = () => {
                             <tbody>
                             {pagedItems.map((item, i) => {
                                 const absoluteIndex = (currentPage - 1) * pageSize + i;
+                                const isCompleted = !!confirmedRows[absoluteIndex]; // Check if row is completed
+
                                 return (
                                     <tr
                                         key={i}
+                                        className={isCompleted ? 'disabled-row' : ''} // Apply disabled class
                                         onClick={() => {
-                                            const data = confirmedRows[absoluteIndex];
-                                            setSelectedRowIndex(absoluteIndex);
-                                            setModalData({
-                                                quantity: data?.quantity?.replace(` ${item.measure}`, '') || '',
-                                                price: data?.price?.replace(' ₼', '') || '',
-                                                vendor: data?.vendor || ''
-                                            });
+                                            if (!isCompleted) {
+                                                // Only allow clicking if the row is not completed
+                                                const data = confirmedRows[absoluteIndex];
+                                                setSelectedRowIndex(absoluteIndex);
+                                                setModalData({
+                                                    quantity: data?.quantity?.replace(` ${item.measure}`, '') || '',
+                                                    price: data?.price?.replace(' ₼', '') || '',
+                                                    vendor: data?.vendor || '',
+                                                });
+                                            }
                                         }}
+                                        style={isCompleted ? { cursor: 'not-allowed' } : {}} // Optional inline style for cursor
                                     >
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                checked={!!confirmedRows[absoluteIndex]}
+                                                checked={isCompleted}
                                                 readOnly
+                                                disabled={isCompleted} // Disable checkbox for completed rows
                                             />
                                         </td>
                                         <td>{item.name}</td>
