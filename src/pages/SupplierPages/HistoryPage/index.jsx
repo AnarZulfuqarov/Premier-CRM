@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import './index.scss';
 import {
-    useGetAllCompaniesQuery,
+    useGetAllCompaniesQuery, useGetOrderByPageByCompanyFighterQuery,
     useGetOrderByPageByCompanyQuery,
-    useGetOrderByPageQuery,
+     useGetUserFightersQuery,
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const OrderHistorySupplier = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,12 +16,15 @@ const OrderHistorySupplier = () => {
     const [selectedCompany, setSelectedCompany] = useState('all');
     const [page, setPage] = useState(1);
     const pageSize = 10;
-
+    const {data:getUserFighters} = useGetUserFightersQuery()
+    const user = getUserFighters?.data
+    const fighterId = user?.id
+    const companyId = Cookies.get('companyId');
     const commonParams = { page, pageSize, companyName: selectedCompany };
 
     const { data: pagedOrdersData, isFetching } =
         selectedCompany === 'all'
-            ? useGetOrderByPageQuery({ page, pageSize })
+            ? useGetOrderByPageByCompanyFighterQuery({fighterId,companyId, page, pageSize })
             : useGetOrderByPageByCompanyQuery(commonParams);
     useEffect(() => {
         setAllOrders([]);

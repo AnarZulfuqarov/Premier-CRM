@@ -784,6 +784,11 @@ export const api = createApi({
                 url: `/Orders/paged?companyName=${companyName}&page=${page}&pageSize=${pageSize}`,
             }),
         }),
+        getOrderByPageByCompanyFighter: builder.query({
+            query: ({fighterId,companyId,page,pageSize}) => ({
+                url: `/Orders/paged-by-fighter-and-company?fighterId=${fighterId}&companyId=${companyId}&page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
     }),
 });
 
@@ -934,4 +939,5 @@ export const {
     useGetOrderCompanyByPageQuery,
     useGetOrderCompanyInCompleteQuery,
     useGetOrderByPageFighterQuery,
+    useGetOrderByPageByCompanyFighterQuery,
 } = api;
