@@ -16,16 +16,15 @@ const OrderHistory = () => {
     }, []);
     const orders = orderss?.map((order) => {
         let status = '';
-        if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
-            const hasIncompleteItems = order.items.some(
-                (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
-            );
-            status = hasIncompleteItems ? 'Natamam sifariş' : 'Tamamlanmış';
-        } else if (order.employeeConfirm && order.fighterConfirm) {
-            const hasIncompleteItems = order.items.some(
-                (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
-            );
-            status = hasIncompleteItems ? 'Natamam sifariş' : 'Təhvil alınmayan';
+
+        if (order.employeeConfirm && order.fighterConfirm) {
+            if (order.employeeDelivery && !order.incompledEmployee) {
+                status = 'Tamamlanmış';
+            } else if (!order.employeeDelivery && order.incompledEmployee) {
+                status = 'Natamam sifariş';
+            } else if (!order.employeeDelivery && !order.incompledEmployee) {
+                status = 'Təhvil alınmayan';
+            }
         } else if (order.employeeConfirm && !order.fighterConfirm) {
             status = 'Təchizatçıdan təsdiq gözləyən';
         }
@@ -38,6 +37,7 @@ const OrderHistory = () => {
             (sum, item) => sum + item.suppliedQuantity * (item?.price || 0),
             0
         ) || 0;
+
         const vendorName = order.fighterInfo
             ? `${order.fighterInfo.name} ${order.fighterInfo.surname}`
             : null;

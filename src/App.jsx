@@ -22,6 +22,7 @@ const AuthSyncListener = () => {
     return null;
 };
 
+
 const App = () => {
     const token = Cookies.get('superAdminToken');
     if (!token) {

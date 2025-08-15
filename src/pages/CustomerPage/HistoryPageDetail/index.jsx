@@ -16,18 +16,14 @@ const OrderHistoryDetail = () => {
     const orderData = getMyOrdersId?.data
     let status = '';
 
-    if (orderData?.employeeConfirm && orderData?.fighterConfirm && orderData?.employeeDelivery) {
-        // Check for incomplete items in completed orders
-        const hasIncompleteItems = orderData?.items?.some(
-            (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
-        );
-        status = hasIncompleteItems ? 'Natamam sifariş' : 'Tamamlanmış';
-    } else if (orderData?.employeeConfirm && orderData?.fighterConfirm) {
-        // Check for incomplete items in not-delivered orders
-        const hasIncompleteItems = orderData?.items?.some(
-            (item) => item.suppliedQuantity < item.requiredQuantity || item.suppliedQuantity === 0
-        );
-        status = hasIncompleteItems ? 'Natamam sifariş' : 'Təhvil alınmayan';
+    if (orderData?.employeeConfirm && orderData?.fighterConfirm) {
+        if (orderData?.employeeDelivery && !orderData?.incompledEmployee) {
+            status = 'Tamamlanmış';
+        } else if (!orderData?.employeeDelivery && orderData?.incompledEmployee) {
+            status = 'Natamam sifariş';
+        } else if (!orderData?.employeeDelivery && !orderData?.incompledEmployee) {
+            status = 'Təhvil alınmayan';
+        }
     } else if (orderData?.employeeConfirm && !orderData?.fighterConfirm) {
         status = 'Təchizatçıdan təsdiq gözləyən';
     }
