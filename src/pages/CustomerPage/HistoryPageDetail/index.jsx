@@ -264,7 +264,7 @@ const OrderHistoryDetail = () => {
                         </div>
                     )}
 
-                    {status === 'Təhvil alınmayan' || status === "Natamam sifariş" && (
+                    {(status === 'Təhvil alınmayan' || status === "Natamam sifariş") && (
                         <div className="order-history-detail__actions">
                             <span>Sifariş hazırdır. Təhvil almağı təsdiq edin.</span>
                             <button
