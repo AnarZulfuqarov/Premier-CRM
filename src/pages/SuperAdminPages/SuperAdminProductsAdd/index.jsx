@@ -52,6 +52,7 @@ const SuperProductsAdd = () => {
                                     placeholder="Məhsul adı daxil et"
                                     value={row.name}
                                     onChange={(e) => handleChange(index, 'name', e.target.value)}
+                                    required
                                 />
                             </td>
                             <td>

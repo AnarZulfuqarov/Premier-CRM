@@ -64,6 +64,7 @@ const SuperAdminCompanyAdd = () => {
                                     placeholder="Şirkət adı daxil et"
                                     value={row.name}
                                     onChange={(e) => handleChange(index, e.target.value)}
+                                    required
                                 />
                             </td>
                         </tr>

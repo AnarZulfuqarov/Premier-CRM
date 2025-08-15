@@ -59,6 +59,7 @@ const SuperVendorAdd = () => {
                                     placeholder="Vendor adı daxil et"
                                     value={row.name}
                                     onChange={(e) => handleChange(index, 'name', e.target.value)}
+                                    required
                                 />
                             </td>
 
