@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
-    useChangePasswordFightersMutation, useGetAdminNotificationsFighterQuery,
+    useChangePasswordFightersMutation, useGetAdminNotificationFighterQuery, useGetAdminNotificationsFighterQuery,
     useGetUserFightersQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const SupplierNavbar = ({ setSidebarOpen }) => {
     const navigate = useNavigate();
@@ -13,12 +14,14 @@ const SupplierNavbar = ({ setSidebarOpen }) => {
         const [showProfilePopup, setShowProfilePopup] = useState(false);
         const [showChangePassword, setShowChangePassword] = useState(false);
         const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationsFighterQuery()
+    const companyId = Cookies.get("companyId");
+    const {data:getUserFighters} = useGetUserFightersQuery()
+    const user = getUserFighters?.data
+    const fighterId = user?.id
+    const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationFighterQuery({fighterId,companyId})
     const notification = getAdminNotificationsSuperAdmin?.data
     const hasUnread = notification?.some(item => item.isRead === false);
-        const {data:getUser} = useGetUserFightersQuery()
-        const user = getUser?.data
-        // input’lar için state
+
         const [oldPass, setOldPass] = useState('');
         const [newPass, setNewPass] = useState('');
         const [newPass2, setNewPass2] = useState('');
