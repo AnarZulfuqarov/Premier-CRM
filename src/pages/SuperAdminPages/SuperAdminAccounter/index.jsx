@@ -331,7 +331,7 @@ const SuperAdminAccounter
                                 className="confirm-btn"
                                 onClick={async () => {
                                     try {
-                                        const phoneNumber = filteredUsers[deleteIndex]?.phone;
+                                        const phoneNumber = filteredUsers[deleteIndex]?.id;
 
 
                                         await deleteFighter(phoneNumber).unwrap();

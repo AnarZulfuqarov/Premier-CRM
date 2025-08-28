@@ -179,7 +179,7 @@ const OrderHistoryAccounter = () => {
                 <div className="order-history-accounter__list">
                     {filteredOrders.map((order, index) => (
                         <div key={order.id || index} className="order-history-accounter__item"
-                             onClick={() => navigate(`/supplier/history/${order.id}`)}>
+                             onClick={() => navigate(`/accounter/history/${order.id}`)}>
                             <div className={"techizat"}>
                                 <div className={"order-history-accounter__ids"}>
                                     <p className="order-history-accounter__id">

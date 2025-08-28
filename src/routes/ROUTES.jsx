@@ -76,6 +76,7 @@ import SuperAdminSupplierDetailAddBolme from "../pages/SuperAdminPages/SuperAdmi
 import CompanyPageFighter from "../pages/SupplierPages/CompanyPageFighte/index.jsx";
 import InCompleteOrders from "../pages/SupplierPages/InCompleteOrders/index.jsx";
 import InCompleteOrdersDetail from "../pages/SupplierPages/InCompleteOrdersDetail/index.jsx";
+import OrderHistoryDetailAccounter from "../pages/AccounterPages/AccounterHistoryPageDetail/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -422,7 +423,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/accounter/history/:id",
-                element: <OrderHistoryDetailSuplier/>
+                element: <OrderHistoryDetailAccounter/>
             },
             {
                 path: "/accounter/products/products",

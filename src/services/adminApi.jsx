@@ -448,6 +448,11 @@ export const api = createApi({
                 url: `/Orders/${id}`,
             }),
         }),
+        getMyOrdersIdAccounter: builder.query({
+            query: (orderId) => ({
+                url: `/Orders/accountant/${orderId}`,
+            }),
+        }),
         deleteOrder: builder.mutation({
             query: (id) => ({
                 url: `/Orders/${id}`,
@@ -946,4 +951,6 @@ export const {
     useGetOrderByPageFighterQuery,
     useGetOrderByPageByCompanyFighterQuery,
     useGetAdminNotificationFighterQuery,
+
+    useGetMyOrdersIdAccounterQuery,
 } = api;
