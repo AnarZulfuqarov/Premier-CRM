@@ -245,17 +245,7 @@ const OrderHistoryDetailAccounter = () => {
                         </div>
                     </div>
 
-                    {status === 'Təchizatçıdan təsdiq gözləyən' && (
-                        <div className="order-history-detail-accounter__delete">
-                            <button className="delete-btn" onClick={() => {
-                                navigate('/superAdmin/history')
-                                deleteOrder(id)
-                                showPopup("Sifarişinizi uğurla sildiniz","Seçilmiş sifariş sistemdən silindi","success")
-                            }}>
-                                Sil
-                            </button>
-                        </div>
-                    )}
+
 
                 </div>
 

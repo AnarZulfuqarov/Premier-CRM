@@ -77,6 +77,7 @@ import CompanyPageFighter from "../pages/SupplierPages/CompanyPageFighte/index.j
 import InCompleteOrders from "../pages/SupplierPages/InCompleteOrders/index.jsx";
 import InCompleteOrdersDetail from "../pages/SupplierPages/InCompleteOrdersDetail/index.jsx";
 import OrderHistoryDetailAccounter from "../pages/AccounterPages/AccounterHistoryPageDetail/index.jsx";
+import AccounterBorc from "../pages/AccounterPages/AccounterBorc/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -426,8 +427,8 @@ const router = createBrowserRouter([
                 element: <OrderHistoryDetailAccounter/>
             },
             {
-                path: "/accounter/products/products",
-                element: <SupplierProducts/>
+                path: "/accounter/borc",
+                element: <AccounterBorc/>
             },
             {
                 path: "/accounter/productAdd",
