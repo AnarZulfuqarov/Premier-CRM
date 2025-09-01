@@ -2,8 +2,10 @@ import './index.scss';
 import { useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { useGetAllVendorsQuery, useGetAllCompaniesQuery } from '../../../services/adminApi.jsx';
+import {useNavigate} from "react-router-dom";
 
 const AccounterBorc = () => {
+    const navigate = useNavigate();
     // Demo sətirlər (öz backend-dən əvəz edə bilərsən)
     const initialRows = [
         { id: 1, lastOrderAt: '16/05/25, 13:45', companyId: 101, company: 'Şirvanşah', vendorId: 1, vendor: 'Bravo', totalDebt: 325, returned: 20, paid: 100, remaining: 205, method: 'Nağd', invoiceCount: 8 },
@@ -320,7 +322,9 @@ const AccounterBorc = () => {
                             <tbody>
                             {filteredRows.map((r) => (
                                 <tr key={r.id}>
-                                    <td>{r.lastOrderAt}</td>
+                                    <td style={{
+                                        cursor:"pointer"
+                                    }} onClick={()=>navigate('/accounter/borc/:id')}>{r.lastOrderAt}</td>
                                     <td>{r.company}</td>
                                     <td>{r.vendor}</td>
                                     <td>{r.totalDebt}₼</td>
