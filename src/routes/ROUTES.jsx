@@ -79,6 +79,7 @@ import InCompleteOrdersDetail from "../pages/SupplierPages/InCompleteOrdersDetai
 import OrderHistoryDetailAccounter from "../pages/AccounterPages/AccounterHistoryPageDetail/index.jsx";
 import AccounterBorc from "../pages/AccounterPages/AccounterBorc/index.jsx";
 import AccounterBorcTarixce from "../pages/AccounterPages/AccounterBorcTarixce/index.jsx";
+import AccounterNotification from "../pages/NotificationPages/AccounterNotification/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -436,28 +437,8 @@ const router = createBrowserRouter([
                 element: <AccounterBorcTarixce/>
             },
             {
-                path: "/accounter/products/categories",
-                element: <SupplierCategories/>
-            },
-            {
-                path: "/accounter/categoryAdd",
-                element: <SupplierCategoryAdd/>
-            },
-            {
-                path: "/accounter/products/vendors",
-                element: <SupplierVendors/>
-            },
-            {
-                path: "/accounter/vendor/:id",
-                element: <VendorHistorySupplier/>
-            },
-            {
-                path: "/accounter/vendor/:vendorId/:id",
-                element: <VendorHistoryDetailSuplier/>
-            },
-            {
                 path: "/accounter/notification",
-                element: <SupplierNotification/>
+                element: <AccounterNotification/>
             },
         ]
     },
