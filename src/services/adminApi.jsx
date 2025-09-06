@@ -799,6 +799,11 @@ export const api = createApi({
                 url: `/AdminNotifications/${fighterId}/${companyId}`,
             }),
         }),
+        getVendorDebts: builder.query({
+            query: (companyId) => ({
+                url: `/VendorDebts?companyId=${companyId}`,
+            }),
+        }),
     }),
 });
 
@@ -953,4 +958,7 @@ export const {
     useGetAdminNotificationFighterQuery,
 
     useGetMyOrdersIdAccounterQuery,
+
+    useGetVendorDebtsQuery,
+
 } = api;

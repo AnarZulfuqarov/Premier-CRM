@@ -1,7 +1,7 @@
 import './index.scss';
 import { useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { useGetAllVendorsQuery, useGetAllCompaniesQuery } from '../../../services/adminApi.jsx';
+import {useGetAllVendorsQuery, useGetAllCompaniesQuery, useGetVendorDebtsQuery} from '../../../services/adminApi.jsx';
 import {useNavigate} from "react-router-dom";
 
 const AccounterBorc = () => {
@@ -11,6 +11,9 @@ const AccounterBorc = () => {
         { id: 1, lastOrderAt: '16/05/25, 13:45', companyId: 101, company: 'Şirvanşah', vendorId: 1, vendor: 'Bravo', totalDebt: 325, returned: 20, paid: 100, remaining: 205, method: 'Nağd', invoiceCount: 8 },
         { id: 2, lastOrderAt: '16/05/25, 13:45', companyId: 102, company: 'Qalaaltı',  vendorId: 2, vendor: 'Araz',   totalDebt: 325, returned: 10, paid: 165, remaining: 150, method: 'Kart', invoiceCount: 5 },
     ];
+    // companies və seçilmiş company state-lərin altına əlavə et
+
+
     const [rows, setRows] = useState(initialRows);
 
     /* ------- Başlıq filterləri ------- */
@@ -74,15 +77,25 @@ const AccounterBorc = () => {
     const selectCompany = (c) => {
         setSelectedCompanyId(c.id);
         setSelectedCompanyName(c.name);
-        setCompanyQuery(c.name);
+        setCompanyQuery('');         // <- BURA
         setCompanyOpen(false);
+        // debtsRefetch(); // lazımdırsa qalsın, yoxsa sil
     };
+
     const clearCompany = () => {
-        setSelectedCompanyId('');
-        setSelectedCompanyName('');
-        setCompanyQuery('');
+        if (companies.length > 0) {
+            setSelectedCompanyId(companies[0].id);
+            setSelectedCompanyName(companies[0].name);
+            setCompanyQuery('');       // <- BURA
+        } else {
+            setSelectedCompanyId('');
+            setSelectedCompanyName('');
+            setCompanyQuery('');       // <- BURA
+        }
         setCompanyOpen(false);
+        // debtsRefetch();
     };
+
 
     /* ------- Tarixi ISO-ya çevir ------- */
     const toISODate = (s) => {
@@ -127,7 +140,50 @@ const AccounterBorc = () => {
     /* ------- Edit modal (returned / paid) ------- */
     const [editModal, setEditModal] = useState(null);
     // { id, field: 'returned' | 'paid', value: string }
+    useEffect(() => {
+        if (!selectedCompanyId && companies.length > 0) {
+            setSelectedCompanyId(String(companies[0].id));
+            setSelectedCompanyName(companies[0].name);
+            setCompanyQuery('');       // <- ƏVVƏL name idi, indi boş
+        }
+    }, [companies, selectedCompanyId]);
 
+
+
+    const { data: getVendorDebts, refetch: debtsRefetch } = useGetVendorDebtsQuery(
+        { companyId: selectedCompanyId },
+        { skip: !selectedCompanyId } // company seçilməyibsə çağırmasın
+    );
+
+    const debts = getVendorDebts?.data
+    useEffect(() => {
+        const list = getVendorDebts?.data;
+        if (!list) return;
+
+        const mapped = list.map((d, idx) => {
+            const total = Number(d.totalDebt ?? d.total ?? 0);
+            const paid  = Number(d.paid ?? 0);
+            const ret   = Number(d.returned ?? 0);
+            const rem   = Number(d.remaining ?? (total - paid - ret));
+
+            return {
+                id: d.id ?? idx + 1,
+                lastOrderAt: d.lastOrderAt ?? d.lastOrderDate ?? '',
+                companyId: d.companyId ?? d.companyID ?? null,
+                company: d.company ?? d.companyName ?? '',
+                vendorId: d.vendorId ?? d.vendorID ?? null,
+                vendor: d.vendor ?? d.vendorName ?? '',
+                totalDebt: total,
+                returned: ret,
+                paid: paid,
+                remaining: rem,
+                method: d.method ?? d.paymentMethod ?? '-',
+                invoiceCount: Number(d.invoiceCount ?? d.invoicesCount ?? 0),
+            };
+        });
+
+        setRows(mapped);
+    }, [getVendorDebts]);
     return (
         <div className="accounter-borc-main">
             <div className="accounter-borc">
@@ -150,7 +206,13 @@ const AccounterBorc = () => {
 
                     <div className="company-filter" ref={companyRef}>
                         <label>Şirkət seçin:</label>
-                        <button type="button" onClick={() => setCompanyOpen(v => !v)}>
+                        <button type="button" onClick={() => {
+                            setCompanyOpen(v => {
+                                const next = !v;
+                                if (next) setCompanyQuery(''); // açılarkən input boş olsun
+                                return next;
+                            });
+                        }}>
                             <span>{selectedCompanyName || 'Hamısı'}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 10l5 5 5-5" stroke="#434343" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -324,7 +386,8 @@ const AccounterBorc = () => {
                                 <tr key={r.id}>
                                     <td style={{
                                         cursor:"pointer"
-                                    }} onClick={()=>navigate('/accounter/borc/:id')}>{r.lastOrderAt}</td>
+                                    }} onClick={() => navigate(`/accounter/borc/${r.id}`)}
+                                    >{r.lastOrderAt}</td>
                                     <td>{r.company}</td>
                                     <td>{r.vendor}</td>
                                     <td>{r.totalDebt}₼</td>
