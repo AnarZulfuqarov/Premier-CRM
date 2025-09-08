@@ -1,18 +1,18 @@
 import './index.scss';
 import { useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import {useGetAllVendorsQuery, useGetAllCompaniesQuery, useGetVendorDebtsQuery} from '../../../services/adminApi.jsx';
-import {useNavigate} from "react-router-dom";
+import { useGetAllVendorsQuery, useGetAllCompaniesQuery, useGetVendorDebtsQuery } from '../../../services/adminApi.jsx';
+import { useNavigate } from "react-router-dom";
+
+const LS_KEY = 'borcCompanyId';
 
 const AccounterBorc = () => {
     const navigate = useNavigate();
-    // Demo sətirlər (öz backend-dən əvəz edə bilərsən)
+
     const initialRows = [
         { id: 1, lastOrderAt: '16/05/25, 13:45', companyId: 101, company: 'Şirvanşah', vendorId: 1, vendor: 'Bravo', totalDebt: 325, returned: 20, paid: 100, remaining: 205, method: 'Nağd', invoiceCount: 8 },
         { id: 2, lastOrderAt: '16/05/25, 13:45', companyId: 102, company: 'Qalaaltı',  vendorId: 2, vendor: 'Araz',   totalDebt: 325, returned: 10, paid: 165, remaining: 150, method: 'Kart', invoiceCount: 5 },
     ];
-    // companies və seçilmiş company state-lərin altına əlavə et
-
 
     const [rows, setRows] = useState(initialRows);
 
@@ -32,7 +32,6 @@ const AccounterBorc = () => {
 
     /* ------- Şirkət seçimi (üst toolbar) — API-dən ------- */
     const { data: getAllCompanies } = useGetAllCompaniesQuery();
-    // Ad sahəsi backend-də fərqli ola bilər deyə təhlükəsiz map:
     const companies = (getAllCompanies?.data ?? [])
         .map(c => ({
             id: String(c.id ?? c.companyId ?? c.value ?? ''),
@@ -77,25 +76,56 @@ const AccounterBorc = () => {
     const selectCompany = (c) => {
         setSelectedCompanyId(c.id);
         setSelectedCompanyName(c.name);
-        setCompanyQuery('');         // <- BURA
+        setCompanyQuery('');
         setCompanyOpen(false);
-        // debtsRefetch(); // lazımdırsa qalsın, yoxsa sil
+        /* LOCAL STORAGE: seçilən company yadda saxlanır */
+        try { localStorage.setItem(LS_KEY, String(c.id)); } catch {}
+        // debtsRefetch && debtsRefetch();
     };
 
     const clearCompany = () => {
         if (companies.length > 0) {
-            setSelectedCompanyId(companies[0].id);
-            setSelectedCompanyName(companies[0].name);
-            setCompanyQuery('');       // <- BURA
+            const first = companies[0];
+            setSelectedCompanyId(first.id);
+            setSelectedCompanyName(first.name);
+            setCompanyQuery('');
+            /* LOCAL STORAGE: "Hamısı" klikində də bizdə default ilk şirkət qalır */
+            try { localStorage.setItem(LS_KEY, String(first.id)); } catch {}
         } else {
             setSelectedCompanyId('');
             setSelectedCompanyName('');
-            setCompanyQuery('');       // <- BURA
+            setCompanyQuery('');
+            try { localStorage.removeItem(LS_KEY); } catch {}
         }
         setCompanyOpen(false);
-        // debtsRefetch();
+        // debtsRefetch && debtsRefetch();
     };
 
+    /* ------- İlk yüklənmədə localStorage-dan bərpa ------- */
+    useEffect(() => {
+        if (!companies.length) return;
+
+        const lsId = (() => {
+            try { return localStorage.getItem(LS_KEY) || ''; } catch { return ''; }
+        })();
+
+        if (lsId && companies.some(c => String(c.id) === String(lsId))) {
+            const c = companies.find(c => String(c.id) === String(lsId));
+            if (c) {
+                setSelectedCompanyId(String(c.id));
+                setSelectedCompanyName(c.name);
+                setCompanyQuery('');
+            }
+        } else {
+            // Localda yoxdursa, ilk şirkəti seç və local-a yaz
+            const first = companies[0];
+            setSelectedCompanyId(String(first.id));
+            setSelectedCompanyName(first.name);
+            setCompanyQuery('');
+            try { localStorage.setItem(LS_KEY, String(first.id)); } catch {}
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [companies.length]);
 
     /* ------- Tarixi ISO-ya çevir ------- */
     const toISODate = (s) => {
@@ -116,14 +146,12 @@ const AccounterBorc = () => {
         const byDate = !searchDate || rowISO === searchDate;
         const byCompanyHeader = !searchCompany || (r.company ?? '').toLowerCase().includes(searchCompany.toLowerCase());
 
-        // Üst toolbar-dan seçilmiş şirkət ID-si varsa — ID ilə dəqiq uyğunluq
         const byCompanyTop = !selectedCompanyId
             ? true
             : (r.companyId != null
                 ? String(r.companyId) === String(selectedCompanyId)
                 : (r.company ?? '').toLowerCase() === selectedCompanyName.toLowerCase());
 
-        // Vendor filter (ID varsa ID, yoxsa ada görə)
         let byVendor = true;
         if (searchVendorText) {
             if (searchVendorId && r.vendorId != null) {
@@ -138,24 +166,14 @@ const AccounterBorc = () => {
     });
 
     /* ------- Edit modal (returned / paid) ------- */
-    const [editModal, setEditModal] = useState(null);
-    // { id, field: 'returned' | 'paid', value: string }
-    useEffect(() => {
-        if (!selectedCompanyId && companies.length > 0) {
-            setSelectedCompanyId(String(companies[0].id));
-            setSelectedCompanyName(companies[0].name);
-            setCompanyQuery('');       // <- ƏVVƏL name idi, indi boş
-        }
-    }, [companies, selectedCompanyId]);
+    const [editModal, setEditModal] = useState(null); // { id, field: 'returned' | 'paid', value: string }
 
-
-
+    /* ------- Borc API ------- */
     const { data: getVendorDebts, refetch: debtsRefetch } = useGetVendorDebtsQuery(
         { companyId: selectedCompanyId },
         { skip: !selectedCompanyId } // company seçilməyibsə çağırmasın
     );
 
-    const debts = getVendorDebts?.data
     useEffect(() => {
         const list = getVendorDebts?.data;
         if (!list) return;
@@ -184,6 +202,7 @@ const AccounterBorc = () => {
 
         setRows(mapped);
     }, [getVendorDebts]);
+
     return (
         <div className="accounter-borc-main">
             <div className="accounter-borc">
@@ -197,22 +216,25 @@ const AccounterBorc = () => {
 
                 {/* Üst toolbar – Şirkət seçimi (API-dən) */}
                 <div className="about">
-
-                       <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z" stroke="#ED0303" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></span>
-
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+              <path d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z" stroke="#ED0303" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
 
                     <div className="company-filter" ref={companyRef}>
                         <label>Şirkət seçin:</label>
-                        <button type="button" onClick={() => {
-                            setCompanyOpen(v => {
-                                const next = !v;
-                                if (next) setCompanyQuery(''); // açılarkən input boş olsun
-                                return next;
-                            });
-                        }}>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setCompanyOpen(v => {
+                                    const next = !v;
+                                    if (next) setCompanyQuery(''); // açılarkən input boş olsun
+                                    return next;
+                                });
+                            }}
+                        >
                             <span>{selectedCompanyName || 'Hamısı'}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 10l5 5 5-5" stroke="#434343" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -272,14 +294,14 @@ const AccounterBorc = () => {
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('date')}>
                                             Son sifariş tarixi
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.002 12.776 19 11C19 7.134 15.866 4 12 4C8.134 4 5 7.134 5 11C5 14.866 8.134 18 12 18" stroke="#7A7A7A" strokeWidth="1.6" strokeLinecap="round"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
                                 </th>
 
-                                {/* ŞİRKƏT ADI (sütun içi mətn axtarışı) */}
+                                {/* ŞİRKƏT ADI */}
                                 <th>
                                     {activeHeaderSearch === 'company' ? (
                                         <div className="th-search">
@@ -294,8 +316,8 @@ const AccounterBorc = () => {
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('company')}>
                                             Şirkət adı
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.002 12.776 19 11C19 7.134 15.866 4 12 4C8.134 4 5 7.134 5 11C5 14.866 8.134 18 12 18" stroke="#7A7A7A" strokeWidth="1.6" strokeLinecap="round"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
@@ -365,8 +387,8 @@ const AccounterBorc = () => {
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('vendor')}>
                                             Vendor
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.002 12.776 19 11C19 7.134 15.866 4 12 4C8.134 4 5 7.134 5 11C5 14.866 8.134 18 12 18" stroke="#7A7A7A" strokeWidth="1.6" strokeLinecap="round"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
@@ -384,10 +406,7 @@ const AccounterBorc = () => {
                             <tbody>
                             {filteredRows.map((r) => (
                                 <tr key={r.id}>
-                                    <td style={{
-                                        cursor:"pointer"
-                                    }} onClick={() => navigate(`/accounter/borc/${r.id}`)}
-                                    >{r.lastOrderAt}</td>
+                                    <td style={{ cursor:"pointer" }} onClick={() => navigate(`/accounter/borc/${r.id}`)}>{r.lastOrderAt}</td>
                                     <td>{r.company}</td>
                                     <td>{r.vendor}</td>
                                     <td>{r.totalDebt}₼</td>
@@ -447,7 +466,7 @@ const AccounterBorc = () => {
                             style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '15px' }}
                             onClick={() => setEditModal(null)}
                         >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
                 <path d="M12.6668 3.33398L3.3335 12.6673M3.3335 3.33398L12.6668 12.6673" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </span>

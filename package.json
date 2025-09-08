@@ -40,6 +40,7 @@
     "react-spinners": "^0.15.0",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.0",
+    "rsuite": "^5.83.3",
     "sass": "^1.85.1",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.2.5"

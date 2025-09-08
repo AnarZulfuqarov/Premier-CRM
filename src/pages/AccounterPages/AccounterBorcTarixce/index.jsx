@@ -1,70 +1,100 @@
 import "./index.scss";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     useDeleteAccountantMutation,
     useEditAccountantMutation,
     useGetAllAccountantsQuery,
+    // ⚠️ Bunu adminApi.jsx-də varsa belə import et
+    // əgər "lazy" variantın varsa: useLazyGetCompanyByIdQuery istifadə et (aşağıda qeyd etdim)
+    useGetCompanyIdQuery,
 } from "../../../services/adminApi.jsx";
 import { usePopup } from "../../../components/Popup/PopupContext.jsx";
 
-/* ---- Cədvəl sütunları (sol hissə) ---- */
+/* ---- Cədvəl sütunları ---- */
 const columns = [
     { key: "deliveredAt", label: "Təhvil verilmə tarixi" },
-    { key: "company",     label: "Şirkət adı" },
-    { key: "amount",      label: "Ümumi məbləğ" },
-    { key: "customer",    label: "Sifarişçinin adı" },
-    { key: "supplier",    label: "Təchizatçının adı" },
-    { key: "orderId",     label: "Order ID" },
-    { key: "payment",     label: "Ödəniş üsulu" },
+    { key: "company", label: "Şirkət adı" },
+    { key: "amount", label: "Ümumi məbləğ" },
+    { key: "customer", label: "Sifarişçinin adı" },
+    { key: "supplier", label: "Təchizatçının adı" },
+    { key: "orderId", label: "Order ID" },
+    { key: "payment", label: "Ödəniş üsulu" },
 ];
 
 const searchableKeys = new Set([
-    "deliveredAt","company","amount","customer","supplier","orderId","payment"
+    "deliveredAt",
+    "company",
+    "amount",
+    "customer",
+    "supplier",
+    "orderId",
+    "payment",
 ]);
 
-/* ---- Sadə UI köməkçiləri ---- */
 const Caret = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
         <path d="M7 10l5 5 5-5" stroke="#444" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
-const Funnel = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M3 5h18l-7 8v6l-4-2v-4L3 5z" stroke="#444" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
 const SearchIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#666" strokeWidth="1.6" />
+        <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#666" strokeWidth="1.6"/>
     </svg>
 );
 
-/* ---- Dropdown komponenti ---- */
-function Dropdown({ label, value, onChange, options = [], placeholder="Seç", width }) {
+/* ---- Dropdown ---- */
+function Dropdown({ label, value, onChange, options = [], placeholder = "Seç", width }) {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const ref = useRef(null);
+
+    const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q) return options;
+        return options.filter(o => String(o).toLowerCase().includes(q));
+    }, [options, query]);
+
+    useEffect(() => {
+        const onDocClick = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) {
+                setOpen(false);
+                setQuery("");
+            }
+        };
+        document.addEventListener("mousedown", onDocClick);
+        return () => document.removeEventListener("mousedown", onDocClick);
+    }, []);
+
+    const selectAndClose = (val) => {
+        onChange(val);
+        setOpen(false);
+        setQuery("");
+    };
+
     return (
-        <div className="filter-dd" >
-            <button type="button" className={`dd-btn ${value ? "filled":""}`}>
-                <span>{label}</span>
-                <Caret/>
+        <div className={`filter-dd ${open ? "open" : ""}`} ref={ref}>
+            <button type="button" className={`dd-btn ${value ? "filled" : ""}`} onClick={() => setOpen(s => !s)}>
+                <span>{value || label}</span>
+                <Caret />
             </button>
-            <div className="dd-panel">
-                <div className="dd-search">
-                    <input
-                        placeholder={placeholder}
-                        value={value || ""}
-                        onChange={(e)=>onChange(e.target.value)}
-                    />
+
+            {open && (
+                <div className="dd-panel">
+                    <div className="dd-search">
+                        <input placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+                    </div>
+                    <div className="dd-list">
+                        <div className={`dd-item ${value === "" ? "active" : ""}`} onClick={() => selectAndClose("")}>Hamısı</div>
+                        {filtered.map(opt => (
+                            <div key={opt} className={`dd-item ${opt === value ? "active" : ""}`} onClick={() => selectAndClose(opt)}>
+                                {opt}
+                            </div>
+                        ))}
+                        {filtered.length === 0 && <div className="dd-empty">Nəticə tapılmadı</div>}
+                    </div>
                 </div>
-                <div className="dd-list">
-                    <div className={`dd-item ${value===""?"active":""}`} onClick={()=>onChange("")}>Hamısı</div>
-                    {options.map((opt)=>(
-                        <div key={opt} className={`dd-item ${opt===value?"active":""}`} onClick={()=>onChange(opt)}>
-                            {opt}
-                        </div>
-                    ))}
-                </div>
-            </div>
+            )}
         </div>
     );
 }
@@ -73,79 +103,172 @@ const AccounterBorcTarixce = () => {
     const navigate = useNavigate();
     const showPopup = usePopup();
 
-    // Header axtarışı (şəkildə yuxarı input)
+    /* ---- LOCAL borcCompanyId ---- */
+    const [borcCompanyId, setBorcCompanyId] = useState(() => {
+        try {
+            const v = localStorage.getItem("borcCompanyId");
+            return v ? (isNaN(+v) ? v : +v) : null;
+        } catch {
+            return null;
+        }
+    });
+
+    // ⚠️ Əgər səndə "useGetCompanyByIdQuery" yoxdursa:
+    // const [triggerGetCompanyById, { data: companyRes }] = useLazyGetCompanyByIdQuery();
+    // useEffect(() => { if (borcCompanyId) triggerGetCompanyById(borcCompanyId); }, [borcCompanyId]);
+
+    const { data: companyRes } = useGetCompanyIdQuery(borcCompanyId, { skip: !borcCompanyId });
+
+    // Header axtarışı
     const [globalSearch, setGlobalSearch] = useState("");
-
     // Sütun daxili axtarış
-    const [searchCol, setSearchCol]   = useState(null);
+    const [searchCol, setSearchCol] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-
-    // Modal/CRUD state
+    // Modal/CRUD
     const [editingRow, setEditingRow] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
 
-    // Filter bar state (şəkildəki droplar)
-    const [companyF, setCompanyF] = useState("Oldgates"); // default şəkilə uyğun
-    const [departmentF, setDepartmentF] = useState("");   // Şöbə seç
-    const [sectionF, setSectionF] = useState("");         // Bölmə seç
-    const [dateQuickF, setDateQuickF] = useState("");     // Tarix seç
-    const [dateFrom, setDateFrom] = useState("");         // Tarix aralığı: başlanğıc
-    const [dateTo, setDateTo] = useState("");             // Tarix aralığı: bitiş
-    const [productF, setProductF] = useState("");         // Məhsul seç
-    const [priceMin, setPriceMin] = useState("");         // Qiymət aralığı: min
-    const [priceMax, setPriceMax] = useState("");         // Qiymət aralığı: max
-    const [statusFilterOpen, setStatusFilterOpen] = useState(false);
-    const [dateFilterOpen, setDateFilterOpen] = useState(false);
-    const [statusF, setStatusF] = useState("");           // Status üzrə filtr
+    // Filter bar state
+    const [companyF, setCompanyF] = useState(""); // dropdown-da company seçimi (borcCompanyId varsa auto-set edəcəyik)
+    const [departmentF, setDepartmentF] = useState("");
+    const [sectionF, setSectionF] = useState("");
+    const [statusF, setStatusF] = useState("");
+    const [dateQuickF, setDateQuickF] = useState("");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
+    const [productF, setProductF] = useState("");
+    const [priceMin, setPriceMin] = useState("");
+    const [priceMax, setPriceMax] = useState("");
 
-    const { data:getAllFighters, refetch } = useGetAllAccountantsQuery();
+    const { data: getAllFighters, refetch } = useGetAllAccountantsQuery();
     const [editFighter] = useEditAccountantMutation();
     const [deleteFighter] = useDeleteAccountantMutation();
 
-    useEffect(() => { refetch(); }, []);
+    useEffect(() => { refetch(); }, [refetch]);
 
-    /* BACKEND-dən gələn datanı “orders” modelinə map edirik */
+    /* Map orders */
     const orders = useMemo(() => {
         const raw = getAllFighters?.data ?? [];
-        return raw.map((s, i) => ({
-            id: s.id,
-            deliveredAt: s.deliveredAt ?? "2025-05-16T13:45:00", // ISO saxlayaq
-            company:     s.companyName ?? s.name ?? "Oldgates",
-            amountNum:   typeof s.totalAmount === "number" ? s.totalAmount : 325,
-            amount:      (typeof s.totalAmount === "number" ? s.totalAmount : 325) + " ₼",
-            customer:    s.customerName ?? "Sabina Heydarova",
-            supplier:    s.supplierName ?? "Sabina Heydarova",
-            orderId:     s.orderNumber ? `#${s.orderNumber}` : "#9187654366",
-            payment:     s.paymentMethod ?? "Nağd",
-            status:      s.status ?? "Tamamlandı", // Status üzrə filtr üçün
-            product:     s.productName ?? "Məhsul A",
-            department:  s.department ?? "Satış",
-            section:     s.section ?? "Bölmə 1",
-            // redaktə üçün
-            password:    s.password ?? "********",
-            phone:       s.phoneNumber ?? "",
-            fin:         s.finCode ?? "",
-        }));
+        return raw.map((s) => {
+            const amount = typeof s.totalAmount === "number" ? s.totalAmount : 325;
+            return {
+                id: s.id,
+                deliveredAt: s.deliveredAt ?? "2025-05-16T13:45:00",
+                company: s.companyName ?? s.name ?? "Oldgates",
+                amountNum: amount,
+                amount: amount.toLocaleString("az-Latn-AZ") + " ₼",
+                customer: s.customerName ?? "Sabina Heydarova",
+                supplier: s.supplierName ?? "Sabina Heydarova",
+                orderId: s.orderNumber ? `#${s.orderNumber}` : "#9187654366",
+                payment: s.paymentMethod ?? "Nağd",
+                status: s.status ?? "Tamamlandı",
+                product: s.productName ?? "Məhsul A",
+                department: s.department ?? "Satış",
+                section: s.section ?? "Bölmə 1",
+                password: s.password ?? "********",
+                phone: s.phoneNumber ?? "",
+                fin: s.finCode ?? "",
+            };
+        });
     }, [getAllFighters]);
 
-    /* Dinamik drop siyahıları */
-    const companies   = useMemo(()=>Array.from(new Set(orders.map(o=>o.company))).sort(), [orders]);
-    const departments = useMemo(()=>Array.from(new Set(orders.map(o=>o.department))).sort(), [orders]);
-    const sections    = useMemo(()=>Array.from(new Set(orders.map(o=>o.section))).sort(), [orders]);
-    const products    = useMemo(()=>Array.from(new Set(orders.map(o=>o.product))).sort(), [orders]);
-    const statuses    = useMemo(()=>Array.from(new Set(orders.map(o=>o.status))), [orders]);
+    /* Dinamik siyahılar (fallback) */
+    const companiesFromOrders = useMemo(
+        () => Array.from(new Set(orders.map((o) => o.company))).sort(),
+        [orders]
+    );
+    const departmentsFromOrders = useMemo(
+        () => Array.from(new Set(orders.map((o) => o.department))).sort(),
+        [orders]
+    );
+    const sectionsFromOrders = useMemo(
+        () => Array.from(new Set(orders.map((o) => o.section))).sort(),
+        [orders]
+    );
+    const products = useMemo(
+        () => Array.from(new Set(orders.map((o) => o.product))).sort(),
+        [orders]
+    );
+    const statuses = useMemo(
+        () => Array.from(new Set(orders.map((o) => o.status))).sort(),
+        [orders]
+    );
 
-    /* Header “Tarix üzrə filtr” sürətli seçimləri */
-    const quickDateOptions = [
-        "Bugün", "Dünən", "Bu həftə", "Keçən həftə", "Bu ay", "Keçən ay"
-    ];
+    /* ---- Şirkət məlumatı getCompanyById-dan ---- */
+    // Backend strukturunu dəqiq bilmədiyim üçün həm companyRes?.data, həm də companyRes birbaşa obyekt ola bilər deyə ehtiyatlı parse edirəm.
+    const companyObj = companyRes?.data ?? companyRes ?? null;
 
-    /* Sürətli tarix seçiminin aralığa çevrilməsi */
+    // Məs: { name, departments: [{name, sections: ["..."]}] } və ya
+    // { title, departments: ["Satış","İstehsal"], sections: ["Bölmə 1","Bölmə 2"] }
+    const companyNameFromApi =
+        companyObj?.name || companyObj?.title || companyObj?.companyName || "";
+
+    // Əgər departamentlər nested-dirsə (dept.name), düzləşdiririk:
+    const departmentsFromApi = useMemo(() => {
+        const d = companyObj?.departments;
+        if (!d) return [];
+        if (Array.isArray(d)) {
+            // Dept obyekt və ya string ola bilər
+            const names = d
+                .map((x) => (typeof x === "string" ? x : x?.name || x?.title))
+                .filter(Boolean);
+            return Array.from(new Set(names));
+        }
+        return [];
+    }, [companyObj]);
+
+    // Bölmələr birbaşa company səviyyəsində ola və ya dept-lərin içində ola bilər
+    const sectionsFromApi = useMemo(() => {
+        // 1) Birbaşa massiv kimi
+        if (Array.isArray(companyObj?.sections)) {
+            return Array.from(new Set(companyObj.sections.filter(Boolean)));
+        }
+        // 2) Dept-lərin içində sections ola bilər
+        if (Array.isArray(companyObj?.departments)) {
+            const gathered = [];
+            companyObj.departments.forEach((d) => {
+                const sec =
+                    (Array.isArray(d?.sections) && d.sections) ||
+                    (Array.isArray(d?.bolmeler) && d.bolmeler) || // ehtiyat
+                    [];
+                sec.forEach((s) => s && gathered.push(typeof s === "string" ? s : s?.name || s?.title));
+            });
+            return Array.from(new Set(gathered.filter(Boolean)));
+        }
+        return [];
+    }, [companyObj]);
+
+    /* ---- borcCompanyId varsa, company dropdown-u auto-dolur və dept/section mənbəyi API olur ---- */
+    useEffect(() => {
+        if (borcCompanyId && companyNameFromApi) {
+            setCompanyF(companyNameFromApi);
+            // borcCompanyId dəyişəndə seçilmiş dept/section-u sıfırlamaq daha sağlamdır
+            setDepartmentF("");
+            setSectionF("");
+        }
+    }, [borcCompanyId, companyNameFromApi]);
+
+    // Dropdown-lara veriləcək final siyahılar:
+    const companies = borcCompanyId && companyNameFromApi
+        ? [companyNameFromApi]
+        : companiesFromOrders;
+
+    const departments = (borcCompanyId && departmentsFromApi.length > 0)
+        ? departmentsFromApi
+        : departmentsFromOrders;
+
+    const sections = (borcCompanyId && sectionsFromApi.length > 0)
+        ? sectionsFromApi
+        : sectionsFromOrders;
+
+    /* ---- Tarix sürətli seçimləri ---- */
+    const quickDateOptions = ["Bugün", "Dünən", "Bu həftə", "Keçən həftə", "Bu ay", "Keçən ay"];
+
     const getQuickRange = (label) => {
         const now = new Date();
         const start = new Date(now);
         const end = new Date(now);
-        const dow = now.getDay() || 7; // bazar = 7
+        const dow = now.getDay() || 7;
         if (label === "Bugün") {
             start.setHours(0,0,0,0); end.setHours(23,59,59,999);
         } else if (label === "Dünən") {
@@ -167,38 +290,39 @@ const AccounterBorcTarixce = () => {
         return [start, end];
     };
 
-    /* CƏDVƏL üçün filtr + axtarış nəticəsi */
+    /* ---- Filtr tətbiqi ---- */
     const filtered = useMemo(() => {
         let list = [...orders];
 
-        // 1) Yuxarı global axtarış
         if (globalSearch.trim()) {
             const q = globalSearch.trim().toLowerCase();
             list = list.filter(r =>
-                Object.keys(r).some(k => ["company","customer","supplier","orderId","payment","product","status"]
-                    .some(key => key===k && String(r[k]).toLowerCase().includes(q)))
+                ["company","customer","supplier","orderId","payment","product","status"].some(
+                    key => String(r[key] ?? "").toLowerCase().includes(q)
+                ) ||
+                String(r.amount ?? "").toLowerCase().includes(q) ||
+                String(r.amountNum ?? "").toLowerCase().includes(q)
             );
         }
 
-        // 2) Sütun daxili axtarış
         if (searchCol && searchTerm.trim()) {
             const val = searchTerm.toLowerCase();
-            list = list.filter(r => String(r[searchCol] ?? "").toLowerCase().includes(val));
+            list = list.filter(r => {
+                if (searchCol === "amount") {
+                    return String(r.amount ?? "").toLowerCase().includes(val) || String(r.amountNum ?? "").toLowerCase().includes(val);
+                }
+                return String(r[searchCol] ?? "").toLowerCase().includes(val);
+            });
         }
 
-        // 3) Şirkət / Şöbə / Bölmə / Məhsul
         if (companyF)   list = list.filter(r => r.company   === companyF);
         if (departmentF)list = list.filter(r => r.department=== departmentF);
         if (sectionF)   list = list.filter(r => r.section   === sectionF);
+        if (statusF)    list = list.filter(r => r.status    === statusF);
         if (productF)   list = list.filter(r => r.product   === productF);
 
-        // 4) Status
-        if (statusF) list = list.filter(r => r.status === statusF);
-
-        // 5) Tarixlər
         let from = dateFrom ? new Date(dateFrom) : null;
         let to   = dateTo   ? new Date(dateTo)   : null;
-
         if (dateQuickF) {
             const [qs, qe] = getQuickRange(dateQuickF);
             from = qs; to = qe;
@@ -207,12 +331,11 @@ const AccounterBorcTarixce = () => {
             list = list.filter(r => {
                 const d = new Date(r.deliveredAt);
                 if (from && d < from) return false;
-                if (to)   { const t = new Date(to); t.setHours(23,59,59,999); if (d > t) return false; }
+                if (to) { const t = new Date(to); t.setHours(23,59,59,999); if (d > t) return false; }
                 return true;
             });
         }
 
-        // 6) Qiymət aralığı
         const pMin = priceMin !== "" ? Number(priceMin) : null;
         const pMax = priceMax !== "" ? Number(priceMax) : null;
         if (pMin !== null) list = list.filter(r => r.amountNum >= pMin);
@@ -221,11 +344,11 @@ const AccounterBorcTarixce = () => {
         return list;
     }, [
         orders, globalSearch, searchCol, searchTerm,
-        companyF, departmentF, sectionF, productF,
-        statusF, dateQuickF, dateFrom, dateTo, priceMin, priceMax
+        companyF, departmentF, sectionF, statusF, productF,
+        dateQuickF, dateFrom, dateTo, priceMin, priceMax
     ]);
 
-    /* Yadda saxla (demo) */
+    /* ---- Yadda saxla ---- */
     const handleSave = async (row) => {
         const isPasswordChanged = row.password !== "********";
         try {
@@ -247,7 +370,6 @@ const AccounterBorcTarixce = () => {
     return (
         <div className="accounter-borc-tarixce-main">
             <div className="accounter-borc-tarixce">
-                {/* Başlıq */}
                 <div className="headerr">
                     <div className="head">
                         <h2>Tarixçə</h2>
@@ -255,7 +377,7 @@ const AccounterBorcTarixce = () => {
                     </div>
                 </div>
 
-                {/* ==== Şəkildəki FILTER BAR ==== */}
+                {/* FILTER BAR */}
                 <div className="filterbar">
                     <div className="searchbox">
                         <SearchIcon/>
@@ -265,57 +387,35 @@ const AccounterBorcTarixce = () => {
                             placeholder="Axtarış edin..."
                         />
                     </div>
-
-                    <div className="toolbar">
-                        {/* Tarix üzrə filtr (funnel) */}
-                        <div className={`toolbar-dd ${dateFilterOpen?"open":""}`}>
-                            <button type="button" onClick={()=>setDateFilterOpen(v=>!v)}>
-                                <Funnel/>&nbsp;Tarix üzrə filtr <Caret/>
-                            </button>
-                            <div className="toolbar-panel">
-                                <div className="row">
-                                    <label>Tarix seç</label>
-                                    <select value={dateQuickF} onChange={(e)=>setDateQuickF(e.target.value)}>
-                                        <option value="">Seç</option>
-                                        {quickDateOptions.map(o=><option key={o} value={o}>{o}</option>)}
-                                    </select>
-                                </div>
-                                <div className="row two">
-                                    <div>
-                                        <label>Başlanğıc</label>
-                                        <input type="date" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label>Bitiş</label>
-                                        <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Status üzrə filtr */}
-                        <div className={`toolbar-dd ${statusFilterOpen?"open":""}`}>
-                            <button type="button" onClick={()=>setStatusFilterOpen(v=>!v)}>
-                                Status üzrə filtr <Caret/>
-                            </button>
-                            <div className="toolbar-panel">
-                                <div className="row">
-                                    <label>Status</label>
-                                    <select value={statusF} onChange={(e)=>setStatusF(e.target.value)}>
-                                        <option value="">Hamısı</option>
-                                        {statuses.map(s=><option key={s} value={s}>{s}</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                {/* Alt filter sıra (Şirkət seçin ... Qiymət aralığı seç) */}
+                {/* Alt filter sıra */}
                 <div className="filter-row">
-                    <Dropdown label="Şöbə seç" value={departmentF} onChange={setDepartmentF} options={departments} placeholder="Şöbə" />
-                    <Dropdown label="Bölmə seç" value={sectionF} onChange={setSectionF} options={sections} placeholder="Bölmə" />
-                    <Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} placeholder="Tarix seç" />
+
+                    {/* Şöbə / Bölmə — borcCompanyId varsa getCompanyById-dan gələn siyahılar */}
+                    <Dropdown
+                        label="Şöbə seç"
+                        value={departmentF}
+                        onChange={setDepartmentF}
+                        options={departments}
+                        placeholder="Şöbə"
+                    />
+                    <Dropdown
+                        label="Bölmə seç"
+                        value={sectionF}
+                        onChange={setSectionF}
+                        options={sections}
+                        placeholder="Bölmə"
+                    />
+
+
+                    <Dropdown
+                        label="Tarix seç"
+                        value={dateQuickF}
+                        onChange={setDateQuickF}
+                        options={["Bugün","Dünən","Bu həftə","Keçən həftə","Bu ay","Keçən ay"]}
+                        placeholder="Tarix seç"
+                    />
                     <div className="range-dd">
                         <div className="range-label">Tarix aralığı seç</div>
                         <div className="range-row">
@@ -324,7 +424,13 @@ const AccounterBorcTarixce = () => {
                             <input type="date" value={dateTo} onChange={e=>setDateTo(e.target.value)} />
                         </div>
                     </div>
-                    <Dropdown label="Məhsul seç" value={productF} onChange={setProductF} options={products} placeholder="Məhsul" />
+                    <Dropdown
+                        label="Məhsul seç"
+                        value={productF}
+                        onChange={setProductF}
+                        options={products}
+                        placeholder="Məhsul"
+                    />
                     <div className="range-dd">
                         <div className="range-label">Qiymət aralığı seç</div>
                         <div className="range-row">
@@ -346,10 +452,10 @@ const AccounterBorcTarixce = () => {
                                         {c.label}
                                         {searchableKeys.has(c.key) && (
                                             <span className="search-icon" onClick={() => setSearchCol(searchCol === c.key ? null : c.key)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+  <path d="M17.71 16.29L14.31 12.9C15.407 11.5025 16.0022 9.77666 16 8C16 6.41775 15.5308 4.87103 14.6518 3.55544C13.7727 2.23985 12.5233 1.21447 11.0615 0.608967C9.59966 0.00346625 7.99113 -0.15496 6.43928 0.153721C4.88743 0.462403 3.46197 1.22433 2.34315 2.34315C1.22433 3.46197 0.462403 4.88743 0.153721 6.43928C-0.15496 7.99113 0.00346625 9.59966 0.608967 11.0615C1.21447 12.5233 2.23985 13.7727 3.55544 14.6518C4.87103 15.5308 6.41775 16 8 16C9.77666 16.0022 11.5025 15.407 12.9 14.31L16.29 17.71C16.383 17.8037 16.4936 17.8781 16.6154 17.9289C16.7373 17.9797 16.868 18.0058 17 18.0058C17.132 18.0058 17.2627 17.9797 17.3846 17.9289C17.5064 17.8781 17.617 17.8037 17.71 17.71C17.8037 17.617 17.8781 17.5064 17.9289 17.3846C17.9797 17.2627 18.0058 17.132 18.0058 17C18.0058 16.868 17.9797 16.7373 17.9289 16.6154C17.8781 16.4936 17.8037 16.383 17.71 16.29ZM2 8C2 6.81332 2.3519 5.65328 3.01119 4.66658C3.67047 3.67989 4.60755 2.91085 5.7039 2.45673C6.80026 2.0026 8.00666 1.88378 9.17055 2.11529C10.3344 2.3468 11.4035 2.91825 12.2426 3.75736C13.0818 4.59648 13.6532 5.66558 13.8847 6.82946C14.1162 7.99335 13.9974 9.19975 13.5433 10.2961C13.0892 11.3925 12.3201 12.3295 11.3334 12.9888C10.3467 13.6481 9.18669 14 8 14C6.4087 14 4.88258 13.3679 3.75736 12.2426C2.63214 11.1174 2 9.5913 2 8Z" fill="#7A7A7A"/>
 </svg>
-                      </span>
+                        </span>
                                         )}
                                         {searchCol === c.key && (
                                             <div className="search-input-wrapper">
@@ -361,10 +467,10 @@ const AccounterBorcTarixce = () => {
                                                     placeholder={`Axtar: ${c.label}`}
                                                 />
                                                 <span className="close-search" onClick={() => { setSearchCol(null); setSearchTerm(""); }}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5" stroke="#7A7A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <path d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5" stroke="#7A7A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </span>
                                             </div>
                                         )}
                                     </th>
@@ -398,7 +504,6 @@ const AccounterBorcTarixce = () => {
                 </div>
             </div>
 
-            {/* Edit modal */}
             {editingRow && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -425,7 +530,6 @@ const AccounterBorcTarixce = () => {
                 </div>
             )}
 
-            {/* Delete modal (hazırda gizlidir; lazım olsa çağırın) */}
             {deleteIndex !== null && (
                 <div className="modal-overlay" onClick={() => setDeleteIndex(null)}>
                     <div className="delete-modal-box" onClick={(e)=>e.stopPropagation()}>

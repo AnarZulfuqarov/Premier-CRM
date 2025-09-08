@@ -3,6 +3,7 @@ import './App.css';
 import Cookies from 'js-cookie';
 import router from './routes/ROUTES';
 import { useEffect } from 'react';
+import 'rsuite/dist/rsuite.min.css';
 
 const AuthSyncListener = () => {
 

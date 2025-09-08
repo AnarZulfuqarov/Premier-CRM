@@ -789,6 +789,12 @@ export const api = createApi({
                 url: `/Orders/paged?companyName=${companyName}&page=${page}&pageSize=${pageSize}`,
             }),
         }),
+        getOrderByPageByCompanyAccounterHistory: builder.query({
+            query: ({companyId,page,pageSize}) => ({
+                url: `/Orders/accountant/by-company/${companyId}/paged?page=${page}&pageSize=${pageSize}`,
+            }),
+        }),
+
         getOrderByPageByCompanyFighter: builder.query({
             query: ({fighterId,companyId,page,pageSize}) => ({
                 url: `/Orders/paged-by-fighter-and-company?fighterId=${fighterId}&companyId=${companyId}&page=${page}&pageSize=${pageSize}`,
@@ -802,6 +808,13 @@ export const api = createApi({
         getVendorDebts: builder.query({
             query: (companyId) => ({
                 url: `/VendorDebts?companyId=${companyId}`,
+            }),
+        }),
+        setLastDeliveryDate: builder.mutation({
+            query: ({orderId,date}) => ({
+                url: `/Orders/${orderId}/set-last-delivery-date?date=${date}`,
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
             }),
         }),
     }),
@@ -960,5 +973,6 @@ export const {
     useGetMyOrdersIdAccounterQuery,
 
     useGetVendorDebtsQuery,
-
+    useGetOrderByPageByCompanyAccounterHistoryQuery,
+    useSetLastDeliveryDateMutation,
 } = api;
