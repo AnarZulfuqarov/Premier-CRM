@@ -179,8 +179,8 @@
 
     .due-date-row{
       display: flex;
-      justify-content: end;
-      align-items: center;
+      align-items: end;
+      flex-direction: column;
       margin-bottom: 32px;
       gap: 8px;
 

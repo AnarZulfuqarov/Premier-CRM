@@ -665,6 +665,11 @@ export const api = createApi({
                 url: `/AdminNotifications/customer`,
             }),
         }),
+        getAdminNotificationsAccountant: builder.query({
+            query: () => ({
+                url: `/AdminNotifications/accountant`,
+            }),
+        }),
         getAdminNotificationsCustomerId: builder.query({
             query: (customerId) => ({
                 url: `/AdminNotifications/customer/${customerId}`,
@@ -808,6 +813,14 @@ export const api = createApi({
         getVendorDebts: builder.query({
             query: (companyId) => ({
                 url: `/VendorDebts?companyId=${companyId}`,
+            }),
+        }),
+        editVendorDebts: builder.mutation({
+            query: (debts) => ({
+                url: '/VendorDebts',
+                method: 'PUT',
+                body: debts,
+                headers: { 'Content-Type': 'application/json' },
             }),
         }),
         setLastDeliveryDate: builder.mutation({
@@ -975,4 +988,6 @@ export const {
     useGetVendorDebtsQuery,
     useGetOrderByPageByCompanyAccounterHistoryQuery,
     useSetLastDeliveryDateMutation,
+    useEditVendorDebtsMutation,
+    useGetAdminNotificationsAccountantQuery,
 } = api;

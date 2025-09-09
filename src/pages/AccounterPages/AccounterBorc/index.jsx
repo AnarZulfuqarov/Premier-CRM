@@ -1,8 +1,13 @@
 import './index.scss';
-import { useEffect, useRef, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
-import { useGetAllVendorsQuery, useGetAllCompaniesQuery, useGetVendorDebtsQuery } from '../../../services/adminApi.jsx';
-import { useNavigate } from "react-router-dom";
+import {useEffect, useRef, useState} from 'react';
+import {FaTimes} from 'react-icons/fa';
+import {
+    useGetAllVendorsQuery,
+    useGetAllCompaniesQuery,
+    useGetVendorDebtsQuery,
+    useEditVendorDebtsMutation
+} from '../../../services/adminApi.jsx';
+import {useNavigate} from "react-router-dom";
 
 const LS_KEY = 'borcCompanyId';
 
@@ -10,19 +15,72 @@ const AccounterBorc = () => {
     const navigate = useNavigate();
 
     const initialRows = [
-        { id: 1, lastOrderAt: '16/05/25, 13:45', companyId: 101, company: 'Şirvanşah', vendorId: 1, vendor: 'Bravo', totalDebt: 325, returned: 20, paid: 100, remaining: 205, method: 'Nağd', invoiceCount: 8 },
-        { id: 2, lastOrderAt: '16/05/25, 13:45', companyId: 102, company: 'Qalaaltı',  vendorId: 2, vendor: 'Araz',   totalDebt: 325, returned: 10, paid: 165, remaining: 150, method: 'Kart', invoiceCount: 5 },
+        {
+            id: 1,
+            lastOrderAt: '16/05/25, 13:45',
+            companyId: 101,
+            company: 'Şirvanşah',
+            vendorId: 1,
+            vendor: 'Bravo',
+            totalDebt: 325,
+            returned: 20,
+            paid: 100,
+            remaining: 205,
+            method: 'Nağd',
+            invoiceCount: 8
+        },
+        {
+            id: 2,
+            lastOrderAt: '16/05/25, 13:45',
+            companyId: 102,
+            company: 'Qalaaltı',
+            vendorId: 2,
+            vendor: 'Araz',
+            totalDebt: 325,
+            returned: 10,
+            paid: 165,
+            remaining: 150,
+            method: 'Kart',
+            invoiceCount: 5
+        },
     ];
-
     const [rows, setRows] = useState(initialRows);
 
     /* ------- Başlıq filterləri ------- */
     const [activeHeaderSearch, setActiveHeaderSearch] = useState(null); // 'date' | 'company' | 'vendor' | null
     const [searchDate, setSearchDate] = useState('');
     const [searchCompany, setSearchCompany] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState({
+            id: '',
+           paidDebt: 0,          // ödənilən borc
+           returnedDebt: 0,
+        paymentType: 'Nağd',
+        invoices: [],
+        newInvoice: '',
+        editIdx: null,
+        editValue: '',
+    });
+
+    const openEditModal = (row) => {
+        setModalData({
+            id: String(row.id ?? ''),
+                paidDebt: Number(row.paid ?? 0),
+               returnedDebt: Number(row.returned ?? 0),
+            paymentType: (row.method && row.method !== '-') ? row.method : 'Nağd',
+            invoices: Array.isArray(row.invoices) ? [...row.invoices] : [],
+            newInvoice: '',
+            editIdx: null,
+            editValue: '',
+        });
+        setModalOpen(true);
+    };
+
+    const closeModal = () => setModalOpen(false);
+
 
     /* ------- Vendor (başlıqda searchable select) ------- */
-    const { data: getAllVendors } = useGetAllVendorsQuery();
+    const {data: getAllVendors} = useGetAllVendorsQuery();
     const vendors = getAllVendors?.data ?? [];
     const [searchVendorText, setSearchVendorText] = useState('');
     const [searchVendorId, setSearchVendorId] = useState('');
@@ -31,7 +89,7 @@ const AccounterBorc = () => {
     const vendorSearchRef = useRef(null);
 
     /* ------- Şirkət seçimi (üst toolbar) — API-dən ------- */
-    const { data: getAllCompanies } = useGetAllCompaniesQuery();
+    const {data: getAllCompanies} = useGetAllCompaniesQuery();
     const companies = (getAllCompanies?.data ?? [])
         .map(c => ({
             id: String(c.id ?? c.companyId ?? c.value ?? ''),
@@ -45,7 +103,7 @@ const AccounterBorc = () => {
     const [selectedCompanyId, setSelectedCompanyId] = useState('');
     const [selectedCompanyName, setSelectedCompanyName] = useState('');
     const companyRef = useRef(null);
-
+    const [editDebts, {isLoading: isSaving}] = useEditVendorDebtsMutation();
     /* ------- Outside click close (vendor + company) ------- */
     useEffect(() => {
         const onDown = (e) => {
@@ -78,9 +136,10 @@ const AccounterBorc = () => {
         setSelectedCompanyName(c.name);
         setCompanyQuery('');
         setCompanyOpen(false);
-        /* LOCAL STORAGE: seçilən company yadda saxlanır */
-        try { localStorage.setItem(LS_KEY, String(c.id)); } catch {}
-        // debtsRefetch && debtsRefetch();
+        try {
+            localStorage.setItem(LS_KEY, String(c.id));
+        } catch {
+        }
     };
 
     const clearCompany = () => {
@@ -89,16 +148,20 @@ const AccounterBorc = () => {
             setSelectedCompanyId(first.id);
             setSelectedCompanyName(first.name);
             setCompanyQuery('');
-            /* LOCAL STORAGE: "Hamısı" klikində də bizdə default ilk şirkət qalır */
-            try { localStorage.setItem(LS_KEY, String(first.id)); } catch {}
+            try {
+                localStorage.setItem(LS_KEY, String(first.id));
+            } catch {
+            }
         } else {
             setSelectedCompanyId('');
             setSelectedCompanyName('');
             setCompanyQuery('');
-            try { localStorage.removeItem(LS_KEY); } catch {}
+            try {
+                localStorage.removeItem(LS_KEY);
+            } catch {
+            }
         }
         setCompanyOpen(false);
-        // debtsRefetch && debtsRefetch();
     };
 
     /* ------- İlk yüklənmədə localStorage-dan bərpa ------- */
@@ -106,7 +169,11 @@ const AccounterBorc = () => {
         if (!companies.length) return;
 
         const lsId = (() => {
-            try { return localStorage.getItem(LS_KEY) || ''; } catch { return ''; }
+            try {
+                return localStorage.getItem(LS_KEY) || '';
+            } catch {
+                return '';
+            }
         })();
 
         if (lsId && companies.some(c => String(c.id) === String(lsId))) {
@@ -117,17 +184,19 @@ const AccounterBorc = () => {
                 setCompanyQuery('');
             }
         } else {
-            // Localda yoxdursa, ilk şirkəti seç və local-a yaz
             const first = companies[0];
             setSelectedCompanyId(String(first.id));
             setSelectedCompanyName(first.name);
             setCompanyQuery('');
-            try { localStorage.setItem(LS_KEY, String(first.id)); } catch {}
+            try {
+                localStorage.setItem(LS_KEY, String(first.id));
+            } catch {
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companies.length]);
 
-    /* ------- Tarixi ISO-ya çevir ------- */
+    /* ------- Tarixi ISO-ya çevir (başlıq filtr üçün) ------- */
     const toISODate = (s) => {
         if (!s) return null;
         const datePart = s.split(',')[0].trim().split(' ')[0].trim();
@@ -165,44 +234,91 @@ const AccounterBorc = () => {
         return byDate && byCompanyHeader && byCompanyTop && byVendor;
     });
 
-    /* ------- Edit modal (returned / paid) ------- */
-    const [editModal, setEditModal] = useState(null); // { id, field: 'returned' | 'paid', value: string }
+    /* ================= RTK Query: Vendor Debts ================= */
+    const {data: getVendorDebts} =
+        useGetVendorDebtsQuery(selectedCompanyId, {skip: !selectedCompanyId});
 
-    /* ------- Borc API ------- */
-    const { data: getVendorDebts, refetch: debtsRefetch } = useGetVendorDebtsQuery(
-        { companyId: selectedCompanyId },
-        { skip: !selectedCompanyId } // company seçilməyibsə çağırmasın
-    );
+    /* Tarixi formatla: ISO/string -> "dd/mm/yy, HH:mm" */
+    const fmtDateTime = (v) => {
+        if (!v) return '-';
+        const d = new Date(v);
+        if (Number.isNaN(d.getTime())) return '-';
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yy = String(d.getFullYear()).slice(-2);
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return `${dd}/${mm}/${yy}, ${hh}:${mi}`;
+    };
 
     useEffect(() => {
         const list = getVendorDebts?.data;
         if (!list) return;
 
         const mapped = list.map((d, idx) => {
-            const total = Number(d.totalDebt ?? d.total ?? 0);
-            const paid  = Number(d.paid ?? 0);
-            const ret   = Number(d.returned ?? 0);
-            const rem   = Number(d.remaining ?? (total - paid - ret));
+            const total = Number(d.totalDebt ?? 0);
+            const paid = Number(d.paidDebt ?? 0);
+            const ret = Number(d.repayableDebt ?? 0);
+            const rem = Number(d.unpaidDebt ?? (total - paid - ret));
+            const invoicesCount = Array.isArray(d.vendordebtInvoices) ? d.vendordebtInvoices.length : 0;
 
             return {
                 id: d.id ?? idx + 1,
-                lastOrderAt: d.lastOrderAt ?? d.lastOrderDate ?? '',
-                companyId: d.companyId ?? d.companyID ?? null,
-                company: d.company ?? d.companyName ?? '',
-                vendorId: d.vendorId ?? d.vendorID ?? null,
-                vendor: d.vendor ?? d.vendorName ?? '',
+                lastOrderAt: fmtDateTime(d.lastOrderTime),
+                companyId: d.companyId ?? null,
+                company: d.companyName ?? '',
+                vendorId: d.vendorDto?.id ?? null,
+                vendor: d.vendorDto?.name ?? '',
                 totalDebt: total,
                 returned: ret,
                 paid: paid,
                 remaining: rem,
-                method: d.method ?? d.paymentMethod ?? '-',
-                invoiceCount: Number(d.invoiceCount ?? d.invoicesCount ?? 0),
+                method: d.paymentType || '-',
+                invoiceCount: invoicesCount,
             };
         });
 
         setRows(mapped);
     }, [getVendorDebts]);
 
+    const saveModal = async () => {
+          // payload – backend-in istədiyi struktur
+        const pt = (modalData.paymentType && modalData.paymentType !== '-') ? modalData.paymentType : 'Nağd';
+              const payload = {
+                id: String(modalData.id),
+                      paidDebt: Number(modalData.paidDebt) || 0,
+                     repayableDebt: Number(modalData.returnedDebt) || 0,
+                  paymentType: pt,
+               vendordebtInvoices: (modalData.invoices || []).map(String),
+              };
+
+              try {
+                await editDebts(payload).unwrap();
+
+                    // Optimistik UI: cədvəldə həmin sətiri yenilə
+                        setRows(prev => prev.map(r => {
+                              if (String(r.id) !== String(modalData.id)) return r;
+                            const returned = payload.repayableDebt;
+                             const paid = payload.paidDebt;
+                             const remaining = Math.max(0, Number(r.totalDebt || 0) - paid - returned);
+                              const invoices = (modalData.invoices || []).map(String);
+                              return {
+                                    ...r,
+                                    returned,
+                                  paid,
+                                 remaining,
+                                  method: pt,
+                                   invoices,
+                                   invoiceCount: invoices.length,
+                                  };
+                            }));
+
+                    setModalOpen(false);
+              } catch (e) {
+                console.error('editDebts failed:', e);
+                // istəsən burada toast göstərə bilərik
+                  }
+        };
     return (
         <div className="accounter-borc-main">
             <div className="accounter-borc">
@@ -218,8 +334,11 @@ const AccounterBorc = () => {
                 <div className="about">
           <span>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-              <path d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z" stroke="#ED0303" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                  d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z"
+                  stroke="#ED0303" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round"
+                    strokeLinejoin="round"/>
             </svg>
           </span>
 
@@ -230,14 +349,15 @@ const AccounterBorc = () => {
                             onClick={() => {
                                 setCompanyOpen(v => {
                                     const next = !v;
-                                    if (next) setCompanyQuery(''); // açılarkən input boş olsun
+                                    if (next) setCompanyQuery('');
                                     return next;
                                 });
                             }}
                         >
                             <span>{selectedCompanyName || 'Hamısı'}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 10l5 5 5-5" stroke="#434343" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M7 10l5 5 5-5" stroke="#434343" strokeWidth="2" strokeLinecap="round"
+                                      strokeLinejoin="round"/>
                             </svg>
                         </button>
 
@@ -259,7 +379,10 @@ const AccounterBorc = () => {
                                                 <li
                                                     key={c.id}
                                                     className={String(c.id) === String(selectedCompanyId) ? 'active' : ''}
-                                                    onMouseDown={(e) => { e.preventDefault(); selectCompany(c); }}
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault();
+                                                        selectCompany(c);
+                                                    }}
                                                 >
                                                     {c.name}
                                                 </li>
@@ -289,13 +412,19 @@ const AccounterBorc = () => {
                                                 onChange={(e) => setSearchDate(e.target.value)}
                                                 placeholder="Tarix seçin"
                                             />
-                                            <FaTimes onClick={() => { setActiveHeaderSearch(null); setSearchDate(''); }} />
+                                            <FaTimes onClick={() => {
+                                                setActiveHeaderSearch(null);
+                                                setSearchDate('');
+                                            }}/>
                                         </div>
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('date')}>
-                                            Son sifariş tarixi
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
+                                            Son ödəmə tarixi
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none">
+                                                <path
+                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
+                                                    fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
@@ -311,13 +440,19 @@ const AccounterBorc = () => {
                                                 onChange={(e) => setSearchCompany(e.target.value)}
                                                 placeholder="Axtar..."
                                             />
-                                            <FaTimes onClick={() => { setActiveHeaderSearch(null); setSearchCompany(''); }} />
+                                            <FaTimes onClick={() => {
+                                                setActiveHeaderSearch(null);
+                                                setSearchCompany('');
+                                            }}/>
                                         </div>
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('company')}>
                                             Şirkət adı
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none">
+                                                <path
+                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
+                                                    fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
@@ -375,7 +510,10 @@ const AccounterBorc = () => {
                                                                 key={v.id}
                                                                 className={idx === vendorHover ? 'active' : ''}
                                                                 onMouseEnter={() => setVendorHover(idx)}
-                                                                onMouseDown={(e) => { e.preventDefault(); selectVendor(v); }}
+                                                                onMouseDown={(e) => {
+                                                                    e.preventDefault();
+                                                                    selectVendor(v);
+                                                                }}
                                                             >
                                                                 {v.name}
                                                             </li>
@@ -387,8 +525,11 @@ const AccounterBorc = () => {
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('vendor')}>
                                             Vendor
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#7A7A7A"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none">
+                                                <path
+                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
+                                                    fill="#7A7A7A"/>
                                             </svg>
                                         </div>
                                     )}
@@ -400,54 +541,51 @@ const AccounterBorc = () => {
                                 <th>Qalıq borc</th>
                                 <th>Ödəniş üsulu</th>
                                 <th>Faktura sayı</th>
+                                <th>Fəaliyyətlər</th>
                             </tr>
                             </thead>
 
                             <tbody>
                             {filteredRows.map((r) => (
                                 <tr key={r.id}>
-                                    <td style={{ cursor:"pointer" }} onClick={() => navigate(`/accounter/borc/${r.id}`)}>{r.lastOrderAt}</td>
+                                    <td style={{cursor: "pointer"}}
+                                        onClick={() => navigate(`/accounter/history/${r.id}`)}>{r.lastOrderAt}</td>
                                     <td>{r.company}</td>
                                     <td>{r.vendor}</td>
                                     <td>{r.totalDebt}₼</td>
 
-                                    {/* Geri qaytarılan */}
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-                                            <span>{r.returned}₼</span>
-                                            <button
-                                                className="edit-btn"
-                                                onClick={() => setEditModal({ id: r.id, field: 'returned', value: String(r.returned) })}
-                                                aria-label="Geri qaytarılanı düzəlt"
-                                                style={{ background: 'transparent', border: 0, cursor: 'pointer', padding: 0 }}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none" style={{ cursor: 'pointer' }}>
-                                                    <path d="M18.333 6.033c.001-.11-.02-.219-.061-.321a.83.83 0 0 0-.18-.272L14.558 1.908a.83.83 0 0 0-.272-.18.83.83 0 0 0-.32-.061.83.83 0 0 0-.32.061.83.83 0 0 0-.272.18L1.908 13.375a.83.83 0 0 0-.18.272.83.83 0 0 0-.061.32v3.533c0 .221.088.433.244.589.156.156.368.244.589.244h3.533a.83.83 0 0 0 .333-.053.83.83 0 0 0 .291-.168l9.058-9.109 2.367-2.316a.83.83 0 0 0 .184-.475c.008-.066.008-.133 0-.2" fill="#919191"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    {/* Geri qaytarılan (yalnız məbləğ) */}
+                                    <td>{r.returned}₼</td>
 
-                                    {/* Ödənilən */}
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-                                            <span>{r.paid}₼</span>
-                                            <button
-                                                className="edit-btn"
-                                                onClick={() => setEditModal({ id: r.id, field: 'paid', value: String(r.paid) })}
-                                                aria-label="Ödəniləni düzəlt"
-                                                style={{ background: 'transparent', border: 0, cursor: 'pointer', padding: 0 }}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none" style={{ cursor: 'pointer' }}>
-                                                    <path d="M18.333 6.033c.001-.11-.02-.219-.061-.321a.83.83 0 0 0-.18-.272L14.558 1.908a.83.83 0 0 0-.272-.18.83.83 0 0 0-.32-.061.83.83 0 0 0-.32.061.83.83 0 0 0-.272.18L1.908 13.375a.83.83 0 0 0-.18.272.83.83 0 0 0-.061.32v3.533c0 .221.088.433.244.589.156.156.368.244.589.244h3.533a.83.83 0 0 0 .333-.053.83.83 0 0 0 .291-.168l9.058-9.109 2.367-2.316a.83.83 0 0 0 .184-.475c.008-.066.008-.133 0-.2" fill="#919191"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    {/* Ödənilən (yalnız məbləğ) */}
+                                    <td>{r.paid}₼</td>
 
                                     <td>{r.remaining}₼</td>
                                     <td>{r.method}</td>
                                     <td>{r.invoiceCount}</td>
+
+                                    {/* Yeni: Fəaliyyətlər sütunu */}
+                                    <td style={{
+                                        display:'flex',
+                                        justifyContent:"center"
+                                    }}>
+                                        <button
+                                            className="edit-btn"
+                                            onClick={() => openEditModal(r)}
+                                            aria-label="Sətiri redaktə et"
+                                            style={{
+                                                background: 'transparent',
+                                                border: 0,
+                                                cursor: 'pointer',
+                                                padding: 0,
+                                                textAlign:'center'
+                                            }}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path d="M18.3327 6.03465C18.3333 5.92498 18.3123 5.81626 18.2708 5.71473C18.2294 5.6132 18.1683 5.52085 18.091 5.44298L14.5577 1.90965C14.4798 1.83241 14.3875 1.77131 14.286 1.72984C14.1844 1.68837 14.0757 1.66735 13.966 1.66798C13.8564 1.66735 13.7476 1.68837 13.6461 1.72984C13.5446 1.77131 13.4522 1.83241 13.3744 1.90965L11.016 4.26798L1.9077 13.3763C1.83046 13.4542 1.76936 13.5465 1.72789 13.6481C1.68642 13.7496 1.6654 13.8583 1.66603 13.968V17.5013C1.66603 17.7223 1.75383 17.9343 1.91011 18.0906C2.06639 18.2469 2.27835 18.3347 2.49936 18.3347H6.0327C6.1493 18.341 6.26594 18.3228 6.37505 18.2811C6.48415 18.2395 6.58329 18.1754 6.66603 18.093L15.7244 8.98465L18.091 6.66798C18.167 6.58712 18.2289 6.49418 18.2744 6.39298C18.2824 6.32656 18.2824 6.25941 18.2744 6.19298C18.2783 6.15419 18.2783 6.11511 18.2744 6.07632L18.3327 6.03465ZM5.69103 16.668H3.3327V14.3097L11.6077 6.03465L13.966 8.39298L5.69103 16.668ZM15.141 7.21798L12.7827 4.85965L13.966 3.68465L16.316 6.03465L15.141 7.21798Z" fill="#606060"/>
+                                            </svg>
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -457,43 +595,178 @@ const AccounterBorc = () => {
 
             </div>
 
-            {/* Edit Modal */}
-            {editModal && (
-                <div className="modal-overlay" onClick={() => setEditModal(null)}>
-                    <div className="modal-box" style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-                        <h3>{editModal.field === 'returned' ? 'Geri qaytarılan' : 'Ödənilən'} məbləği</h3>
-                        <span
-                            style={{ cursor: 'pointer', position: 'absolute', right: '15px', top: '15px' }}
-                            onClick={() => setEditModal(null)}
-                        >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                <path d="M12.6668 3.33398L3.3335 12.6673M3.3335 3.33398L12.6668 12.6673" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-
-                        <div className="modal-fields">
-                            <label>Məbləğ (₼)</label>
-                            <input
-                                type="number"
-                                value={editModal.value}
-                                onChange={(e) => setEditModal({ ...editModal, value: e.target.value })}
-                                placeholder="0"
-                            />
+            {/* Yeni: Edit Modal (hər iki dəyər birlikdə) */}
+            {modalOpen && (
+                <div className="debt-modal__overlay" onClick={closeModal}>
+                    <div
+                        className="debt-modal__box"
+                        onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="debt-modal-title"
+                    >
+                        {/* Header */}
+                        <div className="debt-modal__header">
+                            <h3 id="debt-modal-title">Dəyişiklik et</h3>
+                            <button className="icon-btn close" onClick={closeModal} aria-label="Bağla">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
+                                     fill="none">
+                                    <path d="M12.6673 3.33203L3.33398 12.6654M3.33398 3.33203L12.6673 12.6654"
+                                          stroke="black" stroke-width="1.5" stroke-linecap="round"
+                                          stroke-linejoin="round"/>
+                                </svg>
+                            </button>
                         </div>
 
-                        <button
-                            onClick={() => {
-                                const val = Number(editModal.value) || 0;
-                                setRows(prev =>
-                                    prev.map(r =>
-                                        r.id === editModal.id ? { ...r, [editModal.field]: val } : r
-                                    )
-                                );
-                                setEditModal(null);
-                            }}
-                        >
-                            Yadda saxla
-                        </button>
+                        {/* 1-ci sıra: Ümumi borc / Geri qaytarılan borc */}
+                        <div className="debt-modal__row debt-modal__row--two">
+                            <div className="field">
+                                <label>Ödənilən borc</label>
+                                <div className="input-with-icon">
+                                    <input
+                                        type="number"
+                                        placeholder="0"
+                                        value={modalData.paidDebt}
+                                        onChange={(e) => setModalData(s => ({ ...s, paidDebt: e.target.value }))}
+                                    />
+                                    <button className="ghost-icon" tabIndex={-1} aria-hidden>✎</button>
+                                </div>
+                            </div>
+
+                            <div className="field">
+                                <label>Geri qaytarılan borc</label>
+                                <div className="input-with-icon">
+                                    <input
+                                        type="number"
+                                        placeholder="0"
+                                        value={modalData.returnedDebt}
+                                        onChange={(e) => setModalData(s => ({...s, returnedDebt: e.target.value}))}
+                                    />
+                                    <button className="ghost-icon" tabIndex={-1} aria-hidden>✎</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2-ci sıra: Ödəniş üsulu */}
+                        <div className="debt-modal__row">
+                            <div className="field">
+                                <label>Ödəniş üsulu</label>
+                                <div className="input-with-icon">
+                                    <select
+                                        value={modalData.paymentType}
+                                        onChange={(e) => setModalData(s => ({...s, paymentType: e.target.value}))}
+                                    >
+                                        <option>Nağd</option>
+                                        <option>Kart</option>
+                                    </select>
+                                    <button className="ghost-icon" tabIndex={-1} aria-hidden></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3-cü sıra: Fakturalar (siyahı + edit/sil) */}
+                        <div className="debt-modal__row">
+                            <div className="field">
+                                <label>Faktura sayı</label>
+
+                                {modalData.invoices.length > 0 && (
+                                    <ul className="invoice-list">
+                                        {modalData.invoices.map((inv, idx) => (
+                                            <li key={idx}>
+                                                {modalData.editIdx === idx ? (
+                                                    <div className="input-with-icon">
+                                                        <input
+                                                            value={modalData.editValue}
+                                                            onChange={(e) => setModalData(s => ({
+                                                                ...s,
+                                                                editValue: e.target.value
+                                                            }))}
+                                                            autoFocus
+                                                        />
+                                                        <button
+                                                            className="ghost-icon"
+                                                            title="Yadda saxla"
+                                                            onClick={() => setModalData(s => {
+                                                                const copy = [...s.invoices];
+                                                                copy[idx] = (s.editValue || '').trim();
+                                                                return {
+                                                                    ...s,
+                                                                    invoices: copy,
+                                                                    editIdx: null,
+                                                                    editValue: ''
+                                                                };
+                                                            })}
+                                                        >✔
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <span className="invoice-chip">{inv}</span>
+                                                        <div className="actions">
+                                                            <button
+                                                                className="icon-btn"
+                                                                title="Düzəlt"
+                                                                onClick={() => setModalData(s => ({
+                                                                    ...s,
+                                                                    editIdx: idx,
+                                                                    editValue: inv
+                                                                }))}
+                                                            >✎
+                                                            </button>
+                                                            <button
+                                                                className="icon-btn danger"
+                                                                title="Sil"
+                                                                onClick={() => setModalData(s => {
+                                                                    const copy = [...s.invoices];
+                                                                    copy.splice(idx, 1);
+                                                                    return {...s, invoices: copy};
+                                                                })}
+                                                            >🗑
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
+                                {/* Yeni faktura əlavə et */}
+                                <div className="input-with-icon add-invoice">
+                                    <input
+                                        placeholder="Yeni faktura əlavə et"
+                                        value={modalData.newInvoice}
+                                        onChange={(e) => setModalData(s => ({...s, newInvoice: e.target.value}))}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                const v = (modalData.newInvoice || '').trim();
+                                                if (!v) return;
+                                                setModalData(s => ({
+                                                    ...s,
+                                                    invoices: [...s.invoices, v],
+                                                    newInvoice: ''
+                                                }));
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        className="ghost-icon"
+                                        title="Əlavə et"
+                                        onClick={() => {
+                                            const v = (modalData.newInvoice || '').trim();
+                                            if (!v) return;
+                                            setModalData(s => ({...s, invoices: [...s.invoices, v], newInvoice: ''}));
+                                        }}
+                                    >＋
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="debt-modal__footer">
+                            <button className="primary" onClick={saveModal}>Yadda saxla</button>
+                        </div>
                     </div>
                 </div>
             )}

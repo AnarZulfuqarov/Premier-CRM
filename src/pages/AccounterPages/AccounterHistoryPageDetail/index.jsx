@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { FaTimes } from 'react-icons/fa';
+import {useEffect, useState} from 'react';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
+import {FaTimes} from 'react-icons/fa';
 import './index.scss';
 
 import {
@@ -9,20 +9,20 @@ import {
     useSetLastDeliveryDateMutation, // ⬅️ yeni
 } from '../../../services/adminApi.jsx';
 
-import { usePopup } from '../../../components/Popup/PopupContext.jsx';
-import { DatePicker, InputGroup } from 'rsuite';
+import {usePopup} from '../../../components/Popup/PopupContext.jsx';
+import {DatePicker, InputGroup} from 'rsuite';
 
 const OrderHistoryDetailAccounter = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
 
-    const { data: getMyOrdersId, refetch } = useGetMyOrdersIdAccounterQuery(id);
+    const {data: getMyOrdersId, refetch} = useGetMyOrdersIdAccounterQuery(id);
     const orderData = getMyOrdersId?.data;
 
     const [deleteOrder] = useDeleteOrderAdminMutation();
-    const [setLastDeliveryDate, { isLoading: isSettingDate }] = useSetLastDeliveryDateMutation();
+    const [setLastDeliveryDate, {isLoading: isSettingDate}] = useSetLastDeliveryDateMutation();
 
-    const { showPopup } = usePopup();
+    const {showPopup} = usePopup();
 
     const [searchName, setSearchName] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
@@ -51,7 +51,7 @@ const OrderHistoryDetailAccounter = () => {
         if (!dueDateObj) return;
         try {
             const date = toDMY(dueDateObj);
-            await setLastDeliveryDate({ orderId: id, date }).unwrap();
+            await setLastDeliveryDate({orderId: id, date}).unwrap();
             showPopup?.('Son ödəmə tarixi təyin olundu', 'success');
             await refetch();
         } catch (e) {
@@ -81,7 +81,10 @@ const OrderHistoryDetailAccounter = () => {
     }, []);
 
     // Cədvəl üçün map
-    const filtered = orderData?.items?.map((item) => {
+    const filtered = orderData?.items?.filter(item =>
+        (!searchName || item.product?.name?.toLowerCase().includes(searchName.toLowerCase())) &&
+        (!searchCategory || item.product?.categoryName?.toLowerCase().includes(searchCategory.toLowerCase()))
+    ).map((item) => {
         const name = item.product?.name || '—';
         const category = item.product?.categoryName || '—';
         const required = `${item.requiredQuantity} ${item.product?.measure || ''}`;
@@ -92,7 +95,7 @@ const OrderHistoryDetailAccounter = () => {
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
         const vendor = item.vendorName && item.vendorName.trim() ? item.vendorName : '—';
-        return { name, category, required, provided, price, priceEach, created, delivery, received, vendor };
+        return {name, category, required, provided, price, priceEach, created, delivery, received, vendor};
     });
 
     return (
@@ -107,6 +110,52 @@ const OrderHistoryDetailAccounter = () => {
 
                 {/* DatePicker + düymə */}
                 <div className="due-date-row">
+                    <div style={{
+                        display: 'flex',
+                    }}>
+                        <div className="due-date-left">
+            <span className="due-date-icon" aria-hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                    d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z"
+                    stroke="#ED0303"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round"
+                      strokeLinejoin="round"/>
+              </svg>
+            </span>
+                            <span className="due-date-label">Son ödəmə tarixi təyin et :</span>
+                        </div>
+
+                        <div className="due-date-input-wrap" style={{minWidth: 280}}>
+                            <InputGroup inside>
+                                <DatePicker
+                                    value={dueDateObj}
+                                    onChange={setDueDateObj}
+                                    format="dd.MM.yyyy"      // ekranda dd.MM.yyyy
+                                    oneTap
+                                    block
+                                    placement="bottomEnd"
+                                    disabledDate={disablePast}
+                                    placeholder="Tarix seçin"
+                                    cleanable
+                                />
+
+                                <InputGroup.Button
+                                    onClick={handleApplyDate}
+                                    disabled={!dueDateObj || isSettingDate}
+                                    title={!dueDateObj ? 'Öncə tarix seçin' : 'Tətbiq et'}
+                                >
+                                    {isSettingDate ? 'Gözləyin...' : 'Tətbiq et'}
+                                </InputGroup.Button>
+                            </InputGroup>
+
+
+                        </div>
+                    </div>
                     <div className="due-date-left">
             <span className="due-date-icon" aria-hidden>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -117,33 +166,20 @@ const OrderHistoryDetailAccounter = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
-                <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round"
+                      strokeLinejoin="round"/>
               </svg>
             </span>
-                        <span className="due-date-label">Son ödəmə tarixi təyin et :</span>
-                    </div>
-
-                    <div className="due-date-input-wrap" style={{ minWidth: 280 }}>
-                        <InputGroup inside>
-                            <DatePicker
-                                value={dueDateObj}
-                                onChange={setDueDateObj}
-                                format="dd.MM.yyyy"      // ekranda dd.MM.yyyy
-                                oneTap
-                                block
-                                placement="bottomEnd"
-                                disabledDate={disablePast}
-                                placeholder="Tarix seçin"
-                                cleanable
-                            />
-                            <InputGroup.Button
-                                onClick={handleApplyDate}
-                                disabled={!dueDateObj || isSettingDate}
-                                title={!dueDateObj ? 'Öncə tarix seçin' : 'Tətbiq et'}
-                            >
-                                {isSettingDate ? 'Gözləyin...' : 'Tətbiq et'}
-                            </InputGroup.Button>
-                        </InputGroup>
+                        {orderData?.orderLastDeliveryDate && (
+                            <span className="due-date-label" style={{
+                                display:'flex',
+                                gap:"8px"
+                            }}>
+                                Son ödəniş tarixi: <p style={{
+                                    fontWeight: '500',
+                            }}>{orderData.orderLastDeliveryDate}</p>
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -177,8 +213,10 @@ const OrderHistoryDetailAccounter = () => {
                     <div className="order-history-super-admin__data">
                         <p>{orderData?.items?.map((item) => item.product?.name).join(', ')}</p>
                         <p>
-                            <span className="quantity-count">{itemCount}</span> <span className="quantity-label">məhsul,</span>{' '}
-                            <span className="quantity-count">{categoryCount}</span> <span className="quantity-label">kateqoriya</span>
+                            <span className="quantity-count">{itemCount}</span> <span
+                            className="quantity-label">məhsul,</span>{' '}
+                            <span className="quantity-count">{categoryCount}</span> <span
+                            className="quantity-label">kateqoriya</span>
                         </p>
                     </div>
                 </div>
@@ -191,7 +229,9 @@ const OrderHistoryDetailAccounter = () => {
                                 <th>
                                     {activeSearch === 'name' ? (
                                         <div className="th-search">
-                                            <input autoFocus value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder="Axtar..." />
+                                            <input autoFocus value={searchName}
+                                                   onChange={(e) => setSearchName(e.target.value)}
+                                                   placeholder="Axtar..."/>
                                             <FaTimes
                                                 onClick={() => {
                                                     setActiveSearch(null);
@@ -276,10 +316,10 @@ const OrderHistoryDetailAccounter = () => {
                                     <td>{item.delivery}</td>
                                     <td>{item.vendor}</td>
                                     {status === 'Tamamlanmış' && (
-                                        <td style={{ textAlign: 'center' }}>
+                                        <td style={{textAlign: 'center'}}>
                                             <svg
                                                 onClick={() => setIsOverheadModalOpen(true)}
-                                                style={{ cursor: 'pointer' }}
+                                                style={{cursor: 'pointer'}}
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="21"
                                                 height="20"
@@ -349,7 +389,8 @@ const OrderHistoryDetailAccounter = () => {
                                                 📄 PDF #{i + 1}
                                             </div>
                                         ) : (
-                                            <img src={file} alt={`overhead-${i}`} onClick={() => setSelectedOverheadImage(file)} />
+                                            <img src={file} alt={`overhead-${i}`}
+                                                 onClick={() => setSelectedOverheadImage(file)}/>
                                         )}
                                     </div>
                                 );
@@ -362,7 +403,7 @@ const OrderHistoryDetailAccounter = () => {
             {selectedOverheadImage && (
                 <div className="image-preview-modal" onClick={() => setSelectedOverheadImage(null)}>
                     <div className="image-preview-content" onClick={(e) => e.stopPropagation()}>
-                        <img src={selectedOverheadImage} alt="preview" />
+                        <img src={selectedOverheadImage} alt="preview"/>
                     </div>
                 </div>
             )}

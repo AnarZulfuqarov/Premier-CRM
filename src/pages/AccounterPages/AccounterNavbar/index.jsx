@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
-    useChangePasswordFightersMutation, useGetAdminNotificationsFighterQuery,
+    useChangePasswordFightersMutation, useGetAdminNotificationsAccountantQuery, useGetAdminNotificationsFighterQuery,
     useGetUserAccountantsQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
@@ -13,7 +13,7 @@ const AccounterNavbar = ({ setSidebarOpen }) => {
         const [showProfilePopup, setShowProfilePopup] = useState(false);
         const [showChangePassword, setShowChangePassword] = useState(false);
         const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationsFighterQuery()
+    const {data:getAdminNotificationsSuperAdmin} = useGetAdminNotificationsAccountantQuery()
     const notification = getAdminNotificationsSuperAdmin?.data
     const hasUnread = notification?.some(item => item.isRead === false);
         const {data:getUser} = useGetUserAccountantsQuery()
