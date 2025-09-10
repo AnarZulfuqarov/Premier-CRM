@@ -4,7 +4,7 @@ import {
     useGetAdminNotificationsAccountantQuery,
     useGetUserAccountantsQuery,
     useGetMyOrdersIdQuery,
-    useMarkAsReadMutation,
+    useMarkAsReadMutation, useGetMyOrdersIdAccounterQuery,
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
@@ -58,7 +58,7 @@ const pickLastPaymentDate = (order) => {
 
 // ---- child row (hook burada çağırılır; lazy YOXDUR) ----
 const NotificationRow = ({ n, rowNumber, onClick }) => {
-    const { data: orderData, isFetching } = useGetMyOrdersIdQuery(n?.orderId, { skip: !n?.orderId });
+    const { data: orderData, isFetching } = useGetMyOrdersIdAccounterQuery(n?.orderId, { skip: !n?.orderId });
     const lastPay = pickLastPaymentDate(orderData);
 
     const iconColor =

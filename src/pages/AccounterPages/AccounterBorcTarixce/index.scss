@@ -194,9 +194,40 @@
       }
     }
 
+
     .fixed-column .detail-btn {
-      background: #384871; color: #fff; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer;
-      &:hover { background: #2e375a; }
+      background: transparent; color: #6C6C6C; border: none; border-radius: 6px; cursor: pointer;
+    }
+    .cell {
+      padding: 6.5px 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+
+      .action-icon {
+        font-size: 18px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: scale(1.2);
+        }
+
+        &.eye {
+          color: #007bff;
+        }
+
+        &.edit {
+          color: #ffc107;
+        }
+
+        &.delete {
+          color: #dc3545;
+        }
+      }
     }
   }
 
@@ -596,7 +627,7 @@
       }
 
       .cell {
-        padding: 6.5px 16px;
+        padding: 8px 16px;
         border-bottom: 1px solid #eee;
         display: flex;
         align-items: center;

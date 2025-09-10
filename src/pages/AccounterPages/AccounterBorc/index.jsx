@@ -11,6 +11,12 @@ import {useNavigate} from "react-router-dom";
 
 const LS_KEY = 'borcCompanyId';
 
+// payment helpers
+const toUiPayment = (val) => (String(val).toLowerCase() === 'kart' ? 'kart' : 'nagd');
+const toServerPayment = (val) => (String(val).toLowerCase() === 'kart' ? 'kart' : 'nagd');
+const labelPayment = (val) => (val === 'kart' ? 'Kart' : 'Nağd');
+const normalize = (x) => (x || '').trim().toLowerCase();
+
 const AccounterBorc = () => {
     const navigate = useNavigate();
 
@@ -26,7 +32,8 @@ const AccounterBorc = () => {
             returned: 20,
             paid: 100,
             remaining: 205,
-            method: 'Nağd',
+            method: 'nagd',
+            invoices: ['INV-1','INV-2'],
             invoiceCount: 8
         },
         {
@@ -40,7 +47,8 @@ const AccounterBorc = () => {
             returned: 10,
             paid: 165,
             remaining: 150,
-            method: 'Kart',
+            method: 'kart',
+            invoices: ['A-1'],
             invoiceCount: 5
         },
     ];
@@ -52,23 +60,25 @@ const AccounterBorc = () => {
     const [searchCompany, setSearchCompany] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState({
-            id: '',
-           paidDebt: 0,          // ödənilən borc
-           returnedDebt: 0,
-        paymentType: 'Nağd',
-        invoices: [],
+        id: '',
+        paidDebt: 0,
+        returnedDebt: 0,
+        paymentType: 'nagd',       // 'nagd' | 'kart'
+        originalInvoices: [],      // backend-dən gələnlər (readonly)
+        newInvoices: [],           // yalnız yenilər (edit/sil)
         newInvoice: '',
-        editIdx: null,
+        editIdx: null,             // newInvoices üçün edit index
         editValue: '',
     });
 
     const openEditModal = (row) => {
         setModalData({
             id: String(row.id ?? ''),
-                paidDebt: Number(row.paid ?? 0),
-               returnedDebt: Number(row.returned ?? 0),
-            paymentType: (row.method && row.method !== '-') ? row.method : 'Nağd',
-            invoices: Array.isArray(row.invoices) ? [...row.invoices] : [],
+            paidDebt: Number(row.paid ?? 0),
+            returnedDebt: Number(row.returned ?? 0),
+            paymentType: toUiPayment(row.method && row.method !== '-' ? row.method : 'nagd'),
+            originalInvoices: Array.isArray(row.invoices) ? [...row.invoices] : [],
+            newInvoices: [],
             newInvoice: '',
             editIdx: null,
             editValue: '',
@@ -77,7 +87,6 @@ const AccounterBorc = () => {
     };
 
     const closeModal = () => setModalOpen(false);
-
 
     /* ------- Vendor (başlıqda searchable select) ------- */
     const {data: getAllVendors} = useGetAllVendorsQuery();
@@ -104,6 +113,7 @@ const AccounterBorc = () => {
     const [selectedCompanyName, setSelectedCompanyName] = useState('');
     const companyRef = useRef(null);
     const [editDebts, {isLoading: isSaving}] = useEditVendorDebtsMutation();
+
     /* ------- Outside click close (vendor + company) ------- */
     useEffect(() => {
         const onDown = (e) => {
@@ -138,8 +148,7 @@ const AccounterBorc = () => {
         setCompanyOpen(false);
         try {
             localStorage.setItem(LS_KEY, String(c.id));
-        } catch {
-        }
+        } catch {}
     };
 
     const clearCompany = () => {
@@ -150,16 +159,14 @@ const AccounterBorc = () => {
             setCompanyQuery('');
             try {
                 localStorage.setItem(LS_KEY, String(first.id));
-            } catch {
-            }
+            } catch {}
         } else {
             setSelectedCompanyId('');
             setSelectedCompanyName('');
             setCompanyQuery('');
             try {
                 localStorage.removeItem(LS_KEY);
-            } catch {
-            }
+            } catch {}
         }
         setCompanyOpen(false);
     };
@@ -190,8 +197,7 @@ const AccounterBorc = () => {
             setCompanyQuery('');
             try {
                 localStorage.setItem(LS_KEY, String(first.id));
-            } catch {
-            }
+            } catch {}
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companies.length]);
@@ -241,6 +247,21 @@ const AccounterBorc = () => {
     /* Tarixi formatla: ISO/string -> "dd/mm/yy, HH:mm" */
     const fmtDateTime = (v) => {
         if (!v) return '-';
+        // "10.09.2025 14:25" kimi gəlirsə, əl ilə parse
+        if (typeof v === 'string' && /^\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}/.test(v)) {
+            const [dpart, tpart] = v.split(' ');
+            const [dd, mm, yyyy] = dpart.split('.');
+            const [HH, MM] = tpart.split(':');
+            const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MM));
+            if (!Number.isNaN(d.getTime())) {
+                const dd2 = String(d.getDate()).padStart(2, '0');
+                const mm2 = String(d.getMonth() + 1).padStart(2, '0');
+                const yy2 = String(d.getFullYear()).slice(-2);
+                const hh2 = String(d.getHours()).padStart(2, '0');
+                const mi2 = String(d.getMinutes()).padStart(2, '0');
+                return `${dd2}/${mm2}/${yy2}, ${hh2}:${mi2}`;
+            }
+        }
         const d = new Date(v);
         if (Number.isNaN(d.getTime())) return '-';
         const dd = String(d.getDate()).padStart(2, '0');
@@ -260,7 +281,8 @@ const AccounterBorc = () => {
             const paid = Number(d.paidDebt ?? 0);
             const ret = Number(d.repayableDebt ?? 0);
             const rem = Number(d.unpaidDebt ?? (total - paid - ret));
-            const invoicesCount = Array.isArray(d.vendordebtInvoices) ? d.vendordebtInvoices.length : 0;
+            const invoicesArr = Array.isArray(d.vendordebtInvoices) ? d.vendordebtInvoices : [];
+            const invoicesCount = invoicesArr.length;
 
             return {
                 id: d.id ?? idx + 1,
@@ -273,7 +295,8 @@ const AccounterBorc = () => {
                 returned: ret,
                 paid: paid,
                 remaining: rem,
-                method: d.paymentType || '-',
+                method: d.paymentType || '-',              // 'nagd' | 'kart' | '-'
+                invoices: invoicesArr,                     // cədvəldə saxlayırıq
                 invoiceCount: invoicesCount,
             };
         });
@@ -282,43 +305,47 @@ const AccounterBorc = () => {
     }, [getVendorDebts]);
 
     const saveModal = async () => {
-          // payload – backend-in istədiyi struktur
-        const pt = (modalData.paymentType && modalData.paymentType !== '-') ? modalData.paymentType : 'Nağd';
-              const payload = {
-                id: String(modalData.id),
-                      paidDebt: Number(modalData.paidDebt) || 0,
-                     repayableDebt: Number(modalData.returnedDebt) || 0,
-                  paymentType: pt,
-               vendordebtInvoices: (modalData.invoices || []).map(String),
-              };
+        const ptServer = toServerPayment(modalData.paymentType || 'nagd');
 
-              try {
-                await editDebts(payload).unwrap();
-
-                    // Optimistik UI: cədvəldə həmin sətiri yenilə
-                        setRows(prev => prev.map(r => {
-                              if (String(r.id) !== String(modalData.id)) return r;
-                            const returned = payload.repayableDebt;
-                             const paid = payload.paidDebt;
-                             const remaining = Math.max(0, Number(r.totalDebt || 0) - paid - returned);
-                              const invoices = (modalData.invoices || []).map(String);
-                              return {
-                                    ...r,
-                                    returned,
-                                  paid,
-                                 remaining,
-                                  method: pt,
-                                   invoices,
-                                   invoiceCount: invoices.length,
-                                  };
-                            }));
-
-                    setModalOpen(false);
-              } catch (e) {
-                console.error('editDebts failed:', e);
-                // istəsən burada toast göstərə bilərik
-                  }
+        // yalnız YENİLƏRİ göndər
+        const payload = {
+            id: String(modalData.id),
+            paidDebt: Number(modalData.paidDebt) || 0,
+            repayableDebt: Number(modalData.returnedDebt) || 0,
+            paymentType: ptServer,
+            vendordebtInvoices: (modalData.newInvoices || []).map(String),
         };
+
+        try {
+            await editDebts(payload).unwrap();
+
+            // Optimistik UI: sətirin fakturalarına yeniləri əlavə et
+            setRows(prev => prev.map(r => {
+                if (String(r.id) !== String(modalData.id)) return r;
+                const returned = payload.repayableDebt;
+                const paid = payload.paidDebt;
+                const remaining = Math.max(0, Number(r.totalDebt || 0) - paid - returned);
+                const invoices = [
+                    ...(Array.isArray(r.invoices) ? r.invoices : []),
+                    ...(modalData.newInvoices || []).map(String),
+                ];
+                return {
+                    ...r,
+                    returned,
+                    paid,
+                    remaining,
+                    method: ptServer,
+                    invoices,
+                    invoiceCount: invoices.length,
+                };
+            }));
+
+            setModalOpen(false);
+        } catch (e) {
+            console.error('editDebts failed:', e);
+        }
+    };
+
     return (
         <div className="accounter-borc-main">
             <div className="accounter-borc">
@@ -419,7 +446,7 @@ const AccounterBorc = () => {
                                         </div>
                                     ) : (
                                         <div className="th-label" onClick={() => setActiveHeaderSearch('date')}>
-                                            Son ödəmə tarixi
+                                            Son sifariş tarixi
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                  viewBox="0 0 24 24" fill="none">
                                                 <path
@@ -548,8 +575,13 @@ const AccounterBorc = () => {
                             <tbody>
                             {filteredRows.map((r) => (
                                 <tr key={r.id}>
-                                    <td style={{cursor: "pointer"}}
-                                        onClick={() => navigate(`/accounter/history/${r.id}`)}>{r.lastOrderAt}</td>
+                                    <td
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => r.vendorId && navigate(`/accounter/borc/${r.vendorId}`)}
+                                    >
+                                        {r.lastOrderAt}
+                                    </td>
+
                                     <td>{r.company}</td>
                                     <td>{r.vendor}</td>
                                     <td>{r.totalDebt}₼</td>
@@ -561,14 +593,11 @@ const AccounterBorc = () => {
                                     <td>{r.paid}₼</td>
 
                                     <td>{r.remaining}₼</td>
-                                    <td>{r.method}</td>
+                                    <td>{labelPayment(toUiPayment(r.method))}</td>
                                     <td>{r.invoiceCount}</td>
 
                                     {/* Yeni: Fəaliyyətlər sütunu */}
-                                    <td style={{
-                                        display:'flex',
-                                        justifyContent:"center"
-                                    }}>
+                                    <td style={{display:'flex', justifyContent:"center"}}>
                                         <button
                                             className="edit-btn"
                                             onClick={() => openEditModal(r)}
@@ -595,7 +624,7 @@ const AccounterBorc = () => {
 
             </div>
 
-            {/* Yeni: Edit Modal (hər iki dəyər birlikdə) */}
+            {/* Edit Modal */}
             {modalOpen && (
                 <div className="debt-modal__overlay" onClick={closeModal}>
                     <div
@@ -612,13 +641,13 @@ const AccounterBorc = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
                                      fill="none">
                                     <path d="M12.6673 3.33203L3.33398 12.6654M3.33398 3.33203L12.6673 12.6654"
-                                          stroke="black" stroke-width="1.5" stroke-linecap="round"
-                                          stroke-linejoin="round"/>
+                                          stroke="black" strokeWidth="1.5" strokeLinecap="round"
+                                          strokeLinejoin="round"/>
                                 </svg>
                             </button>
                         </div>
 
-                        {/* 1-ci sıra: Ümumi borc / Geri qaytarılan borc */}
+                        {/* 1-ci sıra: Ödənilən / Geri qaytarılan */}
                         <div className="debt-modal__row debt-modal__row--two">
                             <div className="field">
                                 <label>Ödənilən borc</label>
@@ -654,81 +683,96 @@ const AccounterBorc = () => {
                                 <div className="input-with-icon">
                                     <select
                                         value={modalData.paymentType}
-                                        onChange={(e) => setModalData(s => ({...s, paymentType: e.target.value}))}
+                                        onChange={(e) => setModalData(s => ({ ...s, paymentType: toUiPayment(e.target.value) }))}
                                     >
-                                        <option>Nağd</option>
-                                        <option>Kart</option>
+                                        <option value="nagd">Nağd</option>
+                                        <option value="kart">Kart</option>
                                     </select>
                                     <button className="ghost-icon" tabIndex={-1} aria-hidden></button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 3-cü sıra: Fakturalar (siyahı + edit/sil) */}
+                        {/* 3-cü sıra: Fakturalar */}
                         <div className="debt-modal__row">
                             <div className="field">
-                                <label>Faktura sayı</label>
+                                <label>Fakturalar</label>
 
-                                {modalData.invoices.length > 0 && (
-                                    <ul className="invoice-list">
-                                        {modalData.invoices.map((inv, idx) => (
-                                            <li key={idx}>
-                                                {modalData.editIdx === idx ? (
-                                                    <div className="input-with-icon">
-                                                        <input
-                                                            value={modalData.editValue}
-                                                            onChange={(e) => setModalData(s => ({
-                                                                ...s,
-                                                                editValue: e.target.value
-                                                            }))}
-                                                            autoFocus
-                                                        />
-                                                        <button
-                                                            className="ghost-icon"
-                                                            title="Yadda saxla"
-                                                            onClick={() => setModalData(s => {
-                                                                const copy = [...s.invoices];
-                                                                copy[idx] = (s.editValue || '').trim();
-                                                                return {
-                                                                    ...s,
-                                                                    invoices: copy,
-                                                                    editIdx: null,
-                                                                    editValue: ''
-                                                                };
-                                                            })}
-                                                        >✔
-                                                        </button>
+                                {/* Backend-dən gələnlər – READONLY */}
+                                {modalData.originalInvoices.length > 0 && (
+                                    <>
+                                        <div className="muted-title">Mövcud (backend):</div>
+                                        <ul className="invoice-list readonly">
+                                            {modalData.originalInvoices.map((inv, idx) => (
+                                                <li key={`orig-${idx}`}>
+                          <span className="invoice-chip" title="Backend-dən gəlib, dəyişmək olmaz">
+                            {inv}
+                          </span>
+                                                    <div className="actions">
+                                                        <button className="icon-btn" disabled title="Düzəltmək olmaz">✎</button>
+                                                        <button className="icon-btn danger" disabled title="Silmək olmaz">🗑</button>
                                                     </div>
-                                                ) : (
-                                                    <>
-                                                        <span className="invoice-chip">{inv}</span>
-                                                        <div className="actions">
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+
+                                {/* YENİLƏR – Edit/Sil mümkün */}
+                                {modalData.newInvoices.length > 0 && (
+                                    <>
+                                        <div className="muted-title">Yeni əlavə etdikləriniz:</div>
+                                        <ul className="invoice-list">
+                                            {modalData.newInvoices.map((inv, idx) => (
+                                                <li key={`new-${idx}`}>
+                                                    {modalData.editIdx === idx ? (
+                                                        <div className="input-with-icon">
+                                                            <input
+                                                                value={modalData.editValue}
+                                                                onChange={(e) => setModalData(s => ({ ...s, editValue: e.target.value }))}
+                                                                autoFocus
+                                                            />
                                                             <button
-                                                                className="icon-btn"
-                                                                title="Düzəlt"
-                                                                onClick={() => setModalData(s => ({
-                                                                    ...s,
-                                                                    editIdx: idx,
-                                                                    editValue: inv
-                                                                }))}
-                                                            >✎
-                                                            </button>
-                                                            <button
-                                                                className="icon-btn danger"
-                                                                title="Sil"
+                                                                className="ghost-icon"
+                                                                title="Yadda saxla"
                                                                 onClick={() => setModalData(s => {
-                                                                    const copy = [...s.invoices];
-                                                                    copy.splice(idx, 1);
-                                                                    return {...s, invoices: copy};
+                                                                    const nextVal = (s.editValue || '').trim();
+                                                                    if (!nextVal) return { ...s };
+                                                                    // dublikat yoxlanışı
+                                                                    const inOriginal = s.originalInvoices.some(o => normalize(o) === normalize(nextVal));
+                                                                    const inNewOther = s.newInvoices.some((n, i) => i !== idx && normalize(n) === normalize(nextVal));
+                                                                    if (inOriginal || inNewOther) return { ...s };
+                                                                    const copy = [...s.newInvoices];
+                                                                    copy[idx] = nextVal;
+                                                                    return { ...s, newInvoices: copy, editIdx: null, editValue: '' };
                                                                 })}
-                                                            >🗑
-                                                            </button>
+                                                            >✔</button>
                                                         </div>
-                                                    </>
-                                                )}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                                    ) : (
+                                                        <>
+                                                            <span className="invoice-chip">{inv}</span>
+                                                            <div className="actions">
+                                                                <button
+                                                                    className="icon-btn"
+                                                                    title="Düzəlt"
+                                                                    onClick={() => setModalData(s => ({ ...s, editIdx: idx, editValue: inv }))}
+                                                                >✎</button>
+                                                                <button
+                                                                    className="icon-btn danger"
+                                                                    title="Sil"
+                                                                    onClick={() => setModalData(s => {
+                                                                        const copy = [...s.newInvoices];
+                                                                        copy.splice(idx, 1);
+                                                                        return { ...s, newInvoices: copy };
+                                                                    })}
+                                                                >🗑</button>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
                                 )}
 
                                 {/* Yeni faktura əlavə et */}
@@ -741,9 +785,12 @@ const AccounterBorc = () => {
                                             if (e.key === 'Enter') {
                                                 const v = (modalData.newInvoice || '').trim();
                                                 if (!v) return;
+                                                const inOriginal = modalData.originalInvoices.some(o => normalize(o) === normalize(v));
+                                                const inNew = modalData.newInvoices.some(n => normalize(n) === normalize(v));
+                                                if (inOriginal || inNew) return;
                                                 setModalData(s => ({
                                                     ...s,
-                                                    invoices: [...s.invoices, v],
+                                                    newInvoices: [...s.newInvoices, v],
                                                     newInvoice: ''
                                                 }));
                                             }
@@ -755,17 +802,21 @@ const AccounterBorc = () => {
                                         onClick={() => {
                                             const v = (modalData.newInvoice || '').trim();
                                             if (!v) return;
-                                            setModalData(s => ({...s, invoices: [...s.invoices, v], newInvoice: ''}));
+                                            const inOriginal = modalData.originalInvoices.some(o => normalize(o) === normalize(v));
+                                            const inNew = modalData.newInvoices.some(n => normalize(n) === normalize(v));
+                                            if (inOriginal || inNew) return;
+                                            setModalData(s => ({...s, newInvoices: [...s.newInvoices, v], newInvoice: ''}));
                                         }}
-                                    >＋
-                                    </button>
+                                    >＋</button>
                                 </div>
                             </div>
                         </div>
 
                         {/* Footer */}
                         <div className="debt-modal__footer">
-                            <button className="primary" onClick={saveModal}>Yadda saxla</button>
+                            <button className="primary" onClick={saveModal} disabled={isSaving}>
+                                {isSaving ? 'Yadda saxlanır...' : 'Yadda saxla'}
+                            </button>
                         </div>
                     </div>
                 </div>
