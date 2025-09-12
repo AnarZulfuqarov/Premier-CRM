@@ -1,271 +1,305 @@
-.order-history-super-admin-main{
-  position: relative;
-  .xett{
-    width: 100%;
-    height: 4px;
-    background: #F6F6F6;
-    position: absolute;
-    bottom: 100px;
-  }
+/* ============== Common ============== */
+@mixin card {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
 }
+
+/* ============== Wrapper ============== */
+.order-history-super-admin-main {
+  position: relative;
+}
+
 .order-history-super-admin {
   padding: 20px;
   max-width: 100%;
   margin: 0 auto;
   background: #fff;
-  height: calc(100vh - 129px);
-  overflow: hidden;
+  min-height: calc(100vh - 129px);
   position: relative;
-
 
   h2 {
     font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 8px;
   }
-
   p {
-    margin-bottom: 10px;
+    color: #3f3f3f;
+    font-size: 14px;
+    margin-bottom: 12px;
   }
+}
 
-  &__controls {
+/* ============== Top filter bar ============== */
+.filterbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  width: 100%;
+
+  .searchbox {
+    @include card;
+    flex: 1; /* search daha çox yer tutsun */
     display: flex;
-    gap: 10px;
-    margin-bottom: 40px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
 
     input {
       flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
+      border: none;
       outline: none;
+      font-size: 14px;
+      background: transparent;
     }
-    .company-select {
+  }
+
+  .filter-dd {
+    min-width: 200px; /* status dropdown */
+    height: 100%;
+  }
+}
+
+
+/* ============== Chip / alt filter sıra ============== */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 6px;
+  margin-bottom: 18px;
+
+  .filter-dd {
+    position: relative;
+
+    .dd-btn {
+      @include card;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #fff;
+      cursor: pointer;
+      height: 36px;
+
+      span {
+        white-space: nowrap;
+        color: #9a9a9a;
+      }
+      &.filled span { font-weight: 500; color: #0c0c0c; }
+    }
+
+    .dd-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 260px;
+      @include card;
+      display: none;
+      z-index: 12;
+      background: #fff;
+
+      .dd-search {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+        input {
+          width: 100%;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 8px;
+          outline: none;
+          font-size: 14px;
+        }
+      }
+
+      .dd-list {
+        max-height: 220px;
+        overflow: auto;
+        padding: 6px;
+
+        .dd-item {
+          padding: 8px 10px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 14px;
+          color: #0c0c0c;
+
+          &:hover { background: #f5f6fa; }
+          &.active { background: #eef2ff; color: #1c2c57; font-weight: 500; }
+        }
+        .dd-empty {
+          font-size: 13px;
+          color: #6c6c6c;
+          padding: 8px 10px;
+        }
+      }
+    }
+
+    &.open .dd-panel { display: block; }
+  }
+
+  .range-dd {
+    @include card;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    height: 36px;
+
+    .range-label {
+      font-size: 13px;
+      color: #9a9a9a;
+      white-space: nowrap;
+    }
+
+    .range-row {
       display: flex;
       align-items: center;
       gap: 6px;
 
-      label {
-        font-size: 14px;
-        color: #555;
-      }
-
-      select {
-        padding: 8px 10px;
+      input {
         border: 1px solid #ddd;
-        border-radius: 4px;
+        border-radius: 8px;
+        padding: 6px 8px;
+        outline: none;
         font-size: 14px;
-        background: #fff;
-        cursor: pointer;
+        height: 28px;
       }
-    }
-
-
-    select {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
+      span { color: #999; }
     }
   }
+}
 
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-height: 480px;
-    overflow-y: auto;
+/* ============== Table wrapper + scrollbar ============== */
+.order-history-super-admin__table-wrap {
+  @include card;
+  max-height: 520px;
+  overflow: auto;
+  padding: 0;
+  border-color: #e6e8eb;
 
-    &::-webkit-scrollbar {
-      width: 3px;
-    }
+  &::-webkit-scrollbar { width: 3px; height: 8px; }
+  &::-webkit-scrollbar-thumb { background: #007aff; border-radius: 4px; }
+  &::-webkit-scrollbar-track { background: #f1f1f1; }
+}
 
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
+/* ============== Table grid ============== */
+.ohsa-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
 
-    &::-webkit-scrollbar-thumb {
-      background: #007AFF;
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
-  }
-
-  &__item {
-    padding: 15px;
-    border: 1px solid #ddd;
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background: #fff;
-    cursor: pointer;
-
-    &:hover {
-      background: #f9f9f9;
-    }
-  }
-
-  &__data {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 5px;
-    border: 1px solid #DCDCDC;
-    background: #FFF;
-    height: 42px;
-    padding: 0px 10px 0px 11px;
-
-    p {
-      margin: 0;
-      color: #0C0C0C;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-    }
-    p {
-      margin: 0;
-      font-size: 14px;
-      line-height: normal;
-
-      .quantity-count {
-        font-weight: 400;
-        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
-      }
-
-      .quantity-label {
-        font-weight: 400;
-        color: #979797; // Açıq boz (yazı hissəsi üçün)
-      }
-    }
-  }
-  .techizat{
-    .order-history-super-admin__ids{
-      display: flex;
-      gap: 24px;
-      align-items: center;
-    }
-    .order-history-super-admin__id {
-      color: #272727;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-
-      span {
-        color: #979797;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-        margin-right: 12px;
-      }
-    }
-  }
-  &__details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-
-    p {
-      margin: 5px 0;
-      color: #333;
-    }
-    .order-history-super-admin__ids{
-      display: flex;
-      gap: 24px;
-      align-items: center;
-    }
-    .order-history-super-admin__id {
-      color: #272727;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-
-      span {
-        color: #979797;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-        margin-right: 12px;
-      }
-    }
-  }
-
-  &__status {
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 12px;
     font-weight: 500;
-
-    &.pending {
-      border-radius: 16px;
-      background: #FFF5F5;
-      border: 1px solid #FFC31C;
-      background: rgba(255, 229, 159, 0.25);
-    }
-
-    &.completed {
-      border-radius: 16px;
-      border: 1px solid #31AC2E;
-      background: #E7FFE5;
-    }
-
-    &.not-completed {
-      border-radius: 16px;
-      background: rgba(255, 229, 159, 0.25);
-      border: 1px solid #FBB;
-      background: #FFF5F5;
-    }
+    font-size: 14px;
+    color: #0c0c0c;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e6e8eb;
+    white-space: nowrap;
   }
 
-  &__pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    margin-top: 20px;
-    position: absolute;
-    bottom: 30px;
-    right: 20px;
-    button {
-      padding: 8px 12px;
-      background: #fff;
-      color: #333;
-      cursor: pointer;
-      font-size: 14px;
-      min-width: 40px;
-      text-align: center;
-      border-radius: 3px;
-      border: 1px solid #E3E3E3;
-
-      &:disabled {
-        background: #f1f1f1;
-        cursor: not-allowed;
-        color: #999;
-      }
-
-      &:hover:not(:disabled):not(.active) {
-        background: #f9f9f9;
-      }
-
-      &.active {
-        color: #fff;
-        font-weight: 500;
-        border-radius: 3px;
-        background: #384871;
-      }
-
-      &:first-child, &:last-child {
-        font-size: 14px;
-        padding: 8px;
-      }
-    }
+  tbody td {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #6c6c6c;
+    border-bottom: 1px solid #f3f3f3;
+    background: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+
+  /* şaquli xəttlər */
+  thead th, tbody td { border-right: 1px solid #e6e8eb; }
+  thead th { border-top: 1px solid #e6e8eb; }
+  thead th:first-child, tbody td:first-child { border-left: 1px solid #e6e8eb; }
+
+  /* hover */
+  tbody tr:hover td { background: #f9f9f9; cursor: pointer; }
+
+  /* mərkəzlənəcək sütunlar */
+  thead th:nth-child(3),
+  thead th:nth-child(6),
+  tbody td:nth-child(3),
+  tbody td:nth-child(6) { text-align: center; }
+
+  /* sağ yapışqan sütun */
+  .sticky-col {
+    position: sticky;
+    right: 0;
+    z-index: 3;
+    background: #fff;
+    box-shadow: -6px 0 10px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* ============== Status pill ============== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 9999px;
+  line-height: 1;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
+  background: #fff;
+
+  &.pending {
+    background: #fdedc8;
+    border-color: #ffc31c;
+    color: #6b5e05;
+  }
+  &.completed {
+    background: #e7ffe5;
+    border-color: #2fc25b;
+    color: #1e7c1c;
+  }
+}
+
+/* ============== Buttons & empty state ============== */
+.detail-btn {
+  background: transparent;
+  border: none;
+  color: #6c6c6c;
+  font-size: 13px;
+  border-radius: 6px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  transition: 0.2s ease;
+
+  &:after { content: "→"; margin-left: 6px; }
+  &:hover { background: #f5f6fa; color: #0c0c0c; }
+}
+
+.ohsa-empty {
+  padding: 24px 8px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ============== Optional fixed widths (istəsən saxla) ============== */
+/* .ohsa-table colgroup col:nth-child(1) { width: 140px; }
+.ohsa-table colgroup col:nth-child(2) { width: 160px; }
+.ohsa-table colgroup col:nth-child(3) { width: 120px; }
+.ohsa-table colgroup col:nth-child(4) { width: 180px; }
+.ohsa-table colgroup col:nth-child(5) { width: 180px; }
+.ohsa-table colgroup col:nth-child(6) { width: 160px; }
+.ohsa-table colgroup col:nth-child(7) { width: 140px; } */
+
+/* ============== Responsive ============== */
+@media (max-width: 992px) {
+  .filterbar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .filter-row { gap: 8px; }
+  .order-history-super-admin { padding: 16px; }
 }

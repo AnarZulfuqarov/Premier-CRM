@@ -80,6 +80,7 @@ import OrderHistoryDetailAccounter from "../pages/AccounterPages/AccounterHistor
 import AccounterBorc from "../pages/AccounterPages/AccounterBorc/index.jsx";
 import AccounterBorcTarixce from "../pages/AccounterPages/AccounterBorcTarixce/index.jsx";
 import AccounterNotification from "../pages/NotificationPages/AccounterNotification/index.jsx";
+import SuperAdminAccounterBorc from "../pages/SuperAdminPages/SuperAdminAccounterBorc/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -258,11 +259,15 @@ const router = createBrowserRouter([
                 element: <SuperSupplierAdd/>
             },
             {
-                path: "/superAdmin/accounter",
+                path: "/superAdmin/accounter/accounter",
                 element: <SuperAdminAccounter/>
             },
             {
-                path: "/superAdmin/accounterAdd",
+                path: "/superAdmin/accounter/borc",
+                element: <SuperAdminAccounterBorc/>
+            },
+            {
+                path: "/superAdmin/accounter/accounterAdd",
                 element: <SuperAccounterAdd/>
             },
             {

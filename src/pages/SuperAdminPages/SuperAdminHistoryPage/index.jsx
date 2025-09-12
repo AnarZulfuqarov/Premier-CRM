@@ -1,245 +1,439 @@
-import {useEffect, useRef, useState} from 'react';
-import './index.scss';
-import {useNavigate} from "react-router-dom";
-import {useGetAllCompaniesQuery, useGetOrdersQuery,useGetOrderByPageByCompanyQuery,
-    useGetOrderByPageQuery} from "../../../services/adminApi.jsx";
+import { useEffect, useRef, useState, useMemo } from "react";
+import "./index.scss";
+import { useNavigate } from "react-router-dom";
+import {
+    useGetAllCompaniesQuery,
+    useGetOrderByPageQuery,
+    useGetOrderByPageByCompanyQuery,
+} from "../../../services/adminApi.jsx";
+
+/* ==== Icons ==== */
+const Caret = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M7 10l5 5 5-5" stroke="#444" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+const SearchIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#666" strokeWidth="1.6" />
+    </svg>
+);
+
+/* ==== Safe Dropdown ==== */
+function Dropdown({ label, value, onChange, options = [], placeholder = "Seç", width }) {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const ref = useRef(null);
+
+    // options -> həmişə array
+    const safeOptions = useMemo(() => {
+        if (Array.isArray(options)) return options;
+        if (options && typeof options === "object") return Object.values(options);
+        return [];
+    }, [options]);
+
+    const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q) return safeOptions;
+        return safeOptions.filter((o) => String(o).toLowerCase().includes(q));
+    }, [safeOptions, query]);
+
+    useEffect(() => {
+        const onDocClick = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) {
+                setOpen(false);
+                setQuery("");
+            }
+        };
+        document.addEventListener("mousedown", onDocClick);
+        return () => document.removeEventListener("mousedown", onDocClick);
+    }, []);
+
+    const selectAndClose = (val) => {
+        onChange(val);
+        setOpen(false);
+        setQuery("");
+    };
+
+    return (
+        <div className={`filter-dd ${open ? "open" : ""}`} ref={ref} style={{ width }}>
+            <button type="button" className={`dd-btn ${value ? "filled" : ""}`} onClick={() => setOpen((s) => !s)}>
+                <span>{value || label}</span>
+                <Caret />
+            </button>
+
+            {open && (
+                <div className="dd-panel">
+                    <div className="dd-search">
+                        <input placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+                    </div>
+                    <div className="dd-list">
+                        <div className={`dd-item ${value === "" ? "active" : ""}`} onClick={() => selectAndClose("")}>
+                            Hamısı
+                        </div>
+                        {filtered.map((opt) => (
+                            <div key={String(opt)} className={`dd-item ${opt === value ? "active" : ""}`} onClick={() => selectAndClose(opt)}>
+                                {opt}
+                            </div>
+                        ))}
+                        {filtered.length === 0 && <div className="dd-empty">Nəticə tapılmadı</div>}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+/* ==== Helpers ==== */
+const parseAZDate = (s) => {
+    if (!s) return null;
+    const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(s).trim());
+    if (!m) return new Date(s);
+    const [, dd, MM, yyyy] = m;
+    return new Date(`${yyyy}-${MM}-${dd}T00:00:00`);
+};
 
 const OrderHistorySuperAdmin = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filter, setFilter] = useState('all');
     const navigate = useNavigate();
-    const {data:getAllCompanies} = useGetAllCompaniesQuery()
-    const companies = getAllCompanies?.data
-    const [selectedCompany, setSelectedCompany] = useState('all');
+
+    /* ===== Companies (safe) ===== */
+    const { data: getAllCompanies } = useGetAllCompaniesQuery();
+    const companies = useMemo(() => {
+        const arr = Array.isArray(getAllCompanies?.data) ? getAllCompanies.data : [];
+        return arr.map((c) => c?.name).filter(Boolean);
+    }, [getAllCompanies]);
+
+    /* ===== Paging + accumulation ===== */
     const [page, setPage] = useState(1);
     const pageSize = 10;
     const [allOrders, setAllOrders] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
 
-    const commonParams = { page, pageSize, companyName: selectedCompany };
-
-    const { data: pagedOrdersData, isFetching ,refetch} =
-        selectedCompany === 'all'
+    const [selectedCompany, setSelectedCompany] = useState(""); // "" = Hamısı
+    const commonParams = { page, pageSize, companyName: selectedCompany || "all" };
+    const { data: pagedOrdersData, isFetching } =
+        (selectedCompany || "all") === "all"
             ? useGetOrderByPageQuery({ page, pageSize })
             : useGetOrderByPageByCompanyQuery(commonParams);
+
     useEffect(() => {
         setAllOrders([]);
         setPage(1);
+        setHasMore(true);
     }, [selectedCompany]);
 
-    const listRef = useRef(null);
-    const [hasMore, setHasMore] = useState(true);
-
     useEffect(() => {
-        const el = listRef.current;
-        if (!el) return;
-
-        const onScroll = () => {
-            const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
-            if (nearBottom && !isFetching && hasMore) {
-                setPage(prev => prev + 1);
-            }
-        };
-
-        el.addEventListener('scroll', onScroll);
-        return () => el.removeEventListener('scroll', onScroll);
-    }, [isFetching, hasMore]);
-
-// Hər səhifə gələndə listə əlavə et və "hasMore"u güncəllə
-    useEffect(() => {
-        const pageData = pagedOrdersData?.data ?? [];
+        const pageData = Array.isArray(pagedOrdersData?.data) ? pagedOrdersData.data : [];
+        if (page === 1 && pageData.length === 0) {
+            setAllOrders([]);
+            setHasMore(false);
+            return;
+        }
         if (pageData.length) {
-            setAllOrders(prev => {
-                // duplikatları önlə (id ilə)
-                const seen = new Set(prev.map(o => o.id));
-                const next = pageData.filter(o => !seen.has(o.id));
+            setAllOrders((prev) => {
+                const seen = new Set(prev.map((o) => o.id));
+                const next = pageData.filter((o) => !seen.has(o.id));
                 return [...prev, ...next];
             });
             if (pageData.length < pageSize) setHasMore(false);
         } else if (page > 1) {
             setHasMore(false);
         }
-    }, [pagedOrdersData]);
+    }, [pagedOrdersData, page, pageSize]);
 
-    const orderss = selectedCompany === 'all' ? pagedOrdersData?.data : allOrders;
-
+    // infinite scroll
+    const listRef = useRef(null);
     useEffect(() => {
-        refetch()
-    }, [orderss]);
-    const orders = orderss?.map((order) => {
-        let status = '';
-        if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) {
-            status = 'Tamamlanmış';
-        } else if (order.employeeConfirm && order.fighterConfirm) {
-            status = 'Sifarişçidən təhvil gözləyən';
-        } else if (order.employeeConfirm && !order.fighterConfirm) {
-            status = 'Təchizatçıdan təsdiq gözləyən';
-        }
-        const totalPrice = order.items?.reduce((sum, item) =>
-            sum + item.suppliedQuantity * (item?.price || 0), 0
-        ) || 0;
-        const productNames = order.items?.map(item => item.product?.name).join(', ');
-        const totalQuantity = order.items?.length;
-        const customerFullName = `${order.adminInfo?.name || ''} ${order.adminInfo?.surname || ''}`;
-        const supplierFullName = `${order.fighterInfo?.name || ''} ${order.fighterInfo?.surname || ''}`;
-        const uniqueCategories = [
-            ...new Set(order.items.map(item => item.product?.categoryName).filter(Boolean))
-        ];
-        return {
-            id: order.id,
-            product: productNames,
-            itemCount: order.items.length,
-            categoryCount: uniqueCategories.length,
-            status,
-            price: totalPrice.toFixed(2),
-            customer: customerFullName,
-            supplier: supplierFullName,
-            order
+        const el = listRef.current;
+        if (!el) return;
+        const onScroll = () => {
+            const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+            if (nearBottom && !isFetching && hasMore) setPage((p) => p + 1);
         };
-    }) || [];
+        el.addEventListener("scroll", onScroll);
+        return () => el.removeEventListener("scroll", onScroll);
+    }, [isFetching, hasMore]);
 
-    const filteredOrders = orders.filter((order) => {
-        const matchesSearch =
-            order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.product.toLowerCase().includes(searchTerm.toLowerCase());
+    /* ===== Top/Chip filters ===== */
+    const [globalSearch, setGlobalSearch] = useState("");
+    const [departmentF, setDepartmentF] = useState("");
+    const [sectionF, setSectionF] = useState("");
+    const [statusF, setStatusF] = useState("");
+    const [dateQuickF, setDateQuickF] = useState("");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
+    const [productF, setProductF] = useState("");
+    const [priceMin, setPriceMin] = useState("");
+    const [priceMax, setPriceMax] = useState("");
 
-        const matchesFilter =
-            filter === 'all' ||
-            (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən') ||
-            (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış');
+    const quickDateOptions = ["Bugün", "Dünən", "Bu həftə", "Keçən həftə", "Bu ay", "Keçən ay"];
+    const statusOptions = ["Təchizatçıdan təsdiq gözləyən", "Sifarişçidən təhvil gözləyən", "Tamamlanmış"];
 
-        const matchesCompany =
-            selectedCompany === 'all' ||
-            order?.order?.section?.companyName === selectedCompany;
-        return matchesSearch && matchesFilter && matchesCompany;
-    });
+    const getQuickRange = (label) => {
+        const now = new Date();
+        const start = new Date(now);
+        const end = new Date(now);
+        const dow = now.getDay() || 7;
+        if (label === "Bugün") {
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+        } else if (label === "Dünən") {
+            start.setDate(now.getDate() - 1);
+            start.setHours(0, 0, 0, 0);
+            end.setDate(now.getDate() - 1);
+            end.setHours(23, 59, 59, 999);
+        } else if (label === "Bu həftə") {
+            start.setDate(now.getDate() - (dow - 1));
+            start.setHours(0, 0, 0, 0);
+            end.setDate(start.getDate() + 6);
+            end.setHours(23, 59, 59, 999);
+        } else if (label === "Keçən həftə") {
+            start.setDate(now.getDate() - (dow - 1) - 7);
+            start.setHours(0, 0, 0, 0);
+            end.setDate(start.getDate() + 6);
+            end.setHours(23, 59, 59, 999);
+        } else if (label === "Bu ay") {
+            start.setDate(1);
+            start.setHours(0, 0, 0, 0);
+            end.setMonth(now.getMonth() + 1, 0);
+            end.setHours(23, 59, 59, 999);
+        } else if (label === "Keçən ay") {
+            start.setMonth(now.getMonth() - 1, 1);
+            start.setHours(0, 0, 0, 0);
+            end.setMonth(now.getMonth(), 0);
+            end.setHours(23, 59, 59, 999);
+        } else return [null, null];
+        return [start, end];
+    };
 
+    /* ===== Shape data (safe) ===== */
+    const shaped = useMemo(() => {
+        const src = Array.isArray(allOrders) ? allOrders : [];
+        return src.map((order) => {
+            let status = "";
+            if (order.employeeConfirm && order.fighterConfirm && order.employeeDelivery) status = "Tamamlanmış";
+            else if (order.employeeConfirm && order.fighterConfirm) status = "Sifarişçidən təhvil gözləyən";
+            else if (order.employeeConfirm && !order.fighterConfirm) status = "Təchizatçıdan təsdiq gözləyən";
 
+            const items = Array.isArray(order.items) ? order.items : [];
+            const totalPrice =
+                items.reduce(
+                    (sum, item) => sum + (Number(item?.suppliedQuantity ?? 0) * Number(item?.price ?? 0)),
+                    0
+                ) ?? 0;
 
-    // Pagination logic
+            const productNames = Array.from(new Set(items.map((i) => i?.product?.name).filter(Boolean)));
 
-    // Generate page numbers with ellipsis
+            return {
+                id: order?.id,
+                createdAt: parseAZDate(order?.createdDate),
+                createdDateText: order?.createdDate || "",
+                companyName: order?.section?.companyName ?? "",
+                amountNum: +(+totalPrice).toFixed(2),
+                amountText: `${(+totalPrice).toFixed(2)} ₼`,
+                customer: `${order?.adminInfo?.name ?? ""} ${order?.adminInfo?.surname ?? ""}`.trim(),
+                supplier: `${order?.fighterInfo?.name ?? ""} ${order?.fighterInfo?.surname ?? ""}`.trim(),
+                status,
+                department: order?.section?.departmentName ?? "",
+                section: order?.section?.name ?? "",
+                products: productNames,
+            };
+        });
+    }, [allOrders]);
 
-    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    // dynamic option lists (safe)
+    const departments = useMemo(() => {
+        const arr = Array.isArray(shaped) ? shaped : [];
+        return Array.from(new Set(arr.map((o) => o?.department).filter(Boolean))).sort();
+    }, [shaped]);
+
+    const sections = useMemo(() => {
+        const arr = Array.isArray(shaped) ? shaped : [];
+        return Array.from(new Set(arr.map((o) => o?.section).filter(Boolean))).sort();
+    }, [shaped]);
+
+    const products = useMemo(() => {
+        const arr = Array.isArray(shaped) ? shaped : [];
+        return Array.from(new Set(arr.flatMap((o) => o?.products || []).filter(Boolean))).sort();
+    }, [shaped]);
+
+    /* ===== Filtering (safe) ===== */
+    const filtered = useMemo(() => {
+        let list = Array.isArray(shaped) ? [...shaped] : [];
+
+        // global search
+        if (globalSearch.trim()) {
+            const q = globalSearch.trim().toLowerCase();
+            list = list.filter(
+                (r) =>
+                    String(r.companyName ?? "").toLowerCase().includes(q) ||
+                    String(r.customer ?? "").toLowerCase().includes(q) ||
+                    String(r.supplier ?? "").toLowerCase().includes(q) ||
+                    String(r.status ?? "").toLowerCase().includes(q) ||
+                    String(r.amountText ?? "").toLowerCase().includes(q) ||
+                    String(r.amountNum ?? "").includes(q) ||
+                    (Array.isArray(r.products) && r.products.some((p) => String(p).toLowerCase().includes(q)))
+            );
+        }
+
+        if (statusF) list = list.filter((r) => r.status === statusF);
+        if (departmentF) list = list.filter((r) => r.department === departmentF);
+        if (sectionF) list = list.filter((r) => r.section === sectionF);
+        if (productF) list = list.filter((r) => Array.isArray(r.products) && r.products.includes(productF));
+
+        // date quick / range
+        let from = dateFrom ? new Date(dateFrom) : null;
+        let to = dateTo ? new Date(dateTo) : null;
+        if (dateQuickF) {
+            const [qs, qe] = getQuickRange(dateQuickF);
+            from = qs;
+            to = qe;
+        }
+        if (from || to) {
+            list = list.filter((r) => {
+                const d = r.createdAt ? new Date(r.createdAt) : null;
+                if (!d) return false;
+                if (from && d < from) return false;
+                if (to) {
+                    const t = new Date(to);
+                    t.setHours(23, 59, 59, 999);
+                    if (d > t) return false;
+                }
+                return true;
+            });
+        }
+
+        // price range
+        const pMin = priceMin !== "" ? Number(priceMin) : null;
+        const pMax = priceMax !== "" ? Number(priceMax) : null;
+        if (pMin !== null) list = list.filter((r) => r.amountNum >= pMin);
+        if (pMax !== null) list = list.filter((r) => r.amountNum <= pMax);
+
+        return list;
+    }, [
+        shaped,
+        globalSearch,
+        statusF,
+        departmentF,
+        sectionF,
+        productF,
+        dateQuickF,
+        dateFrom,
+        dateTo,
+        priceMin,
+        priceMax,
+    ]);
+
+    /* ===== Render ===== */
     return (
-        <div className={"order-history-super-admin-main"}>
+        <div className="order-history-super-admin-main">
             <div className="order-history-super-admin">
                 <h2>Tarixçə</h2>
                 <p>Sifarişlərin bütün mərhələlər üzrə vəziyyəti bu bölmədə əks olunur.</p>
-                <div className="order-history-super-admin__controls">
-                    <input
-                        type="text"
-                        placeholder="Axtarış edin"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div className="company-select">
-                        <label>Şirkət seçin:</label>
-                        <select
-                            value={selectedCompany}
-                            onChange={(e) => setSelectedCompany(e.target.value)}
-                        >
-                            <option value="all">Hamısı</option>
-                            {companies?.map(company => (
-                                <option key={company.id} value={company.name}>{company.name}</option>
-                            ))}
-                        </select>
+
+                {/* ==== TOP BAR ==== */}
+                <div className="filterbar">
+                    <div className="searchbox">
+                        <SearchIcon />
+                        <input
+                            value={globalSearch}
+                            onChange={(e) => setGlobalSearch(e.target.value)}
+                            placeholder="Axtarış edin..."
+                        />
                     </div>
 
-                    <div className="order-history__filter-button">
-                        <button className="filter-icon" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none">
-                                <path d="M7 14H11V12H7V14ZM3 8H15V6H3V8ZM0 0V2H18V0H0Z" fill="black"/>
-                            </svg>
-                        </button>
+                        <Dropdown
+                            label="Status seç"
+                            value={statusF}
+                            onChange={setStatusF}
+                            options={statusOptions}
+                            placeholder="Status"
+                            width="200px"
+                        />
 
-                        {showFilterDropdown && (
-                            <div className="filter-dropdown">
-                                <button
-                                    className={filter === 'all' ? 'active' : ''}
-                                    onClick={() => {
-                                        setFilter('all');
-                                        setShowFilterDropdown(false);
-                                    }}
-                                >
-                                    Hamısı
-                                </button>
-                                <button
-                                    className={filter === 'pending' ? 'active' : ''}
-                                    onClick={() => {
-                                        setFilter('pending');
-                                        setShowFilterDropdown(false);
-                                    }}
-                                >
-                                    <div className={"statuss pending"}></div>  Təchizatçıdan təsdiq gözləyən
-                                </button>
-                                <button
-                                    className={filter === 'completed' ? 'active' : ''}
-                                    onClick={() => {
-                                        setFilter('completed');
-                                        setShowFilterDropdown(false);
-                                    }}
-                                >
-                                    <div className={"statuss completed"}></div> Tamamlanmış
-                                </button>
-                                <button
-                                    className={filter === 'pending' ? 'active' : ''}
-                                    onClick={() => {
-                                        setFilter('pending');
-                                        setShowFilterDropdown(false);
-                                    }}
-                                >
-                                    <div className={"statuss pending"}></div> Sifarişçidən təhvil gözləyən
-                                </button>
-                            </div>
-                        )}
+                </div>
+
+                {/* ==== CHIP/FILTER ROW ==== */}
+                <div className="filter-row">
+                    <Dropdown
+                        label="Şirkət seçin"
+                        value={selectedCompany}
+                        onChange={(v) => setSelectedCompany(v || "")}
+                        options={companies}
+                        placeholder="Şirkət"
+                    />
+                    <Dropdown label="Şöbə seç" value={departmentF} onChange={setDepartmentF} options={departments} />
+                    <Dropdown label="Bölmə seç" value={sectionF} onChange={setSectionF} options={sections} />
+                    {/*<Dropdown label="Status üzrə filtr" value={statusF} onChange={setStatusF} options={statusOptions} />*/}
+                    <Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />
+
+                    <div className="range-dd">
+                        <div className="range-label">Tarix aralığı seç</div>
+                        <div className="range-row">
+                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+                            <span>—</span>
+                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+                        </div>
+                    </div>
+
+                    <Dropdown label="Məhsul seç" value={productF} onChange={setProductF} options={products} />
+
+                    <div className="range-dd">
+                        <div className="range-label">Qiymət aralığı seç</div>
+                        <div className="range-row">
+                            <input type="number" min="0" placeholder="min" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} />
+                            <span>—</span>
+                            <input type="number" min="0" placeholder="max" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} />
+                        </div>
                     </div>
                 </div>
-                <div className="order-history-super-admin__list" ref={listRef}>
-                    {filteredOrders.map((order, index) => (
-                        <div key={order.id || index} className="order-history-super-admin__item" onClick={()=>navigate(`/superAdmin/history/${order.id}`)}>
-                            <div className={"techizat"}>
-                                <div className={"order-history-super-admin__ids"}>
-                                    <p className="order-history-super-admin__id">
-                                        <span>Təchizatçının adı:</span> {order.supplier}
-                                    </p>
-                                    <p className="order-history-super-admin__id">
-                                        <span>Sifarişçinin adı:</span> {order.customer}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="order-history-super-admin__details">
-                                <div className={"order-history-super-admin__ids"}>
-                                    <p className="order-history-super-admin__id">
-                                        <span>Order ID</span> {order.id}
-                                    </p>
-                                    <p className="order-history-super-admin__id">
-                                        <span>Ümumi məbləğ:</span> {order.price} ₼
-                                    </p>
-                                </div>
-                                <span
-                                    className={`order-history-super-admin__status ${
-                                        order.status === 'Tamamlanmış'
-                                            ? 'completed'
-                                            : order.status === 'Sifarişçidən təhvil gözləyən'
-                                                ? 'pending'
-                                                : 'pending'
-                                    }`}
-                                >
-                {order.status}
-              </span>
-                            </div>
-                            <div className="order-history-super-admin__data">
-                                <p>{order.product}</p>
-                                <p>
-                                    <span className="quantity-count">{order.itemCount}</span>{' '}
-                                    <span className="quantity-label">məhsul,</span>{' '}
-                                    <span className="quantity-count">{order.categoryCount}</span>{' '}
-                                    <span className="quantity-label">kateqoriya</span>
-                                </p>
-                            </div>
-                        </div>
-                    ))}
+
+                {/* ==== TABLE ==== */}
+                <div className="order-history-super-admin__table-wrap" ref={listRef}>
+                    <table className="ohsa-table">
+                        <thead>
+                        <tr>
+                            <th>Tarixi</th>
+                            <th>Şirkət adı</th>
+                            <th>Ümumi məbləğ</th>
+                            <th>Sifarişçinin adı</th>
+                            <th>Təchizatçının adı</th>
+                            <th>Status</th>
+                            <th>Sifariş detalı</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {filtered.map((o, i) => (
+                            <tr key={o.id ?? i} onClick={() => navigate(`/superAdmin/history/${o.id}`)}>
+                                <td>{o.createdDateText}</td>
+                                <td>{o.companyName}</td>
+                                <td>{o.amountText}</td>
+                                <td>{o.customer || "-"}</td>
+                                <td>{o.supplier || "-"}</td>
+                                <td>
+                    <span className={"status-badge " + (o.status === "Tamamlanmış" ? "completed" : "pending")}>
+                      {o.status}
+                    </span>
+                                </td>
+                                <td className="sticky-col">
+                                    <button
+                                        className="detail-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/superAdmin/history/${o.id}`);
+                                        }}
+                                    >
+                                        Detallı bax
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+
+                    {!isFetching && filtered.length === 0 && (
+                        <div className="ohsa-empty">Məlumat tapılmadı</div>
+                    )}
                 </div>
             </div>
         </div>

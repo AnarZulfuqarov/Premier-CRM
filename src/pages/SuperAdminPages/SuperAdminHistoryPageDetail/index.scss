@@ -1,17 +1,19 @@
-.order-history-detail-super-admin-main{
+.order-history-detail-super-admin-main {
   position: relative;
+
   .confirm-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
   }
+
   .overhead-modal-overlay,
   .image-preview-modal {
     position: fixed;
@@ -19,7 +21,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -76,7 +78,7 @@
     border-radius: 8px;
     width: 320px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   /* Kapatma Ikonu */
@@ -88,7 +90,8 @@
     font-size: 18px;
     color: #333;
   }
-  .confirm-modal__iconHead{
+
+  .confirm-modal__iconHead {
     width: 120px;
     height: 120px;
     display: flex;
@@ -98,7 +101,8 @@
     background: rgba(226, 255, 223, 0.31);
     margin: 0 auto;
   }
-  .confirm-modal__iconMain{
+
+  .confirm-modal__iconMain {
     width: 80px;
     height: 80px;
     display: flex;
@@ -136,7 +140,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .order-history-detail-super-admin_item{
+
+  .order-history-detail-super-admin_item {
     padding: 15px;
     border: 1px solid #ddd;
     background: #fff;
@@ -144,13 +149,63 @@
     &:hover {
       background: #f9f9f9;
     }
+
     margin-bottom: 20px;
-    .techizat{
-      .order-history-super-admin__ids{
+
+    &__item {
+      padding: 15px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+
+      &:hover {
+        background: #f9f9f9;
+      }
+    }
+
+    &__data {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+      border: 1px solid #DCDCDC;
+      background: #FFF;
+      height: 42px;
+      padding: 0px 10px 0px 11px;
+
+      p {
+        margin: 0;
+        color: #0C0C0C;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: normal;
+
+        .quantity-count {
+          font-weight: 400;
+          color: #0C0C0C;
+        }
+
+        .quantity-label {
+          font-weight: 400;
+          color: #979797;
+        }
+      }
+    }
+
+    .techizat {
+      .order-history-super-admin__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
+
       .order-history-super-admin__id {
         color: #272727;
         font-size: 14px;
@@ -168,6 +223,94 @@
         }
       }
     }
+
+    &__details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      p {
+        margin: 5px 0;
+        color: #333;
+      }
+
+      .order-history-super-admin__ids {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .order-history-super-admin__id {
+        color: #272727;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+
+        span {
+          color: #979797;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin-right: 12px;
+        }
+      }
+    }
+
+    &__status {
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+
+      &.pending {
+        border-radius: 16px;
+        background: #FFF5F5;
+        border: 1px solid #FFC31C;
+        background: rgba(255, 229, 159, 0.25);
+      }
+
+      &.completed {
+        border-radius: 16px;
+        border: 1px solid #31AC2E;
+        background: #E7FFE5;
+      }
+
+      &.not-completed {
+        border-radius: 16px;
+        background: rgba(255, 229, 159, 0.25);
+        border: 1px solid #FBB;
+        background: #FFF5F5;
+      }
+    }
+
+    .techizat {
+      .order-history-super-admin__ids {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .order-history-super-admin__id {
+        color: #272727;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+
+        span {
+          color: #979797;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin-right: 12px;
+        }
+      }
+    }
+
     .order-history__details {
       display: flex;
       justify-content: space-between;
@@ -178,11 +321,13 @@
         margin: 5px 0;
         color: #333;
       }
-      .order-history-super-admin__ids{
+
+      .order-history-super-admin__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
+
       .order-history-super-admin__id {
         color: #272727;
         font-size: 14px;
@@ -229,6 +374,7 @@
       background: #FFF5F5;
     }
   }
+
   h2 {
     font-size: 14px;
     margin-bottom: 20px;
@@ -238,7 +384,8 @@
       text-decoration: none;
     }
   }
-  &__data{
+
+  &__data {
     p {
       margin: 0;
       font-size: 14px;
@@ -255,6 +402,7 @@
       }
     }
   }
+
   .order-history-detail-super-admin__delete {
     display: flex;
     justify-content: flex-end;
@@ -286,13 +434,16 @@
     overflow: auto;
 
   }
+
   .table-scroll::-webkit-scrollbar {
-    width: 2px;   /* dikey scroll çubuğu kalınlığı */
+    width: 2px; /* dikey scroll çubuğu kalınlığı */
     height: 6px;
   }
+
   .table-scroll::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
+
   .table-scroll::-webkit-scrollbar-thumb {
     background: #384871;
     border-radius: 4px;
@@ -300,14 +451,16 @@
   }
 
   .order-history-detail-super-admin__table {
-  margin: 0;
-width: 100%;
+    margin: 0;
+    width: 100%;
+
     th, td {
       padding: 8px 16px;
       font-size: 14px;
       border: 1px solid #ddd;
       white-space: nowrap;
     }
+
     th {
       background: #f9f9f9;
       font-weight: 500;
@@ -316,6 +469,7 @@ width: 100%;
       top: 0;
       z-index: 1;
     }
+
     th {
       & .th-label,
       & .th-search {
@@ -323,10 +477,15 @@ width: 100%;
         align-items: center;
         justify-content: space-between;
       }
+
       & .th-label {
         cursor: pointer;
-        svg { margin-left: 16px; }
+
+        svg {
+          margin-left: 16px;
+        }
       }
+
       & .th-search {
         input {
           flex: 1;
@@ -337,6 +496,7 @@ width: 100%;
           margin-right: 6px;
           outline: none;
         }
+
         svg {
           cursor: pointer;
         }
@@ -359,6 +519,7 @@ width: 100%;
     z-index: 2;
     border-radius: 0px 0px 8px 8px;
   }
+
   &__actions {
     margin-top: 20px;
     display: flex;
@@ -379,13 +540,14 @@ width: 100%;
       cursor: pointer;
     }
   }
+
   .confirm-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -400,7 +562,7 @@ width: 100%;
     border-radius: 8px;
     width: 320px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   /* Kapatma Ikonu */

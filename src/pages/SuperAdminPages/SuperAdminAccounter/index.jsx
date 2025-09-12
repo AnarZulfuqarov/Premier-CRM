@@ -105,7 +105,7 @@ const SuperAdminAccounter
                         <p>Şirkət daxilindəki bütün mühasibat əməliyyatlarını buradan izləyə bilərsiniz.</p>
                     </div>
                     <div>
-                        <button onClick={()=>navigate("/superAdmin/accounterAdd")}>
+                        <button onClick={()=>navigate("/superAdmin/accounter/accounterAdd")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none">
                                 <path
