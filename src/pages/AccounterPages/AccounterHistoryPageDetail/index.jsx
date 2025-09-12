@@ -46,7 +46,22 @@ const OrderHistoryDetailAccounter = () => {
         const yyyy = d.getFullYear();
         return `${dd}.${mm}.${yyyy}`;
     };
+    // Backend string → Date (dd.MM.yyyy)
+        const parseDMY = (s) => {
+                const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(s || '').trim());
+                if (!m) return null;
+                const [, dd, mm, yyyy] = m;
+                return new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+            };
 
+            // Backend-dən gələn son ödəniş tarixini DatePicker-ə yüklə
+                useEffect(() => {
+                        const s = orderData?.orderLastDeliveryDate;
+                        const d = parseDMY(s);
+                        if (d && (!dueDateObj || d.getTime() !== dueDateObj.getTime())) {
+                                setDueDateObj(d);
+                            }
+                    }, [orderData?.orderLastDeliveryDate]); // eslint-disable-line react-hooks/exhaustive-deps
     const handleApplyDate = async () => {
         if (!dueDateObj) return;
         try {
@@ -108,7 +123,7 @@ const OrderHistoryDetailAccounter = () => {
                     — Sifariş detalları
                 </h2>
 
-                {/* DatePicker + düymə */}
+                {/* DatePicker  düymə */}
                 <div className="due-date-row">
                     <div style={{
                         display: 'flex',
@@ -156,31 +171,6 @@ const OrderHistoryDetailAccounter = () => {
 
 
                         </div>
-                    </div>
-                    <div className="due-date-left">
-            <span className="due-date-icon" aria-hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                    d="M12.005 17.278V10.945M12 21.5C14.5196 21.5 16.9359 20.4991 18.7175 18.7175C20.4991 16.9359 21.5 14.5196 21.5 12C21.5 9.48044 20.4991 7.06408 18.7175 5.28249C16.9359 3.50089 14.5196 2.5 12 2.5C9.48044 2.5 7.06408 3.50089 5.28249 5.28249C3.50089 7.06408 2.5 9.48044 2.5 12C2.5 14.5196 3.50089 16.9359 5.28249 18.7175C7.06408 20.4991 9.48044 21.5 12 21.5Z"
-                    stroke="#ED0303"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-                <path d="M11.9551 7.44141H11.9655" stroke="#ED0303" strokeWidth="2" strokeLinecap="round"
-                      strokeLinejoin="round"/>
-              </svg>
-            </span>
-                        {orderData?.orderLastDeliveryDate && (
-                            <span className="due-date-label" style={{
-                                display:'flex',
-                                gap:"8px"
-                            }}>
-                                Son ödəniş tarixi: <p style={{
-                                    fontWeight: '500',
-                            }}>{orderData.orderLastDeliveryDate}</p>
-                            </span>
-                        )}
                     </div>
                 </div>
 

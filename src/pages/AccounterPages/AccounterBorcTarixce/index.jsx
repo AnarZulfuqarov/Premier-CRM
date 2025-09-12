@@ -1,6 +1,6 @@
 import "./index.scss";
-import { useEffect, useMemo, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useMemo, useState, useRef} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import {
     useDeleteAccountantMutation,
     useEditAccountantMutation,
@@ -8,7 +8,7 @@ import {
     useGetCompanyIdQuery,
     useGetOrdersVendorQuery,
 } from "../../../services/adminApi.jsx";
-import { usePopup } from "../../../components/Popup/PopupContext.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 /* ===================== Köməkçi ikonlar ===================== */
 const Caret = () => (
@@ -35,12 +35,12 @@ const SearchIcon = () => (
 
 /* ===================== Cədvəl sütunları ===================== */
 const columns = [
-    { key: "deliveredAt", label: "Təhvil verilmə tarixi" },
-    { key: "company", label: "Şirkət adı" },
-    { key: "amount", label: "Ümumi məbləğ" },
-    { key: "customer", label: "Sifarişçinin adı" },
-    { key: "supplier", label: "Təchizatçı(lar)" },
-    { key: "orderId", label: "Order ID" },
+    {key: "deliveredAt", label: "Təhvil verilmə tarixi"},
+    {key: "company", label: "Şirkət adı"},
+    {key: "amount", label: "Ümumi məbləğ"},
+    {key: "customer", label: "Sifarişçinin adı"},
+    {key: "supplier", label: "Təchizatçı(lar)"},
+    {key: "orderId", label: "Order ID"},
 ];
 
 const searchableKeys = new Set([
@@ -57,7 +57,7 @@ const searchableKeys = new Set([
 ]);
 
 /* ===================== Dropdown ===================== */
-function Dropdown({ label, value, onChange, options = [], placeholder = "Seç", width }) {
+function Dropdown({label, value, onChange, options = [], placeholder = "Seç", width}) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const ref = useRef(null);
@@ -86,16 +86,16 @@ function Dropdown({ label, value, onChange, options = [], placeholder = "Seç", 
     };
 
     return (
-        <div className={`filter-dd ${open ? "open" : ""}`} ref={ref} style={{ width }}>
+        <div className={`filter-dd ${open ? "open" : ""}`} ref={ref} style={{width}}>
             <button type="button" className={`dd-btn ${value ? "filled" : ""}`} onClick={() => setOpen((s) => !s)}>
                 <span>{value || label}</span>
-                <Caret />
+                <Caret/>
             </button>
 
             {open && (
                 <div className="dd-panel">
                     <div className="dd-search">
-                        <input placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+                        <input placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)}/>
                     </div>
                     <div className="dd-list">
                         <div className={`dd-item ${value === "" ? "active" : ""}`} onClick={() => selectAndClose("")}>
@@ -133,7 +133,7 @@ const sumBy = (arr, pick) => arr.reduce((acc, x) => acc + (pick(x) || 0), 0);
 const AccounterBorcTarixce = () => {
     const navigate = useNavigate();
     const showPopup = usePopup();
-    const { id } = useParams();
+    const {id} = useParams();
 
     /* ----------------- LocalStorage: borcCompanyId ----------------- */
     const [borcCompanyId, setBorcCompanyId] = useState(() => {
@@ -146,11 +146,11 @@ const AccounterBorcTarixce = () => {
     });
 
     /* ----------------- API: Vendor Orders ----------------- */
-    const { data: getOrdersVendor } = useGetOrdersVendorQuery(id);
+    const {data: getOrdersVendor} = useGetOrdersVendorQuery(id);
     const vendorDebts = getOrdersVendor?.data ?? [];
 
     /* ----------------- (İstəyə bağlı) Company by Id ----------------- */
-    const { data: companyRes } = useGetCompanyIdQuery(borcCompanyId, { skip: !borcCompanyId });
+    const {data: companyRes} = useGetCompanyIdQuery(borcCompanyId, {skip: !borcCompanyId});
     const companyObj = companyRes?.data ?? companyRes ?? null;
     const companyNameFromApi = companyObj?.name || companyObj?.title || companyObj?.companyName || "";
 
@@ -197,9 +197,9 @@ const AccounterBorcTarixce = () => {
     const orders = useMemo(() => {
         const raw = vendorDebts ?? [];
         return raw.map((o) => {
-            const company    = o?.section?.companyName || "";
+            const company = o?.section?.companyName || "";
             const department = o?.section?.departmentName || "";
-            const section    = o?.section?.name || "";
+            const section = o?.section?.name || "";
 
             // 🔁 TƏZƏ: Təchizatçı fighterInfo-dan
             const fighterFullName = [o?.fighterInfo?.name, o?.fighterInfo?.surname]
@@ -220,15 +220,17 @@ const AccounterBorcTarixce = () => {
                 acc + Number(it?.price ?? 0) * Number(it?.suppliedQuantity ?? 0), 0);
             const amount = `${amountNum.toLocaleString("az-Latn-AZ")} ₼`;
 
-            const deliveredAtDate = parseAZDate(o?.orderDeliveryTime);
-            const createdAtDate   = parseAZDate(o?.createdDate);
-            const limitAtDate     = parseAZDate(o?.orderLimitTime);
+            const deliveredAtText = o?.orderDeliveryTime || "";
+            const deliveredAtDate = parseAZDate(o?.orderDeliveryTime); // filtrləmə üçün
+            const createdAtDate = parseAZDate(o?.createdDate);
+            const limitAtDate = parseAZDate(o?.orderLimitTime);
 
             const customer = [o?.adminInfo?.name, o?.adminInfo?.surname].filter(Boolean).join(" ") || "";
 
             return {
                 orderIdNav: o?.id,
                 deliveredAt: deliveredAtDate ? deliveredAtDate.toISOString() : "",
+                deliveredAtText,
                 company,
                 amountNum,
                 amount,
@@ -469,8 +471,9 @@ const AccounterBorcTarixce = () => {
                 {/* FILTER BAR */}
                 <div className="filterbar">
                     <div className="searchbox">
-                        <SearchIcon />
-                        <input value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} placeholder="Axtarış edin..." />
+                        <SearchIcon/>
+                        <input value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)}
+                               placeholder="Axtarış edin..."/>
                     </div>
                 </div>
 
@@ -493,15 +496,7 @@ const AccounterBorcTarixce = () => {
                     />
 
                     {/* Status (istəyə bağlı göstər) */}
-                    {statuses.length > 0 && (
-                        <Dropdown
-                            label="Status seç"
-                            value={statusF}
-                            onChange={setStatusF}
-                            options={statuses}
-                            placeholder="Status"
-                        />
-                    )}
+
 
                     {/* Tez tarix seçimi */}
                     <Dropdown
@@ -516,9 +511,9 @@ const AccounterBorcTarixce = () => {
                     <div className="range-dd">
                         <div className="range-label">Tarix aralığı seç</div>
                         <div className="range-row">
-                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}/>
                             <span>—</span>
-                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}/>
                         </div>
                     </div>
 
@@ -623,11 +618,7 @@ const AccounterBorcTarixce = () => {
                             <tbody>
                             {filtered.map((row, idx) => (
                                 <tr key={row.id ?? idx}>
-                                    <td>
-                                        {row.deliveredAt
-                                            ? new Date(row.deliveredAt).toLocaleString()
-                                            : ""}
-                                    </td>
+                                    <td>{row.deliveredAtText || ""}</td>
                                     <td>{row.company}</td>
                                     <td>{row.amount}</td>
                                     <td>{row.customer}</td>
@@ -644,10 +635,17 @@ const AccounterBorcTarixce = () => {
                         <div className="header">Sifariş detalı</div>
                         {filtered.map((row, i) => (
                             <div key={row.id ?? i} className="cell">
-                                <button className="detail-btn" onClick={() => navigate(`/accounter/history/${row.orderIdNav}`)}>
-                                    Ətraflı bax <svg xmlns="http://www.w3.org/2000/svg" width="23" height="24" viewBox="0 0 23 24" fill="none">
-                                    <path d="M12.9087 8.31404L16.6128 11.9429L12.9087 8.31404ZM16.6128 11.9429L12.9839 15.647L16.6128 11.9429ZM16.6128 11.9429L5.61335 12.0558L16.6128 11.9429Z" fill="#6C6C6C"/>
-                                    <path d="M12.9087 8.31404L16.6128 11.9429M16.6128 11.9429L12.9839 15.647M16.6128 11.9429L5.61335 12.0558" stroke="#6C6C6C" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                <button className="detail-btn"
+                                        onClick={() => navigate(`/accounter/history/${row.orderIdNav}`)}>
+                                    Ətraflı bax <svg xmlns="http://www.w3.org/2000/svg" width="23" height="24"
+                                                     viewBox="0 0 23 24" fill="none">
+                                    <path
+                                        d="M12.9087 8.31404L16.6128 11.9429L12.9087 8.31404ZM16.6128 11.9429L12.9839 15.647L16.6128 11.9429ZM16.6128 11.9429L5.61335 12.0558L16.6128 11.9429Z"
+                                        fill="#6C6C6C"/>
+                                    <path
+                                        d="M12.9087 8.31404L16.6128 11.9429M16.6128 11.9429L12.9839 15.647M16.6128 11.9429L5.61335 12.0558"
+                                        stroke="#6C6C6C" stroke-miterlimit="10" stroke-linecap="round"
+                                        stroke-linejoin="round"/>
                                 </svg>
                                 </button>
                             </div>
@@ -678,10 +676,7 @@ const AccounterBorcTarixce = () => {
                                 <b>Status:</b> {editingRow.status || "—"}
                             </div>
                             <div>
-                                <b>Tarix:</b>{" "}
-                                {editingRow.deliveredAt
-                                    ? new Date(editingRow.deliveredAt).toLocaleString()
-                                    : "—"}
+                                <b>Tarix:</b> {editingRow.deliveredAtText || "—"}
                             </div>
                             <div>
                                 <b>Məbləğ:</b> {editingRow.amount}
@@ -703,8 +698,9 @@ const AccounterBorcTarixce = () => {
                                 <h4>Qaimələr</h4>
                                 <div className="overheads-grid">
                                     {editingRow.overheadNames.map((url, idx) => (
-                                        <a href={url} target="_blank" rel="noreferrer" key={idx} className="overhead-thumb">
-                                            <img src={url} alt={`overhead-${idx}`} />
+                                        <a href={url} target="_blank" rel="noreferrer" key={idx}
+                                           className="overhead-thumb">
+                                            <img src={url} alt={`overhead-${idx}`}/>
                                         </a>
                                     ))}
                                 </div>
@@ -718,27 +714,27 @@ const AccounterBorcTarixce = () => {
                                     <label>Şirkət adı</label>
                                     <input
                                         value={editingRow.company || ""}
-                                        onChange={(e) => setEditingRow({ ...editingRow, company: e.target.value })}
+                                        onChange={(e) => setEditingRow({...editingRow, company: e.target.value})}
                                     />
                                 </div>
                                 <div>
                                     <label>Təchizatçının adı</label>
                                     <input
                                         value={editingRow.supplier || ""}
-                                        onChange={(e) => setEditingRow({ ...editingRow, supplier: e.target.value })}
+                                        onChange={(e) => setEditingRow({...editingRow, supplier: e.target.value})}
                                     />
                                 </div>
                             </div>
                             <label>FIN</label>
                             <input
                                 value={editingRow.fin || ""}
-                                onChange={(e) => setEditingRow({ ...editingRow, fin: e.target.value })}
+                                onChange={(e) => setEditingRow({...editingRow, fin: e.target.value})}
                             />
                             <label>Parol</label>
                             <input
                                 type="password"
                                 value={editingRow.password || "********"}
-                                onChange={(e) => setEditingRow({ ...editingRow, password: e.target.value })}
+                                onChange={(e) => setEditingRow({...editingRow, password: e.target.value})}
                             />
                             <button className="save-btn" onClick={() => handleSave(editingRow)}>
                                 Yadda saxla
