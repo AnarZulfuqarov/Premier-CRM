@@ -46,7 +46,7 @@ function Login() {
                 } else if (role === 'Accountant') {
                     Cookies.set('accountToken', token);
                     showPopup('Giriş uğurludur', 'Sistemə daxil oldunuz', 'success');
-                    navigate('/accounter/history');
+                    navigate('/accounter/borc');
                 } else {
                     showPopup('Naməlum rol', 'Təyin olunmamış rol: ' + role, 'warning');
                 }

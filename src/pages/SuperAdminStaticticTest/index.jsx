@@ -77,85 +77,85 @@ function SuperAdminStatistikTest() {
                     </div>
 
                 </div>
-                <div className={"firstStatik"}>
-                    <div className={"chart1"}>
-                        <Chart1Card />
-                    </div>
+                {/*<div className={"firstStatik"}>*/}
+                {/*    <div className={"chart1"}>*/}
+                {/*        <Chart1Card />*/}
+                {/*    </div>*/}
 
-                    <div className={"chart2"}>
-                        <DoughnutChartCard />
-                    </div>
-                </div>
-                <div className={'secondStatik'}>
-                    <div className={'chart3'}>
-                        <MonthlyOrdersChart  />
+                {/*    <div className={"chart2"}>*/}
+                {/*        <DoughnutChartCard />*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+                {/*<div className={'secondStatik'}>*/}
+                {/*    <div className={'chart3'}>*/}
+                {/*        <MonthlyOrdersChart  />*/}
 
-                    </div>
+                {/*    </div>*/}
 
-                </div>
-                <div className={'thirdStatik'}>
-                    <div className={'chart4'}>
-                        <Chart4 />
-                    </div>
+                {/*</div>*/}
+                {/*<div className={'thirdStatik'}>*/}
+                {/*    <div className={'chart4'}>*/}
+                {/*        <Chart4 />*/}
+                {/*    </div>*/}
 
-                </div>
-                <div className={'fourStatik'}>
-                    <div className={'chart6'}>
-                        <StatusBarChart  />
-                    </div>
+                {/*</div>*/}
+                {/*<div className={'fourStatik'}>*/}
+                {/*    <div className={'chart6'}>*/}
+                {/*        <StatusBarChart  />*/}
+                {/*    </div>*/}
 
-                </div>
-                <div className={'fifthStatik'}>
-                    <ProductChart  />
-                </div>
-                <div className="sixStatik">
-                    <div className="staticHead">
-                        <div className="content">
-                            <h3>Təchizat</h3>
-                            <p>
-                                Bu hissədə təchizat sifarişlərinin vəziyyəti və ümumi həcmi əks olunur.
-                            </p>
-                        </div>
-                        <div className="dropdownSelect">
-                            <select
-                                value={selectedFighter}
-                                onChange={handleFighterChange}
-                                style={{
-                                    border: "1px solid #ccc",
-                                    borderRadius: 6,
-                                    padding: "4px 12px",
-                                    fontSize: 14,
-                                    backgroundColor: "#f5f5f5",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <option value="">Techizatçı seçin</option>
-                                {allFighters?.data?.map((fighter) => (
-                                    <option key={fighter.id} value={fighter.id}>
-                                        {fighter.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+                {/*</div>*/}
+                {/*<div className={'fifthStatik'}>*/}
+                {/*    <ProductChart  />*/}
+                {/*</div>*/}
+                {/*<div className="sixStatik">*/}
+                {/*    <div className="staticHead">*/}
+                {/*        <div className="content">*/}
+                {/*            <h3>Təchizat</h3>*/}
+                {/*            <p>*/}
+                {/*                Bu hissədə təchizat sifarişlərinin vəziyyəti və ümumi həcmi əks olunur.*/}
+                {/*            </p>*/}
+                {/*        </div>*/}
+                {/*        <div className="dropdownSelect">*/}
+                {/*            <select*/}
+                {/*                value={selectedFighter}*/}
+                {/*                onChange={handleFighterChange}*/}
+                {/*                style={{*/}
+                {/*                    border: "1px solid #ccc",*/}
+                {/*                    borderRadius: 6,*/}
+                {/*                    padding: "4px 12px",*/}
+                {/*                    fontSize: 14,*/}
+                {/*                    backgroundColor: "#f5f5f5",*/}
+                {/*                    cursor: "pointer",*/}
+                {/*                }}*/}
+                {/*            >*/}
+                {/*                <option value="">Techizatçı seçin</option>*/}
+                {/*                {allFighters?.data?.map((fighter) => (*/}
+                {/*                    <option key={fighter.id} value={fighter.id}>*/}
+                {/*                        {fighter.name}*/}
+                {/*                    </option>*/}
+                {/*                ))}*/}
+                {/*            </select>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
 
-                    <div className="firstStatik"> {/* reuse the same layout structure */}
-                        <div className="chart2">
-                            <DoughnutChartCard2
+                {/*    <div className="firstStatik"> /!* reuse the same layout structure *!/*/}
+                {/*        <div className="chart2">*/}
+                {/*            <DoughnutChartCard2*/}
 
-                            />
-                        </div>
+                {/*            />*/}
+                {/*        </div>*/}
 
-                        <div className="chart1">
-                            <Chart11Card
-                            />
-                        </div>
-                    </div>
-                </div>
+                {/*        <div className="chart1">*/}
+                {/*            <Chart11Card*/}
+                {/*            />*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
-                <div className={'sevenStatik'}>
-                    <StatusBasedBarChart  />
-                </div>
+                {/*<div className={'sevenStatik'}>*/}
+                {/*    <StatusBasedBarChart  />*/}
+                {/*</div>*/}
             </div>
         </div>
     );

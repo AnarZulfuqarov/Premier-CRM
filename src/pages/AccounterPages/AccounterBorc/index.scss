@@ -221,10 +221,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 50px;
+        gap: 8px;
         height: 40px;
         padding: 10px 17px;
-        min-width: 220px;
+        min-width: max-content;
         border-radius: 7px;
         border: 1px solid #9C9C9C;
         background: #FFF;

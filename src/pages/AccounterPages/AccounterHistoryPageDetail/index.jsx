@@ -102,8 +102,8 @@ const OrderHistoryDetailAccounter = () => {
         <div className="order-history-detail-accounter-main">
             <div className="order-history-detail-accounter">
                 <h2>
-                    <NavLink className="link" to="/accounter/history">
-                        — Tarixçə
+                    <NavLink className="link" to="/accounter/borc">
+                        — Borc
                     </NavLink>{' '}
                     — Sifariş detalları
                 </h2>
@@ -112,6 +112,7 @@ const OrderHistoryDetailAccounter = () => {
                 <div className="due-date-row">
                     <div style={{
                         display: 'flex',
+                        gap:"8px"
                     }}>
                         <div className="due-date-left">
             <span className="due-date-icon" aria-hidden>
@@ -130,7 +131,7 @@ const OrderHistoryDetailAccounter = () => {
                             <span className="due-date-label">Son ödəmə tarixi təyin et :</span>
                         </div>
 
-                        <div className="due-date-input-wrap" style={{minWidth: 280}}>
+                        <div className="due-date-input-wrap" style={{minWidth: 150}}>
                             <InputGroup inside>
                                 <DatePicker
                                     value={dueDateObj}
