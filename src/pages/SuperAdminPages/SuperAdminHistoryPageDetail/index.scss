@@ -141,22 +141,13 @@
   flex-direction: column;
   overflow: hidden;
 
-  .order-history-detail-super-admin_item {
-    padding: 15px;
-    border: 1px solid #ddd;
-    background: #fff;
-
-    &:hover {
-      background: #f9f9f9;
-    }
-
-    margin-bottom: 20px;
 
     &__item {
       padding: 15px;
       border: 1px solid #ddd;
       background: #fff;
       cursor: pointer;
+      margin-bottom: 24px;
 
       &:hover {
         background: #f9f9f9;
@@ -200,13 +191,13 @@
     }
 
     .techizat {
-      .order-history-super-admin__ids {
+      .order-history-detail-super-admin__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
 
-      .order-history-super-admin__id {
+      .order-history-detail-super-admin__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -235,13 +226,13 @@
         color: #333;
       }
 
-      .order-history-super-admin__ids {
+      .order-history-detail-super-admin__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
 
-      .order-history-super-admin__id {
+      .order-history-detail-super-admin__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -286,69 +277,11 @@
       }
     }
 
-    .techizat {
-      .order-history-super-admin__ids {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-      }
-
-      .order-history-super-admin__id {
-        color: #272727;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-
-        span {
-          color: #979797;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-          margin-right: 12px;
-        }
-      }
-    }
-
-    .order-history__details {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-
-      p {
-        margin: 5px 0;
-        color: #333;
-      }
-
-      .order-history-super-admin__ids {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-      }
-
-      .order-history-super-admin__id {
-        color: #272727;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-
-        span {
-          color: #979797;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-          margin-right: 12px;
-        }
-      }
-    }
-  }
 
 
-  .order-history-super-admin__status {
+
+
+  .order-history-detail-super-admin__status {
     padding: 5px 12px;
     border-radius: 12px;
     font-size: 12px;
@@ -385,23 +318,7 @@
     }
   }
 
-  &__data {
-    p {
-      margin: 0;
-      font-size: 14px;
-      line-height: normal;
 
-      .quantity-count {
-        font-weight: 400;
-        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
-      }
-
-      .quantity-label {
-        font-weight: 400;
-        color: #979797; // Açıq boz (yazı hissəsi üçün)
-      }
-    }
-  }
 
   .order-history-detail-super-admin__delete {
     display: flex;

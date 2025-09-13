@@ -25,7 +25,6 @@ function Dropdown({ label, value, onChange, options = [], placeholder = "Seç", 
     const [query, setQuery] = useState("");
     const ref = useRef(null);
 
-    // options -> həmişə array
     const safeOptions = useMemo(() => {
         if (Array.isArray(options)) return options;
         if (options && typeof options === "object") return Object.values(options);
@@ -110,49 +109,90 @@ const OrderHistorySuperAdmin = () => {
     const [hasMore, setHasMore] = useState(true);
 
     const [selectedCompany, setSelectedCompany] = useState(""); // "" = Hamısı
-    const commonParams = { page, pageSize, companyName: selectedCompany || "all" };
-    const { data: pagedOrdersData, isFetching } =
-        (selectedCompany || "all") === "all"
-            ? useGetOrderByPageQuery({ page, pageSize })
-            : useGetOrderByPageByCompanyQuery(commonParams);
 
+    // HƏR İKİ HOOK HƏMİŞƏ ÇAĞIRILSIN (skip ilə):
+    const {
+        data: allPagedRes,
+        isFetching: isFetchingAll,
+    } = useGetOrderByPageQuery(
+        { page, pageSize },
+        { skip: !!selectedCompany } // company seçilibsə, hamı üçün olanı skip et
+    );
+
+    const {
+        data: byCompanyRes,
+        isFetching: isFetchingByCompany,
+    } = useGetOrderByPageByCompanyQuery(
+        { page, pageSize, companyName: selectedCompany || "all" },
+        { skip: !selectedCompany } // company seçilməyibsə skip et
+    );
+
+    const isFetching = selectedCompany ? isFetchingByCompany : isFetchingAll;
+    const pageData = useMemo(() => {
+        const raw = selectedCompany ? byCompanyRes?.data : allPagedRes?.data;
+        return Array.isArray(raw) ? raw : [];
+    }, [selectedCompany, byCompanyRes, allPagedRes]);
+
+    // Şirkət dəyişəndə sıfırla
     useEffect(() => {
         setAllOrders([]);
         setPage(1);
         setHasMore(true);
     }, [selectedCompany]);
 
+    // Gələn səhifəni akkumulasiya et
     useEffect(() => {
-        const pageData = Array.isArray(pagedOrdersData?.data) ? pagedOrdersData.data : [];
-        if (page === 1 && pageData.length === 0) {
-            setAllOrders([]);
-            setHasMore(false);
-            return;
+        if (!isFetching) {
+            if (page === 1 && pageData.length === 0) {
+                setAllOrders([]);
+                setHasMore(false);
+                return;
+            }
+            if (pageData.length) {
+                setAllOrders((prev) => {
+                    const seen = new Set(prev.map((o) => o.id ?? JSON.stringify(o)));
+                    const next = pageData.filter((o) => !seen.has(o.id ?? JSON.stringify(o)));
+                    return [...prev, ...next];
+                });
+                if (pageData.length < pageSize) setHasMore(false);
+            } else if (page > 1) {
+                setHasMore(false);
+            }
         }
-        if (pageData.length) {
-            setAllOrders((prev) => {
-                const seen = new Set(prev.map((o) => o.id));
-                const next = pageData.filter((o) => !seen.has(o.id));
-                return [...prev, ...next];
-            });
-            if (pageData.length < pageSize) setHasMore(false);
-        } else if (page > 1) {
-            setHasMore(false);
-        }
-    }, [pagedOrdersData, page, pageSize]);
+    }, [pageData, isFetching, page, pageSize]);
 
-    // infinite scroll
+    // IntersectionObserver ilə stabil infinite scroll
     const listRef = useRef(null);
+    const sentinelRef = useRef(null);
+
     useEffect(() => {
-        const el = listRef.current;
-        if (!el) return;
-        const onScroll = () => {
-            const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
-            if (nearBottom && !isFetching && hasMore) setPage((p) => p + 1);
-        };
-        el.addEventListener("scroll", onScroll);
-        return () => el.removeEventListener("scroll", onScroll);
-    }, [isFetching, hasMore]);
+        const rootEl = listRef.current;
+        const target = sentinelRef.current;
+        if (!rootEl || !target) return;
+
+        let ticking = false; // ardıcıl iki dəfə artmasın
+        const io = new IntersectionObserver(
+            (entries) => {
+                const [entry] = entries;
+                if (entry.isIntersecting && !isFetching && hasMore && !ticking) {
+                    ticking = true;
+                    setPage((p) => p + 1);
+                    // kiçik gecikmə ilə təkrar triggerin qarşısını alaq
+                    setTimeout(() => {
+                        ticking = false;
+                    }, 350);
+                }
+            },
+            {
+                root: rootEl,
+                rootMargin: "200px 0px", // bir az əvvəl yüklə
+                threshold: 0.01,
+            }
+        );
+
+        io.observe(target);
+        return () => io.disconnect();
+    }, [isFetching, hasMore, selectedCompany]);
 
     /* ===== Top/Chip filters ===== */
     const [globalSearch, setGlobalSearch] = useState("");
@@ -217,10 +257,7 @@ const OrderHistorySuperAdmin = () => {
 
             const items = Array.isArray(order.items) ? order.items : [];
             const totalPrice =
-                items.reduce(
-                    (sum, item) => sum + (Number(item?.suppliedQuantity ?? 0) * Number(item?.price ?? 0)),
-                    0
-                ) ?? 0;
+                items.reduce((sum, item) => sum + (Number(item?.suppliedQuantity ?? 0) * Number(item?.price ?? 0)), 0) ?? 0;
 
             const productNames = Array.from(new Set(items.map((i) => i?.product?.name).filter(Boolean)));
 
@@ -261,7 +298,6 @@ const OrderHistorySuperAdmin = () => {
     const filtered = useMemo(() => {
         let list = Array.isArray(shaped) ? [...shaped] : [];
 
-        // global search
         if (globalSearch.trim()) {
             const q = globalSearch.trim().toLowerCase();
             list = list.filter(
@@ -310,19 +346,7 @@ const OrderHistorySuperAdmin = () => {
         if (pMax !== null) list = list.filter((r) => r.amountNum <= pMax);
 
         return list;
-    }, [
-        shaped,
-        globalSearch,
-        statusF,
-        departmentF,
-        sectionF,
-        productF,
-        dateQuickF,
-        dateFrom,
-        dateTo,
-        priceMin,
-        priceMax,
-    ]);
+    }, [shaped, globalSearch, statusF, departmentF, sectionF, productF, dateQuickF, dateFrom, dateTo, priceMin, priceMax]);
 
     /* ===== Render ===== */
     return (
@@ -342,15 +366,14 @@ const OrderHistorySuperAdmin = () => {
                         />
                     </div>
 
-                        <Dropdown
-                            label="Status seç"
-                            value={statusF}
-                            onChange={setStatusF}
-                            options={statusOptions}
-                            placeholder="Status"
-                            width="200px"
-                        />
-
+                    <Dropdown
+                        label="Status seç"
+                        value={statusF}
+                        onChange={setStatusF}
+                        options={["Təchizatçıdan təsdiq gözləyən", "Sifarişçidən təhvil gözləyən", "Tamamlanmış"]}
+                        placeholder="Status"
+                        width="200px"
+                    />
                 </div>
 
                 {/* ==== CHIP/FILTER ROW ==== */}
@@ -364,7 +387,6 @@ const OrderHistorySuperAdmin = () => {
                     />
                     <Dropdown label="Şöbə seç" value={departmentF} onChange={setDepartmentF} options={departments} />
                     <Dropdown label="Bölmə seç" value={sectionF} onChange={setSectionF} options={sections} />
-                    {/*<Dropdown label="Status üzrə filtr" value={statusF} onChange={setStatusF} options={statusOptions} />*/}
                     <Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />
 
                     <div className="range-dd">
@@ -434,6 +456,9 @@ const OrderHistorySuperAdmin = () => {
                     {!isFetching && filtered.length === 0 && (
                         <div className="ohsa-empty">Məlumat tapılmadı</div>
                     )}
+
+                    {/* Infinite scroll üçün sentinel */}
+                    <div ref={sentinelRef} className="io-sentinel" />
                 </div>
             </div>
         </div>

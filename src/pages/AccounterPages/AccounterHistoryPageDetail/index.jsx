@@ -174,24 +174,24 @@ const OrderHistoryDetailAccounter = () => {
                     </div>
                 </div>
 
-                <div key={orderData?.id} className="order-history-detail-accounter_item">
+                <div key={orderData?.id} className="order-history-detail-accounter__item">
                     <div className="techizat">
-                        <div className="order-history-super-admin__ids">
-                            <p className="order-history-super-admin__id">
+                        <div className="order-history-detail-accounter__ids">
+                            <p className="order-history-detail-accounter__id">
                                 <span>Təchizatçının adı:</span> {orderData?.fighterInfo?.name} {orderData?.fighterInfo?.surname}
                             </p>
-                            <p className="order-history-super-admin__id">
+                            <p className="order-history-detail-accounter__id">
                                 <span>Sifarişçinin adı:</span> {orderData?.adminInfo?.name} {orderData?.adminInfo?.surname}
                             </p>
                         </div>
                     </div>
 
-                    <div className="order-history-super-admin__details">
-                        <div className="order-history-super-admin__ids">
-                            <p className="order-history-super-admin__id">
+                    <div className="order-history-detail-accounter__details">
+                        <div className="order-history-detail-accounter__ids">
+                            <p className="order-history-detail-accounter__id">
                                 <span>Order ID</span> {orderData?.id}
                             </p>
-                            <p className="order-history-super-admin__id">
+                            <p className="order-history-detail-accounter__id">
                                 <span>Ümumi məbləğ:</span>{' '}
                                 {orderData?.items
                                     ?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0)
@@ -201,7 +201,7 @@ const OrderHistoryDetailAccounter = () => {
                         </div>
                     </div>
 
-                    <div className="order-history-super-admin__data">
+                    <div className="order-history-detail-accounter__data">
                         <p>{orderData?.items?.map((item) => item.product?.name).join(', ')}</p>
                         <p>
                             <span className="quantity-count">{itemCount}</span> <span

@@ -576,7 +576,7 @@ const SuperAdminAccounterBorc = () => {
                                 <tr key={r.id}>
                                     <td
                                         style={{ cursor: "pointer" }}
-                                        onClick={() => r.vendorId && navigate(`/accounter/borc/${r.vendorId}`)}
+                                        // onClick={() => r.vendorId && navigate(`/accounter/borc/${r.vendorId}`)}
                                     >
                                         {r.lastOrderAt}
                                     </td>

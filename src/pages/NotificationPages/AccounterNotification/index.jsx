@@ -17,9 +17,9 @@ const formatDate = (input) => {
     const isDDMM = typeof input === 'string' && /^\d{2}\.\d{2}\.\d{4}/.test(input);
     let d;
     if (isDDMM) {
-        const [datePart, timePart = '00:00:00'] = input.split(' ');
+        const [datePart] = input.split(' ');
         const [dd, mm, yyyy] = datePart.split('.');
-        d = new Date(`${yyyy}-${mm}-${dd}T${timePart}`);
+        d = new Date(`${yyyy}-${mm}-${dd}`);
     } else {
         d = new Date(input);
     }
@@ -30,21 +30,19 @@ const formatDate = (input) => {
     const yyyy = d.getFullYear();
     const hh = pad(d.getHours());
     const min = pad(d.getMinutes());
-    return `${dd}.${mm}.${yyyy} ${hh}:${min}`;
+    return `${dd}.${mm}.${yyyy}`;
 };
 
 // Order obyekti müxtəlif strukturlarda gələ bilər – bu helper son ödənişi tapır
+// (artıq istifadə etmirik, amma istəsən saxlaya bilərsən)
 const pickLastPaymentDate = (order) => {
     if (!order) return null;
-
-    // 1) Birbaşa sahə
     if (order.lastPaymentDate) return order.lastPaymentDate;
     if (order.lastPaidAt) return order.lastPaidAt;
     if (order.lastPaymentAt) return order.lastPaymentAt;
     if (order.payment?.lastPaymentDate) return order.payment.lastPaymentDate;
     if (order.order?.lastPaymentDate) return order.order.lastPaymentDate;
 
-    // 2) Ödənişlər massivindən ən son tarix
     const payments = order.payments || order.orderPayments || order.paymentHistory || [];
     if (Array.isArray(payments) && payments.length) {
         const getTs = (p) => new Date(p.paidAt || p.createdAt || p.date || p.paymentDate || p.time || 0).getTime();
@@ -52,14 +50,22 @@ const pickLastPaymentDate = (order) => {
         const last = latest?.paidAt || latest?.createdAt || latest?.date || latest?.paymentDate || null;
         if (last) return last;
     }
-
     return null;
 };
 
 // ---- child row (hook burada çağırılır; lazy YOXDUR) ----
 const NotificationRow = ({ n, rowNumber, onClick }) => {
-    const { data: orderData, isFetching } = useGetMyOrdersIdAccounterQuery(n?.orderId, { skip: !n?.orderId });
-    const lastPay = pickLastPaymentDate(orderData);
+    const { data: orderResp, isFetching } = useGetMyOrdersIdAccounterQuery(n?.orderId, { skip: !n?.orderId });
+
+    // Backenddən bəzən { data: {...} } gəlir, bəzən birbaşa obyekt – hər ikisini tuturuq
+    const order = orderResp?.data ?? orderResp;
+
+    // İstədiyin sahə: orderLastDeliveryDate (fallback: lastDeliveryDate)
+    const lastDeliveryRaw =
+        order?.orderLastDeliveryDate ||
+        order?.order?.orderLastDeliveryDate ||
+        order?.lastDeliveryDate ||
+        null;
 
     const iconColor =
         n.role === 'customer' ? 'red' :
@@ -81,8 +87,6 @@ const NotificationRow = ({ n, rowNumber, onClick }) => {
                 </div>
 
                 <div>
-                    {/*<h3>{n.role === 'admin' ? 'Super Admin' : n.role === 'accountant' ? 'Mühasib' : 'Sifarişçi'}</h3>*/}
-
                     <p>
                         {n.type === 'order_created' && 'Yeni sifariş var. Təmin edin '}
                         {n.type === 'upcoming_payment' && 'Ödəniş tarixinin yaxınlaşması haqqında xatırlatma'}
@@ -90,8 +94,8 @@ const NotificationRow = ({ n, rowNumber, onClick }) => {
 
                     {n.orderId && (
                         <small className="muted">
-                            Sifariş ID: {n.orderId} • Son ödəniş:&nbsp;
-                            {isFetching ? 'yüklənir…' : (lastPay ? formatDate(lastPay) : '—')}
+                            Sifariş ID: {n.orderId} • Son çatdırılma tarixi:&nbsp;
+                            {isFetching ? 'yüklənir…' : (lastDeliveryRaw ? formatDate(lastDeliveryRaw) : '—')}
                         </small>
                     )}
                 </div>
@@ -174,9 +178,7 @@ const AccounterNotification = () => {
         try {
             await markAsRead(n.id);
             refetch();
-
-                navigate("/accounter/borc");
-
+            navigate("/accounter/borc");
         } catch (error) {
             console.error("Bildiriş oxunarkən xəta baş verdi:", error);
         }

@@ -1,9 +1,4 @@
-/* ============== Common ============== */
-@mixin card {
-  background: #fff;
-  border: 1px solid #e7e7e7;
-  border-radius: 10px;
-}
+
 
 /* ============== Wrapper ============== */
 .order-history-super-admin-main {
@@ -31,21 +26,103 @@
   }
 }
 
-/* ============== Top filter bar ============== */
-.filterbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  width: 100%;
+/* ============== Common ============== */
+@mixin card {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+}
 
-  .searchbox {
+/* ============== Dropdown BASE (həm filterbar, həm filter-row üçün) ============== */
+.filter-dd {
+  position: relative;
+
+  .dd-btn {
     @include card;
-    flex: 1; /* search daha çox yer tutsun */
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    height: 36px;
+
+    span {
+      white-space: nowrap;
+      color: #9a9a9a;
+    }
+    &.filled span { font-weight: 500; color: #0c0c0c; }
+  }
+
+  .dd-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: auto;
+    right: 0;
+    transform-origin:top right;
+    width: 260px;
+    @include card;
+    display: none;
+    z-index: 12;
+    background: #fff;
+
+    .dd-search {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+
+      input {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 8px;
+        outline: none;
+        font-size: 14px;
+      }
+    }
+
+    .dd-list {
+      max-height: 220px;
+      overflow: auto;
+      padding: 6px;
+
+      .dd-item {
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #0c0c0c;
+
+        &:hover { background: #f5f6fa; }
+        &.active { background: #eef2ff; color: #1c2c57; font-weight: 500; }
+      }
+      .dd-empty {
+        font-size: 13px;
+        color: #6c6c6c;
+        padding: 8px 10px;
+      }
+    }
+  }
+
+  &.open .dd-panel { display: block; }
+}
+
+/* ============== Top filter bar ============== */
+.filterbar {
+  display: flex;
+  align-items: center;
+  gap:8px;
+  margin-bottom: 12px;
+  width: 95%;
+
+  .searchbox {
+    @include card;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    width: 75%;
 
     input {
       flex: 1;
@@ -56,12 +133,12 @@
     }
   }
 
+  /* status dropdown üçün ölçü */
   .filter-dd {
-    min-width: 200px; /* status dropdown */
-    height: 100%;
+    min-width: 200px;
+    height: 36px;
   }
 }
-
 
 /* ============== Chip / alt filter sıra ============== */
 .filter-row {
@@ -70,76 +147,8 @@
   gap: 10px 6px;
   margin-bottom: 18px;
 
-  .filter-dd {
-    position: relative;
-
-    .dd-btn {
-      @include card;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      font-size: 14px;
-      background: #fff;
-      cursor: pointer;
-      height: 36px;
-
-      span {
-        white-space: nowrap;
-        color: #9a9a9a;
-      }
-      &.filled span { font-weight: 500; color: #0c0c0c; }
-    }
-
-    .dd-panel {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      width: 260px;
-      @include card;
-      display: none;
-      z-index: 12;
-      background: #fff;
-
-      .dd-search {
-        padding: 8px;
-        border-bottom: 1px solid #eee;
-        input {
-          width: 100%;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 8px;
-          outline: none;
-          font-size: 14px;
-        }
-      }
-
-      .dd-list {
-        max-height: 220px;
-        overflow: auto;
-        padding: 6px;
-
-        .dd-item {
-          padding: 8px 10px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          color: #0c0c0c;
-
-          &:hover { background: #f5f6fa; }
-          &.active { background: #eef2ff; color: #1c2c57; font-weight: 500; }
-        }
-        .dd-empty {
-          font-size: 13px;
-          color: #6c6c6c;
-          padding: 8px 10px;
-        }
-      }
-    }
-
-    &.open .dd-panel { display: block; }
-  }
-
+  /* Buradan .filter-dd-in ümumi qaydalarını çıxardıq.
+     Lazım olsa yalnız layout-a aid şeyləri saxlayın. */
   .range-dd {
     @include card;
     padding: 6px 10px;
@@ -173,10 +182,11 @@
   }
 }
 
+
 /* ============== Table wrapper + scrollbar ============== */
 .order-history-super-admin__table-wrap {
   @include card;
-  max-height: 520px;
+  max-height:480px;
   overflow: auto;
   padding: 0;
   border-color: #e6e8eb;
@@ -275,11 +285,10 @@
   border-radius: 6px;
   width: 100%;
   text-align: left;
-  padding: 6px 8px;
   transition: 0.2s ease;
+  text-align: center;
 
   &:after { content: "→"; margin-left: 6px; }
-  &:hover { background: #f5f6fa; color: #0c0c0c; }
 }
 
 .ohsa-empty {

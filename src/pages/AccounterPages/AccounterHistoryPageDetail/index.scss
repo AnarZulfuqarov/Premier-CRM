@@ -215,22 +215,63 @@
     }
 
 
-  .order-history-detail-accounter_item{
-    padding: 15px;
-    border: 1px solid #ddd;
-    background: #fff;
 
-    &:hover {
-      background: #f9f9f9;
+    &__item {
+      padding: 15px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      margin-bottom: 24px;
+
+      &:hover {
+        background: #f9f9f9;
+      }
     }
-    margin-bottom: 20px;
-    .techizat{
-      .order-history-super-admin__ids{
+
+    &__data {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+      border: 1px solid #DCDCDC;
+      background: #FFF;
+      height: 42px;
+      padding: 0px 10px 0px 11px;
+
+      p {
+        margin: 0;
+        color: #0C0C0C;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: normal;
+
+        .quantity-count {
+          font-weight: 400;
+          color: #0C0C0C;
+        }
+
+        .quantity-label {
+          font-weight: 400;
+          color: #979797;
+        }
+      }
+    }
+
+    .techizat {
+      .order-history-detail-accounter__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-super-admin__id {
+
+      .order-history-detail-accounter__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -247,7 +288,8 @@
         }
       }
     }
-    .order-history__details {
+
+    &__details {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -257,12 +299,14 @@
         margin: 5px 0;
         color: #333;
       }
-      .order-history-super-admin__ids{
+
+      .order-history-detail-accounter__ids {
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-super-admin__id {
+
+      .order-history-detail-accounter__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -279,35 +323,36 @@
         }
       }
     }
-  }
 
+    &__status {
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
 
-  .order-history-super-admin__status {
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+      &.pending {
+        border-radius: 16px;
+        background: #FFF5F5;
+        border: 1px solid #FFC31C;
+        background: rgba(255, 229, 159, 0.25);
+      }
 
-    &.pending {
-      border-radius: 16px;
-      background: #FFF5F5;
-      border: 1px solid #FFC31C;
-      background: rgba(255, 229, 159, 0.25);
+      &.completed {
+        border-radius: 16px;
+        border: 1px solid #31AC2E;
+        background: #E7FFE5;
+      }
+
+      &.not-completed {
+        border-radius: 16px;
+        background: rgba(255, 229, 159, 0.25);
+        border: 1px solid #FBB;
+        background: #FFF5F5;
+      }
     }
 
-    &.completed {
-      border-radius: 16px;
-      border: 1px solid #31AC2E;
-      background: #E7FFE5;
-    }
 
-    &.not-completed {
-      border-radius: 16px;
-      background: rgba(255, 229, 159, 0.25);
-      border: 1px solid #FBB;
-      background: #FFF5F5;
-    }
-  }
+
   h2 {
     font-size: 14px;
     margin-bottom: 20px;
@@ -315,23 +360,6 @@
     .link {
       color: #5b5b5b;
       text-decoration: none;
-    }
-  }
-  &__data{
-    p {
-      margin: 0;
-      font-size: 14px;
-      line-height: normal;
-
-      .quantity-count {
-        font-weight: 400;
-        color: #0C0C0C; // Tünd rəng (rəqəmlər üçün)
-      }
-
-      .quantity-label {
-        font-weight: 400;
-        color: #979797; // Açıq boz (yazı hissəsi üçün)
-      }
     }
   }
   .order-history-detail-accounter__delete {

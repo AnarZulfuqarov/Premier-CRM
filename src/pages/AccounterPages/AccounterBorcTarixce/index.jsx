@@ -578,39 +578,63 @@ const AccounterBorcTarixce = () => {
                         </span>
                                         )}
                                         {searchCol === c.key && (
-                                            <div className="search-input-wrapper">
-                                                <input
-                                                    autoFocus
-                                                    type="text"
-                                                    value={searchTerm}
-                                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                                    placeholder={`Axtar: ${c.label}`}
-                                                />
-                                                <span
-                                                    className="close-search"
-                                                    onClick={() => {
-                                                        setSearchCol(null);
-                                                        setSearchTerm("");
-                                                    }}
-                                                >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                            >
-                              <path
-                                  d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5"
-                                  stroke="#7A7A7A"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                              />
-                            </svg>
-                          </span>
-                                            </div>
+                                            c.key === "deliveredAt" ? (
+                                                <div className="search-input-wrapper">
+                                                    <input
+                                                        type="date"
+                                                        value={dateFrom}
+                                                        onChange={(e) => {
+                                                            setDateQuickF("");
+                                                            setDateFrom(e.target.value);
+                                                        }}
+                                                    />
+                                                    <span>—</span>
+                                                    <input
+                                                        type="date"
+                                                        value={dateTo}
+                                                        onChange={(e) => {
+                                                            setDateQuickF("");
+                                                            setDateTo(e.target.value);
+                                                        }}
+                                                    />
+                                                    <span
+                                                        className="close-search"
+                                                        onClick={() => {
+                                                            setSearchCol(null);
+                                                            setDateFrom("");
+                                                            setDateTo("");
+                                                            setDateQuickF("");
+                                                        }}
+                                                    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5" stroke="#7A7A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </span>
+                                                </div>
+                                            ) : (
+                                                <div className="search-input-wrapper">
+                                                    <input
+                                                        autoFocus
+                                                        type="text"
+                                                        value={searchTerm}
+                                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                                        placeholder={`Axtar: ${c.label}`}
+                                                    />
+                                                    <span
+                                                        className="close-search"
+                                                        onClick={() => {
+                                                            setSearchCol(null);
+                                                            setSearchTerm("");
+                                                        }}
+                                                    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5" stroke="#7A7A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </span>
+                                                </div>
+                                            )
                                         )}
+
                                     </th>
                                 ))}
                             </tr>
@@ -635,7 +659,7 @@ const AccounterBorcTarixce = () => {
                         <div className="header">Sifariş detalı</div>
                         {filtered.map((row, i) => (
                             <div key={row.id ?? i} className="cell">
-                                <button className="detail-btn"
+                                <button className="detail-btnn"
                                         onClick={() => navigate(`/accounter/history/${row.orderIdNav}`)}>
                                     Ətraflı bax <svg xmlns="http://www.w3.org/2000/svg" width="23" height="24"
                                                      viewBox="0 0 23 24" fill="none">

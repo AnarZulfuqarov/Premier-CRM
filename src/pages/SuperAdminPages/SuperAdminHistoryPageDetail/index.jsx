@@ -67,23 +67,23 @@ const OrderHistoryDetailSuperAdmin = () => {
                     <NavLink className="link" to="/superAdmin/history">— Tarixçə</NavLink>{' '}
                     — Sifariş detalları
                 </h2>
-                <div key={orderData?.id} className="order-history-detail-super-admin_item">
+                <div key={orderData?.id} className="order-history-detail-super-admin__item">
                     <div className={"techizat"}>
-                        <div className={"order-history-super-admin__ids"}>
-                            <p className="order-history-super-admin__id">
+                        <div className={"order-history-detail-super-admin__ids"}>
+                            <p className="order-history-detail-super-admin__id">
                                 <span>Təchizatçının adı:</span> {orderData?.fighterInfo?.name} {orderData?.fighterInfo?.surname}
                             </p>
-                            <p className="order-history-super-admin__id">
+                            <p className="order-history-detail-super-admin__id">
                                 <span>Sifarişçinin adı:</span> {orderData?.adminInfo?.name} {orderData?.adminInfo?.surname}
                             </p>
                         </div>
                     </div>
-                    <div className="order-history-super-admin__details">
-                        <div className={"order-history-super-admin__ids"}>
-                            <p className="order-history-super-admin__id">
+                    <div className="order-history-detail-super-admin__details">
+                        <div className={"order-history-detail-super-admin__ids"}>
+                            <p className="order-history-detail-super-admin__id">
                                 <span>Order ID</span> {orderData?.id}
                             </p>
-                            <p className="order-history-super-admin__id">
+                            <p className="order-history-detail-super-admin__id">
                                 <span>Ümumi məbləğ:</span> {
                                 orderData?.items?.reduce((sum, item) =>
                                     sum + (item.suppliedQuantity * (item?.price || 0)), 0
@@ -92,11 +92,11 @@ const OrderHistoryDetailSuperAdmin = () => {
                             </p>
                         </div>
                         <span
-                            className={`order-history-super-admin__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'pending'}`}>
+                            className={`order-history-detail-super-admin__status ${status === 'Tamamlanmış' ? 'completed' : status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' : 'pending'}`}>
   {status}
 </span>
                     </div>
-                    <div className="order-history-super-admin__data">
+                    <div className="order-history-detail-super-admin__data">
                         <p>{orderData?.items?.map(item => item.product?.name).join(', ')}</p>
                         <p>
                             <span className="quantity-count">{itemCount}</span>{' '}
