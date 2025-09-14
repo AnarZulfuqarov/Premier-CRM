@@ -1,105 +1,141 @@
-import { useState } from "react";
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    CartesianGrid,
-} from "recharts";
-import { useGetMonthlyOrderAmountStatikQuery } from "../../../services/adminApi";
+// src/components/Statistika/OrdersTotalCountAmountTable.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
+import {
+    useGetMonthlyOrderAmountStatikQuery,    // { year, companyId } -> monthlyOrderAmounts {yanvar: number, ...}
+    useGetMonthlyOrderStatusStatikQuery,    // { year, companyId } -> statusCounts [{month:'yanvar', completedCount,...}]
+    useGetAllCompaniesQuery,                // şirkət dropdown-u üçün
+} from "/src/services/adminApi.jsx";
+import "./index.scss";
 
-const yearOptions = [2025, 2024, 2023];
-
-const monthOrder = [
-    "yanvar", "fevral", "mart", "aprel", "may", "iyun",
-    "iyul", "avqust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+const MONTHS_ORDER = [
+    { label: "Yanvar",   key: "yanvar"   },
+    { label: "Fevral",   key: "fevral"   },
+    { label: "Mart",     key: "mart"     },
+    { label: "Aprel",    key: "aprel"    },
+    { label: "May",      key: "may"      },
+    { label: "İyun",     key: "iyun"     },
+    { label: "İyul",     key: "iyul"     },
+    { label: "Avqust",   key: "avqust"   },
+    { label: "Sentyabr", key: "sentyabr" },
+    { label: "Oktyabr",  key: "oktyabr"  },
+    { label: "Noyabr",   key: "noyabr"   },
+    { label: "Dekabr",   key: "dekabr"   },
 ];
 
-const localizedMonthNames = [
-    "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
-    "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-];
+const yearOptions = (() => {
+    const y = new Date().getFullYear();
+    return [y - 2, y - 1, y, y + 1, y + 2];
+})();
 
-const Chart4 = () => {
-    const [selectedYear, setSelectedYear] = useState(2025);
-    const companyId = localStorage.getItem("selectedCompanyId");
-    const isValidId = companyId && companyId.length === 36;
+export default function OrdersTotalCountAmountTable({
+                                                        initialCompanyId = "",                 // istəsən parent-dən ver
+                                                        defaultYear = new Date().getFullYear()
+                                                    }) {
+    // Şirkətlər
+    const { data: companiesResp } = useGetAllCompaniesQuery();
+    const companies = companiesResp?.data ?? companiesResp ?? [];
 
-    const { data, isLoading, isError } = useGetMonthlyOrderAmountStatikQuery(
-        isValidId ? { year: selectedYear, companyId } : skipToken
-    );
+    const [companyId, setCompanyId] = useState(initialCompanyId || (companies?.[0]?.id ?? ""));
+    useEffect(() => {
+        if (!initialCompanyId && companies?.length) setCompanyId(companies[0].id);
+    }, [companies, initialCompanyId]);
 
-    const transformedData =
-        data?.monthlyOrderAmounts
-            ? monthOrder.map((key, idx) => ({
-                month: localizedMonthNames[idx],
-                count: data.monthlyOrderAmounts[key] || 0,
-            }))
-            : [];
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
+    const isValidId = Boolean(companyId);
+
+    const q = isValidId ? { year: Number(selectedYear), companyId } : skipToken;
+
+    // A) Məbləğ
+    const {
+        data: amountResp,
+        isLoading: isLoadingAmount,
+        isError: isErrorAmount
+    } = useGetMonthlyOrderAmountStatikQuery(q);
+
+    // B) Status -> toplam say
+    const {
+        data: statusResp,
+        isLoading: isLoadingStatus,
+        isError: isErrorStatus
+    } = useGetMonthlyOrderStatusStatikQuery(q);
+
+    const amountObj = amountResp?.monthlyOrderAmounts ?? {};
+    const countsMap = useMemo(() => {
+        const arr = statusResp?.statusCounts ?? [];
+        const map = {};
+        for (const it of arr) {
+            const total = Number(it.completedCount ?? 0) + Number(it.pendingCount ?? 0) + Number(it.canceledCount ?? 0);
+            map[String(it.month)] = total;
+        }
+        return map; // { 'yanvar': 0, ... }
+    }, [statusResp]);
+
+    const rows = useMemo(() => {
+        return MONTHS_ORDER.map(({ label, key }) => ({
+            monthName: label,
+            count: Number(countsMap[key] ?? 0),
+            amount: Number(amountObj[key] ?? 0),
+        }));
+    }, [countsMap, amountObj]);
+
+    const isLoading = isLoadingAmount || isLoadingStatus;
+    const isError = isErrorAmount || isErrorStatus;
 
     return (
-        <div style={{ width: "100%", height: 320 }}>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 32,
-            }}>
-                <h3 style={{ margin: 0 }}>Verilən sifarişlərin məbləği</h3>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(Number(e.target.value))}
-                    style={{
-                        border: "1px solid #ccc",
-                        borderRadius: 6,
-                        padding: "4px 12px",
-                        fontSize: 14,
-                        backgroundColor: "#f5f5f5",
-                        cursor: "pointer",
-                    }}
-                >
-                    {yearOptions.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
-                    ))}
-                </select>
+        <div className="otca-card">
+            <div className="otca-head">
+                <h3 className="otca-title">Verilən sifarişlərin ümumi sayı və məbləği</h3>
+
+                <div className="otca-filters">
+                    <div className="filter">
+                        <span className="label">Şirkətin adı:</span>
+                        <div className="select-wrap">
+                            <select value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
+                                {companies.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter">
+                        <span className="label">İl seçimi:</span>
+                        <div className="select-wrap">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                                {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {isLoading ? (
-                <p>Yüklənir...</p>
-            ) : isError ? (
-                <p>Xəta baş verdi</p>
-            ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={transformedData}>
-                        <defs>
-                            <linearGradient id="colorYellow" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#FACC15" stopOpacity={0.6} />
-                                <stop offset="100%" stopColor="#FACC15" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
-                        <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                        <YAxis tick={{ fontSize: 12 }} />
-                        <Tooltip formatter={(value) => value.toLocaleString()} />
-                        <Area
-                            type="monotone"
-                            dataKey="count"
-                            stroke="#FACC15"
-                            fill="url(#colorYellow)"
-                            strokeWidth={2}
-                            dot={{ r: 3, stroke: "#FACC15", strokeWidth: 2, fill: "#fff" }}
-                            activeDot={{ r: 6 }}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
-            )}
+            <div className="otca-table-wrap">
+                {isLoading ? (
+                    <div className="otca-state">Yüklənir...</div>
+                ) : isError ? (
+                    <div className="otca-state error">Xəta baş verdi</div>
+                ) : (
+                    <table className="otca-table">
+                        <thead>
+                        <tr>
+                            <th>Aylar</th>
+                            <th>Sifariş sayı</th>
+                            <th>Sifariş məbləği</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {rows.map(r => (
+                            <tr key={r.monthName}>
+                                <td className="month">{r.monthName}</td>
+                                <td>{r.count}</td>
+                                <td>{r.amount.toLocaleString("az-AZ")} ₼</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
-};
-
-export default Chart4;
+}

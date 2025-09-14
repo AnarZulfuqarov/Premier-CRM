@@ -1,139 +1,137 @@
-import { useState } from "react";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-} from "recharts";
-import { useGetMonthlyOrderStatusStatikQuery } from "../../../services/adminApi";
+// src/components/Statistika/OrdersSupplyStatusTable.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
+import {
+    useGetAllCompaniesQuery,
+    useGetMonthlyOrderStatusStatikQuery, // { year, companyId } -> statusCounts[]
+} from "/src/services/adminApi.jsx";
+import "./index.scss";
 
-const yearOptions = [2025, 2024, 2023];
+const MONTHS_ORDER = [
+    { label: "Yanvar",   key: "yanvar"   },
+    { label: "Fevral",   key: "fevral"   },
+    { label: "Mart",     key: "mart"     },
+    { label: "Aprel",    key: "aprel"    },
+    { label: "May",      key: "may"      },
+    { label: "İyun",     key: "iyun"     },
+    { label: "İyul",     key: "iyul"     },
+    { label: "Avqust",   key: "avqust"   },
+    { label: "Sentyabr", key: "sentyabr" },
+    { label: "Oktyabr",  key: "oktyabr"  },
+    { label: "Noyabr",   key: "noyabr"   },
+    { label: "Dekabr",   key: "dekabr"   },
+];
 
-const monthMap = {
-    yanvar: "Yanvar",
-    fevral: "Fevral",
-    mart: "Mart",
-    aprel: "Aprel",
-    may: "May",
-    iyun: "İyun",
-    iyul: "İyul",
-    avqust: "Avqust",
-    sentyabr: "Sentyabr",
-    oktyabr: "Oktyabr",
-    noyabr: "Noyabr",
-    dekabr: "Dekabr",
-};
+const yearOptions = (() => {
+    const y = new Date().getFullYear();
+    return [y - 2, y - 1, y, y + 1, y + 2];
+})();
 
-const StatusBarChart = () => {
-    const [selectedYear, setSelectedYear] = useState(2025);
-    const companyId = localStorage.getItem("selectedCompanyId");
+export default function OrdersSupplyStatusTable({
+                                                    initialCompanyId = "",
+                                                    defaultYear = new Date().getFullYear(),
+                                                }) {
+    // Şirkətlər
+    const { data: companiesResp } = useGetAllCompaniesQuery();
+    const companies = companiesResp?.data ?? companiesResp ?? [];
 
-    const { data, isLoading, isError } = useGetMonthlyOrderStatusStatikQuery(
-        companyId ? { year: selectedYear, companyId } : skipToken
+    const [companyId, setCompanyId] = useState(initialCompanyId || (companies?.[0]?.id ?? ""));
+    useEffect(() => {
+        if (!initialCompanyId && companies?.length) setCompanyId(companies[0].id);
+    }, [companies, initialCompanyId]);
+
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
+    const isValidId = Boolean(companyId);
+
+    const q = isValidId ? { year: Number(selectedYear), companyId } : skipToken;
+
+    // Statuslar
+    const {
+        data: statusResp,
+        isLoading,
+        isError,
+    } = useGetMonthlyOrderStatusStatikQuery(q);
+
+    // { ayKey: { pending, completed } } xəritəsi
+    const statusMap = useMemo(() => {
+        const map = {};
+        const arr = statusResp?.statusCounts ?? [];
+        for (const it of arr) {
+            const m = String(it.month);
+            map[m] = {
+                pending: Number(it.pendingCount ?? 0),
+                completed: Number(it.completedCount ?? 0),
+            };
+        }
+        return map;
+    }, [statusResp]);
+
+    const rows = useMemo(
+        () =>
+            MONTHS_ORDER.map(({ label, key }) => ({
+                monthName: label,
+                pending: statusMap[key]?.pending ?? 0,
+                completed: statusMap[key]?.completed ?? 0,
+            })),
+        [statusMap]
     );
-
-    const transformedData =
-        data?.statusCounts?.map((item) => ({
-            month: monthMap[item.month] || item.month,
-            completed: item.completedCount,
-            canceled: item.canceledCount,
-            pending: item.pendingCount,
-        })) || [];
 
     return (
-        <div style={{ width: "100%", height: 360 }}>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 12,
-            }}>
-                <h3 style={{ margin: 0 }}>Sifarişlərin statusa əsasən statistikası</h3>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(Number(e.target.value))}
-                    style={{
-                        border: "1px solid #ccc",
-                        borderRadius: 6,
-                        padding: "4px 12px",
-                        fontSize: 14,
-                        backgroundColor: "#f5f5f5",
-                        cursor: "pointer",
-                    }}
-                >
-                    {yearOptions.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
-                    ))}
-                </select>
-            </div>
+        <div className="oss-card">
+            <div className="oss-head">
+                <h3 className="oss-title">Sifarişlərin təchiz olunmaya görə statusu</h3>
 
-            {/* Legend header altı */}
-            <div style={{
-                display: "flex",
-                gap: "24px",
-                marginBottom: 16,
-                fontSize: 14,
-                color: "#555",
-                fontWeight: 500,
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: 999,
-                        background: "#facc15"
-                    }}></div>
-                    Təsdiq gözləyən sifarişlər
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: 999,
-                        background: "#93c5fd"
-                    }}></div>
-                    Ləğv edilmiş sifarişlər
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: 999,
-                        background: "#3b82f6"
-                    }}></div>
-                    Tamamlanmış sifarişlər
+                <div className="oss-filters">
+                    <div className="filter">
+                        <span className="label">Şirkətin adı:</span>
+                        <div className="select-wrap">
+                            <select value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
+                                {companies.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter">
+                        <span className="label">İl seçimi:</span>
+                        <div className="select-wrap">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                                {yearOptions.map((y) => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {isLoading ? (
-                <p>Yüklənir...</p>
-            ) : isError ? (
-                <p>Xəta baş verdi</p>
-            ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        data={transformedData}
-                        barCategoryGap={10}
-                        barGap={2}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="pending" fill="#facc15" radius={[20, 20, 0, 0]} />
-                        <Bar dataKey="canceled" fill="#93c5fd" radius={[20, 20, 0, 0]} />
-                        <Bar dataKey="completed" fill="#3b82f6" radius={[20, 20, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-            )}
+            <div className="oss-table-wrap">
+                {isLoading ? (
+                    <div className="oss-state">Yüklənir...</div>
+                ) : isError ? (
+                    <div className="oss-state error">Xəta baş verdi</div>
+                ) : (
+                    <table className="oss-table">
+                        <thead>
+                        <tr>
+                            <th>Aylar</th>
+                            <th>Natamam sifariş sayı</th>
+                            <th>Tamamlanan sifariş sayı</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {rows.map((r) => (
+                            <tr key={r.monthName}>
+                                <td className="month">{r.monthName}</td>
+                                <td>{r.pending}</td>
+                                <td>{r.completed}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
-};
-
-export default StatusBarChart;
+}

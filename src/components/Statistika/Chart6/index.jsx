@@ -1,139 +1,140 @@
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    CartesianGrid,
-} from "recharts";
-import { useState, useEffect } from "react";
-import { useGetAllCategoriesQuery, useGetMonthlyProductQuantityStatikQuery } from "../../../services/adminApi";
+// src/components/Statistika/OrdersByStatusCountTable.jsx
+import  { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
+import {
+    useGetAllCompaniesQuery,
+    useGetMonthlyOrderStatusStatikQuery, // { year, companyId } -> statusCounts[]
+} from "/src/services/adminApi.jsx";
+import "./index.scss";
 
-const getLastThreeYears = () => {
-    const current = new Date().getFullYear();
-    return [current, current - 1, current - 2];
-};
+const MONTHS_ORDER = [
+    { label: "Yanvar",   key: "yanvar"   },
+    { label: "Fevral",   key: "fevral"   },
+    { label: "Mart",     key: "mart"     },
+    { label: "Aprel",    key: "aprel"    },
+    { label: "May",      key: "may"      },
+    { label: "İyun",     key: "iyun"     },
+    { label: "İyul",     key: "iyul"     },
+    { label: "Avqust",   key: "avqust"   },
+    { label: "Sentyabr", key: "sentyabr" },
+    { label: "Oktyabr",  key: "oktyabr"  },
+    { label: "Noyabr",   key: "noyabr"   },
+    { label: "Dekabr",   key: "dekabr"   },
+];
 
-const ProductChart = () => {
-    const companyId = localStorage.getItem("selectedCompanyId");
-    const isValidCompanyId = companyId && companyId.length === 36;
+const yearOptions = (() => {
+    const y = new Date().getFullYear();
+    return [y - 2, y - 1, y, y + 1, y + 2];
+})();
 
-    const { data: apiData = {}, isLoading: isLoadingCats, isError: isErrorCats } = useGetAllCategoriesQuery();
-    const categoriesData = apiData?.data || [];
+export default function OrdersByStatusCountTable({
+                                                     initialCompanyId = "",
+                                                     defaultYear = new Date().getFullYear(),
+                                                 }) {
+    // Şirkətlər
+    const { data: companiesResp } = useGetAllCompaniesQuery();
+    const companies = companiesResp?.data ?? companiesResp ?? [];
 
-    const yearOptions = getLastThreeYears();
-    const [selectedYear, setSelectedYear] = useState(yearOptions[0]);
-
-    const [selectedCategoryId, setSelectedCategoryId] = useState("");
-    const [selectedProductId, setSelectedProductId] = useState("");
-
+    const [companyId, setCompanyId] = useState(initialCompanyId || (companies?.[0]?.id ?? ""));
     useEffect(() => {
-        if (categoriesData.length > 0) {
-            const defaultCategory = categoriesData[0];
-            setSelectedCategoryId(defaultCategory.id);
-            if (defaultCategory.products?.length) {
-                setSelectedProductId(defaultCategory.products[0].id);
-            }
-        }
-    }, [categoriesData]);
+        if (!initialCompanyId && companies?.length) setCompanyId(companies[0].id);
+    }, [companies, initialCompanyId]);
 
-    const selectedCategory = categoriesData?.find(c => c.id === selectedCategoryId);
-    const productOptions = selectedCategory?.products || [];
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
+    const isValidId = Boolean(companyId);
+    const q = isValidId ? { year: Number(selectedYear), companyId } : skipToken;
 
+    // Statuslar
     const {
-        data: chartApiData,
-        isLoading: isLoadingChart,
-        isError: isErrorChart,
-    } = useGetMonthlyProductQuantityStatikQuery(
-        isValidCompanyId && selectedCategoryId && selectedProductId && selectedYear
-            ? { companyId, categoryId: selectedCategoryId, productId: selectedProductId, year: selectedYear }
-            : skipToken
+        data: statusResp,
+        isLoading,
+        isError,
+    } = useGetMonthlyOrderStatusStatikQuery(q);
+
+    // { ayKey: { pending, completed, canceled } }
+    const statusMap = useMemo(() => {
+        const arr = statusResp?.statusCounts ?? [];
+        const map = {};
+        for (const it of arr) {
+            const key = String(it.month);
+            map[key] = {
+                pending:   Number(it.pendingCount ?? 0),
+                completed: Number(it.completedCount ?? 0),
+                canceled:  Number(it.canceledCount ?? 0),
+            };
+        }
+        return map;
+    }, [statusResp]);
+
+    const rows = useMemo(
+        () =>
+            MONTHS_ORDER.map(({ label, key }) => ({
+                monthName: label,
+                pending:   statusMap[key]?.pending   ?? 0,
+                completed: statusMap[key]?.completed ?? 0,
+                canceled:  statusMap[key]?.canceled  ?? 0,
+            })),
+        [statusMap]
     );
 
-    const months = [
-        "yanvar", "fevral", "mart", "aprel", "may", "iyun",
-        "iyul", "avqust", "sentyabr", "oktyabr", "noyabr", "dekabr"
-    ];
-
-    const monthlyQuantities = chartApiData?.monthlyQuantities || {};
-    const chartData = months.map((month) => ({
-        month: month.charAt(0).toUpperCase() + month.slice(1),
-        count: monthlyQuantities[month] ?? 0
-    }));
-
-    if (isLoadingCats || isLoadingChart) return <div>Yüklənir...</div>;
-    if (isErrorCats || isErrorChart) return <div>Xəta baş verdi</div>;
-    if (!categoriesData.length) return <div>Kategoriya tapılmadı</div>;
-
     return (
-        <div style={{ width: "100%", height: 360 }}>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 20,
-            }}>
-                <h3 style={{ margin: 0 }}>Məhsul statistikası</h3>
-                <div style={{ display: "flex", gap: 12 }}>
-                    <select
-                        value={selectedCategoryId}
-                        onChange={(e) => {
-                            const newCatId = e.target.value;
-                            setSelectedCategoryId(newCatId);
-                            const firstProd = categoriesData.find(c => c.id === newCatId)?.products?.[0];
-                            setSelectedProductId(firstProd?.id || "");
-                        }}
-                        style={selectStyle}
-                    >
-                        {categoriesData.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
+        <div className="osbc-card">
+            <div className="osbc-head">
+                <h3 className="osbc-title">Sifarişlərin statusa əsasən sayı</h3>
 
-                    <select
-                        value={selectedProductId}
-                        onChange={(e) => setSelectedProductId(e.target.value)}
-                        style={selectStyle}
-                    >
-                        {productOptions.map((prod) => (
-                            <option key={prod.id} value={prod.id}>{prod.name}</option>
-                        ))}
-                    </select>
+                <div className="osbc-filters">
+                    <div className="filter">
+                        <span className="label">Şirkətin adı:</span>
+                        <div className="select-wrap">
+                            <select value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
+                                {companies.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
 
-                    <select
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(Number(e.target.value))}
-                        style={selectStyle}
-                    >
-                        {yearOptions.map((year) => (
-                            <option key={year} value={year}>{year}</option>
-                        ))}
-                    </select>
+                    <div className="filter">
+                        <span className="label">İl seçimi:</span>
+                        <div className="select-wrap">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                                {yearOptions.map((y) => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#60a5fa" barSize={30} />
-                </BarChart>
-            </ResponsiveContainer>
+            <div className="osbc-table-wrap">
+                {isLoading ? (
+                    <div className="osbc-state">Yüklənir...</div>
+                ) : isError ? (
+                    <div className="osbc-state error">Xəta baş verdi</div>
+                ) : (
+                    <table className="osbc-table">
+                        <thead>
+                        <tr>
+                            <th>Aylar</th>
+                            <th>Təsdiq gözləyən sifariş sayı</th>
+                            <th>Təsdiqlənən sifariş sayı</th>
+                            <th>Ləğv edilən sifariş sayı</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {rows.map((r) => (
+                            <tr key={r.monthName}>
+                                <td className="month">{r.monthName}</td>
+                                <td>{r.pending}</td>
+                                <td>{r.completed}</td>
+                                <td>{r.canceled}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
-};
-
-const selectStyle = {
-    border: "1px solid #ccc",
-    borderRadius: 6,
-    padding: "4px 12px",
-    fontSize: 14,
-    backgroundColor: "#f5f5f5",
-    cursor: "pointer",
-};
-
-export default ProductChart;
+}

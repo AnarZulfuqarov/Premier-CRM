@@ -1,107 +1,195 @@
-import { useState } from "react";
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    CartesianGrid,
-} from "recharts";
-import { useGetMonthlyOrderStatikQuery } from "../../../services/adminApi";
+// ProductMonthlyTable.jsx
+import React, { useMemo, useState, useEffect } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
+import {
+    useGetMonthlyOrderStatikQuery,
+    useGetMonthlyOrderAmountStatikQuery,
+    useGetAllCategoriesQuery,
+    useGetAllProductsQuery,
+    useGetAllCompaniesQuery, // şirkət seçimi üçün
+} from "/src/services/adminApi.jsx";
+import "./index.scss";
 
-const yearOptions = [2025, 2024, 2023];
-
-const monthOrder = [
-    "yanvar", "fevral", "mart", "aprel", "may", "iyun",
-    "iyul", "avqust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+const MONTHS_ORDER = [
+    { label: "Yanvar",   key: "yanvar"   },
+    { label: "Fevral",   key: "fevral"   },
+    { label: "Mart",     key: "mart"     },
+    { label: "Aprel",    key: "aprel"    },
+    { label: "May",      key: "may"      },
+    { label: "İyun",     key: "iyun"     },
+    { label: "İyul",     key: "iyul"     },
+    { label: "Avqust",   key: "avqust"   },
+    { label: "Sentyabr", key: "sentyabr" },
+    { label: "Oktyabr",  key: "oktyabr"  },
+    { label: "Noyabr",   key: "noyabr"   },
+    { label: "Dekabr",   key: "dekabr"   },
 ];
 
-const localizedMonthNames = [
-    "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
-    "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-];
+const yearOptions = (() => {
+    const y = new Date().getFullYear();
+    return [y - 2, y - 1, y, y + 1, y + 2];
+})();
 
-const MonthlyOrdersChart = () => {
-    const [selectedYear, setSelectedYear] = useState(2025);
-    const companyId = localStorage.getItem("selectedCompanyId");
-    const isValidId = companyId && companyId.length === 36;
+export default function ProductMonthlyTable({
+                                                // İstəsən parent-dən companyId ver; yoxdursa buradakı şirkət dropdown-u ilə idarə olunur
+                                                initialCompanyId = "",
+                                                defaultYear = new Date().getFullYear(),
+                                            }) {
+    const { data: companiesResp } = useGetAllCompaniesQuery();
+    const companies = companiesResp?.data ?? companiesResp ?? [];
 
-    const { data, isLoading, isError } = useGetMonthlyOrderStatikQuery(
-        isValidId ? { year: selectedYear, companyId } : skipToken
+    const [companyId, setCompanyId] = useState(initialCompanyId || (companies?.[0]?.id ?? ""));
+    useEffect(() => {
+        if (!initialCompanyId && companies?.length) {
+            setCompanyId(companies[0].id);
+        }
+    }, [companies, initialCompanyId]);
+
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState("");
+
+    // Kateqoriya / Məhsul
+    const { data: catData } = useGetAllCategoriesQuery();
+    const categories = catData?.data ?? catData ?? [];
+
+    const { data: allProdData } = useGetAllProductsQuery();
+    const allProducts = allProdData?.data ?? allProdData ?? [];
+
+    // kateqoriya dəyişəndə məhsulu sıfırla
+    useEffect(() => setSelectedProduct(""), [selectedCategory]);
+
+    // front-filter: seçilmiş kateqoriyaya görə məhsullar
+    const products = useMemo(() => {
+        if (!selectedCategory) return allProducts;
+        return allProducts.filter(p =>
+            String(p.categoryId ?? p.category?.id) === String(selectedCategory)
+        );
+    }, [allProducts, selectedCategory]);
+
+    const isValidId = Boolean(companyId);
+    const queryParams = isValidId
+        ? {
+            year: Number(selectedYear),
+            companyId,
+            ...(selectedCategory ? { categoryId: selectedCategory } : {}),
+            ...(selectedProduct ? { productId: selectedProduct } : {}),
+        }
+        : skipToken;
+
+    // A) say
+    const { data: monthlyCountData, isLoading: l1, isError: e1 } =
+        useGetMonthlyOrderStatikQuery(queryParams);
+    // B) məbləğ
+    const { data: monthlyAmountData, isLoading: l2, isError: e2 } =
+        useGetMonthlyOrderAmountStatikQuery(queryParams);
+
+    const countObj  = monthlyCountData?.monthlyOrders ?? {};
+    const amountObj = monthlyAmountData?.monthlyOrderAmounts ?? {};
+
+    const rows = useMemo(
+        () =>
+            MONTHS_ORDER.map(({ label, key }) => ({
+                monthName: label,
+                count: Number(countObj?.[key] ?? 0),
+                amount: Number(amountObj?.[key] ?? 0),
+            })),
+        [countObj, amountObj]
     );
 
-    const transformedData =
-        data?.monthlyOrders
-            ? monthOrder.map((key, idx) => ({
-                month: localizedMonthNames[idx],
-                count: data.monthlyOrders[key] || 0,
-            }))
-            : [];
+    const isLoading = l1 || l2;
+    const isError = e1 || e2;
 
     return (
-        <div style={{ width: "100%", height: 300 }}>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 32,
-                }}
-            >
-                <h3 style={{ margin: 0 }}>Verilən sifarişlərin sayı</h3>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(Number(e.target.value))}
-                    style={{
-                        border: "1px solid #ccc",
-                        borderRadius: 6,
-                        padding: "4px 12px",
-                        fontSize: 14,
-                        backgroundColor: "#f5f5f5",
-                        cursor: "pointer",
-                    }}
-                >
-                    {yearOptions.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
-                    ))}
-                </select>
+        <div className="pmt-card">
+            <div className="pmt-head">
+                <h3 className="pmt-title">Məhsul statistikası</h3>
+
+                <div className="pmt-filters">
+                    <div className="filter">
+                        <span className="label">Şirkətin adı:</span>
+                        <div className="select-wrap">
+                            <select
+                                value={companyId}
+                                onChange={(e) => setCompanyId(e.target.value)}
+                            >
+                                {companies.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter">
+                        <span className="label">İl seçimi:</span>
+                        <div className="select-wrap">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                                {yearOptions.map((y) => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter">
+                        <span className="label">Kateqoriya seç:</span>
+                        <div className="select-wrap">
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                            >
+                                <option value="">Hamısı</option>
+                                {categories.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter">
+                        <span className="label">Məhsul seç:</span>
+                        <div className="select-wrap">
+                            <select
+                                value={selectedProduct}
+                                onChange={(e) => setSelectedProduct(e.target.value)}
+                                disabled={!products.length}
+                            >
+                                <option value="">Hamısı</option>
+                                {products.map((p) => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {isLoading ? (
-                <p>Yüklənir...</p>
-            ) : isError ? (
-                <p>Xəta baş verdi</p>
-            ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={transformedData}>
-                        <defs>
-                            <linearGradient id="colorBlue" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                        <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                        <YAxis tick={{ fontSize: 12 }} />
-                        <Tooltip />
-                        <Area
-                            type="monotone"
-                            dataKey="count"
-                            stroke="#3b82f6"
-                            fill="url(#colorBlue)"
-                            strokeWidth={2}
-                            dot={{ r: 3, strokeWidth: 2, fill: "#fff" }}
-                            activeDot={{ r: 6 }}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
-            )}
+            <div className="pmt-table-wrap">
+                {isLoading ? (
+                    <div className="pmt-state">Yüklənir...</div>
+                ) : isError ? (
+                    <div className="pmt-state error">Xəta baş verdi</div>
+                ) : (
+                    <table className="pmt-table">
+                        <thead>
+                        <tr>
+                            <th>Aylar</th>
+                            <th>Sifariş verilən məhsul sayı</th>
+                            <th>Sifariş verilən məhsulun ümumi məbləği</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {rows.map((r) => (
+                            <tr key={r.monthName}>
+                                <td className="month">{r.monthName}</td>
+                                <td>{r.count}</td>
+                                <td>{r.amount.toLocaleString("az-AZ")} ₼</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
-};
-
-export default MonthlyOrdersChart;
+}

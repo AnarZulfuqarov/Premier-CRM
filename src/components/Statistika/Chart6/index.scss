@@ -1,25 +1,23 @@
-/* ProductMonthlyTable.scss */
-.pmt-card {
-  background: #fff;
-  border-radius: 12px;
-}
+/* src/components/Statistika/OrdersByStatusCountTable.scss */
 
-.pmt-head {
+
+
+.osbc-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 10px;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 
-  .pmt-title {
+  .osbc-title {
+    margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #0f172a; /* yaxın tünd boz */
-    margin: 0;
+    color: #0f172a;
   }
 
-  .pmt-filters {
+  .osbc-filters {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -32,7 +30,7 @@
 
       .label {
         font-size: 13px;
-        color: #6b7280; /* boz */
+        color: #6b7280;
         white-space: nowrap;
       }
 
@@ -49,17 +47,14 @@
           border-radius: 8px;
           line-height: 1.4;
           cursor: pointer;
-          min-width: 120px;
+          min-width: 110px;
         }
 
-        /* chevron */
         &::after {
           content: "";
           position: absolute;
-          right: 10px;
-          top: 50%;
-          width: 10px;
-          height: 10px;
+          right: 10px; top: 50%;
+          width: 10px; height: 10px;
           transform: translateY(-50%);
           pointer-events: none;
           background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -72,36 +67,31 @@
   }
 }
 
-/* Cədvəl */
-.pmt-table-wrap {
-  margin-top: 6px;
+.osbc-table-wrap {
   border: 1px solid #e9edf3;
-  border-radius: 10px;
-  overflow: hidden; /* başlıq radiusu üçün */
-  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.pmt-table {
+.osbc-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  thead th:not(:last-child),
-  tbody td:not(:last-child) {
-    border-right: 1px solid #e9edf3; // istəsən #f2f4f7 istifadə et
-  }
 
-  // (opsional) başlığın alt xəttini eyni rəngə çəkmək üçün:
   thead th {
-    border-bottom: 1px solid #e9edf3;
-  }
-  thead th {
-    background: #eaf4ff;      /* açıq mavi başlıq */
+    background: #fff7e6; /* açıq sarı (amber) */
     color: #0f172a;
     font-weight: 600;
     font-size: 14px;
     padding: 12px 14px;
     text-align: left;
-    border-bottom: 1px solid #e6eef7;
+    border-bottom: 1px solid #f3e8d1;
+  }
+
+  /* sütun arası xətt */
+  thead th:not(:last-child),
+  tbody td:not(:last-child) {
+    border-right: 1px solid #e9edf3;
   }
 
   tbody td {
@@ -111,10 +101,7 @@
     border-bottom: 1px solid #f2f4f7;
     vertical-align: middle;
   }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
+  tbody tr:last-child td { border-bottom: none; }
 
   td.month {
     color: #374151;
@@ -122,26 +109,8 @@
   }
 }
 
-/* Yüklənmə / xəta */
-.pmt-state {
+.osbc-state {
   padding: 16px;
   font-size: 14px;
   &.error { color: #b91c1c; }
-}
-
-/* Mobil uyğunluğu */
-@media (max-width: 768px) {
-  .pmt-head {
-    align-items: flex-start;
-
-    .pmt-filters .filter .select-wrap select {
-      min-width: 110px;
-    }
-  }
-
-  .pmt-table thead th,
-  .pmt-table tbody td {
-    padding: 10px 12px;
-    font-size: 13px;
-  }
 }

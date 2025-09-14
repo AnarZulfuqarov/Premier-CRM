@@ -12,6 +12,10 @@ import ProductChart from "../../components/Statistika/Chart6/index.jsx";
 import StatusBasedBarChart from "../../components/Statistika/Chart7/index.jsx";
 import Chart11Card from "../../components/Statistika/Chart11/index.jsx";
 import DoughnutChartCard2 from "../../components/Statistika/Chart22/index.jsx";
+import ProductMonthlyTable from "../../components/Statistika/Cart3/index.jsx";
+import OrdersTotalCountAmountTable from "../../components/Statistika/Cart4/index.jsx";
+import OrdersSupplyStatusTable from "../../components/Statistika/Chart5/index.jsx";
+import OrdersByStatusCountTable from "../../components/Statistika/Chart6/index.jsx";
 ChartJS.register(ArcElement, Tooltip, Legend);
 function SuperAdminStatistikTest() {
     const { data: getAllCompanies, isLoading } = useGetAllCompaniesQuery();
@@ -77,37 +81,31 @@ function SuperAdminStatistikTest() {
                     </div>
 
                 </div>
-                {/*<div className={"firstStatik"}>*/}
-                {/*    <div className={"chart1"}>*/}
-                {/*        <Chart1Card />*/}
-                {/*    </div>*/}
+                <div className={"firstStatik"}>
+                    <div className={"chart1"}>
+                        <Chart1Card />
+                    </div>
 
-                {/*    <div className={"chart2"}>*/}
-                {/*        <DoughnutChartCard />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*<div className={'secondStatik'}>*/}
-                {/*    <div className={'chart3'}>*/}
-                {/*        <MonthlyOrdersChart  />*/}
+                    <div className={"chart2"}>
+                        <DoughnutChartCard />
+                    </div>
+                </div>
+                <div className={'secondStatik'}>
+                    <ProductMonthlyTable companyId={selectedBranch} />
+                </div>
+                <div className={'thirdStatik'}>
+                    <OrdersTotalCountAmountTable />
 
-                {/*    </div>*/}
+                </div>
+                <div className={'fourStatik'}>
+                    <div className={'chart6'}>
+                        <OrdersSupplyStatusTable  />
+                    </div>
 
-                {/*</div>*/}
-                {/*<div className={'thirdStatik'}>*/}
-                {/*    <div className={'chart4'}>*/}
-                {/*        <Chart4 />*/}
-                {/*    </div>*/}
-
-                {/*</div>*/}
-                {/*<div className={'fourStatik'}>*/}
-                {/*    <div className={'chart6'}>*/}
-                {/*        <StatusBarChart  />*/}
-                {/*    </div>*/}
-
-                {/*</div>*/}
-                {/*<div className={'fifthStatik'}>*/}
-                {/*    <ProductChart  />*/}
-                {/*</div>*/}
+                </div>
+                <div className={'fifthStatik'}>
+                    <OrdersByStatusCountTable  />
+                </div>
                 {/*<div className="sixStatik">*/}
                 {/*    <div className="staticHead">*/}
                 {/*        <div className="content">*/}
