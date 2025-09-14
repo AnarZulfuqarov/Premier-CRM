@@ -110,13 +110,12 @@ const OrderHistorySuperAdmin = () => {
 
     const [selectedCompany, setSelectedCompany] = useState(""); // "" = Hamısı
 
-    // HƏR İKİ HOOK HƏMİŞƏ ÇAĞIRILSIN (skip ilə):
     const {
         data: allPagedRes,
         isFetching: isFetchingAll,
     } = useGetOrderByPageQuery(
         { page, pageSize },
-        { skip: !!selectedCompany } // company seçilibsə, hamı üçün olanı skip et
+        { skip: !!selectedCompany }
     );
 
     const {
@@ -124,7 +123,7 @@ const OrderHistorySuperAdmin = () => {
         isFetching: isFetchingByCompany,
     } = useGetOrderByPageByCompanyQuery(
         { page, pageSize, companyName: selectedCompany || "all" },
-        { skip: !selectedCompany } // company seçilməyibsə skip et
+        { skip: !selectedCompany }
     );
 
     const isFetching = selectedCompany ? isFetchingByCompany : isFetchingAll;
@@ -133,14 +132,12 @@ const OrderHistorySuperAdmin = () => {
         return Array.isArray(raw) ? raw : [];
     }, [selectedCompany, byCompanyRes, allPagedRes]);
 
-    // Şirkət dəyişəndə sıfırla
     useEffect(() => {
         setAllOrders([]);
         setPage(1);
         setHasMore(true);
     }, [selectedCompany]);
 
-    // Gələn səhifəni akkumulasiya et
     useEffect(() => {
         if (!isFetching) {
             if (page === 1 && pageData.length === 0) {
@@ -161,7 +158,7 @@ const OrderHistorySuperAdmin = () => {
         }
     }, [pageData, isFetching, page, pageSize]);
 
-    // IntersectionObserver ilə stabil infinite scroll
+    // IntersectionObserver
     const listRef = useRef(null);
     const sentinelRef = useRef(null);
 
@@ -170,14 +167,13 @@ const OrderHistorySuperAdmin = () => {
         const target = sentinelRef.current;
         if (!rootEl || !target) return;
 
-        let ticking = false; // ardıcıl iki dəfə artmasın
+        let ticking = false;
         const io = new IntersectionObserver(
             (entries) => {
                 const [entry] = entries;
                 if (entry.isIntersecting && !isFetching && hasMore && !ticking) {
                     ticking = true;
                     setPage((p) => p + 1);
-                    // kiçik gecikmə ilə təkrar triggerin qarşısını alaq
                     setTimeout(() => {
                         ticking = false;
                     }, 350);
@@ -185,7 +181,7 @@ const OrderHistorySuperAdmin = () => {
             },
             {
                 root: rootEl,
-                rootMargin: "200px 0px", // bir az əvvəl yüklə
+                rootMargin: "200px 0px",
                 threshold: 0.01,
             }
         );
@@ -262,7 +258,8 @@ const OrderHistorySuperAdmin = () => {
             const productNames = Array.from(new Set(items.map((i) => i?.product?.name).filter(Boolean)));
 
             return {
-                id: order?.id,
+                id: order?.id, // full ID (naviqasiya üçün)
+                orderIdShort: String(order?.id ?? "").slice(0, 8), // qısa göstərim üçün
                 createdAt: parseAZDate(order?.createdDate),
                 createdDateText: order?.createdDate || "",
                 companyName: order?.section?.companyName ?? "",
@@ -278,7 +275,7 @@ const OrderHistorySuperAdmin = () => {
         });
     }, [allOrders]);
 
-    // dynamic option lists (safe)
+    // dynamic option lists
     const departments = useMemo(() => {
         const arr = Array.isArray(shaped) ? shaped : [];
         return Array.from(new Set(arr.map((o) => o?.department).filter(Boolean))).sort();
@@ -294,7 +291,7 @@ const OrderHistorySuperAdmin = () => {
         return Array.from(new Set(arr.flatMap((o) => o?.products || []).filter(Boolean))).sort();
     }, [shaped]);
 
-    /* ===== Filtering (safe) ===== */
+    /* ===== Filtering ===== */
     const filtered = useMemo(() => {
         let list = Array.isArray(shaped) ? [...shaped] : [];
 
@@ -308,7 +305,8 @@ const OrderHistorySuperAdmin = () => {
                     String(r.status ?? "").toLowerCase().includes(q) ||
                     String(r.amountText ?? "").toLowerCase().includes(q) ||
                     String(r.amountNum ?? "").includes(q) ||
-                    (Array.isArray(r.products) && r.products.some((p) => String(p).toLowerCase().includes(q)))
+                    (Array.isArray(r.products) && r.products.some((p) => String(p).toLowerCase().includes(q))) ||
+                    String(r.id ?? "").toLowerCase().includes(q) // ID ilə də axtarış ola bilsin
             );
         }
 
@@ -420,8 +418,9 @@ const OrderHistorySuperAdmin = () => {
                             <th>Ümumi məbləğ</th>
                             <th>Sifarişçinin adı</th>
                             <th>Təchizatçının adı</th>
-                            <th>Status</th>
-                            <th>Sifariş detalı</th>
+                            <th>Order ID</th>
+                            <th className="status-col">Status</th>
+                            <th className="sticky-right">Sifariş detalı</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -432,12 +431,13 @@ const OrderHistorySuperAdmin = () => {
                                 <td>{o.amountText}</td>
                                 <td>{o.customer || "-"}</td>
                                 <td>{o.supplier || "-"}</td>
-                                <td>
-                    <span className={"status-badge " + (o.status === "Tamamlanmış" ? "completed" : "pending")}>
-                      {o.status}
-                    </span>
+                                <td>{o.orderIdShort || String(o.id ?? "").slice(0, 8)}</td>
+                                <td className="status-col">
+        <span className={"status-badge " + (o.status === "Tamamlanmış" ? "completed" : "pending")}>
+          {o.status}
+        </span>
                                 </td>
-                                <td className="sticky-col">
+                                <td className="sticky-right sticky-col">
                                     <button
                                         className="detail-btn"
                                         onClick={(e) => {
@@ -451,6 +451,7 @@ const OrderHistorySuperAdmin = () => {
                             </tr>
                         ))}
                         </tbody>
+
                     </table>
 
                     {!isFetching && filtered.length === 0 && (
