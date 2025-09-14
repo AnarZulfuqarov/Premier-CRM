@@ -1,3 +1,5 @@
+
+
 /* ============== Wrapper ============== */
 .order-history-super-admin-main {
   position: relative;
@@ -58,7 +60,7 @@
     top: calc(100% + 6px);
     left: auto;
     right: 0;
-    transform-origin: top right;
+    transform-origin:top right;
     width: 260px;
     @include card;
     display: none;
@@ -109,7 +111,7 @@
 .filterbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap:8px;
   margin-bottom: 12px;
   width: 95%;
 
@@ -145,6 +147,8 @@
   gap: 10px 6px;
   margin-bottom: 18px;
 
+  /* Buradan .filter-dd-in ümumi qaydalarını çıxardıq.
+     Lazım olsa yalnız layout-a aid şeyləri saxlayın. */
   .range-dd {
     @include card;
     padding: 6px 10px;
@@ -178,18 +182,14 @@
   }
 }
 
+
 /* ============== Table wrapper + scrollbar ============== */
 .order-history-super-admin__table-wrap {
   @include card;
-  max-height: 480px;
-  overflow: auto;                   /* həm V, həm H scroll */
+  max-height:480px;
+  overflow: auto;
   padding: 0;
   border-color: #e6e8eb;
-
-  /* ✅ Sticky sağ sütun örtməsin deyə boşluq */
-  padding-right: 140px;
-
-  -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar { width: 3px; height: 8px; }
   &::-webkit-scrollbar-thumb { background: #007aff; border-radius: 4px; }
@@ -199,7 +199,6 @@
 /* ============== Table grid ============== */
 .ohsa-table {
   width: 100%;
-  min-width: 1100px;               /* ✅ H-scroll üçün minimum en */
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -237,43 +236,19 @@
   /* hover */
   tbody tr:hover td { background: #f9f9f9; cursor: pointer; }
 
-  /* mərkəzlənəcək sütunlar (3: məbləğ, 6: Order ID) */
+  /* mərkəzlənəcək sütunlar */
   thead th:nth-child(3),
   thead th:nth-child(6),
   tbody td:nth-child(3),
   tbody td:nth-child(6) { text-align: center; }
 
-  /* ✅ Status sütunu üçün sabit en (7-ci sütun) */
-  thead th:nth-child(7),
-  tbody td:nth-child(7) {
-    min-width: 180px;
-  }
-
-  /* ✅ Sağdakı “Detallı bax” sticky sütunu */
+  /* sağ yapışqan sütun */
   .sticky-col {
     position: sticky;
     right: 0;
     z-index: 3;
     background: #fff;
     box-shadow: -6px 0 10px rgba(0, 0, 0, 0.04);
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
-    text-align: center;
-  }
-
-  /* ✅ Header-ın sağ son sütunu da sağa yapışsın */
-  thead th:last-child {
-    position: sticky;
-    right: 0;
-    z-index: 4;
-    box-shadow: -6px 0 10px rgba(0, 0, 0, 0.04);
-    background: #fff;
-  }
-
-  /* Hover zamanı sticky sütunun rəngi uyğun qalsın */
-  tbody tr:hover td.sticky-col {
-    background: #f9f9f9;
   }
 }
 
