@@ -2,27 +2,26 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {
-    useGetMonthlyOrderStatikQuery,
-    useGetMonthlyOrderAmountStatikQuery,
+    useGetMonthlyProductQuantityStatikQuery,
     useGetAllCategoriesQuery,
     useGetAllProductsQuery,
-    useGetAllCompaniesQuery, // şirkət seçimi üçün
+    useGetAllCompaniesQuery,
 } from "/src/services/adminApi.jsx";
 import "./index.scss";
 
 const MONTHS_ORDER = [
-    { label: "Yanvar",   key: "yanvar"   },
-    { label: "Fevral",   key: "fevral"   },
-    { label: "Mart",     key: "mart"     },
-    { label: "Aprel",    key: "aprel"    },
-    { label: "May",      key: "may"      },
-    { label: "İyun",     key: "iyun"     },
-    { label: "İyul",     key: "iyul"     },
-    { label: "Avqust",   key: "avqust"   },
+    { label: "Yanvar", key: "yanvar" },
+    { label: "Fevral", key: "fevral" },
+    { label: "Mart", key: "mart" },
+    { label: "Aprel", key: "aprel" },
+    { label: "May", key: "may" },
+    { label: "İyun", key: "iyun" },
+    { label: "İyul", key: "iyul" },
+    { label: "Avqust", key: "avqust" },
     { label: "Sentyabr", key: "sentyabr" },
-    { label: "Oktyabr",  key: "oktyabr"  },
-    { label: "Noyabr",   key: "noyabr"   },
-    { label: "Dekabr",   key: "dekabr"   },
+    { label: "Oktyabr", key: "oktyabr" },
+    { label: "Noyabr", key: "noyabr" },
+    { label: "Dekabr", key: "dekabr" },
 ];
 
 const yearOptions = (() => {
@@ -31,74 +30,97 @@ const yearOptions = (() => {
 })();
 
 export default function ProductMonthlyTable({
-                                                // İstəsən parent-dən companyId ver; yoxdursa buradakı şirkət dropdown-u ilə idarə olunur
                                                 initialCompanyId = "",
                                                 defaultYear = new Date().getFullYear(),
                                             }) {
+    /* ========== Şirkətlər ========== */
     const { data: companiesResp } = useGetAllCompaniesQuery();
     const companies = companiesResp?.data ?? companiesResp ?? [];
+    const [companyId, setCompanyId] = useState(initialCompanyId || "");
 
-    const [companyId, setCompanyId] = useState(initialCompanyId || (companies?.[0]?.id ?? ""));
     useEffect(() => {
-        if (!initialCompanyId && companies?.length) {
+        if (!initialCompanyId && companies?.length && !companyId) {
             setCompanyId(companies[0].id);
         }
-    }, [companies, initialCompanyId]);
+    }, [companies, initialCompanyId, companyId]);
 
-    const [selectedYear, setSelectedYear] = useState(defaultYear);
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedProduct, setSelectedProduct] = useState("");
-
-    // Kateqoriya / Məhsul
+    /* ========== Kateqoriyalar və Məhsullar ========== */
     const { data: catData } = useGetAllCategoriesQuery();
     const categories = catData?.data ?? catData ?? [];
 
     const { data: allProdData } = useGetAllProductsQuery();
     const allProducts = allProdData?.data ?? allProdData ?? [];
 
-    // kateqoriya dəyişəndə məhsulu sıfırla
-    useEffect(() => setSelectedProduct(""), [selectedCategory]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState("");
 
-    // front-filter: seçilmiş kateqoriyaya görə məhsullar
+    // ilk kateqoriya
+    useEffect(() => {
+        if (categories?.length && !selectedCategory) {
+            setSelectedCategory(categories[0].id);
+        }
+    }, [categories, selectedCategory]);
+
+    // ilk məhsul (seçilmiş kateqoriyaya görə)
+    useEffect(() => {
+        if (!selectedCategory) return;
+        const filtered = allProducts.filter(
+            (p) => String(p.categoryId ?? p.category?.id) === String(selectedCategory)
+        );
+        if (filtered.length) {
+            setSelectedProduct(filtered[0].id);
+        } else {
+            setSelectedProduct("");
+        }
+    }, [selectedCategory, allProducts]);
+
     const products = useMemo(() => {
-        if (!selectedCategory) return allProducts;
-        return allProducts.filter(p =>
-            String(p.categoryId ?? p.category?.id) === String(selectedCategory)
+        if (!selectedCategory) return [];
+        return allProducts.filter(
+            (p) => String(p.categoryId ?? p.category?.id) === String(selectedCategory)
         );
     }, [allProducts, selectedCategory]);
 
-    const isValidId = Boolean(companyId);
-    const queryParams = isValidId
+    /* ========== İl seçimi ========== */
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
+
+    const isValidId = Boolean(companyId) && Boolean(selectedCategory) && Boolean(selectedProduct);
+
+    // Backend path param qəbul edir → boş olduqda 0 göndərmək istəsən:
+    const qtyParams = isValidId
         ? {
-            year: Number(selectedYear),
             companyId,
-            ...(selectedCategory ? { categoryId: selectedCategory } : {}),
-            ...(selectedProduct ? { productId: selectedProduct } : {}),
+            categoryId: selectedCategory || 0,
+            productId: selectedProduct || 0,
+            year: Number(selectedYear),
         }
         : skipToken;
 
-    // A) say
-    const { data: monthlyCountData, isLoading: l1, isError: e1 } =
-        useGetMonthlyOrderStatikQuery(queryParams);
-    // B) məbləğ
-    const { data: monthlyAmountData, isLoading: l2, isError: e2 } =
-        useGetMonthlyOrderAmountStatikQuery(queryParams);
+    // TƏK sorğu: həm quantity, həm də amount burada gəlir
+    const {
+        data: monthlyStatData,
+        isLoading,
+        isError,
+    } = useGetMonthlyProductQuantityStatikQuery(qtyParams);
 
-    const countObj  = monthlyCountData?.monthlyOrders ?? {};
-    const amountObj = monthlyAmountData?.monthlyOrderAmounts ?? {};
+    // GÖZLƏNƏN FORMAT:
+    // {
+    //   statusCode: 200,
+    //   monthlyQuantities: {...},
+    //   monthlyAmounts: {...}
+    // }
+    const quantityObj = monthlyStatData?.monthlyQuantities ?? {};
+    const amountObj   = monthlyStatData?.monthlyAmounts ?? {};
 
     const rows = useMemo(
         () =>
             MONTHS_ORDER.map(({ label, key }) => ({
                 monthName: label,
-                count: Number(countObj?.[key] ?? 0),
+                count: Number(quantityObj?.[key] ?? 0),
                 amount: Number(amountObj?.[key] ?? 0),
             })),
-        [countObj, amountObj]
+        [quantityObj, amountObj]
     );
-
-    const isLoading = l1 || l2;
-    const isError = e1 || e2;
 
     return (
         <div className="pmt-card">
@@ -106,6 +128,7 @@ export default function ProductMonthlyTable({
                 <h3 className="pmt-title">Məhsul statistikası</h3>
 
                 <div className="pmt-filters">
+                    {/* Şirkət */}
                     <div className="filter">
                         <span className="label">Şirkətin adı:</span>
                         <div className="select-wrap">
@@ -114,23 +137,32 @@ export default function ProductMonthlyTable({
                                 onChange={(e) => setCompanyId(e.target.value)}
                             >
                                 {companies.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                    <option key={c.id} value={c.id}>
+                                        {c.name}
+                                    </option>
                                 ))}
                             </select>
                         </div>
                     </div>
 
+                    {/* İl */}
                     <div className="filter">
                         <span className="label">İl seçimi:</span>
                         <div className="select-wrap">
-                            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                            <select
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(e.target.value)}
+                            >
                                 {yearOptions.map((y) => (
-                                    <option key={y} value={y}>{y}</option>
+                                    <option key={y} value={y}>
+                                        {y}
+                                    </option>
                                 ))}
                             </select>
                         </div>
                     </div>
 
+                    {/* Kateqoriya */}
                     <div className="filter">
                         <span className="label">Kateqoriya seç:</span>
                         <div className="select-wrap">
@@ -138,14 +170,16 @@ export default function ProductMonthlyTable({
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                             >
-                                <option value="">Hamısı</option>
                                 {categories.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                    <option key={c.id} value={c.id}>
+                                        {c.name}
+                                    </option>
                                 ))}
                             </select>
                         </div>
                     </div>
 
+                    {/* Məhsul */}
                     <div className="filter">
                         <span className="label">Məhsul seç:</span>
                         <div className="select-wrap">
@@ -154,9 +188,10 @@ export default function ProductMonthlyTable({
                                 onChange={(e) => setSelectedProduct(e.target.value)}
                                 disabled={!products.length}
                             >
-                                <option value="">Hamısı</option>
                                 {products.map((p) => (
-                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                    <option key={p.id} value={p.id}>
+                                        {p.name}
+                                    </option>
                                 ))}
                             </select>
                         </div>

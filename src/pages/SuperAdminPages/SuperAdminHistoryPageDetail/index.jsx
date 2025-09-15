@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
-import { FaTimes} from 'react-icons/fa';
+import {FaTimes} from 'react-icons/fa';
 import './index.scss';
 import {useDeleteOrderAdminMutation, useGetMyOrdersIdQuery} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
@@ -13,7 +13,7 @@ const OrderHistoryDetailSuperAdmin = () => {
 
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
-    const {data:getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
+    const {data: getMyOrdersId, refetch} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data
     let status = '';
 
@@ -33,7 +33,7 @@ const OrderHistoryDetailSuperAdmin = () => {
     useEffect(() => {
         refetch()
     }, []);
-    const [deleteOrder] =useDeleteOrderAdminMutation()
+    const [deleteOrder] = useDeleteOrderAdminMutation()
     // filtre uygula
     const showPopup = usePopup()
     const filtered = orderData?.items?.map((item) => {
@@ -168,13 +168,14 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 </th>
                                 <th>Tələb olunan miqdar</th>
                                 <th>Təmin olunan miqdar</th>
-                                <th>Qiyməti</th> {/* ✅ Yeni sütun */}
+                                <th>Qiyməti</th>
+                                {/* ✅ Yeni sütun */}
                                 <th>Sifarişin məbləği</th>
 
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
-                                {status === 'Tamamlanmış'  && (
+                                {status === 'Tamamlanmış' && (
                                     <th>
                                         İnyovsa Bax
                                     </th>
@@ -190,19 +191,28 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.category}</td>
                                     <td>{item.required}</td>
                                     <td>{item.provided}</td>
-                                    <td>{item.priceEach}</td> {/* ✅ Yeni hüceyrə */}
+                                    <td>{item.priceEach}</td>
+                                    {/* ✅ Yeni hüceyrə */}
                                     <td>{item.price}</td>
 
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
                                     <td>{item.received}</td>
-                                    {status === 'Tamamlanmış' &&(
+                                    {status === 'Tamamlanmış' && (
                                         <td style={{
-                                            textAlign:"center"
+                                            textAlign: "center"
                                         }}>
-                                            <svg onClick={() => setIsOverheadModalOpen(true)} style={{cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
-                                                <path d="M13 10C13 10.663 12.7366 11.2989 12.2678 11.7678C11.7989 12.2366 11.163 12.5 10.5 12.5C9.83696 12.5 9.20107 12.2366 8.73223 11.7678C8.26339 11.2989 8 10.663 8 10C8 9.33696 8.26339 8.70107 8.73223 8.23223C9.20107 7.76339 9.83696 7.5 10.5 7.5C11.163 7.5 11.7989 7.76339 12.2678 8.23223C12.7366 8.70107 13 9.33696 13 10Z" stroke="#606060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M2.16602 10.0003C3.49935 6.58616 6.61268 4.16699 10.4993 4.16699C14.386 4.16699 17.4993 6.58616 18.8327 10.0003C17.4993 13.4145 14.386 15.8337 10.4993 15.8337C6.61268 15.8337 3.49935 13.4145 2.16602 10.0003Z" stroke="#606060" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg onClick={() => setIsOverheadModalOpen(true)}
+                                                 style={{cursor: "pointer"}} xmlns="http://www.w3.org/2000/svg"
+                                                 width="21" height="20" viewBox="0 0 21 20" fill="none">
+                                                <path
+                                                    d="M13 10C13 10.663 12.7366 11.2989 12.2678 11.7678C11.7989 12.2366 11.163 12.5 10.5 12.5C9.83696 12.5 9.20107 12.2366 8.73223 11.7678C8.26339 11.2989 8 10.663 8 10C8 9.33696 8.26339 8.70107 8.73223 8.23223C9.20107 7.76339 9.83696 7.5 10.5 7.5C11.163 7.5 11.7989 7.76339 12.2678 8.23223C12.7366 8.70107 13 9.33696 13 10Z"
+                                                    stroke="#606060" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                                <path
+                                                    d="M2.16602 10.0003C3.49935 6.58616 6.61268 4.16699 10.4993 4.16699C14.386 4.16699 17.4993 6.58616 18.8327 10.0003C17.4993 13.4145 14.386 15.8337 10.4993 15.8337C6.61268 15.8337 3.49935 13.4145 2.16602 10.0003Z"
+                                                    stroke="#606060" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
                                             </svg>
                                         </td>
                                     )}
@@ -226,7 +236,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                             <button className="delete-btn" onClick={() => {
                                 navigate('/superAdmin/history')
                                 deleteOrder(id)
-                                showPopup("Sifarişinizi uğurla sildiniz","Seçilmiş sifariş sistemdən silindi","success")
+                                showPopup("Sifarişinizi uğurla sildiniz", "Seçilmiş sifariş sistemdən silindi", "success")
                             }}>
                                 Sil
                             </button>
@@ -281,7 +291,7 @@ const OrderHistoryDetailSuperAdmin = () => {
             {selectedOverheadImage && (
                 <div className="image-preview-modal" onClick={() => setSelectedOverheadImage(null)}>
                     <div className="image-preview-content" onClick={e => e.stopPropagation()}>
-                        <img src={selectedOverheadImage} alt="preview" />
+                        <img src={selectedOverheadImage} alt="preview"/>
                     </div>
                 </div>
             )}

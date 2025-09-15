@@ -718,8 +718,8 @@ export const api = createApi({
             }),
         }),
         getFighterMonthlyCompletionStatik: builder.query({
-            query: ({fighterId,year,companyId}) => ({
-                url: `/Statistics/fighter-monthly-completion/${fighterId}/${year}/${companyId}`,
+            query: ({year,companyId}) => ({
+                url: `/Statistics/fighter-monthly-completion/${year}/${companyId}`,
             }),
         }),
         getMonthlyProductQuantityStatik: builder.query({

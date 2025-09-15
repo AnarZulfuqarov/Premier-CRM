@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {
     useGetAllCompaniesQuery,
-    useGetMonthlyOrderStatusStatikQuery, // { year, companyId } -> statusCounts[]
+    useGetFighterMonthlyCompletionStatikQuery, // /Statistics/fighter-monthly-completion/{year}/{companyId}
 } from "/src/services/adminApi.jsx";
 import "./index.scss";
 
@@ -45,26 +45,26 @@ export default function OrdersSupplyStatusTable({
 
     const q = isValidId ? { year: Number(selectedYear), companyId } : skipToken;
 
-    // Statuslar
-    const {
-        data: statusResp,
-        isLoading,
-        isError,
-    } = useGetMonthlyOrderStatusStatikQuery(q);
+    // Yeni endpoint
+    const { data: statusResp, isLoading, isError } = useGetFighterMonthlyCompletionStatikQuery(q);
+
+    // BE: { statusCode, monthlyCompletionStats: [{ month, completed, incomplete }, ...] }
+    const rawArr = Array.isArray(statusResp?.monthlyCompletionStats)
+        ? statusResp.monthlyCompletionStats
+        : [];
 
     // { ayKey: { pending, completed } } xəritəsi
     const statusMap = useMemo(() => {
         const map = {};
-        const arr = statusResp?.statusCounts ?? [];
-        for (const it of arr) {
-            const m = String(it.month);
+        for (const it of rawArr) {
+            const m = String(it.month).toLowerCase(); // "yanvar", ...
             map[m] = {
-                pending: Number(it.pendingCount ?? 0),
-                completed: Number(it.completedCount ?? 0),
+                pending: Number(it.incomplete ?? 0),
+                completed: Number(it.completed ?? 0),
             };
         }
         return map;
-    }, [statusResp]);
+    }, [rawArr]);
 
     const rows = useMemo(
         () =>
