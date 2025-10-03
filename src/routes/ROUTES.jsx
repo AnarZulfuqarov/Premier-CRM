@@ -82,6 +82,7 @@ import AccounterBorcTarixce from "../pages/AccounterPages/AccounterBorcTarixce/i
 import AccounterNotification from "../pages/NotificationPages/AccounterNotification/index.jsx";
 import SuperAdminAccounterBorc from "../pages/SuperAdminPages/SuperAdminAccounterBorc/index.jsx";
 import SuperAdminBorcTarixce from "../pages/SuperAdminPages/SuperAdminBorcTarixce/index.jsx";
+import AdminBorcE from "../pages/AccounterPages/AccounterBorcE/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -440,10 +441,14 @@ const router = createBrowserRouter([
             },
             {
                 path: "/accounter/borc",
-                element: <AccounterBorc/>
+                element: <AdminBorcE/>
             },
             {
                 path: "/accounter/borc/:id",
+                element: <AccounterBorc/>
+            },
+            {
+                path: "/accounter/borc/vendor/:id",
                 element: <AccounterBorcTarixce/>
             },
             {
