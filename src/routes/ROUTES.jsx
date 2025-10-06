@@ -432,11 +432,11 @@ const router = createBrowserRouter([
         children: [
 
             {
-                path: "/accounter/history",
+                path: "/accounter/borc/history/:date",
                 element: <OrderHistoryAccounter/>
             },
             {
-                path: "/accounter/history/:id",
+                path: "/accounter/borc/history/:id",
                 element: <OrderHistoryDetailAccounter/>
             },
             {

@@ -16,6 +16,8 @@ const AdminBorcE = () => {
         c.name.toLowerCase().includes(globalSearch.toLowerCase())
     );
 const navigate = useNavigate();
+
+
     return (
         <div className="admin-borc-e-main">
             <div className="admin-borc-e">
@@ -52,7 +54,10 @@ const navigate = useNavigate();
                                 </div>
                                 <h4>{company.name}</h4>
                                 <div className={"cardButton"} >
-                                    Keçid et <button onClick={()=>navigate(`/accounter/borc/${company.id}`)} style={{ backgroundColor: color }}> <svg xmlns="http://www.w3.org/2000/svg" width="5" height="8" viewBox="0 0 5 8" fill="none">
+                                    Keçid et <button onClick={()=>{
+                                    navigate(`/accounter/borc/${company.id}`);
+                                    localStorage.setItem('borcCompanyId', `${company.id}`);
+                                }} style={{ backgroundColor: color }}> <svg xmlns="http://www.w3.org/2000/svg" width="5" height="8" viewBox="0 0 5 8" fill="none">
                                     <path d="M0.783192 6.90021L3.75133 4.02903L0.880149 1.0609" stroke="white" stroke-width="1.16802" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg></button>
                                 </div>

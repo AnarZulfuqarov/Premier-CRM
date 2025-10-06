@@ -830,6 +830,30 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        getDateBasedPaymentTotal: builder.query({
+            query: (companyId) => ({
+                url: `/DateBasedPayments/total?companyId=${companyId}`,
+            }),
+        }),
+        getDateBasedPaymentHistory: builder.query({
+            query: ({companyId,vendorId,startDate,endDate}) => ({
+                url: `/DateBasedPayments/history?vendorId=${vendorId}&companyId=${companyId}&startDate=${startDate}&endDate=${endDate}`,
+            }),
+        }),
+        getDateBasedPaymentByDate: builder.query({
+            query: ({companyId,vendorId,date}) => ({
+                url: `/DateBasedPayments/orders-by-date?vendorId=${vendorId}&companyId=${companyId}&date=${date}`,
+            }),
+        }),
+        editDateBasedPayment: builder.mutation({
+            query: (payment) => ({
+                url: `/DateBasedPayments/create-or-update`,
+                method: 'POST',
+                body: payment,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
+
     }),
 });
 
@@ -990,4 +1014,9 @@ export const {
     useSetLastDeliveryDateMutation,
     useEditVendorDebtsMutation,
     useGetAdminNotificationsAccountantQuery,
+
+    useGetDateBasedPaymentTotalQuery,
+    useGetDateBasedPaymentHistoryQuery,
+    useGetDateBasedPaymentByDateQuery,
+    useEditDateBasedPaymentMutation,
 } = api;
