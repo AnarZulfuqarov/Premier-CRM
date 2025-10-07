@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import PopupContainer from "./PopupContainer.jsx";
 
-const PopupContext = createContext();
+const PopupContext = createContext(null);
 
 export const PopupProvider = ({ children }) => {
     const [popups, setPopups] = useState([]);
@@ -25,7 +25,7 @@ export const PopupProvider = ({ children }) => {
 export const usePopup = () => {
     const context = useContext(PopupContext);
     if (!context) {
-        throw new Error('usePopup must be used within a PopupProvider');
+        throw new Error('usePopup must be used within a   PopupProvider');
     }
     return context;
 };

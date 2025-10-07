@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./index.scss";
 import {
     useGetAllCompaniesQuery,
-    useGetDateBasedPaymentByDateQuery, // Yeni query
+    useGetAllVendorsIdQuery,
+    useGetCompanyIdQuery,
+    useGetDateBasedPaymentByDateQuery,
 } from "../../../services/adminApi.jsx";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 
 const INVALID_MIN_DATES = new Set([
@@ -20,11 +22,11 @@ function parseAppDate(input) {
     if (typeof input === "string") {
         const s = input.trim();
         if (!s || INVALID_MIN_DATES.has(s)) return null;
-        const m1 =
-            /^(\d{2})\.(\d{2})\.(\d{4})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/.exec(s);
+        const m1 = /^(\d{2})\/(\d{2})\/(\d{2})$/.exec(s);
         if (m1) {
-            const [, dd, mm, yyyy, hh = "00", mi = "00", ss = "00"] = m1;
-            return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(mi), Number(ss));
+            const [, mm, dd, yy] = m1;
+            const yyyy = `20${yy}`;
+            return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
         }
         const d = new Date(s);
         return isNaN(d.getTime()) ? null : d;
@@ -43,302 +45,98 @@ function formatToAZDate(dateStr) {
     return `${dd}.${MM}.${yyyy}`;
 }
 
-function getQuickRange(label) {
-    const now = new Date();
-    const start = new Date(now);
-    const end = new Date(now);
-    const dow = now.getDay() || 7;
-    if (label === "Bugün") {
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
-    } else if (label === "Dünən") {
-        start.setDate(now.getDate() - 1);
-        start.setHours(0, 0, 0, 0);
-        end.setDate(now.getDate() - 1);
-        end.setHours(23, 59, 59, 999);
-    } else if (label === "Bu həftə") {
-        start.setDate(now.getDate() - (dow - 1));
-        start.setHours(0, 0, 0, 0);
-        end.setDate(start.getDate() + 6);
-        end.setHours(23, 59, 59, 999);
-    } else if (label === "Keçən həftə") {
-        start.setDate(now.getDate() - (dow - 1) - 7);
-        start.setHours(0, 0, 0, 0);
-        end.setDate(start.getDate() + 6);
-        end.setHours(23, 59, 59, 999);
-    } else if (label === "Bu ay") {
-        start.setDate(1);
-        start.setHours(0, 0, 0, 0);
-        end.setMonth(now.getMonth() + 1, 0);
-        end.setHours(23, 59, 59, 999);
-    } else if (label === "Keçən ay") {
-        start.setMonth(now.getMonth() - 1, 1);
-        start.setHours(0, 0, 0, 0);
-        end.setMonth(now.getMonth(), 0);
-        end.setHours(23, 59, 59, 999);
-    } else return [null, null];
-    return [start, end];
-}
-
 const OrderHistoryAccounter = () => {
-    const navigate = useNavigate();
-    const { date } = useParams(); // Tarixi URL-dən alırıq
+    const { date } = useParams();
     const [vendorId, setVendorId] = useState(() => localStorage.getItem("vendorId") || "");
     const [borcCompanyId, setBorcCompanyId] = useState(() => localStorage.getItem("borcCompanyId") || "");
-
-    // State-lər
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCompany, setSelectedCompany] = useState("all");
-    const [filter, setFilter] = useState("all");
-    const [globalSearch, setGlobalSearch] = useState("");
-    const [activeSearch, setActiveSearch] = useState(null);
+    const [activeSearch, setActiveSearch] = useState(null); // Tracks which column is being searched
 
-    // Tarix filterləri
-    const [dateFilterOpen, setDateFilterOpen] = useState(false);
-    const [dateQuickF, setDateQuickF] = useState("");
-    const [dateFrom, setDateFrom] = useState("");
-    const [dateTo, setDateTo] = useState("");
-
-    // Əlavə filtrlər
-    const [statusFilterOpen, setStatusFilterOpen] = useState(false);
-    const [statusF, setStatusF] = useState("");
-    const [departmentF, setDepartmentF] = useState("");
-    const [sectionF, setSectionF] = useState("");
-    const [productF, setProductF] = useState("");
-    const [priceMin, setPriceMin] = useState("");
-    const [priceMax, setPriceMax] = useState("");
-
-    // Registry-lər
-    const sectionRegistryRef = useRef(new Map());
-    const sectionToDepartmentRef = useRef(new Map());
-    const seenIdsRef = useRef(new Set());
-
-    // Companies
-    const { data: getAllCompanies } = useGetAllCompaniesQuery();
+    const { data: getAllCompanies } = useGetCompanyIdQuery(borcCompanyId);
     const companies = getAllCompanies?.data || [];
-
-    // Companies-dən şirkət -> şöbə xəritəsi
-    const companyToDepartments = useMemo(() => {
-        const map = new Map();
-        for (const c of companies) {
-            const cname = c?.name || c?.companyName || "";
-            const deps = (c?.departments || []).map((d) => d?.name).filter(Boolean);
-            if (cname) map.set(cname, new Set(deps));
-        }
-        return map;
-    }, [companies]);
-
-    // name -> id xəritəsi
-    const nameToId = useMemo(() => {
-        const m = new Map();
-        for (const c of companies) {
-            const name = c?.name || c?.companyName || c?.title || "";
-            const id = c?.id ?? c?.companyId ?? c?._id;
-            if (name && id) m.set(name, String(id));
-        }
-        return m;
-    }, [companies]);
-
-    // Master department/section siyahıları
-    const allDepartmentsMaster = useMemo(() => {
-        const all = new Set();
-        for (const set of companyToDepartments.values()) for (const d of set) all.add(d);
-        return Array.from(all).sort();
-    }, [companyToDepartments]);
-
-    // Data çəkilməsi
+    const { data: getAllVendorsId } = useGetAllVendorsIdQuery(vendorId);
+    const vendors = getAllVendorsId?.data || [];
     const formattedDate = formatToAZDate(date);
-    const { data: paymentData, isFetching } = useGetDateBasedPaymentByDateQuery(
-        {
-            companyId: borcCompanyId,
-            vendorId: vendorId,
-            date: formattedDate,
-        },
-        { skip: !vendorId || !borcCompanyId || !formattedDate }
-    );
+    const { data: paymentData, isFetching } = useGetDateBasedPaymentByDateQuery({
+        companyId: borcCompanyId,
+        vendorId: vendorId,
+        date: date,
+    });
 
-    // Yığıcı state
     const [allOrders, setAllOrders] = useState([]);
 
-    // Data işlənməsi
     useEffect(() => {
         if (!paymentData?.data) return;
-
-        setAllOrders((prev) => {
-            const base = prev;
-            seenIdsRef.current = new Set();
-            const next = [];
-            for (const it of paymentData.data) {
-                const id = String(it?.id || "");
-                if (!id || seenIdsRef.current.has(id)) continue;
-                seenIdsRef.current.add(id);
-                next.push(it);
-            }
-            return next;
-        });
-
-        // Section registry-ni update et
-        const reg = sectionRegistryRef.current;
-        const s2d = sectionToDepartmentRef.current;
-        for (const o of paymentData.data) {
-            const compName = o?.companyName || "";
-            const sec = o?.section?.name || "";
-            const dep = o?.section?.departmentName || "";
-            if (compName && sec) {
-                if (!reg.has(compName)) reg.set(compName, new Set());
-                reg.get(compName).add(sec);
-            }
-            if (sec && dep && !s2d.has(sec)) s2d.set(sec, dep);
-        }
+        setAllOrders(paymentData.data);
     }, [paymentData]);
 
-    // Orders mapping
     const orders = useMemo(() => {
         const list = allOrders ?? [];
-        return list.map((order) => {
-            const isPaid = order.paymentAmount > 0 && order.remainingDebt === 0;
-            const isUnpaid = order.remainingDebt > 0;
-
-            let status = "";
-            if (isPaid) status = "Ödənilib";
-            else if (isUnpaid) status = "Ödənilməyib";
-            else status = "—";
-
-            return {
-                id: String(order.id || ""),
-                product: order.invoices?.join(", ") || "—", // Fakturalar məhsul kimi göstərilir
-                productSingle: order.invoices?.[0] || "—",
-                itemCount: order.invoices?.length || 0,
-                status,
-                price: Number(order.paymentAmount || 0).toFixed(2),
-                priceNum: Number(order.paymentAmount || 0),
-                customer: order.vendorName || "—",
-                supplier: order.vendorName || "—",
-                paymentStatus: status,
-                companyName: order.companyName || "—",
-                companyId: String(order.companyId || ""),
-                department: order.section?.departmentName || "",
-                section: order.section?.name || "",
-                deliveredAt: order.paymentDate || "",
-                order, // raw
-            };
-        });
+        return list.map((order) => ({
+            id: String(order.orderId || ""),
+            supplier: order.fighterName || "—",
+            customer: order.customerName || "—",
+            product: order.productName || "—",
+            category: order.category || "—",
+            price: Number(order.price || 0).toFixed(2),
+            priceNum: Number(order.price || 0),
+            requiredQuantity: Number(order.requiredQuantity || 0).toFixed(2),
+            suppliedQuantity: Number(order.suppliedQuantity || 0).toFixed(2),
+            orderAmount: Number(order.orderAmount || 0).toFixed(2),
+            orderCreatedDate: order.orderCreatedDate || "",
+            orderDeliveryDate: order.orderDeliveryDate || "",
+        }));
     }, [allOrders]);
 
-    // Dinamik dropdown siyahıları
-    const departmentsFromData = useMemo(
-        () => Array.from(new Set(orders.map((o) => o.department).filter(Boolean))).sort(),
-        [orders]
-    );
-    const sectionsFromData = useMemo(
-        () => Array.from(new Set(orders.map((o) => o.section).filter(Boolean))).sort(),
-        [orders]
-    );
-
-    // Relations
-    const relations = useMemo(() => {
-        const departmentToCompany = new Map();
-        for (const [cname, deps] of companyToDepartments.entries()) {
-            for (const d of deps) if (!departmentToCompany.has(d)) departmentToCompany.set(d, cname);
-        }
-        const sectionToCompany = new Map();
-        const reg = sectionRegistryRef.current;
-        for (const [cname, secs] of reg.entries()) {
-            for (const s of secs) if (!sectionToCompany.has(s)) sectionToCompany.set(s, cname);
-        }
-        return {
-            companyToDepartments,
-            sectionRegistry: reg,
-            departmentToCompany,
-            sectionToCompany,
-            sectionToDepartment: sectionToDepartmentRef.current,
-        };
-    }, [companyToDepartments, allOrders]);
-
-    // Filtr nəticəsi
     const filteredOrders = useMemo(() => {
         let list = [...orders];
-
-        if (globalSearch.trim()) {
-            const q = globalSearch.trim().toLowerCase();
-            list = list.filter((o) =>
-                [o.id, o.product, o.customer, o.supplier, o.companyName, o.status]
-                    .map((v) => String(v ?? "").toLowerCase())
-                    .some((s) => s.includes(q))
-            );
-        }
-
-        if (searchTerm.trim()) {
-            const qs = searchTerm.toLowerCase();
-            list = list.filter(
-                (o) => o.id.toLowerCase().includes(qs) || (o.product || "").toLowerCase().includes(qs)
-            );
-        }
-
-        if (filter !== "all") {
-            list = list.filter(
-                (o) =>
-                    (filter === "unpaid" && o.status === "Ödənilməyib") ||
-                    (filter === "paid" && o.status === "Ödənilib")
-            );
-        }
-
-        if (selectedCompany !== "all") {
-            list = list.filter((o) => o.companyName === selectedCompany);
-        }
-
-        if (departmentF) list = list.filter((o) => o.department === departmentF);
-        if (sectionF) list = list.filter((o) => o.section === sectionF);
-        if (productF) list = list.filter((o) => o.productSingle === productF);
-        if (statusF) list = list.filter((o) => o.status === statusF);
-
-        let from = dateFrom ? new Date(dateFrom) : null;
-        let to = dateTo ? new Date(dateTo) : null;
-        if (dateQuickF) {
-            const [qs, qe] = getQuickRange(dateQuickF);
-            from = qs;
-            to = qe;
-        }
-        if (from || to) {
+        if (searchTerm.trim() && activeSearch) {
+            const q = searchTerm.toLowerCase();
             list = list.filter((o) => {
-                const d = parseAppDate(o.deliveredAt);
-                if (!d) return false;
-                if (from && d < from) return false;
-                if (to) {
-                    const t = new Date(to);
-                    t.setHours(23, 59, 59, 999);
-                    if (d > t) return false;
-                }
-                return true;
+                const value = String(o[activeSearch] ?? "").toLowerCase();
+                return value.includes(q);
             });
         }
-
-        const pMin = priceMin !== "" ? Number(priceMin) : null;
-        const pMax = priceMax !== "" ? Number(priceMax) : null;
-        if (pMin !== null && !Number.isNaN(pMin)) list = list.filter((o) => o.priceNum >= pMin);
-        if (pMax !== null && !Number.isNaN(pMax)) list = list.filter((o) => o.priceNum <= pMax);
-
         return list;
-    }, [
-        orders,
-        globalSearch,
-        searchTerm,
-        filter,
-        selectedCompany,
-        departmentF,
-        sectionF,
-        productF,
-        statusF,
-        dateQuickF,
-        dateFrom,
-        dateTo,
-        priceMin,
-        priceMax,
-    ]);
+    }, [orders, searchTerm, activeSearch]);
+
+    // Helper function to render table header with search
+    const renderTableHeader = (label, field) => (
+        <th>
+            {activeSearch === field ? (
+                <div className="th-search">
+                    <input
+                        autoFocus
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Axtar..."
+                    />
+                    <FaTimes onClick={() => { setActiveSearch(null); setSearchTerm(""); }} />
+                </div>
+            ) : (
+                <div className="th-label">
+                    {label}
+                    <svg
+                        onClick={() => setActiveSearch(field)}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                    >
+                        <path
+                            d="M20.71 19.3252L17.31 15.9352C18.407 14.5376 19.0022 12.8118 19 11.0352C19 9.45291 18.5308 7.90619 17.6518 6.5906C16.7727 5.275 15.5233 4.24962 14.0615 3.64412C12.5997 3.03862 10.9911 2.8802 9.43928 3.18888C7.88743 3.49756 6.46197 4.25949 5.34315 5.37831C4.22433 6.49713 3.4624 7.92259 3.15372 9.47444C2.84504 11.0263 3.00347 12.6348 3.60897 14.0966C4.21447 15.5584 5.23985 16.8079 6.55544 17.6869C7.87103 18.566 9.41775 19.0352 11 19.0352C12.7767 19.0374 14.5025 18.4421 15.9 17.3452L19.29 20.7452C19.383 20.8389 19.4936 20.9133 19.6154 20.9641C19.7373 21.0148 19.868 21.041 20 21.041C20.132 21.041 20.2627 21.0148 20.3846 20.9641C20.5064 20.9133 20.617 20.8389 20.71 20.7452C20.8037 20.6522 20.8781 20.5416 20.9289 20.4197C20.9797 20.2979 21.0058 20.1672 21.0058 20.0352C21.0058 19.9031 20.9797 19.7724 20.9289 19.6506C20.8781 19.5287 20.8037 19.4181 20.71 19.3252ZM5 11.0352C5 9.84847 5.3519 8.68843 6.01119 7.70174C6.67047 6.71504 7.60755 5.94601 8.7039 5.49188C9.80026 5.03776 11.0067 4.91894 12.1705 5.15045C13.3344 5.38196 14.4035 5.9534 15.2426 6.79252C16.0818 7.63163 16.6532 8.70073 16.8847 9.86462C17.1162 11.0285 16.9974 12.2349 16.5433 13.3313C16.0892 14.4276 15.3201 15.3647 14.3334 16.024C13.3467 16.6833 12.1867 17.0352 11 17.0352C9.4087 17.0352 7.88258 16.403 6.75736 15.2778C5.63214 14.1526 5 12.6265 5 11.0352Z"
+                            fill="#7A7A7A"
+                        />
+                    </svg>
+                </div>
+            )}
+        </th>
+    );
 
     return (
         <div className="order-history-accounter-main">
             <div className="order-history-accounter">
+                {/* Başlıq */}
                 <div className="headerr">
                     <div className="head">
                         <h2>Sifariş detalları</h2>
@@ -361,175 +159,98 @@ const OrderHistoryAccounter = () => {
                                 </svg>
                             </div>
                             <div className="borcText">
-                                <h5>{(paymentData?.data?.reduce((sum, item) => sum + (item.totalDebt || 0), 0) || 325).toFixed(2)} ₼</h5>
+                                <h5>
+                                    {(paymentData?.data?.reduce((sum, item) => sum + (item.orderAmount || 0), 0) || 0).toFixed(2)} ₼
+                                </h5>
                                 <p>Ümumi borc</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                {/* Breadcrumb */}
                 <div className="root">
                     <h2>
                         <NavLink className="link" to="/accounter/borc">
                             — Şirkətlər
-                        </NavLink>{" "}
+                        </NavLink>
+                        <NavLink className="link" to={`/accounter/borc/${borcCompanyId}`}>
+                            — {companies?.name} ({vendors?.name})
+                        </NavLink>
+                        <NavLink className="link" to={`/accounter/borc/vendor/${vendorId}`}>
+                            — Borc Tarixçəsi
+                        </NavLink>
                         — (Borc)
                     </h2>
                 </div>
 
-                {/* ==== CƏDVƏL ==== */}
+                {/* Cədvəl */}
                 <div className="table-wrapper">
                     <div className="table-scroll">
                         <table className="orders-table">
                             <thead>
                             <tr>
-                                <th>
-                                    {activeSearch === "id" ? (
-                                        <div className="th-search">
-                                            <input
-                                                autoFocus
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                                placeholder="Axtar..."
-                                            />
-                                            <FaTimes
-                                                onClick={() => {
-                                                    setActiveSearch(null);
-                                                    setSearchTerm("");
-                                                }}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="th-label">
-                                            Order İD
-                                            <svg
-                                                onClick={() => setActiveSearch("id")}
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
-                                                    fill="#7A7A7A"
-                                                />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </th>
-                                <th>
-                                    {activeSearch === "vendor" ? (
-                                        <div className="th-search">
-                                            <input
-                                                autoFocus
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                                placeholder="Axtar..."
-                                            />
-                                            <FaTimes
-                                                onClick={() => {
-                                                    setActiveSearch(null);
-                                                    setSearchTerm("");
-                                                }}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="th-label">
-                                            Təchizatçının adı
-                                            <svg
-                                                onClick={() => setActiveSearch("vendor")}
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
-                                                    fill="#7A7A7A"
-                                                />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </th>
-                                <th>
-                                    {activeSearch === "invoices" ? (
-                                        <div className="th-search">
-                                            <input
-                                                autoFocus
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                                placeholder="Axtar..."
-                                            />
-                                            <FaTimes
-                                                onClick={() => {
-                                                    setActiveSearch(null);
-                                                    setSearchTerm("");
-                                                }}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="th-label">
-                                            Fakturalar
-                                            <svg
-                                                onClick={() => setActiveSearch("invoices")}
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z"
-                                                    fill="#7A7A7A"
-                                                />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </th>
-                                <th>Ödəniş məbləği</th>
-                                <th>Geri qaytarılan məbləğ</th>
-                                <th>Ödəniş üsulu</th>
-                                <th>Ödəniş tarixi</th>
-                                <th>Status</th>
+                                {renderTableHeader("Order ID", "id")}
+                                {renderTableHeader("Təchizatçının adı", "supplier")}
+                                {renderTableHeader("Sifarişçinin adı", "customer")}
+                                {renderTableHeader("Məhsulun adı", "product")}
+                                {renderTableHeader("Kateqoriya", "category")}
+                                <th>Məhsulun qiyməti</th>
+                                <th>Tələb olunan miqdar</th>
+                                <th>Təmin olunan miqdar</th>
+                                <th>Ümumi məbləğ</th>
+                                {renderTableHeader("Sifarişin yaradılma tarixi", "orderCreatedDate")}
+                                {renderTableHeader("Çatdırılma tarixi", "orderDeliveryDate")}
                             </tr>
                             </thead>
+
                             <tbody>
                             {isFetching ? (
                                 <tr>
-                                    <td colSpan={8} style={{ textAlign: "center" }}>
+                                    <td colSpan={11} style={{ textAlign: "center" }}>
                                         Yüklənir...
                                     </td>
                                 </tr>
                             ) : filteredOrders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} style={{ textAlign: "center" }}>
+                                    <td colSpan={11} style={{ textAlign: "center" }}>
                                         Məlumat yoxdur
                                     </td>
                                 </tr>
                             ) : (
-                                filteredOrders.map((item, i) => (
-                                    <tr key={item.id || i}>
-                                        <td>{item.id}</td>
-                                        <td>{item.supplier}</td>
-                                        <td>{item.product}</td>
-                                        <td>{item.price} ₼</td>
-                                        <td>{Number(item.order.reverseAmount || 0).toFixed(2)} ₼</td>
-                                        <td>{item.order.paymentMethod || "—"}</td>
-                                        <td>{formatToAZDate(item.deliveredAt)}</td>
-                                        <td>{item.status}</td>
-                                    </tr>
-                                ))
+                                filteredOrders.map((item, i) => {
+                                    const orderIdParts = item.id.split("-");
+                                    const firstThree = orderIdParts[0].slice(0, 3); // İlk 3 karakter
+                                    const middleThree = orderIdParts[1].slice(1, 4); // Ortadaki 3 karakter (4d7)
+                                    const lastThree = orderIdParts[4].slice(-3); // Sondan 3 karakter
+                                    const formattedOrderId = `${firstThree}-${middleThree}-${lastThree}`;
+
+                                    return (
+                                        <tr key={i}>
+                                            <td>{formattedOrderId}</td>
+                                            <td>{item.supplier}</td>
+                                            <td>{item.customer}</td>
+                                            <td>{item.product}</td>
+                                            <td>{item.category}</td>
+                                            <td>{item.price} ₼</td>
+                                            <td>{item.requiredQuantity}</td>
+                                            <td>{item.suppliedQuantity}</td>
+                                            <td>{item.orderAmount} ₼</td>
+                                            <td>{formatToAZDate(item.orderCreatedDate)}</td>
+                                            <td>{formatToAZDate(item.orderDeliveryDate)}</td>
+                                        </tr>
+                                    );
+                                })
                             )}
                             </tbody>
                         </table>
 
+                        {/* Footer */}
                         <div className="table-footer sticky-footer">
                             <span>Ümumi məbləğ:</span>
                             <span>
                 {`${filteredOrders
-                    .reduce((sum, item) => sum + (item.priceNum || 0), 0)
+                    .reduce((sum, item) => sum + (Number(item.orderAmount) || 0), 0)
                     .toFixed(2)} ₼`}
               </span>
                         </div>

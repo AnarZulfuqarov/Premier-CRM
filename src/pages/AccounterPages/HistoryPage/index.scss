@@ -3,15 +3,18 @@
   border: 1px solid #e7e7e7;
   border-radius: 10px;
 }
-.order-history-accounter-main{
+
+.order-history-accounter-main {
   position: relative;
-  .xett{
+
+  .xett {
     width: 100%;
     height: 4px;
     background: #F6F6F6;
     position: absolute;
     bottom: 100px;
   }
+
   .filterbar {
     display: flex;
     align-items: center;
@@ -35,7 +38,10 @@
         font-size: 14px;
         background: transparent;
       }
-      svg { flex-shrink: 0; }
+
+      svg {
+        flex-shrink: 0;
+      }
     }
 
     .toolbar {
@@ -81,10 +87,19 @@
               flex-direction: row;
               gap: 10px;
 
-              > div { display: flex; flex-direction: column; gap: 6px; width: 50%; }
+              > div {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                width: 50%;
+              }
             }
 
-            label { font-size: 12px; color: #555; }
+            label {
+              font-size: 12px;
+              color: #555;
+            }
+
             select, input {
               border: 1px solid #ddd;
               border-radius: 8px;
@@ -95,7 +110,9 @@
           }
         }
 
-        &.open .toolbar-panel { display: block; }
+        &.open .toolbar-panel {
+          display: block;
+        }
       }
     }
   }
@@ -122,9 +139,14 @@
         cursor: pointer;
         height: 100%;
 
-        &.filled span { font-weight: 500; }
-        span { white-space: nowrap;
-        color: #9A9A9A;}
+        &.filled span {
+          font-weight: 500;
+        }
+
+        span {
+          white-space: nowrap;
+          color: #9A9A9A;
+        }
       }
 
       .dd-panel {
@@ -137,24 +159,46 @@
         z-index: 6;
         background: #fff;
 
-        .dd-search { padding: 8px; border-bottom: 1px solid #eee;
+        .dd-search {
+          padding: 8px;
+          border-bottom: 1px solid #eee;
+
           input {
             width: 100%;
-            border: 1px solid #ddd; border-radius: 8px; padding: 8px; outline: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            outline: none;
           }
         }
 
         .dd-list {
-          max-height: 220px; overflow: auto; padding: 6px;
+          max-height: 220px;
+          overflow: auto;
+          padding: 6px;
 
           .dd-item {
-            padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 14px;
-            &:hover { background: #f5f6fa; }
-            &.active { background: #eef2ff; color: #1c2c57; font-weight: 500; }
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+
+            &:hover {
+              background: #f5f6fa;
+            }
+
+            &.active {
+              background: #eef2ff;
+              color: #1c2c57;
+              font-weight: 500;
+            }
           }
         }
       }
-      &.open .dd-panel { display: block; }
+
+      &.open .dd-panel {
+        display: block;
+      }
     }
 
     .range-dd {
@@ -164,20 +208,34 @@
       gap: 6px;
       background: #fff;
 
-      .range-label { font-size: 13px;
+      .range-label {
+        font-size: 13px;
         align-content: center;
-      color: #9A9A9A;}
+        color: #9A9A9A;
+      }
+
       .range-row {
-        display: flex; align-items: center; gap: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
         input {
-          border: 1px solid #ddd; border-radius: 8px; padding: 8px; outline: none; font-size: 14px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 8px;
+          outline: none;
+          font-size: 14px;
         }
-        span { color:#999; }
+
+        span {
+          color: #999;
+        }
       }
     }
   }
 
 }
+
 .order-history__filter-button {
   position: relative;
 
@@ -197,7 +255,7 @@
     border: 1px solid #ddd;
     border-radius: 6px;
     z-index: 10;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 
     button {
       width: 250px;
@@ -209,7 +267,8 @@
       cursor: pointer;
       display: flex;
       gap: 8px;
-      .statuss{
+
+      .statuss {
         display: flex;
         width: 20px;
         height: 20px;
@@ -218,16 +277,20 @@
         align-items: center;
         gap: 8.286px;
         border-radius: 50%;
-        &.pending{
+
+        &.pending {
           background: #FDEDC8;
         }
-        &.completed{
+
+        &.completed {
           background: #2FC25B;
         }
-        &.unpaid{
+
+        &.unpaid {
           background: #FF5858;
         }
-        &.paid{
+
+        &.paid {
           background: #BBFFB5;
         }
       }
@@ -243,6 +306,7 @@
     }
   }
 }
+
 .order-history-accounter {
   padding: 20px;
   max-width: 100%;
@@ -251,6 +315,7 @@
   height: calc(100vh - 129px);
   overflow: hidden;
   position: relative;
+
   .headerr {
     width: 100%;
     display: flex;
@@ -306,6 +371,7 @@
           font-style: normal;
           font-weight: 500;
           line-height: normal;
+          margin-bottom:0;
         }
       }
     }
@@ -361,70 +427,125 @@
       }
     }
   }
-  .table-wrap {
-    max-height: 480px;        // masaüstü üçün sənin verdiyin limit
-    overflow-y: auto;         // Y boyunca scroll
-    border: 1px solid #EDEDED;
-    border-radius: 6px;
 
-    // scrollbar sənin əvvəlki kimi
-    &::-webkit-scrollbar { width: 3px; }
-    &::-webkit-scrollbar-thumb { background: #007AFF; border-radius: 4px; }
-    &::-webkit-scrollbar-track { background: #f1f1f1; }
-  }
-
-  .orders-table {
+  .table-wrapper {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: fixed;  // sütunlar bərabər paylansın
+    overflow-x: auto; // ✅ X oxu üzrə scroll
+    overflow-y: hidden;
+    border-radius: 6px;
+    background: #fff;
 
-    thead th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: #FFF;
+    // scrollbar görünüşü
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #C0C0C0;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #888;
+    }
+
+    .table-scroll {
+      min-width: 1200px; // ✅ masaüstündə bütün sütunlar yerləşmir deyə
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid #EDEDED;
+      th {
+        background-color:#F3F3F3 !important;
+        & .th-label,
+        & .th-search {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        & .th-label {
+          cursor: pointer;
+          svg { margin-left: 16px; }
+        }
+        & .th-search {
+          input {
+            flex: 1;
+            padding: 4px 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 6px;
+            outline: none;
+          }
+          svg {
+            cursor: pointer;
+          }
+        }
+      }
+      thead th, tbody td {
+        border-right: 1px solid #E6E8EB;
+        border-bottom: 1px solid #E6E8EB;
+        background: #FFF;
+      }
+
+      thead th {
+        border-top: 1px solid #E6E8EB;
+      }
+
+      thead th:first-child, tbody td:first-child {
+        border-left: 1px solid #E6E8EB;
+      }
+
+      tr:hover td {
+        background: #F9F9F9;
+        cursor: pointer;
+      }
+
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #fff;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-bottom: 1px solid #EDEDED;
+        white-space: nowrap; // ✅ başlıqlar bir sətrdə qalsın
+      }
+
+      tbody td {
+        padding: 8px 16px;
+        font-size: 13px;
+        color: #6C6C6C;
+        border-bottom: 1px solid #F3F3F3;
+        background: #FFF;
+        white-space: nowrap;
+      }
+
+      tr:hover td {
+        background: #F9F9F9;
+      }
+    }
+
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid #EDEDED;
+      background: #fff;
       font-weight: 500;
       font-size: 14px;
-      color: #0C0C0C;
-      text-align: left;
-      padding: 8px 16px;
-      border-bottom: 1px solid #EDEDED;
-      white-space: nowrap;
-    }
-
-    tbody td {
-      padding: 8px 16px;
-      font-size: 12px;
-      color: #6C6C6C;
-      border-bottom: 1px solid #F3F3F3;
-      background: #FFF;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    thead th,
-    tbody td {
-      border-right: 1px solid #E6E8EB;  // şaquli xətlər
-      border-bottom: 1px solid #E6E8EB; // üfüqi xətlər
-      background: #FFF;
-    }
-
-    /* yuxarı və sol çərçivəni də tamamla */
-    thead th { border-top: 1px solid #E6E8EB; }
-    thead th:first-child,
-    tbody td:first-child { border-left: 1px solid #E6E8EB; }
-    tr:hover td { background: #F9F9F9; cursor: pointer; }
-
-    // ✅ Sağdakı son sütunu sabitlə
-    .sticky-col {
       position: sticky;
-      right: 0;
-      z-index: 3;              // header-dən kiçik, lakin sətirlərdən böyük
-      background: #FFF;
-      box-shadow: -6px 0 10px rgba(0,0,0,0.04); // sağa sərhəd effekti
+      bottom: 0;
+      z-index: 1;
     }
   }
+
 
   .detail-btn {
     background: transparent;
@@ -432,11 +553,12 @@
     font-size: 13px;
     transition: .2s ease;
     border: none;
-    color:#6C6C6C;
+    color: #6C6C6C;
     width: 100%;
     text-align: left;
 
   }
+
   .table-footer {
     display: flex;
     justify-content: space-between;
@@ -453,15 +575,17 @@
     border-radius: 0px 0px 8px 8px;
   }
 
-/* Mobil optimizasiya */
+  /* Mobil optimizasiya */
 
-  .price-status{
+  .price-status {
     margin-left: 8px;
-    &.paid{
-      color:#2FC25B ;
+
+    &.paid {
+      color: #2FC25B;
     }
-    &.unpaid{
-      color:#ED0303 ;
+
+    &.unpaid {
+      color: #ED0303;
     }
   }
 
@@ -489,6 +613,7 @@
       font-size: 14px;
       outline: none;
     }
+
     .company-select {
       display: flex;
       align-items: center;
@@ -508,6 +633,7 @@
         cursor: pointer;
       }
     }
+
     select {
       padding: 10px;
       border: 1px solid #ddd;
@@ -572,6 +698,7 @@
       font-weight: 400;
       line-height: normal;
     }
+
     p {
       margin: 0;
       font-size: 14px;
@@ -588,12 +715,14 @@
       }
     }
   }
-  .techizat{
-    .order-history-accounter__ids{
+
+  .techizat {
+    .order-history-accounter__ids {
       display: flex;
       gap: 24px;
       align-items: center;
     }
+
     .order-history-accounter__id {
       color: #272727;
       font-size: 14px;
@@ -623,11 +752,13 @@
       margin: 5px 0;
       color: #333;
     }
-    .order-history-accounter__ids{
+
+    .order-history-accounter__ids {
       display: flex;
       gap: 24px;
       align-items: center;
     }
+
     .order-history-accounter__id {
       color: #272727;
       font-size: 14px;
@@ -673,6 +804,7 @@
       border: 1px solid #FBB;
       background: #FFF5F5;
     }
+
     &.paid {
       border-radius: 16px;
       background: rgba(255, 229, 159, 0.25);
@@ -690,6 +822,7 @@
     position: absolute;
     bottom: 30px;
     right: 20px;
+
     button {
       padding: 8px 12px;
       background: #fff;
@@ -725,6 +858,7 @@
     }
   }
 }
+
 @media (max-width: 576px) {
   .order-history-accounter {
     padding: 16px;
@@ -787,13 +921,22 @@
       align-items: flex-start;
       gap: 6px;
     }
+
     .price-status {
       margin-left: 8px;
       font-size: 14px;
       font-weight: 500;
 
-      &.paid { color: #7BE27B; }     // açıq yaşıl
-      &.unpaid { color: #FF5858; }   // qırmızı
+      &.paid {
+        color: #7BE27B;
+      }
+
+      // açıq yaşıl
+      &.unpaid {
+        color: #FF5858;
+      }
+
+      // qırmızı
     }
 
     .order-history-accounter__id {

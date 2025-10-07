@@ -5,7 +5,7 @@ export default function PopupContainer({ popups }) {
 
     return (
         <div className="popup-container">
-            {popups.map((p) => (
+            {popups?.map((p) => (
                 <Popup key={p.id} {...p} />
             ))}
         </div>

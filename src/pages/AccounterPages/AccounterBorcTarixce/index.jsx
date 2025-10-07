@@ -10,7 +10,7 @@ import {
     useGetCompanyIdQuery,
     useGetDateBasedPaymentHistoryQuery,
 } from "../../../services/adminApi.jsx";
-import { usePopup } from "../../../components/Popup/PopupContext.jsx";
+import {usePopup} from "../../../components/Popup/PopupContext.jsx";
 
 const columns = [
     { key: "orderId", label: "Faktura İD" },
@@ -47,7 +47,7 @@ const formatToAZDate = (dateStr) => {
 
 const AccounterBorcTarixce = () => {
     const navigate = useNavigate();
-    const { showPopup } = usePopup();
+    const showPopup = usePopup();
     const { id } = useParams();
     const [modalOpen, setModalOpen] = useState(false);
     const { data: getAllVendorsId } = useGetAllVendorsIdQuery(id);
@@ -67,7 +67,7 @@ const AccounterBorcTarixce = () => {
     const formattedEndDate = formatToAZDate(endDate);
     const skipQuery = !formattedStartDate || !formattedEndDate || !borcCompanyId || !id;
 
-    const { data: getPaymentHistory } = useGetDateBasedPaymentHistoryQuery(
+    const { data: getPaymentHistory,refetch } = useGetDateBasedPaymentHistoryQuery(
         {
             companyId: borcCompanyId,
             vendorId: id,
@@ -84,35 +84,6 @@ const AccounterBorcTarixce = () => {
     const companyObj = companyRes?.data ?? companyRes ?? null;
     const companyNameFromApi = companyObj?.name || companyObj?.title || companyObj?.companyName || "";
 
-    const departmentsFromApi = useMemo(() => {
-        const d = companyObj?.departments;
-        if (!d) return [];
-        if (Array.isArray(d)) {
-            const names = d
-                .map((x) => (typeof x === "string" ? x : x?.name || x?.title))
-                .filter(Boolean);
-            return Array.from(new Set(names));
-        }
-        return [];
-    }, [companyObj]);
-
-    const sectionsFromApi = useMemo(() => {
-        if (Array.isArray(companyObj?.sections)) {
-            return Array.from(new Set(companyObj.sections.filter(Boolean)));
-        }
-        if (Array.isArray(companyObj?.departments)) {
-            const gathered = [];
-            companyObj.departments.forEach((d) => {
-                const sec =
-                    (Array.isArray(d?.sections) && d.sections) ||
-                    (Array.isArray(d?.bolmeler) && d.bolmeler) ||
-                    [];
-                sec.forEach((s) => s && gathered.push(typeof s === "string" ? s : s?.name || s?.title));
-            });
-            return Array.from(new Set(gathered.filter(Boolean)));
-        }
-        return [];
-    }, [companyObj]);
 
     const [editDateBased, { isLoading: isSaving }] = useEditDateBasedPaymentMutation();
 
@@ -136,13 +107,24 @@ const AccounterBorcTarixce = () => {
         editIdx: null,
         editValue: "",
         vendorId: "",
+        paymentPrice:0,
     });
 
     const toUiPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
     const toServerPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
 
     const closeModal = () => setModalOpen(false);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [popupInvoices, setPopupInvoices] = useState([]);
+    const openInvoicePopup = (invoices) => {
+        setPopupInvoices(invoices || []);
+        setIsPopupOpen(true);
+    };
 
+    const closePopup = () => {
+        setIsPopupOpen(false);
+        setPopupInvoices([]);
+    };
     const saveModal = async () => {
         const ptServer = toServerPayment(modalData.paymentType || "nagd");
         const payload = {
@@ -152,12 +134,15 @@ const AccounterBorcTarixce = () => {
             reverseAmount: Number(modalData.returnedDebt) || 0,
             paymentMethod: ptServer,
             paymentDate: modalData.paymentDate,
-            invoices: [...(modalData.originalInvoices || []), ...(modalData.newInvoices || [])].map(String),
+            invoices: modalData.newInvoices.length > 0
+                ? [...(modalData.originalInvoices || []), ...modalData.newInvoices].map(String)
+                : null,
         };
 
         try {
             await editDateBased(payload).unwrap();
             setModalOpen(false);
+            refetch();
             showPopup("Dəyişiklik yadda saxlandı", "Uğurla tamamlandı", "success");
         } catch (e) {
             console.error("editDateBased failed:", e);
@@ -198,6 +183,7 @@ const AccounterBorcTarixce = () => {
             editIdx: null,
             editValue: "",
             vendorId: row.vendorId,
+            paymentPrice:row.remainingDebt
         });
         setModalOpen(true);
     };
@@ -208,15 +194,9 @@ const AccounterBorcTarixce = () => {
     const [companyF, setCompanyF] = useState("");
     const [departmentF, setDepartmentF] = useState("");
     const [sectionF, setSectionF] = useState("");
-    const [statusF, setStatusF] = useState("");
     const [dateQuickF, setDateQuickF] = useState("");
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
-    const [productF, setProductF] = useState("");
-    const [priceMin, setPriceMin] = useState("");
-    const [priceMax, setPriceMax] = useState("");
-    const [editFighter] = useEditAccountantMutation();
-    const [deleteFighter] = useDeleteAccountantMutation();
 
     const DateField = ({ label, value, onChange, placeholder = "dd/mm/yy" }) => {
         const [type, setType] = useState("text");
@@ -365,7 +345,7 @@ const AccounterBorcTarixce = () => {
                         <NavLink className="link" to={`/accounter/borc/${companyId}`}>
                             — {company?.name} ({vendor?.name})
                         </NavLink>{" "}
-                        — (Borc)
+                        — Borc tarixçəsi
                     </h2>
                 </div>
                 <div className="table-toolbar">
@@ -522,7 +502,22 @@ const AccounterBorcTarixce = () => {
                                         <td>{row.paidAmount}</td>
                                         <td>{row.remainingDebt}</td>
                                         <td>{row.paymentMethod}</td>
-                                        <td>{row.orderId}</td>
+                                        <td
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() => openInvoicePopup(row.invoices)}
+                                        >
+                                            {Array.isArray(row.invoices) && row.invoices.length > 0
+                                                ? (
+                                                    <div style={{
+                                                        display:"flex",
+                                                        justifyContent:"space-between",
+                                                        alignItems:"center",
+                                                    }}>
+                                                        {row.invoices[0].invoiceName} <span className="invoice-count">{row.invoices.length}</span>
+                                                    </div>
+                                                )
+                                                : "—"}
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -536,38 +531,40 @@ const AccounterBorcTarixce = () => {
                         ) : (
                             filtered.map((row, i) => (
                                 <div key={row.orderId ?? i} className="cell">
-                                    <button className="detail-btnn" onClick={() => openEditModal(row)}>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="20"
-                                            height="21"
-                                            viewBox="0 0 20 21"
-                                            fill="none"
-                                        >
-                                            <path
-                                                d="M1.66602 3.78516H7.29685C7.62527 3.78512 7.95048 3.84979 8.25389 3.97547C8.55731 4.10116 8.83299 4.28539 9.06518 4.51766L11.666 7.11849M4.16602 11.2852H1.66602M7.08268 6.28516L8.74935 7.95182C8.85878 8.06126 8.94559 8.19118 9.00482 8.33416C9.06404 8.47714 9.09453 8.63039 9.09453 8.78516C9.09453 8.93992 9.06404 9.09317 9.00482 9.23615C8.94559 9.37914 8.85878 9.50905 8.74935 9.61849C8.63991 9.72792 8.51 9.81473 8.36701 9.87396C8.22403 9.93318 8.07078 9.96367 7.91602 9.96367C7.76125 9.96367 7.608 9.93318 7.46502 9.87396C7.32204 9.81473 7.19212 9.72792 7.08268 9.61849L5.83268 8.36849C5.11602 9.08516 3.98018 9.16599 3.16852 8.55766L2.91602 8.36849"
-                                                stroke="#FF6363"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                            <path
-                                                d="M4.16602 9.20052V12.9505C4.16602 14.5222 4.16602 15.3072 4.65435 15.7955C5.14268 16.2839 5.92768 16.2839 7.49935 16.2839H14.9993C16.571 16.2839 17.356 16.2839 17.8443 15.7955C18.3327 15.3072 18.3327 14.5222 18.3327 12.9505V10.4505C18.3327 8.87885 18.3327 8.09385 17.8443 7.60552C17.356 7.11719 16.571 7.11719 14.9993 7.11719H7.91602"
-                                                stroke="#FF6363"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                            <path
-                                                d="M12.7077 11.7005C12.7077 12.0873 12.554 12.4582 12.2805 12.7317C12.0071 13.0052 11.6361 13.1589 11.2493 13.1589C10.8626 13.1589 10.4916 13.0052 10.2182 12.7317C9.94466 12.4582 9.79102 12.0873 9.79102 11.7005C9.79102 11.3137 9.94466 10.9428 10.2182 10.6693C10.4916 10.3958 10.8626 10.2422 11.2493 10.2422C11.6361 10.2422 12.0071 10.3958 12.2805 10.6693C12.554 10.9428 12.7077 11.3137 12.7077 11.7005Z"
-                                                stroke="#FF6363"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>{" "}
-                                        Ödə
-                                    </button>
+                                    {(parseFloat(row.remainingDebt) !== 0 ) && (
+                                        <button className="detail-btnn" onClick={() => openEditModal(row)}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="21"
+                                                viewBox="0 0 20 21"
+                                                fill="none"
+                                            >
+                                                <path
+                                                    d="M1.66602 3.78516H7.29685C7.62527 3.78512 7.95048 3.84979 8.25389 3.97547C8.55731 4.10116 8.83299 4.28539 9.06518 4.51766L11.666 7.11849M4.16602 11.2852H1.66602M7.08268 6.28516L8.74935 7.95182C8.85878 8.06126 8.94559 8.19118 9.00482 8.33416C9.06404 8.47714 9.09453 8.63039 9.09453 8.78516C9.09453 8.93992 9.06404 9.09317 9.00482 9.23615C8.94559 9.37914 8.85878 9.50905 8.74935 9.61849C8.63991 9.72792 8.51 9.81473 8.36701 9.87396C8.22403 9.93318 8.07078 9.96367 7.91602 9.96367C7.76125 9.96367 7.608 9.93318 7.46502 9.87396C7.32204 9.81473 7.19212 9.72792 7.08268 9.61849L5.83268 8.36849C5.11602 9.08516 3.98018 9.16599 3.16852 8.55766L2.91602 8.36849"
+                                                    stroke="#FF6363"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M4.16602 9.20052V12.9505C4.16602 14.5222 4.16602 15.3072 4.65435 15.7955C5.14268 16.2839 5.92768 16.2839 7.49935 16.2839H14.9993C16.571 16.2839 17.356 16.2839 17.8443 15.7955C18.3327 15.3072 18.3327 14.5222 18.3327 12.9505V10.4505C18.3327 8.87885 18.3327 8.09385 17.8443 7.60552C17.356 7.11719 16.571 7.11719 14.9993 7.11719H7.91602"
+                                                    stroke="#FF6363"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M12.7077 11.7005C12.7077 12.0873 12.554 12.4582 12.2805 12.7317C12.0071 13.0052 11.6361 13.1589 11.2493 13.1589C10.8626 13.1589 10.4916 13.0052 10.2182 12.7317C9.94466 12.4582 9.79102 12.0873 9.79102 11.7005C9.79102 11.3137 9.94466 10.9428 10.2182 10.6693C10.4916 10.3958 10.8626 10.2422 11.2493 10.2422C11.6361 10.2422 12.0071 10.3958 12.2805 10.6693C12.554 10.9428 12.7077 11.3137 12.7077 11.7005Z"
+                                                    stroke="#FF6363"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>{" "}
+                                            Ödə
+                                        </button>
+                                    )}
                                 </div>
                             ))
                         )}
@@ -612,6 +609,8 @@ const AccounterBorcTarixce = () => {
                                             placeholder="0"
                                             value={modalData.paidDebt}
                                             onChange={(e) => setModalData((s) => ({ ...s, paidDebt: e.target.value }))}
+                                            min={0}
+                                            max={modalData.paymentPrice}
                                         />
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
@@ -626,6 +625,7 @@ const AccounterBorcTarixce = () => {
                                             placeholder="0"
                                             value={modalData.returnedDebt}
                                             onChange={(e) => setModalData((s) => ({ ...s, returnedDebt: e.target.value }))}
+                                            min={0}
                                         />
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
@@ -650,103 +650,108 @@ const AccounterBorcTarixce = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="debt-modal__row">
+                            <div className="debt-modal__row" >
                                 <div className="field">
                                     <label>Fakturalar</label>
-                                    {modalData.originalInvoices.length > 0 && (
-                                        <>
-                                            <div className="muted-title">Mövcud (backend):</div>
-                                            <ul className="invoice-list readonly">
-                                                {modalData.originalInvoices.map((inv, idx) => (
-                                                    <li key={`orig-${idx}`}>
+                                    <div style={{
+                                        maxHeight:"200px",
+                                        overflowY:"auto"
+                                    }}>
+                                        {modalData.originalInvoices.length > 0 && (
+                                            <>
+                                                <div className="muted-title">Mövcud (backend):</div>
+                                                <ul className="invoice-list readonly">
+                                                    {modalData.originalInvoices?.map((inv, idx) => (
+                                                        <li key={`orig-${idx}`}>
                             <span className="invoice-chip" title="Backend-dən gəlib, dəyişmək olmaz">
-                              {inv}
+                              {inv.invoiceName}
                             </span>
-                                                        <div className="actions">
-                                                            <button className="icon-btn" disabled title="Düzəltmək olmaz">
-                                                                ✎
-                                                            </button>
-                                                            <button className="icon-btn danger" disabled title="Silmək olmaz">
-                                                                🗑
-                                                            </button>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </>
-                                    )}
-                                    {modalData.newInvoices.length > 0 && (
-                                        <>
-                                            <div className="muted-title">Yeni əlavə etdikləriniz:</div>
-                                            <ul className="invoice-list">
-                                                {modalData.newInvoices.map((inv, idx) => (
-                                                    <li key={`new-${idx}`}>
-                                                        {modalData.editIdx === idx ? (
-                                                            <div className="input-with-icon">
-                                                                <input
-                                                                    value={modalData.editValue}
-                                                                    onChange={(e) =>
-                                                                        setModalData((s) => ({ ...s, editValue: e.target.value }))
-                                                                    }
-                                                                    autoFocus
-                                                                />
-                                                                <button
-                                                                    className="ghost-icon"
-                                                                    title="Yadda saxla"
-                                                                    onClick={() =>
-                                                                        setModalData((s) => {
-                                                                            const nextVal = (s.editValue || "").trim();
-                                                                            if (!nextVal) return { ...s };
-                                                                            const inOriginal = s.originalInvoices.some(
-                                                                                (o) => normalize(o) === normalize(nextVal)
-                                                                            );
-                                                                            const inNewOther = s.newInvoices.some(
-                                                                                (n, i) => i !== idx && normalize(n) === normalize(nextVal)
-                                                                            );
-                                                                            if (inOriginal || inNewOther) return { ...s };
-                                                                            const copy = [...s.newInvoices];
-                                                                            copy[idx] = nextVal;
-                                                                            return { ...s, newInvoices: copy, editIdx: null, editValue: "" };
-                                                                        })
-                                                                    }
-                                                                >
-                                                                    ✔
+                                                            <div className="actions">
+                                                                <button className="icon-btn" disabled title="Düzəltmək olmaz">
+                                                                    ✎
+                                                                </button>
+                                                                <button className="icon-btn danger" disabled title="Silmək olmaz">
+                                                                    🗑
                                                                 </button>
                                                             </div>
-                                                        ) : (
-                                                            <>
-                                                                <span className="invoice-chip">{inv}</span>
-                                                                <div className="actions">
-                                                                    <button
-                                                                        className="icon-btn"
-                                                                        title="Düzəlt"
-                                                                        onClick={() =>
-                                                                            setModalData((s) => ({ ...s, editIdx: idx, editValue: inv }))
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </>
+                                        )}
+                                        {modalData.newInvoices.length > 0 && (
+                                            <>
+                                                <div className="muted-title">Yeni əlavə etdikləriniz:</div>
+                                                <ul className="invoice-list">
+                                                    {modalData.newInvoices.map((inv, idx) => (
+                                                        <li key={`new-${idx}`}>
+                                                            {modalData.editIdx === idx ? (
+                                                                <div className="input-with-icon">
+                                                                    <input
+                                                                        value={modalData.editValue}
+                                                                        onChange={(e) =>
+                                                                            setModalData((s) => ({ ...s, editValue: e.target.value }))
                                                                         }
-                                                                    >
-                                                                        ✎
-                                                                    </button>
+                                                                        autoFocus
+                                                                    />
                                                                     <button
-                                                                        className="icon-btn danger"
-                                                                        title="Sil"
+                                                                        className="ghost-icon"
+                                                                        title="Yadda saxla"
                                                                         onClick={() =>
                                                                             setModalData((s) => {
+                                                                                const nextVal = (s.editValue || "").trim();
+                                                                                if (!nextVal) return { ...s };
+                                                                                const inOriginal = s.originalInvoices.some(
+                                                                                    (o) => normalize(o) === normalize(nextVal)
+                                                                                );
+                                                                                const inNewOther = s.newInvoices.some(
+                                                                                    (n, i) => i !== idx && normalize(n) === normalize(nextVal)
+                                                                                );
+                                                                                if (inOriginal || inNewOther) return { ...s };
                                                                                 const copy = [...s.newInvoices];
-                                                                                copy.splice(idx, 1);
-                                                                                return { ...s, newInvoices: copy };
+                                                                                copy[idx] = nextVal;
+                                                                                return { ...s, newInvoices: copy, editIdx: null, editValue: "" };
                                                                             })
                                                                         }
                                                                     >
-                                                                        🗑
+                                                                        ✔
                                                                     </button>
                                                                 </div>
-                                                            </>
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </>
-                                    )}
+                                                            ) : (
+                                                                <>
+                                                                    <span className="invoice-chip">{inv}</span>
+                                                                    <div className="actions">
+                                                                        <button
+                                                                            className="icon-btn"
+                                                                            title="Düzəlt"
+                                                                            onClick={() =>
+                                                                                setModalData((s) => ({ ...s, editIdx: idx, editValue: inv }))
+                                                                            }
+                                                                        >
+                                                                            ✎
+                                                                        </button>
+                                                                        <button
+                                                                            className="icon-btn danger"
+                                                                            title="Sil"
+                                                                            onClick={() =>
+                                                                                setModalData((s) => {
+                                                                                    const copy = [...s.newInvoices];
+                                                                                    copy.splice(idx, 1);
+                                                                                    return { ...s, newInvoices: copy };
+                                                                                })
+                                                                            }
+                                                                        >
+                                                                            🗑
+                                                                        </button>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </>
+                                        )}
+                                    </div>
                                     <div className="input-with-icon add-invoice">
                                         <input
                                             placeholder="Yeni faktura əlavə et"
@@ -796,6 +801,45 @@ const AccounterBorcTarixce = () => {
                                 <button className="primary" onClick={saveModal} disabled={isSaving}>
                                     {isSaving ? "Yadda saxlanır..." : "Yadda saxla"}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {isPopupOpen && (
+                    <div className="invoice-popup__overlay" onClick={closePopup}>
+                        <div className="invoice-popup__box" onClick={(e) => e.stopPropagation()}>
+                            <div className="invoice-popup__header">
+                                <h3>Fakturalar</h3>
+                                <button className="icon-btn close" onClick={closePopup} aria-label="Bağla">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                    >
+                                        <path
+                                            d="M12.6673 3.33203L3.33398 12.6654M3.33398 3.33203L12.6673 12.6654"
+                                            stroke="black"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="invoice-popup__content">
+                                <ul className="invoice-list">
+                                    {popupInvoices.length > 0 ? (
+                                        popupInvoices.map((invoice, idx) => (
+                                            <li key={idx}>
+                                                <span className="invoice-chip">{invoice.invoiceName}</span>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li>Məlumat yoxdur</li>
+                                    )}
+                                </ul>
                             </div>
                         </div>
                     </div>

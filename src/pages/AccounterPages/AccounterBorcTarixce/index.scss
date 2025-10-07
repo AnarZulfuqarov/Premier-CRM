@@ -7,6 +7,78 @@
 .accounter-borc-tarixce-main {
   position: relative;
 
+  .invoice-popup__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 22, 28, 0.35);
+    display: grid;
+    place-items: center;
+    z-index: 1000;
+
+    .invoice-popup__box {
+      width: 300px;
+      max-width: calc(100% - 24px);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(22, 24, 35, 0.15);
+      padding: 18px;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      .invoice-popup__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 700;
+          color: #262b33;
+        }
+
+        .icon-btn.close {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          font-size: 20px;
+          line-height: 1;
+          color: #3b3f45;
+        }
+      }
+
+      .invoice-popup__content {
+        max-height: 200px;
+        overflow-y: auto;
+
+        .invoice-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+
+            .invoice-chip {
+              display: inline-block;
+              padding: 8px 12px;
+              border: 1px dashed #E5E6EB;
+              border-radius: 10px;
+              background: #fafbff;
+              color: #3b3f45;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .debt-modal__overlay {
     position: fixed;
     inset: 0;
@@ -14,6 +86,7 @@
     display: grid;
     place-items: center;
     z-index: 1000;
+
     .debt-modal__box {
       width: 340px;
       max-width: calc(100% - 24px);
@@ -209,7 +282,6 @@
   }
 
 
-
   .input2 {
     height: 36px;
     border: 1px solid #E5E5E5;
@@ -221,8 +293,9 @@
     position: relative;
     width: 150px;
     cursor: pointer;
-    input{
-      cursor:pointer;
+
+    input {
+      cursor: pointer;
     }
 
     &:hover {
@@ -288,16 +361,18 @@
       }
     }
   }
-.tablehead{
- h2{
-   color: #262626;
-   font-size: 18px;
-   font-style: normal;
-   font-weight: 500;
-   line-height: normal;
-   margin-bottom: 20px;
- }
-}
+
+  .tablehead {
+    h2 {
+      color: #262626;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      margin-bottom: 20px;
+    }
+  }
+
   /* ==== Alt filter sıra (droplar) ==== */
   .filter-row {
     display: flex;
@@ -872,6 +947,17 @@
         width: 100%;
         min-width: 900px;
 
+        .invoice-count {
+          display: flex;
+          width: 20px;
+          aspect-ratio: 1/1;
+          justify-content: center;
+          align-items: center;
+          border-radius: 10px;
+          border: 1px solid #BCBCBC;
+          background: #EBF5FF;
+        }
+
         thead {
           background: #f9f9f9;
 
@@ -938,8 +1024,7 @@
             text-align: center;
 
 
-              background-color: #ffffff !important;
-
+            background-color: #ffffff !important;
 
 
           }
@@ -993,6 +1078,7 @@
         justify-content: center;
         gap: 8px;
         font-size: 14px;
+        height: 43px;
 
         .action-icon {
           font-size: 18px;
