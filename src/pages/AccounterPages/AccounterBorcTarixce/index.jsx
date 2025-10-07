@@ -173,7 +173,7 @@ const AccounterBorcTarixce = () => {
     const openEditModal = (row) => {
         setModalData({
             id: row.orderId,
-            paidDebt: parseFloat(row.paidAmount) || 0,
+            paidDebt: parseFloat(row.remainingDebt) || 0,
             returnedDebt: parseFloat(row.reverseAmount) || 0,
             paymentType: toUiPayment(row.paymentMethod && row.paymentMethod !== "—" ? row.paymentMethod : "nagd"),
             paymentDate: row.dateText,
@@ -183,7 +183,7 @@ const AccounterBorcTarixce = () => {
             editIdx: null,
             editValue: "",
             vendorId: row.vendorId,
-            paymentPrice:row.remainingDebt
+            paymentPrice:row.remainingDebt.split(' ')[0],
         });
         setModalOpen(true);
     };
@@ -305,7 +305,7 @@ const AccounterBorcTarixce = () => {
     const companyId = localStorage.getItem("borcCompanyId");
     const { data: getCompanyId } = useGetCompanyIdQuery(companyId);
     const company = getCompanyId?.data;
-
+    console.log(modalData)
     return (
         <div className="accounter-borc-tarixce-main">
             <div className="accounter-borc-tarixce">
@@ -610,7 +610,7 @@ const AccounterBorcTarixce = () => {
                                             value={modalData.paidDebt}
                                             onChange={(e) => setModalData((s) => ({ ...s, paidDebt: e.target.value }))}
                                             min={0}
-                                            max={modalData.paymentPrice}
+                                            max={parseInt(modalData.paymentPrice)}
                                         />
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
