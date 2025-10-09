@@ -171,7 +171,7 @@ const SuperAccounterAdd = () => {
                             </div>
                         </div>
                         <h3>Təchizatçı uğurla əlavə edildi !</h3>
-                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/accounter"}>
+                        <button className="back-btn" onClick={() => window.location.href = "/superAdmin/accounter/accounter"}>
                             Əsas səhifəyə qayıt
                         </button>
                     </div>
