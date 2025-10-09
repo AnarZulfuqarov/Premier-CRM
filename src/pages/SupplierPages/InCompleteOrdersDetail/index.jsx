@@ -69,10 +69,10 @@ const InCompleteOrdersDetail = () => {
     };
 
     const totalAmount = Object.values(confirmedRows).reduce((sum, row) => {
-        const numeric = parseFloat(row.price?.replace(' ₼', '') || '0');
-        return sum + numeric;
+        const price = parseFloat(row.price?.replace(' ₼', '') || '0');
+        const quantity = parseFloat(row.quantity || '0');
+        return sum + (price * quantity);
     }, 0);
-
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         const newPreviews = files.map(file => ({
