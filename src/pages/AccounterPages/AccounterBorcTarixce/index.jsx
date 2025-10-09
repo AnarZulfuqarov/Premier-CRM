@@ -703,8 +703,6 @@ const AccounterBorcTarixce = () => {
                                                 const maxAllowed = parseInt(modalData.paymentPrice.split(' ')[0]);
                                                 if (numVal >= 0 && numVal + paid <= maxAllowed) {
                                                     setModalData((s) => ({ ...s, paidDebt: numVal }));
-                                                    console.log("modalData.paidDebt")
-
                                                 }
                                             }}
                                             min={0}
