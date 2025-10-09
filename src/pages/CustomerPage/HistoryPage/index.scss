@@ -344,16 +344,42 @@
 }
 
 /* ============== Responsive ============== */
-@media (max-width: 992px) {
-  .filterbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  .filter-row {
-    gap: 8px;
-  }
+@media (max-width: 576px) {
   .order-history-cust {
-    padding: 16px;
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 129px);
+  }
+  .filterbar{
+    display: flex; flex-direction: row !important;
+  }
+  .filterbar .searchbox input {
+    font-size: 13px;
+  }
+
+  .filter-dd .dd-btn {
+    font-size: 13px;
+    height: auto;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .filter-row .range-dd .range-row input{
+    width: 100px;
+  }
+  .ohc-table {
+    width: 900px;
+    th:last-child{
+      width:100px;
+    }
+
+  }
+  .sticky-col{
+    width: 75px !important;
   }
 }

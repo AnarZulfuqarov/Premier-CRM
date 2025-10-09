@@ -315,14 +315,23 @@ const OrderHistorySuperAdmin = () => {
         if (sectionF) list = list.filter((r) => r.section === sectionF);
         if (productF) list = list.filter((r) => Array.isArray(r.products) && r.products.includes(productF));
 
-        // date quick / range
-        let from = dateFrom ? new Date(dateFrom) : null;
-        let to = dateTo ? new Date(dateTo) : null;
+        // Yerli tarixi düzgün parse edən funksiya
+        const parseLocalDate = (value) => {
+            if (!value) return null;
+            const [year, month, day] = value.split("-").map(Number);
+            return new Date(year, month - 1, day, 0, 0, 0, 0);
+        };
+
+// date quick / range
+        let from = dateFrom ? parseLocalDate(dateFrom) : null;
+        let to = dateTo ? parseLocalDate(dateTo) : null;
+
         if (dateQuickF) {
             const [qs, qe] = getQuickRange(dateQuickF);
             from = qs;
             to = qe;
         }
+
         if (from || to) {
             list = list.filter((r) => {
                 const d = r.createdAt ? new Date(r.createdAt) : null;
@@ -336,6 +345,7 @@ const OrderHistorySuperAdmin = () => {
                 return true;
             });
         }
+
 
         // price range
         const pMin = priceMin !== "" ? Number(priceMin) : null;
@@ -385,7 +395,7 @@ const OrderHistorySuperAdmin = () => {
                     />
                     <Dropdown label="Şöbə seç" value={departmentF} onChange={setDepartmentF} options={departments} />
                     <Dropdown label="Bölmə seç" value={sectionF} onChange={setSectionF} options={sections} />
-                    <Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />
+                    {/*<Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />*/}
 
                     <div className="range-dd">
                         <div className="range-label">Tarix aralığı seç</div>

@@ -244,9 +244,16 @@ const OrderHistory = () => {
         if (categoryF) list = list.filter((r) => Array.isArray(r.categories) && r.categories.includes(categoryF));
         if (productF) list = list.filter((r) => Array.isArray(r.products) && r.products.includes(productF));
 
-        // dates
-        let from = dateFrom ? new Date(dateFrom) : null;
-        let to = dateTo ? new Date(dateTo) : null;
+        const parseLocalDate = (value) => {
+            if (!value) return null;
+            const [year, month, day] = value.split("-").map(Number);
+            // JS-də aylar 0-dan başlayır (yanvar = 0)
+            return new Date(year, month - 1, day, 0, 0, 0, 0);
+        };
+
+        let from = dateFrom ? parseLocalDate(dateFrom) : null;
+        let to = dateTo ? parseLocalDate(dateTo) : null;
+
         if (dateQuickF) {
             const [qs, qe] = getQuickRange(dateQuickF);
             from = qs;
@@ -309,7 +316,7 @@ const OrderHistory = () => {
                 <div className="filter-row">
                     <Dropdown label="Kategoriya seç" value={categoryF} onChange={setCategoryF} options={categoryOptions} />
                     <Dropdown label="Məhsul seç" value={productF} onChange={setProductF} options={productOptions} />
-                    <Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />
+                    {/*<Dropdown label="Tarix seç" value={dateQuickF} onChange={setDateQuickF} options={quickDateOptions} />*/}
 
                     <div className="range-dd">
                         <div className="range-label">Tarix aralığı</div>

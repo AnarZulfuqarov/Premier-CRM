@@ -77,7 +77,9 @@
 /* Second row */
 .filter-row {
   display: flex; flex-wrap: wrap; gap: 10px 6px; margin-bottom: 18px;
-
+  .customFlex{
+    display: flex; align-items: center; gap: 8px;
+  }
   .range-dd {
     @include card;
     padding: 6px 10px; display: flex; align-items: center; gap: 10px; background: #fff; height: 36px;
@@ -157,51 +159,18 @@
 .ohs-empty { padding: 24px 8px; color: #6b7280; text-align: center; }
 
 /* ==================== Responsive ==================== */
-@media (max-width: 992px) {
-  .order-history-supplier { padding: 16px; }
 
-  .filterbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    width: 100%;
-
-    .filter-dd { min-width: 100%; }
-  }
-
-  .filter-row {
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-
-    .range-dd {
-      width: 100%;
-      justify-content: space-between;
-      .range-row { flex: 1; justify-content: flex-end; }
-    }
-  }
-
-  .order-history-supplier__table-wrap {
-    overflow-x: auto;
-    max-height: none;
-  }
-
-  .ohs-table {
-    min-width: 700px; /* cədvəl mobil ekranda daşma ilə scroll olunsun */
-    font-size: 13px;
-
-    thead th, tbody td {
-      padding: 8px;
-      font-size: 12px;
-    }
-  }
-}
 
 @media (max-width: 576px) {
   .order-history-supplier {
     padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 129px);
   }
-
+  .filterbar{
+    display: flex; flex-direction: row !important;
+  }
   .filterbar .searchbox input {
     font-size: 13px;
   }
@@ -218,7 +187,7 @@
     font-size: 11px;
   }
   .filter-row .range-dd .range-row input{
-    width: 120px;
+    width: 100px;
   }
   .ohs-table {
     width: 900px;

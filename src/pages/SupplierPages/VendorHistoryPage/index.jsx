@@ -71,7 +71,7 @@ const VendorHistorySupplier = () => {
             <div className="vendor-detail-super-admin">
                 <div className="path">
                     <h2>
-                        <NavLink className="link" to="/superAdmin/products/vendors">
+                        <NavLink className="link" to="/supplier/products/vendors">
                             — Vendorlar
                         </NavLink>{' '}
                         — {vendor?.name}
