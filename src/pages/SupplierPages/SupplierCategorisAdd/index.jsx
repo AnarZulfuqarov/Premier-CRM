@@ -18,6 +18,7 @@ const SupplierCategoryAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
+    const isButtonDisabled = rows.some(row => !row.name.trim());
     const handleSubmit = async () => {
         try {
             const promises = rows.map(row => post({ name: row.name }));
@@ -84,7 +85,7 @@ const SupplierCategoryAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
+                <button className="confirm-btn" disabled={isButtonDisabled} onClick={handleSubmit}>Təsdiqlə</button>
             </div>
             <div className="xett"></div>
             {showSuccessModal && (

@@ -186,11 +186,12 @@
 /* ============== Table wrapper + scrollbar ============== */
 .order-history-super-admin__table-wrap {
   @include card;
-  max-height:480px;
-  overflow: auto;
+
   padding: 0;
   border-color: #e6e8eb;
-
+  max-height: calc(70vh - 300px); /* Adjust based on your layout */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: auto; /* Enable horizontal scrolling for wide tables */
   &::-webkit-scrollbar { width: 3px; height: 8px; }
   &::-webkit-scrollbar-thumb { background: #007aff; border-radius: 4px; }
   &::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -201,7 +202,8 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed;
+  height:280px !important;
+  overflow-y: auto !important;
 
   thead th {
     position: sticky;

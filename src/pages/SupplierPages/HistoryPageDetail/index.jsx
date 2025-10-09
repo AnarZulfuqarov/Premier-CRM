@@ -68,22 +68,22 @@ const OrderHistoryDetailSuplier = () => {
                 </h2>
                 <div key={orderData?.id} className="order-history-detail-supplier_item">
                     <div className={"techizat"}>
-                        <div className={"order-history-supplier__ids"}>
-                            <p className="order-history-supplier__id">
+                        <div className={"order-history-detail-supplier__ids"}>
+                            <p className="order-history-detail-supplier__id">
                                 <span>Təchizatçının adı:</span> {orderData?.fighterInfo?.name} {orderData?.fighterInfo?.surname}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="order-history-detail-supplier__id">
                                 <span>Sifarişçinin adı:</span> {orderData?.adminInfo?.name} {orderData?.adminInfo?.surname}
                             </p>
 
                         </div>
                     </div>
-                    <div className="order-history-supplier__details">
-                        <div className="order-history-supplier__ids">
-                            <p className="order-history-supplier__id">
+                    <div className="order-history-detail-supplier__details">
+                        <div className="order-history-detail-supplier__ids">
+                            <p className="order-history-detail-supplier__id">
                                 <span>Order ID:</span> {orderData?.id}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="order-history-detail-supplier__id">
                                 <span>Ümumi məbləğ:</span>{' '}
 
 
@@ -95,7 +95,7 @@ const OrderHistoryDetailSuplier = () => {
                             </p>
                         </div>
                         {isMobile ? ("") : (<div
-                            className={`order-history-supplier__status ${
+                            className={`order-history-detail-supplier__status ${
                                 status === 'Tamamlanmış'
                                     ? 'completed'
                                     : status === 'Sifarişçidən təhvil gözləyən'
@@ -107,7 +107,7 @@ const OrderHistoryDetailSuplier = () => {
                         </div>)}
                     </div>
 
-                    <div className="order-history-supplier__data">
+                    <div className="order-history-detail-supplier__data">
                         <p>
                             {orderData?.items?.map((item) => item.product?.name).join(', ')}
                         </p>
@@ -125,7 +125,7 @@ const OrderHistoryDetailSuplier = () => {
                         marginTop:"10px"
                     }}>
                         <div
-                            className={`order-history-supplier__status ${
+                            className={`order-history-detail-supplier__status ${
                                 status === 'Tamamlanmış'
                                     ? 'completed'
                                     : status === 'Sifarişçidən təhvil gözləyən'

@@ -169,6 +169,10 @@
     font-size: 16px;
     cursor: pointer;
   }
+  .confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
 }
 @media (max-width: 576px) {

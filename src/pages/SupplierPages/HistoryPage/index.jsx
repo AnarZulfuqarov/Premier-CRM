@@ -142,15 +142,19 @@ const OrderHistorySupplier = () => {
     const [hasMore, setHasMore] = useState(true);
 
     // Data queries (both called, controlled by skip)
-    const { data: fighterRes, isFetching: isFetchingFighter } = useGetOrderByPageByCompanyFighterQuery(
+    const { data: fighterRes, isFetching: isFetchingFighter, refetch:orderRefetch } = useGetOrderByPageByCompanyFighterQuery(
         { fighterId, companyId, page, pageSize },
         { skip: !!selectedCompany }
     );
-    const { data: byCompanyRes, isFetching: isFetchingCompany } = useGetOrderByPageByCompanyQuery(
+    const { data: byCompanyRes, isFetching: isFetchingCompany, refetch:ordersRefetch } = useGetOrderByPageByCompanyQuery(
         { page, pageSize, companyName: selectedCompany || "all" },
         { skip: !selectedCompany }
     );
 
+    useEffect(() => {
+        orderRefetch();
+
+    }, []);
     const isFetching = selectedCompany ? isFetchingCompany : isFetchingFighter;
     const pageData = useMemo(() => {
         const raw = selectedCompany ? byCompanyRes?.data : fighterRes?.data;

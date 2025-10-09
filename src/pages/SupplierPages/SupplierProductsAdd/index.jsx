@@ -19,6 +19,7 @@ const SupplierProductAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
+    const isButtonDisabled = rows.some(row => !row.name.trim());
     const [postProduct] = useCreateProductsMutation()
     const {data:getAllCategories} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
@@ -116,7 +117,7 @@ const SupplierProductAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
+                <button className="confirm-btn" disabled={isButtonDisabled} onClick={handleSubmit}>Təsdiqlə</button>
 
             </div>
             <div className="xett"></div>
