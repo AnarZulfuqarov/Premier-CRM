@@ -152,7 +152,7 @@ const SuperAdminAccounter
                                                     type="text"
                                                     value={searchTerm}
                                                     onChange={handleSearchChange}
-                                                    placeholder={`Search ${column}`}
+                                                    placeholder={`Axtar ${column}`}
                                                     autoFocus
                                                 />
                                                 <span
