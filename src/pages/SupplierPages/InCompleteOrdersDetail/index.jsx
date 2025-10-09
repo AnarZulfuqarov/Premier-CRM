@@ -239,6 +239,9 @@ const InCompleteOrdersDetail = () => {
                             <tbody>
                             {filtered.map((item, index) => {
                                 const data = confirmedRows[index] || {};
+                                const price = parseFloat(data.price?.replace(' ₼', '') || '0');
+                                const quantity = parseFloat(data.quantity || '0');
+                                const itemTotal = price * quantity;
                                 return (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
@@ -246,7 +249,7 @@ const InCompleteOrdersDetail = () => {
                                         <td>{item.required}</td>
                                         <td>{data.quantity || '-'}</td>
                                         <td>{data.vendor || '-'}</td>
-                                        <td>{data.price || '-'}</td>
+                                        <td>{itemTotal || '-'}</td>
                                     </tr>
                                 );
                             })}
