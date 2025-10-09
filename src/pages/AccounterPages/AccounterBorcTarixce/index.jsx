@@ -107,6 +107,7 @@ const AccounterBorcTarixce = () => {
         editValue: "",
         vendorId: "",
         paymentPrice: 0,
+        deleteInvoiceIds: [], // New field to track IDs of invoices to delete
     });
 
     const toUiPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
@@ -125,18 +126,27 @@ const AccounterBorcTarixce = () => {
         setPopupInvoices([]);
     };
 
+    const combinedInvoices = [
+        ...(modalData.originalInvoices || []),
+        ...(modalData.newInvoices || []),
+    ].filter(Boolean);
+
+
     const saveModal = async () => {
         const ptServer = toServerPayment(modalData.paymentType || "nagd");
+
         const payload = {
+            id: modalData.id,
             vendorId: modalData.vendorId,
             companyId: String(borcCompanyId),
             paymentAmount: Number(modalData.paidDebt) || 0,
             reverseAmount: Number(modalData.returnedDebt) || 0,
             paymentMethod: ptServer,
             paymentDate: modalData.paymentDate,
-            invoices: modalData.newInvoices.length > 0
-                ? [...(modalData.originalInvoices || []), ...modalData.newInvoices].map(String)
-                : null,
+            deleteInvoiceIds: modalData.deleteInvoiceIds || [],
+            invoices: modalData.newInvoices
+                .map((inv) => String(inv).trim())
+                .filter((inv) => inv && inv !== "null" && inv !== "undefined"),
         };
 
         try {
@@ -149,6 +159,8 @@ const AccounterBorcTarixce = () => {
             showPopup("Sistem xətası", "Yenidən cəhd edin.", "error");
         }
     };
+
+
 
     const orders = useMemo(() => {
         return vendorDebts.map((o) => {
@@ -173,8 +185,8 @@ const AccounterBorcTarixce = () => {
     const openEditModal = (row) => {
         setModalData({
             id: row.orderId,
-            paidDebt: parseFloat(row.remainingDebt) || 0,
-            returnedDebt: parseFloat(row.reverseAmount) || 0,
+            paidDebt: 0,
+            returnedDebt: 0,
             paymentType: toUiPayment(row.paymentMethod && row.paymentMethod !== "—" ? row.paymentMethod : "nagd"),
             paymentDate: row.dateText,
             originalInvoices: Array.isArray(row.invoices) ? [...row.invoices] : [],
@@ -183,7 +195,8 @@ const AccounterBorcTarixce = () => {
             editIdx: null,
             editValue: "",
             vendorId: row.vendorId,
-            paymentPrice: row.remainingDebt.split(' ')[0],
+            paymentPrice: row.remainingDebt.split(" ")[0],
+            deleteInvoiceIds: [],
         });
         setModalOpen(true);
     };
@@ -328,20 +341,35 @@ const AccounterBorcTarixce = () => {
     };
 
     // Function to confirm edited invoice
-    const confirmEditInvoice = (idx) => {
+    const confirmEditInvoice = (idx, isOriginal = false) => {
         const nextVal = (modalData.editValue || "").trim();
         if (!nextVal) return;
         const inOriginal = modalData.originalInvoices.some(
-            (o) => normalize(o.invoiceName || o) === normalize(nextVal)
+            (o, i) => (isOriginal ? i !== idx : true) && normalize(o.invoiceName || o) === normalize(nextVal)
         );
-        const inNewOther = modalData.newInvoices.some(
-            (n, i) => i !== idx && normalize(n) === normalize(nextVal)
+        const inNew = modalData.newInvoices.some(
+            (n, i) => (isOriginal ? true : i !== idx) && normalize(n) === normalize(nextVal)
         );
-        if (inOriginal || inNewOther) return;
+        if (inOriginal || inNew) return;
+
         setModalData((s) => {
-            const copy = [...s.newInvoices];
-            copy[idx] = nextVal;
-            return { ...s, newInvoices: copy, editIdx: null, editValue: "" };
+            const newInvoices = isOriginal
+                ? [...s.newInvoices, nextVal]
+                : [...s.newInvoices.slice(0, idx), nextVal, ...s.newInvoices.slice(idx + 1)];
+            const deleteInvoiceIds = isOriginal
+                ? [...s.deleteInvoiceIds, s.originalInvoices[idx].id]
+                : s.deleteInvoiceIds;
+            const originalInvoices = isOriginal
+                ? [...s.originalInvoices.slice(0, idx), ...s.originalInvoices.slice(idx + 1)]
+                : s.originalInvoices;
+            return {
+                ...s,
+                originalInvoices,
+                newInvoices,
+                deleteInvoiceIds,
+                editIdx: null,
+                editValue: "",
+            };
         });
     };
 
@@ -349,7 +377,18 @@ const AccounterBorcTarixce = () => {
     const cancelEditInvoice = () => {
         setModalData((s) => ({ ...s, editIdx: null, editValue: "" }));
     };
-
+    const deleteInvoice = (idx, isOriginal = false) => {
+        setModalData((s) => {
+            if (isOriginal) {
+                const deleteInvoiceIds = [...s.deleteInvoiceIds, s.originalInvoices[idx].id];
+                const originalInvoices = [...s.originalInvoices.slice(0, idx), ...s.originalInvoices.slice(idx + 1)];
+                return { ...s, originalInvoices, deleteInvoiceIds };
+            } else {
+                const newInvoices = [...s.newInvoices.slice(0, idx), ...s.newInvoices.slice(idx + 1)];
+                return { ...s, newInvoices };
+            }
+        });
+    };
     return (
         <div className="accounter-borc-tarixce-main">
             <div className="accounter-borc-tarixce">
@@ -655,14 +694,21 @@ const AccounterBorcTarixce = () => {
                                             placeholder="0"
                                             value={modalData.paidDebt}
                                             onChange={(e) => {
-                                                const value = e.target.value;
-                                                if (value === "" || Number(value) <= Number(modalData.paymentPrice)) {
-                                                    setModalData((s) => ({ ...s, paidDebt: value }));
+                                                const val = e.target.value;
+                                                const numVal = Number(val);
+                                                const returned = Number(modalData.returnedDebt) || 0;
+                                                const maxAllowed = Number(modalData.paymentPrice);
+
+                                                if (
+                                                    val === "" ||
+                                                    (numVal >= 0 && numVal + returned <= maxAllowed)
+                                                ) {
+                                                    setModalData((s) => ({ ...s, paidDebt: val }));
                                                 }
                                             }}
                                             min={0}
-                                            max={parseInt(modalData.paymentPrice)}
                                         />
+
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
                                         </button>
@@ -675,9 +721,22 @@ const AccounterBorcTarixce = () => {
                                             type="number"
                                             placeholder="0"
                                             value={modalData.returnedDebt}
-                                            onChange={(e) => setModalData((s) => ({ ...s, returnedDebt: e.target.value }))}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                const numVal = Number(val);
+                                                const paid = Number(modalData.paidDebt) || 0;
+                                                const maxAllowed = Number(modalData.paymentPrice);
+
+                                                if (
+                                                    val === "" ||
+                                                    (numVal >= 0 && numVal + paid <= maxAllowed)
+                                                ) {
+                                                    setModalData((s) => ({ ...s, returnedDebt: val }));
+                                                }
+                                            }}
                                             min={0}
                                         />
+
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
                                         </button>
@@ -707,21 +766,61 @@ const AccounterBorcTarixce = () => {
                                     <div style={{ maxHeight: "200px", overflowY: "auto" }}>
                                         {modalData.originalInvoices.length > 0 && (
                                             <>
-                                                <div className="muted-title">Mövcud (backend):</div>
-                                                <ul className="invoice-list readonly">
+                                                <div className="muted-title">Mövcud fakturalar:</div>
+                                                <ul className="invoice-list">
                                                     {modalData.originalInvoices?.map((inv, idx) => (
                                                         <li key={`orig-${idx}`}>
-                                                            <span className="invoice-chip" title="Backend-dən gəlib, dəyişmək olmaz">
-                                                                {inv.invoiceName || inv}
-                                                            </span>
-                                                            <div className="actions">
-                                                                <button className="icon-btn" disabled title="Düzəltmək olmaz">
-                                                                    ✎
-                                                                </button>
-                                                                <button className="icon-btn danger" disabled title="Silmək olmaz">
-                                                                    🗑
-                                                                </button>
-                                                            </div>
+                                                            {modalData.editIdx === `orig-${idx}` ? (
+                                                                <div className="input-with-icon">
+                                                                    <input
+                                                                        value={modalData.editValue}
+                                                                        onChange={(e) =>
+                                                                            setModalData((s) => ({ ...s, editValue: e.target.value }))
+                                                                        }
+                                                                        autoFocus
+                                                                    />
+                                                                    <button
+                                                                        className="ghost-icon2"
+                                                                        title="Təsdiq et"
+                                                                        onClick={() => confirmEditInvoice(idx, true)}
+                                                                    >
+                                                                        ✔
+                                                                    </button>
+                                                                    <button
+                                                                        className="ghost-icon danger"
+                                                                        title="Ləğv et"
+                                                                        onClick={cancelEditInvoice}
+                                                                    >
+                                                                        ✕
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <span className="invoice-chip">{inv.invoiceName || inv}</span>
+                                                                    <div className="actions">
+                                                                        <button
+                                                                            className="icon-btn"
+                                                                            title="Düzəlt"
+                                                                            onClick={() =>
+                                                                                setModalData((s) => ({
+                                                                                    ...s,
+                                                                                    editIdx: `orig-${idx}`,
+                                                                                    editValue: inv.invoiceName || inv,
+                                                                                }))
+                                                                            }
+                                                                        >
+                                                                            ✎
+                                                                        </button>
+                                                                        <button
+                                                                            className="icon-btn danger"
+                                                                            title="Sil"
+                                                                            onClick={() => deleteInvoice(idx, true)}
+                                                                        >
+                                                                            🗑
+                                                                        </button>
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -733,7 +832,7 @@ const AccounterBorcTarixce = () => {
                                                 <ul className="invoice-list">
                                                     {modalData.newInvoices.map((inv, idx) => (
                                                         <li key={`new-${idx}`}>
-                                                            {modalData.editIdx === idx ? (
+                                                            {modalData.editIdx === `new-${idx}` ? (
                                                                 <div className="input-with-icon">
                                                                     <input
                                                                         value={modalData.editValue}
@@ -765,7 +864,11 @@ const AccounterBorcTarixce = () => {
                                                                             className="icon-btn"
                                                                             title="Düzəlt"
                                                                             onClick={() =>
-                                                                                setModalData((s) => ({ ...s, editIdx: idx, editValue: inv }))
+                                                                                setModalData((s) => ({
+                                                                                    ...s,
+                                                                                    editIdx: `new-${idx}`,
+                                                                                    editValue: inv,
+                                                                                }))
                                                                             }
                                                                         >
                                                                             ✎
@@ -773,13 +876,7 @@ const AccounterBorcTarixce = () => {
                                                                         <button
                                                                             className="icon-btn danger"
                                                                             title="Sil"
-                                                                            onClick={() =>
-                                                                                setModalData((s) => {
-                                                                                    const copy = [...s.newInvoices];
-                                                                                    copy.splice(idx, 1);
-                                                                                    return { ...s, newInvoices: copy };
-                                                                                })
-                                                                            }
+                                                                            onClick={() => deleteInvoice(idx)}
                                                                         >
                                                                             🗑
                                                                         </button>

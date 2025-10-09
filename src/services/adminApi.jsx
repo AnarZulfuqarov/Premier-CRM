@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://crmsystem-production-0232.up.railway.app/api/',
+        baseUrl: 'https://confident-nature-production.up.railway.app/api/',
         prepareHeaders: (headers, { endpoint, args }) => {
             const role = Cookies.get("role");
 

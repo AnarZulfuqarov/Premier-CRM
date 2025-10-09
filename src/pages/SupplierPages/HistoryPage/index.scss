@@ -124,20 +124,18 @@
     &.center { text-align: center; }
   }
 
-  /* dik xəttlər */
   thead th, tbody td { border-right: 1px solid #e6e8eb; }
   thead th { border-top: 1px solid #e6e8eb; }
   thead th:first-child, tbody td:first-child { border-left: 1px solid #e6e8eb; }
 
-  /* hover */
   tbody tr:hover td { background: #f9f9f9; cursor: pointer; }
 
   .muted { color: #9a9a9a; }
 
-  /* sağ sticky sütun */
   .sticky-col {
     position: sticky; right: 0; z-index: 3; background: #fff;
     box-shadow: -6px 0 10px rgba(0,0,0,0.04); text-align: center;
+
   }
 }
 
@@ -158,9 +156,74 @@
 }
 .ohs-empty { padding: 24px 8px; color: #6b7280; text-align: center; }
 
-/* Responsive */
+/* ==================== Responsive ==================== */
 @media (max-width: 992px) {
-  .filterbar { flex-direction: column; align-items: stretch; gap: 10px; }
-  .filter-row { gap: 8px; }
   .order-history-supplier { padding: 16px; }
+
+  .filterbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+
+    .filter-dd { min-width: 100%; }
+  }
+
+  .filter-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+
+    .range-dd {
+      width: 100%;
+      justify-content: space-between;
+      .range-row { flex: 1; justify-content: flex-end; }
+    }
+  }
+
+  .order-history-supplier__table-wrap {
+    overflow-x: auto;
+    max-height: none;
+  }
+
+  .ohs-table {
+    min-width: 700px; /* cədvəl mobil ekranda daşma ilə scroll olunsun */
+    font-size: 13px;
+
+    thead th, tbody td {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .order-history-supplier {
+    padding: 12px;
+  }
+
+  .filterbar .searchbox input {
+    font-size: 13px;
+  }
+
+  .filter-dd .dd-btn {
+    font-size: 13px;
+    height: auto;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .filter-row .range-dd .range-row input{
+    width: 120px;
+  }
+  .ohs-table {
+    width: 900px;
+    .sticky-col{
+      width: 75px !important;
+    }
+  }
 }

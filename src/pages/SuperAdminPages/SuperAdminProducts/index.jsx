@@ -44,7 +44,6 @@ const SuperAdminProducts = () => {
     const units = ['kg', 'litr', 'ədəd'];
     const {
         data: pagedData,
-        isLoading,
         isFetching,
         refetch:productRefetch,
     } = useGetProductByPageQuery({ page, pageSize: 10 });
