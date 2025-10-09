@@ -48,14 +48,13 @@ const SuperAdminProducts = () => {
         refetch:productRefetch,
     } = useGetProductByPageQuery({ page, pageSize: 10 });
     useEffect(() => {
-        if (pagedData?.data) {
-            setProductList((prev) => [...prev, ...pagedData.data]);
-
-            if (pagedData.data.length < 10) {
-                setHasMore(false); // daha fazla veri yok
-            }
+        if (page === 1 && pagedData?.data) {
+            setProductList(pagedData.data);
+        } else if (pagedData?.data) {
+            setProductList(prev => [...prev, ...pagedData.data]);
         }
     }, [pagedData]);
+
     useEffect(() => {
         const handleScroll = () => {
             if (
@@ -104,6 +103,11 @@ const SuperAdminProducts = () => {
             (p.categoryName || "").toLowerCase().includes(searchCategory.toLowerCase())
         );
 
+    const handleRefetchProducts = async () => {
+        setPage(1);
+        setProductList([]);  // 👈 köhnə datanı silirik
+        await productRefetch(); // 👈 RTK yenidən sorğu atır
+    };
 
 
 
@@ -607,6 +611,7 @@ const SuperAdminProducts = () => {
                                     });
                                     setModalData(null);
                                     productRefetch();
+                                    await handleRefetchProducts();
                                     showPopup("Məhsula uğurla düzəliş etdiniz","Dəyişikliklər uğurla yadda saxlanıldı","success")
                                 } catch  {
                                     showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
@@ -643,6 +648,7 @@ const SuperAdminProducts = () => {
                                         await deleteProduct(deleteIndex); // məhsulun ID-si backend-ə gedir
                                         setDeleteIndex(null);
                                         productRefetch();
+                                        await handleRefetchProducts();
                                         showPopup("Məhsulu uğurla sildiniz","Seçilmiş məhsul sistemdən silindi","success")
                                     } catch {
                                         showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
