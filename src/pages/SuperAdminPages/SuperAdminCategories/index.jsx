@@ -245,11 +245,11 @@ const SuperAdminCategories = () => {
                                         try {
                                             if (item.statusType === 'add') {
                                                 await confirmAdd( item.id );
-                                                showPopup("Kateqiriya yaratma tələbini təsdiq etdiniz","Yeni kateqoriya sistemə əlavə olundu","success")
+                                                showPopup("Kateqoriya yaratma tələbini təsdiq etdiniz","Yeni kateqoriya sistemə əlavə olundu","success")
 
                                             } else if (item.statusType === 'delete') {
                                                 await confirmDelete(item.id``);
-                                                showPopup("Kateqiriyanın silinmə tələbini təsdiq etdiniz","Seçilmiş kateqoriya sistemdən silindi","success")
+                                                showPopup("Kateqoryanın silinmə tələbini təsdiq etdiniz","Seçilmiş kateqoriya sistemdən silindi","success")
 
                                             }
                                             addPendingRefetch()
