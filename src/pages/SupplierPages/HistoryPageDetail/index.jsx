@@ -205,11 +205,11 @@ const OrderHistoryDetailSuplier = () => {
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
-                                {status === 'Tamamlanmış' && (
+
                                     <th>
                                         İnyovsa Bax
                                     </th>
-                                )}
+
                             </tr>
                             </thead>
                             <tbody>
@@ -233,7 +233,7 @@ const OrderHistoryDetailSuplier = () => {
                                         <td>{item.created}</td>
                                         <td>{item.delivery}</td>
                                         <td>{item.received}</td>
-                                        {status === 'Tamamlanmış' && (
+
                                             <td style={{
                                                 textAlign: "center"
                                             }}>
@@ -250,7 +250,7 @@ const OrderHistoryDetailSuplier = () => {
                                                         stroke-linejoin="round"/>
                                                 </svg>
                                             </td>
-                                        )}
+
                                     </tr>
                                 );
                             })}

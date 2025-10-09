@@ -195,11 +195,13 @@ const AccounterBorcTarixce = () => {
             editIdx: null,
             editValue: "",
             vendorId: row.vendorId,
-            paymentPrice: row.remainingDebt.split(" ")[0],
+                paymentPrice: row.remainingDebt,
             deleteInvoiceIds: [],
         });
         setModalOpen(true);
     };
+
+
 
     const [globalSearch, setGlobalSearch] = useState("");
     const [searchCol, setSearchCol] = useState(null);
@@ -389,6 +391,7 @@ const AccounterBorcTarixce = () => {
             }
         });
     };
+    console.log(modalData.paidDebt)
     return (
         <div className="accounter-borc-tarixce-main">
             <div className="accounter-borc-tarixce">
@@ -695,19 +698,18 @@ const AccounterBorcTarixce = () => {
                                             value={modalData.paidDebt}
                                             onChange={(e) => {
                                                 const val = e.target.value;
-                                                const numVal = Number(val);
-                                                const returned = Number(modalData.returnedDebt) || 0;
-                                                const maxAllowed = Number(modalData.paymentPrice);
+                                                const numVal =  parseInt(val);
+                                                const paid = parseInt(modalData.returnedDebt) ;
+                                                const maxAllowed = parseInt(modalData.paymentPrice.split(' ')[0]);
+                                                if (numVal >= 0 && numVal + paid <= maxAllowed) {
+                                                    setModalData((s) => ({ ...s, paidDebt: numVal }));
+                                                    console.log("modalData.paidDebt")
 
-                                                if (
-                                                    val === "" ||
-                                                    (numVal >= 0 && numVal + returned <= maxAllowed)
-                                                ) {
-                                                    setModalData((s) => ({ ...s, paidDebt: val }));
                                                 }
                                             }}
                                             min={0}
                                         />
+
 
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
@@ -723,19 +725,17 @@ const AccounterBorcTarixce = () => {
                                             value={modalData.returnedDebt}
                                             onChange={(e) => {
                                                 const val = e.target.value;
-                                                const numVal = Number(val);
-                                                const paid = Number(modalData.paidDebt) || 0;
-                                                const maxAllowed = Number(modalData.paymentPrice);
+                                                const numVal = parseInt(val);
+                                                const returned = parseInt(modalData.paidDebt) || 0;
+                                                const maxAllowed = parseInt(modalData.paymentPrice.split(' ')[0]);
 
-                                                if (
-                                                    val === "" ||
-                                                    (numVal >= 0 && numVal + paid <= maxAllowed)
-                                                ) {
-                                                    setModalData((s) => ({ ...s, returnedDebt: val }));
+                                                if (numVal >= 0 && numVal + returned <= maxAllowed) {
+                                                    setModalData((s) => ({ ...s, returnedDebt: numVal }));
                                                 }
                                             }}
                                             min={0}
                                         />
+
 
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
                                             ✎
