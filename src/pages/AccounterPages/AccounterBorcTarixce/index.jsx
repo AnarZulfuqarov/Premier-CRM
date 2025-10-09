@@ -624,7 +624,7 @@ const AccounterBorcTarixce = () => {
                                     </div>
                                 </div>
                                 <div className="field">
-                                    <label>Geri qaytarılan borc</label>
+                                    <label>Geri qaytarılan məbləğ</label>
                                     <div className="input-with-icon">
                                         <input
                                             type="number"
