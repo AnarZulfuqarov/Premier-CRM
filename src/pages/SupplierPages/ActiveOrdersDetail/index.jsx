@@ -380,8 +380,10 @@ const ActiveOrdersDetail = () => {
                                             if (isCompleted) return; // ✅ tamamlanmışsa modal açılmasın
                                             const data = confirmedRows[absoluteIndex];
                                             setSelectedRowIndex(absoluteIndex);
+
+                                            const currentMeasure = filtered[absoluteIndex]?.measure || '';
                                             setModalData({
-                                                quantity: data?.quantity?.replace(' ədəd', '') || '',
+                                                quantity: data?.quantity?.replace(` ${currentMeasure}`, '') || '',
                                                 price: data?.price?.replace(' ₼', '') || '',
                                                 vendor: data?.vendor || ''
                                             });

@@ -311,9 +311,9 @@ const InCompleteOrdersDetail = () => {
                                 return (
                                     <tr
                                         key={i}
-                                        className={isCompleted ? 'disabled-row' : ''} // Apply disabled class
+
                                         onClick={() => {
-                                            if (!isCompleted) {
+
                                                 // Only allow clicking if the row is not completed
                                                 const data = confirmedRows[absoluteIndex];
                                                 setSelectedRowIndex(absoluteIndex);
@@ -322,16 +322,15 @@ const InCompleteOrdersDetail = () => {
                                                     price: data?.price?.replace(' ₼', '') || '',
                                                     vendor: data?.vendor || '',
                                                 });
-                                            }
+
                                         }}
-                                        style={isCompleted ? { cursor: 'not-allowed' } : {}} // Optional inline style for cursor
+                                         // Optional inline style for cursor
                                     >
                                         <td>
                                             <input
                                                 type="checkbox"
                                                 checked={isCompleted}
                                                 readOnly
-                                                disabled={isCompleted} // Disable checkbox for completed rows
                                             />
                                         </td>
                                         <td>{item.name}</td>
