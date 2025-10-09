@@ -298,7 +298,15 @@ const InCompleteOrdersDetail = () => {
                             <tbody>
                             {pagedItems.map((item, i) => {
                                 const absoluteIndex = (currentPage - 1) * pageSize + i;
-                                const isCompleted = !!confirmedRows[absoluteIndex]; // Check if row is completed
+                                const confirmedData = confirmedRows[absoluteIndex];
+                                let isCompleted = false;
+
+                                if (confirmedData) {
+                                    const suppliedQty = parseFloat(confirmedData.quantity);
+                                    const requiredQty = parseFloat(item.required); // "10 ədəd" kimi gəlirsə, yalnız ədədi çıxarırıq
+                                    isCompleted = suppliedQty >= requiredQty; // yalnız bərabər və ya çoxdursa tamamlanmış say
+                                }
+
 
                                 return (
                                     <tr

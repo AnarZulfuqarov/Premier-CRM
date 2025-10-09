@@ -11,6 +11,8 @@ const OrderHistoryDetailSuplier = () => {
     const [searchCategory, setSearchCategory] = useState('');
     const [activeSearch, setActiveSearch] = useState(null); // 'name' | 'category' | null
     const {data:getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
+    const [isOverheadModalOpen, setIsOverheadModalOpen] = useState(false);
+    const [selectedOverheadImage, setSelectedOverheadImage] = useState(null);
     const orderData = getMyOrdersId?.data
     let status = '';
     if (orderData?.employeeConfirm && orderData?.fighterConfirm && orderData?.employeeDelivery) {
@@ -203,6 +205,11 @@ const OrderHistoryDetailSuplier = () => {
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
+                                {status === 'Tamamlanmış' && (
+                                    <th>
+                                        İnyovsa Bax
+                                    </th>
+                                )}
                             </tr>
                             </thead>
                             <tbody>
@@ -226,6 +233,24 @@ const OrderHistoryDetailSuplier = () => {
                                         <td>{item.created}</td>
                                         <td>{item.delivery}</td>
                                         <td>{item.received}</td>
+                                        {status === 'Tamamlanmış' && (
+                                            <td style={{
+                                                textAlign: "center"
+                                            }}>
+                                                <svg onClick={() => setIsOverheadModalOpen(true)}
+                                                     style={{cursor: "pointer"}} xmlns="http://www.w3.org/2000/svg"
+                                                     width="21" height="20" viewBox="0 0 21 20" fill="none">
+                                                    <path
+                                                        d="M13 10C13 10.663 12.7366 11.2989 12.2678 11.7678C11.7989 12.2366 11.163 12.5 10.5 12.5C9.83696 12.5 9.20107 12.2366 8.73223 11.7678C8.26339 11.2989 8 10.663 8 10C8 9.33696 8.26339 8.70107 8.73223 8.23223C9.20107 7.76339 9.83696 7.5 10.5 7.5C11.163 7.5 11.7989 7.76339 12.2678 8.23223C12.7366 8.70107 13 9.33696 13 10Z"
+                                                        stroke="#606060" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                    <path
+                                                        d="M2.16602 10.0003C3.49935 6.58616 6.61268 4.16699 10.4993 4.16699C14.386 4.16699 17.4993 6.58616 18.8327 10.0003C17.4993 13.4145 14.386 15.8337 10.4993 15.8337C6.61268 15.8337 3.49935 13.4145 2.16602 10.0003Z"
+                                                        stroke="#606060" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"/>
+                                                </svg>
+                                            </td>
+                                        )}
                                     </tr>
                                 );
                             })}
@@ -247,7 +272,55 @@ const OrderHistoryDetailSuplier = () => {
                 </div>
 
             </div>
+            {isOverheadModalOpen && (
+                <div className="overhead-modal-overlay" onClick={() => setIsOverheadModalOpen(false)}>
+                    <div className="overhead-modal" onClick={e => e.stopPropagation()}>
+                        <h3>İnvoys Şəkilləri</h3>
+                        <div className="overhead-images">
+                            {orderData?.overheadNames?.map((file, i) => {
+                                const isPDF = file.toLowerCase().endsWith('.pdf');
+                                return (
+                                    <div key={i} className="overhead-file">
+                                        {isPDF ? (
+                                            <div
+                                                className="pdf-thumbnail"
+                                                onClick={() => window.open(file, '_blank')}
+                                                style={{
+                                                    width: '120px',
+                                                    height: '150px',
+                                                    border: '1px solid #ccc',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: '#f8f8f8',
+                                                    fontSize: '14px'
+                                                }}
+                                            >
+                                                📄 PDF #{i + 1}
+                                            </div>
+                                        ) : (
+                                            <img
+                                                src={file}
+                                                alt={`overhead-${i}`}
+                                                onClick={() => setSelectedOverheadImage(file)}
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })}
 
+                        </div>
+                    </div>
+                </div>
+            )}
+            {selectedOverheadImage && (
+                <div className="image-preview-modal" onClick={() => setSelectedOverheadImage(null)}>
+                    <div className="image-preview-content" onClick={e => e.stopPropagation()}>
+                        <img src={selectedOverheadImage} alt="preview"/>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
