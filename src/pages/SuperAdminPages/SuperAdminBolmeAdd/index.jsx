@@ -21,6 +21,7 @@ const SuperAdminBolmeAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
+    const isButtonDisabled = rows.some(row => !row.name.trim());
     const handleSubmit = async () => {
         try {
             const validRows = rows.filter(row => row.name.trim() !== '');
@@ -108,7 +109,7 @@ const SuperAdminBolmeAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={handleSubmit}>Təsdiqlə</button>
+                <button className="confirm-btn" disabled={isButtonDisabled} onClick={handleSubmit}>Təsdiqlə</button>
 
             </div>
             <div className="xett"></div>

@@ -26,7 +26,7 @@ const CustomDropdown = ({ options, selected, onSelect, placeholder = "Seçin" })
         : selected;
 
     // Axtarışa görə filtrlə (label və ya value-dan)
-    const filteredOptions = options.filter(opt => {
+    const filteredOptions = options?.filter(opt => {
         const label = isObjectOptions ? opt.label : opt;
         const value = isObjectOptions ? opt.value : opt;
         const term = searchTerm.toLowerCase();

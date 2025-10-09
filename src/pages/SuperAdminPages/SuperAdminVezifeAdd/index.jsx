@@ -18,6 +18,7 @@ const SuperAdminVezifeAdd = () => {
     const addRow = () => {
         setRows([...rows, { name: '' }]);
     };
+    const isButtonDisabled = rows.some(row => !row.name.trim());
     const showPopup = usePopup()
     const handleSubmit = async () => {
         try {
@@ -83,7 +84,7 @@ const SuperAdminVezifeAdd = () => {
                     </tbody>
                 </table>
 
-                <button className="confirm-btn" onClick={handleSubmit} disabled={isLoading}>
+                <button className="confirm-btn" onClick={handleSubmit} disabled={isButtonDisabled}>
                     {isLoading ? 'Göndərilir...' : 'Təsdiqlə'}
                 </button>
             </div>

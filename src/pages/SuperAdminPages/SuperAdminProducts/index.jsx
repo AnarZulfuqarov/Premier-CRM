@@ -35,7 +35,7 @@ const SuperAdminProducts = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
     const showPopup = usePopup()
     const navigate = useNavigate();
-    const {data:getAllProducts,refetch:productRefetch} = useGetAllProductsQuery()
+    const {data:getAllProducts} = useGetAllProductsQuery()
     const products = getAllProducts?.data
     const [edit] = useUpdateProductsMutation()
     const [deleteProduct] = useDeleteProductsMutation()
@@ -46,7 +46,7 @@ const SuperAdminProducts = () => {
         data: pagedData,
         isLoading,
         isFetching,
-        refetch,
+        refetch:productRefetch,
     } = useGetProductByPageQuery({ page, pageSize: 10 });
     useEffect(() => {
         if (pagedData?.data) {

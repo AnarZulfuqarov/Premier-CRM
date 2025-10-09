@@ -22,6 +22,7 @@ const SuperProductsAdd = () => {
     const addRow = () => {
         setRows([...rows, {name: '', category: '', unit: ''}]);
     };
+    const isButtonDisabled = rows.some(row => !row.name.trim());
     const showPopup = usePopup()
     return (
         <div className="super-admin-product-add-main">
@@ -103,6 +104,7 @@ const SuperProductsAdd = () => {
 
                 <button
                     className="confirm-btn"
+                    disabled={isButtonDisabled}
                     onClick={async () => {
                         try {
                             const requests = rows?.map(row => post({
