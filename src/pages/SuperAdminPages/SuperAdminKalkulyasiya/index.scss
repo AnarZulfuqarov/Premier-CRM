@@ -1,3 +1,8 @@
+@mixin card {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+}
 .super-admin-kalkulyasiya-main{
   position: relative;
   .xett{
@@ -6,6 +11,40 @@
     background: #F6F6F6;
     position: absolute;
     bottom: 100px;
+  }
+  .filterbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    width: 100%;
+
+    .searchbox {
+      @include card;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      width: 40%;
+      position: relative;
+      .searchIcon{
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+
+      input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        background: transparent;
+      }
+      svg { flex-shrink: 0; }
+    }
+
   }
 
 }
@@ -17,6 +56,73 @@
   height: calc(100vh - 129px);
   overflow: hidden;
   position: relative;
+  .card-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 60%;
+  }
+
+  .company-card {
+    @include card;
+    width: 120px !important;
+    box-sizing: border-box;
+
+    padding: 16px;
+    text-align: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .icon {
+      display: flex;
+      width: 37px;
+      height: 37px;
+      padding: 9.044px;
+      justify-content: center;
+      align-items: center;
+      gap: 8.222px;
+      border-radius: 10.689px;
+      background: #FF4653;
+      margin-bottom: 8px;
+    }
+
+    h4 {
+      color: #2A2A2A;
+      text-align: left;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 21.578px; /* 134.864% */
+      margin-bottom: 8px;
+    }
+
+    button {
+      display: flex;
+      width: 20px;
+      height: 20px;
+      padding: 1px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .cardButton{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #8B8B8B;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+
+
   .kalkulyasiya-button-wrapper {
     margin-top: 24px;
     display: flex;

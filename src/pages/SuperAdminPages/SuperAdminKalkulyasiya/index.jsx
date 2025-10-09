@@ -5,66 +5,54 @@ import {useGetAllCompaniesQuery} from "../../../services/adminApi.jsx";
 import { useNavigate } from 'react-router-dom';
 
 const SuperAdminKalkulyasiya = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filter, setFilter] = useState('all');
+    const navigate = useNavigate();
+    const [globalSearch, setGlobalSearch] = useState("");
     const {data:getAllCompanies} = useGetAllCompaniesQuery()
     const companies = getAllCompanies?.data
-
-    const filteredOrders = companies?.filter((order) => {
-        const matchesSearch =
-            order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.product.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter =
-            filter === 'all' ||
-            (filter === 'pending' && order.status === 'Sifarişçidən təhvil gözləyən') ||
-            (filter === 'completed' && order.status === 'Tamamlanmış') ||
-            (filter === 'pending' && order.status === 'Təchizatçıdan təsdiq gözləyən');
-        return matchesSearch && matchesFilter;
-    });
-
-    const [selectedCompany, setSelectedCompany] = useState(null);
-
-
-
-    const handleCompanySelect = (companyId) => {
-        setSelectedCompany(companyId);
-    };
-
-    const navigate = useNavigate();
-
-    const handleContinue = () => {
-        if (selectedCompany) {
-            navigate(`/superAdmin/kalkulyasiya/${selectedCompany}`);
-        } else {
-            alert("Zəhmət olmasa bir şirkət seçin");
-        }
-    };
+    // search filter
+    const filtered = companies?.filter((c) =>
+        c.name.toLowerCase().includes(globalSearch.toLowerCase())
+    );
 
     return (
         <div className={"super-admin-kalkulyasiya-main"}>
             <div className="super-admin-kalkulyasiya">
                 <h2>Kalkulyasiya</h2>
                 <p>Davam etmək üçün işləmək istədiyiniz şirkəti seçin. Seçimdən sonra həmin şirkətə aid əməliyyatlar təqdim olunacaq.</p>
-                <div className="choose">
-                    {companies?.map((company) => (
-                        <div
-                            key={company.id}
-                            className={`company ${selectedCompany === company.id ? 'selected' : ''}`}
-                            onClick={() => handleCompanySelect(company.id)}
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Enter' && handleCompanySelect(company.id)}
-                            role="button"
-                        >
-                            <img src={icon} alt={company.name} />
-                            <p className={'p'}>{company.name}</p>
-                        </div>
-                    ))}
+                <div className="filterbar">
+                    <div className="searchbox">
+                        <input
+                            value={globalSearch}
+                            onChange={(e) => setGlobalSearch(e.target.value)}
+                            placeholder="Axtarış edin..."
+                        /><svg className={"searchIcon"} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M20.71 19.29L17.31 15.9C18.407 14.5025 19.0022 12.7767 19 11C19 9.41775 18.5308 7.87103 17.6518 6.55544C16.7727 5.23985 15.5233 4.21447 14.0615 3.60897C12.5997 3.00347 10.9911 2.84504 9.43928 3.15372C7.88743 3.4624 6.46197 4.22433 5.34315 5.34315C4.22433 6.46197 3.4624 7.88743 3.15372 9.43928C2.84504 10.9911 3.00347 12.5997 3.60897 14.0615C4.21447 15.5233 5.23985 16.7727 6.55544 17.6518C7.87103 18.5308 9.41775 19 11 19C12.7767 19.0022 14.5025 18.407 15.9 17.31L19.29 20.71C19.383 20.8037 19.4936 20.8781 19.6154 20.9289C19.7373 20.9797 19.868 21.0058 20 21.0058C20.132 21.0058 20.2627 20.9797 20.3846 20.9289C20.5064 20.8781 20.617 20.8037 20.71 20.71C20.8037 20.617 20.8781 20.5064 20.9289 20.3846C20.9797 20.2627 21.0058 20.132 21.0058 20C21.0058 19.868 20.9797 19.7373 20.9289 19.6154C20.8781 19.4936 20.8037 19.383 20.71 19.29ZM5 11C5 9.81332 5.3519 8.65328 6.01119 7.66658C6.67047 6.67989 7.60755 5.91085 8.7039 5.45673C9.80026 5.0026 11.0067 4.88378 12.1705 5.11529C13.3344 5.3468 14.4035 5.91825 15.2426 6.75736C16.0818 7.59648 16.6532 8.66558 16.8847 9.82946C17.1162 10.9933 16.9974 12.1997 16.5433 13.2961C16.0892 14.3925 15.3201 15.3295 14.3334 15.9888C13.3467 16.6481 12.1867 17 11 17C9.4087 17 7.88258 16.3679 6.75736 15.2426C5.63214 14.1174 5 12.5913 5 11Z" fill="#474747"/>
+                    </svg>
+                    </div>
                 </div>
-                <div className="kalkulyasiya-button-wrapper">
-                    <button className="kalkulyasiya-continue-btn" onClick={handleContinue}>
 
-                        Davam et
-                    </button>
+                <div className="card-flex">
+                    {filtered?.map((company, idx) => {
+                        const color = '#7BBDFF';
+                        return (
+                            <div key={company.id} className="company-card">
+                                <div className="icon" style={{ backgroundColor: color }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                        <path d="M16.7073 16.292H14.9054V2.70813H15.5984C15.7087 2.70813 15.8145 2.66432 15.8925 2.58633C15.9705 2.50835 16.0143 2.40258 16.0143 2.2923C16.0143 2.18201 15.9705 2.07624 15.8925 1.99826C15.8145 1.92028 15.7087 1.87646 15.5984 1.87646H3.40069C3.29041 1.87646 3.18464 1.92028 3.10666 1.99826C3.02867 2.07624 2.98486 2.18201 2.98486 2.2923C2.98486 2.40258 3.02867 2.50835 3.10666 2.58633C3.18464 2.66432 3.29041 2.70813 3.40069 2.70813H4.09375V16.292H2.29181C2.18152 16.292 2.07575 16.3358 1.99777 16.4138C1.91979 16.4918 1.87598 16.5975 1.87598 16.7078C1.87598 16.8181 1.91979 16.9239 1.99777 17.0018C2.07575 17.0798 2.18152 17.1236 2.29181 17.1236H16.7073C16.8176 17.1236 16.9234 17.0798 17.0014 17.0018C17.0793 16.9239 17.1232 16.8181 17.1232 16.7078C17.1232 16.5975 17.0793 16.4918 17.0014 16.4138C16.9234 16.3358 16.8176 16.292 16.7073 16.292ZM4.92541 2.70813H14.0737V16.292H11.5787V13.3812C11.5787 13.2709 11.5349 13.1651 11.4569 13.0871C11.3789 13.0091 11.2732 12.9653 11.1629 12.9653H7.83624C7.72595 12.9653 7.62018 13.0091 7.5422 13.0871C7.46422 13.1651 7.4204 13.2709 7.4204 13.3812V16.292H4.92541V2.70813ZM10.7471 16.292H8.25207V13.797H10.7471V16.292ZM6.86596 5.06451C6.86596 4.95423 6.90977 4.84846 6.98776 4.77047C7.06574 4.69249 7.17151 4.64868 7.28179 4.64868H8.39068C8.50096 4.64868 8.60673 4.69249 8.68472 4.77047C8.7627 4.84846 8.80651 4.95423 8.80651 5.06451C8.80651 5.1748 8.7627 5.28056 8.68472 5.35855C8.60673 5.43653 8.50096 5.48034 8.39068 5.48034H7.28179C7.17151 5.48034 7.06574 5.43653 6.98776 5.35855C6.90977 5.28056 6.86596 5.1748 6.86596 5.06451ZM10.1926 5.06451C10.1926 4.95423 10.2364 4.84846 10.3144 4.77047C10.3924 4.69249 10.4982 4.64868 10.6084 4.64868H11.7173C11.8276 4.64868 11.9334 4.69249 12.0114 4.77047C12.0894 4.84846 12.1332 4.95423 12.1332 5.06451C12.1332 5.1748 12.0894 5.28056 12.0114 5.35855C11.9334 5.43653 11.8276 5.48034 11.7173 5.48034H10.6084C10.4982 5.48034 10.3924 5.43653 10.3144 5.35855C10.2364 5.28056 10.1926 5.1748 10.1926 5.06451ZM6.86596 7.83672C6.86596 7.72644 6.90977 7.62067 6.98776 7.54269C7.06574 7.4647 7.17151 7.42089 7.28179 7.42089H8.39068C8.50096 7.42089 8.60673 7.4647 8.68472 7.54269C8.7627 7.62067 8.80651 7.72644 8.80651 7.83672C8.80651 7.94701 8.7627 8.05278 8.68472 8.13076C8.60673 8.20875 8.50096 8.25256 8.39068 8.25256H7.28179C7.17151 8.25256 7.06574 8.20875 6.98776 8.13076C6.90977 8.05278 6.86596 7.94701 6.86596 7.83672ZM10.1926 7.83672C10.1926 7.72644 10.2364 7.62067 10.3144 7.54269C10.3924 7.4647 10.4982 7.42089 10.6084 7.42089H11.7173C11.8276 7.42089 11.9334 7.4647 12.0114 7.54269C12.0894 7.62067 12.1332 7.72644 12.1332 7.83672C12.1332 7.94701 12.0894 8.05278 12.0114 8.13076C11.9334 8.20875 11.8276 8.25256 11.7173 8.25256H10.6084C10.4982 8.25256 10.3924 8.20875 10.3144 8.13076C10.2364 8.05278 10.1926 7.94701 10.1926 7.83672ZM7.28179 11.0248C7.17151 11.0248 7.06574 10.981 6.98776 10.903C6.90977 10.825 6.86596 10.7192 6.86596 10.6089C6.86596 10.4987 6.90977 10.3929 6.98776 10.3149C7.06574 10.2369 7.17151 10.1931 7.28179 10.1931H8.39068C8.50096 10.1931 8.60673 10.2369 8.68472 10.3149C8.7627 10.3929 8.80651 10.4987 8.80651 10.6089C8.80651 10.7192 8.7627 10.825 8.68472 10.903C8.60673 10.981 8.50096 11.0248 8.39068 11.0248H7.28179ZM10.1926 10.6089C10.1926 10.4987 10.2364 10.3929 10.3144 10.3149C10.3924 10.2369 10.4982 10.1931 10.6084 10.1931H11.7173C11.8276 10.1931 11.9334 10.2369 12.0114 10.3149C12.0894 10.3929 12.1332 10.4987 12.1332 10.6089C12.1332 10.7192 12.0894 10.825 12.0114 10.903C11.9334 10.981 11.8276 11.0248 11.7173 11.0248H10.6084C10.4982 11.0248 10.3924 10.981 10.3144 10.903C10.2364 10.825 10.1926 10.7192 10.1926 10.6089Z" fill="white"/>
+                                    </svg>
+                                </div>
+                                <h4>{company.name}</h4>
+                                <div className={"cardButton"} >
+                                    Keçid et <button onClick={()=>{
+                                    navigate(`/superAdmin/kalkulyasiya/${company.id}`);
+                                    localStorage.setItem('borcCompanyId', `${company.id}`);
+                                }} style={{ backgroundColor: color }}> <svg xmlns="http://www.w3.org/2000/svg" width="5" height="8" viewBox="0 0 5 8" fill="none">
+                                    <path d="M0.783192 6.90021L3.75133 4.02903L0.880149 1.0609" stroke="white" stroke-width="1.16802" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg></button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

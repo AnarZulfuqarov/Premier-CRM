@@ -213,6 +213,7 @@ const SuperAdminSupplier = () => {
 >
                                             <MdOutlineRemoveRedEye/>
                                         </span>
+                                <div className={"hrXett"}></div>
                                 <span
                                     className="action-icon edit"
                                     onClick={() => handleEdit(user.id)}
@@ -230,6 +231,7 @@ const SuperAdminSupplier = () => {
                                         />
                                     </svg>
                                 </span>
+                                <div className={"hrXett"}></div>
                                 <span
                                     className="action-icon delete"
                                     onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}

@@ -625,6 +625,14 @@ export const api = createApi({
                 headers: { 'Content-Type': 'application/json' },
             }),
         }),
+        changePasswordAccounter: builder.mutation({
+            query: (pass) => ({
+                url: `/Accountants/change-password`,
+                method: 'POST',
+                body:pass,
+                headers: { 'Content-Type': 'application/json' },
+            }),
+        }),
         changePasswordCustomers: builder.mutation({
             query: (pass) => ({
                 url: `/Customers/change-password`,
@@ -999,6 +1007,7 @@ export const {
     useEditAccountantMutation,
     useGetOrderByPageAccounterQuery,
     useGetOrderByPageByCompanyAccounterQuery,
+    useChangePasswordAccounterMutation,
 
     useGetUserAccountantsQuery,
     useGetOrderCompanyByPageQuery,

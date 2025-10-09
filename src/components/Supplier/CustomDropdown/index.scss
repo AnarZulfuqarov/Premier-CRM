@@ -60,8 +60,29 @@
     border-radius: 8px;
     z-index: 10000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    //max-height: 200px; /* Set max height for scrolling */
+    //overflow-y: auto; /* Enable vertical scrolling */
+  }
+  // Yeni: Axtarış input-u
+  .search-input {
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #888;
+    }
   }
 
+  // Yeni: Options container (scroll üçün)
+  .options-container {
+    max-height: calc(250px - 50px); // Input-un hündürlüyünü çıx
+    overflow-y: auto;
+  }
   &-item {
     padding: 10px 12px;
     cursor: pointer;
@@ -74,5 +95,12 @@
       font-weight: 500;
       background-color: #f0f0f0;
     }
+  }
+  // Yeni: Nəticə yoxlama
+  .no-results {
+    padding: 16px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
   }
 }

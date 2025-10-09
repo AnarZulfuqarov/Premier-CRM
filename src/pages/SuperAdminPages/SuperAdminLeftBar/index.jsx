@@ -272,7 +272,7 @@ const SuperAdminLeftBar = () => {
                             </li>
                             <li>
                                 <NavLink
-                                    to="/superAdmin/accounter/borc"
+                                    to="/accounter/borc"
                                     className={({isActive}) =>
                                         isActive ? "sidebar__submenu-item active" : "sidebar__submenu-item"
                                     }

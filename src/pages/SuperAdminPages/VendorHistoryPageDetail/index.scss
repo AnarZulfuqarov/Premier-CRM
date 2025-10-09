@@ -91,12 +91,12 @@
     }
     margin-bottom: 20px;
     .techizat{
-      .order-history-supplier__ids{
+      .vendor-history-detail-super-admin__ids{
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-supplier__id {
+      .vendor-history-detail-super-admin__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -113,7 +113,7 @@
         }
       }
     }
-    .order-history__details {
+    .vendor-history-detail-super-admin__details {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -123,12 +123,12 @@
         margin: 5px 0;
         color: #333;
       }
-      .order-history-supplier__ids{
+      .vendor-history-detail-super-admin__ids{
         display: flex;
         gap: 24px;
         align-items: center;
       }
-      .order-history-supplier__id {
+      .vendor-history-detail-super-admin__id {
         color: #272727;
         font-size: 14px;
         font-style: normal;
@@ -147,8 +147,26 @@
     }
   }
 
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #DCDCDC;
+    background: #FFF;
+    height: 42px;
+    padding: 0px 10px 0px 11px;
 
-  .order-history-supplier__status {
+    p {
+      margin: 0;
+      color: #0C0C0C;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+  .vendor-history-detail-super-admin__status {
     padding: 5px 12px;
     border-radius: 12px;
     font-size: 12px;

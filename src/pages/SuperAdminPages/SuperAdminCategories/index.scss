@@ -320,6 +320,8 @@
   }
 
   .order-history-detail-supplier__table {
+    max-height: 250px;
+    overflow-y: auto;
     margin: 0;
     tr {
 
@@ -418,7 +420,7 @@
   }
 
   .table-scroll {
-    height: calc(75vh - 129px);
+    height: calc(50vh - 129px);
     overflow: auto;
   }
   .table-scroll::-webkit-scrollbar {

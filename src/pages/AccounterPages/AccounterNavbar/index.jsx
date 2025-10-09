@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import './index.scss';
 import profileIcon from '/src/assets/GenericAvatar.png';
 import {
-    useChangePasswordFightersMutation, useGetAdminNotificationsAccountantQuery, useGetAdminNotificationsFighterQuery,
+    useChangePasswordAccounterMutation,
+     useGetAdminNotificationsAccountantQuery,
     useGetUserAccountantsQuery
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
+import logo from "../../../assets/Mask group.png";
 
 const AccounterNavbar = ({ setSidebarOpen }) => {
+    const role = Cookies.get("role");
+    let superAdmin;
+    if (role === "SuperAdmin") {
+        superAdmin = role
+    }
+    console.log(superAdmin)
     const navigate = useNavigate();
         // 3 adet modal için state’ler
         const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -23,7 +32,7 @@ const AccounterNavbar = ({ setSidebarOpen }) => {
         const [newPass, setNewPass] = useState('');
         const [newPass2, setNewPass2] = useState('');
 
-        const [changePassword] = useChangePasswordFightersMutation()
+        const [changePassword] = useChangePasswordAccounterMutation()
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
 
@@ -54,28 +63,30 @@ const AccounterNavbar = ({ setSidebarOpen }) => {
             <div id={"navbar"}>
                 <nav className="navbar">
                     <div className="navbar__logo">
-                        Shirvanshah
-                        <div className="navbar__menu-icon" onClick={() => setSidebarOpen(true)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                <path d="M0.5 1H11.5M0.5 4H11.5M0.5 7H11.5" stroke="#384871" stroke-miterlimit="10" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-
+                        <img src={logo} className="logo" alt="logo" />
                     </div>
 
-                    <div className={"navbar_right"}>
+                    {!superAdmin ? (
+                        <div className={"navbar_right"}>
 
-                        <div className="navbar__profile" onClick={() => setShowProfilePopup(true)}>
-                            <div className="navbar__profile-icon">
-                                <img src={profileIcon} alt="Profile" className="icon" />
-                            </div>
-                            <div>
-                                <span className="navbar__profile-name">{user?.name} {user?.surname}</span>
-                                <br />
-                                <span className="navbar__profile-email">+994 {user?.phoneNumber}</span>
+                            <div className="navbar__profile" onClick={() => setShowProfilePopup(true)}>
+                                <div className="navbar__profile-icon">
+                                    <img src={profileIcon} alt="Profile" className="icon" />
+                                </div>
+                                <div>
+                                    <span className="navbar__profile-name">{user?.name} {user?.surname}</span>
+                                    <br />
+                                    <span className="navbar__profile-email">+994 {user?.phoneNumber}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className={"logout"}>
+                            <button onClick={()=>navigate("/superAdmin/people")}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 21 22" fill="none">
+                                <path d="M12.0929 6.41406L8.22302 10.2967C7.83314 10.6878 7.83418 11.321 8.22535 11.7109L12.108 15.5807M4.19336 16.8438C4.18585 12.2876 4.17414 5.1771 4.17414 5.1771M8.55874 11.0032L16.6837 10.9898" stroke="black" stroke-width="1.2" stroke-linecap="square"/>
+                            </svg> Geri Qayıt</button>
+                        </div>
+                    )}
                 </nav>
 
                 {showProfilePopup && !showChangePassword && (

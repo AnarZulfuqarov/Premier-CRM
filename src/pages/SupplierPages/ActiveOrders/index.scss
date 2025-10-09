@@ -129,9 +129,10 @@
         }
 
         tbody {
+
           tr {
             text-align: center;
-
+            height: 49px;
             &:nth-child(odd) {
               background-color: #ffffff;
             }
@@ -163,6 +164,8 @@
       z-index: 2;
       display: flex;
       flex-direction: column;
+      border-right: 1px solid #e0e0e0;
+      border-top: 1px solid #e0e0e0;
       box-shadow: 0px 0px 0px 0 rgba(126, 126, 126, 0.25), 0 5px 60px 0 rgba(126, 126, 126, 0.25);
       .header {
         font-weight: 500;
@@ -170,7 +173,7 @@
         border-bottom: 1px solid #ccc;
         text-align: center;
         background: #f9f9f9;
-        height: 43px;
+        height: 41px;
         display: flex;
         align-items: center;
         justify-content: center;

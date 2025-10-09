@@ -83,6 +83,7 @@ import AccounterNotification from "../pages/NotificationPages/AccounterNotificat
 import SuperAdminAccounterBorc from "../pages/SuperAdminPages/SuperAdminAccounterBorc/index.jsx";
 import SuperAdminBorcTarixce from "../pages/SuperAdminPages/SuperAdminBorcTarixce/index.jsx";
 import AdminBorcE from "../pages/AccounterPages/AccounterBorcE/index.jsx";
+import ProtectedRouteAccounter from "../ProtectedRouteAccounter.jsx";
 
 
 const router = createBrowserRouter([
@@ -427,7 +428,9 @@ const router = createBrowserRouter([
     {
         path: "/accounter",
         element: (
+            <ProtectedRouteAccounter>
                 <AccounterPage/>
+            </ProtectedRouteAccounter>
         ),
         children: [
 

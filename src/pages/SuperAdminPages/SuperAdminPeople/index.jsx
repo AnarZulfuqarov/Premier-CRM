@@ -210,13 +210,13 @@ const SuperAdminPeople = () => {
             >
                                             <MdOutlineRemoveRedEye/>
                                         </span>
-                                            <div className="line"/>
+                                            <div className={"hrXett"}></div>
                                             <span
                                                 className="action-icon edit"
                                                 onClick={() => handleEdit(user.id)}
                                             ><LuPencil/>
                                         </span>
-                                            <div className="line"/>
+                                            <div className={"hrXett"}></div>
                                             <span
                                                 className="action-icon delete"
                                                 onClick={() => setDeleteIndex(filteredUsers.findIndex(u => u.id === user.id))}

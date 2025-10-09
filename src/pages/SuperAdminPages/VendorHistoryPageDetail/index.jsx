@@ -57,26 +57,26 @@ const VendorHistoryDetailSuperAdmin = () => {
                 </h2>
                 <div key={orderData.id} className="vendor-history-detail-super-admin_item">
                     <div className={"techizat"}>
-                        <div className="order-history-supplier__ids">
-                            <p className="order-history-supplier__id">
+                        <div className="vendor-history-detail-super-admin__ids">
+                            <p className="vendor-history-detail-super-admin__id">
                                 <span>Təchizatçının adı:</span> {orderData.fighterInfo.name} {orderData.fighterInfo.surname}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="vendor-history-detail-super-admin__id">
                                 <span>Sifarişçinin adı:</span> {orderData.adminInfo.name} {orderData.adminInfo.surname}
                             </p>
                         </div>
                     </div>
-                    <div className="order-history-supplier__details">
-                        <div className={"order-history-supplier__ids"}>
-                            <p className="order-history-supplier__id">
+                    <div className="vendor-history-detail-super-admin__details">
+                        <div className={"vendor-history-detail-super-admin__ids"}>
+                            <p className="vendor-history-detail-super-admin__id">
                                 <span>Order ID</span> {orderData.id}
                             </p>
-                            <p className="order-history-supplier__id">
+                            <p className="vendor-history-detail-super-admin__id">
                                 <span>Ümumi məbləğ:</span> {totalPrice.toFixed(2)} ₼
                             </p>
                         </div>
                         <span
-                            className={`order-history-supplier__status ${
+                            className={`vendor-history-detail-super-admin__status ${
                                 status === 'Tamamlanmış'
                                     ? 'completed'
                                     : status === 'Sifarişçidən təhvil gözləyən'
@@ -87,7 +87,7 @@ const VendorHistoryDetailSuperAdmin = () => {
             {status}
         </span>
                     </div>
-                    <div className="order-history-supplier__data">
+                    <div className="vendor-history-detail-super-admin__data">
                         <p>{orderData?.items?.map((item) => item.product?.name).join(', ')}</p>
                         <p>
                             <span className="quantity-count">{itemCount}</span>{' '}

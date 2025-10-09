@@ -21,7 +21,6 @@ function AccounterPage() {
                 </div>
             </div>
             {/* Mobil sidebar */}
-            <AccounterLeftBar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
         </div>
     );
 }

@@ -246,14 +246,15 @@ const OrderHistoryAccounter = () => {
                         </table>
 
                         {/* Footer */}
-                        <div className="table-footer sticky-footer">
-                            <span>Ümumi məbləğ:</span>
-                            <span>
+
+                    </div>
+                    <div className="table-footer sticky-footer">
+                        <span>Ümumi məbləğ:</span>
+                        <span>
                 {`${filteredOrders
                     .reduce((sum, item) => sum + (Number(item.orderAmount) || 0), 0)
                     .toFixed(2)} ₼`}
               </span>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -608,7 +608,13 @@ const AccounterBorcTarixce = () => {
                                             type="number"
                                             placeholder="0"
                                             value={modalData.paidDebt}
-                                            onChange={(e) => setModalData((s) => ({ ...s, paidDebt: e.target.value }))}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                // Ensure the value does not exceed paymentPrice
+                                                if (value === "" || Number(value) <= Number(modalData.paymentPrice)) {
+                                                    setModalData((s) => ({ ...s, paidDebt: value }));
+                                                }
+                                            }}
                                             min={0}
                                             max={parseInt(modalData.paymentPrice)}
                                         />
