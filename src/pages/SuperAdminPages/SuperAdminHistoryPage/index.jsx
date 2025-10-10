@@ -314,6 +314,7 @@ const OrderHistorySuperAdmin = () => {
         if (departmentF) list = list.filter((r) => r.department === departmentF);
         if (sectionF) list = list.filter((r) => r.section === sectionF);
         if (productF) list = list.filter((r) => Array.isArray(r.products) && r.products.includes(productF));
+        if (selectedCompany) list = list.filter((r) => r.companyName === selectedCompany);
 
         // Yerli tarixi düzgün parse edən funksiya
         const parseLocalDate = (value) => {
@@ -354,7 +355,7 @@ const OrderHistorySuperAdmin = () => {
         if (pMax !== null) list = list.filter((r) => r.amountNum <= pMax);
 
         return list;
-    }, [shaped, globalSearch, statusF, departmentF, sectionF, productF, dateQuickF, dateFrom, dateTo, priceMin, priceMax]);
+    }, [shaped, globalSearch, statusF, departmentF, sectionF, productF, dateQuickF, dateFrom, dateTo, priceMin, priceMax, selectedCompany]);
 
     /* ===== Render ===== */
     return (
