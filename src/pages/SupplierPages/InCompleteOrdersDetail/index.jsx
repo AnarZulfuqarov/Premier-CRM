@@ -27,7 +27,9 @@ const InCompleteOrdersDetail = () => {
     const orderData = getMyOrdersId?.data;
     const [complateOrder, { isLoading }] = useOrderComplateMutation();
     const showPopup  = usePopup();
-
+    useEffect(() => {
+        myOrdersRefetch()
+    }, []);
     // Initialize confirmed rows and existing invoices
     useEffect(() => {
         if (orderData?.items?.length) {
@@ -445,23 +447,6 @@ const InCompleteOrdersDetail = () => {
                             </button>
                         )}
                     </div>
-                </div>
-                <div className="in-complete-order-detail__pagination">
-                    <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            className={page === currentPage ? 'active' : ''}
-                            onClick={() => setCurrentPage(page)}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
-                        &gt;
-                    </button>
                 </div>
             </div>
             {showPreviewModal && (
