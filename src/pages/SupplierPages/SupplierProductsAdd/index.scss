@@ -108,14 +108,18 @@
         font-size: 24px;
         font-style: normal;
         font-weight: 500;
-        line-height: normal;
+        line-height: 1;
         margin-bottom: 16px;
+        @media screen and (max-width: 576px){
+          margin-bottom: 0;
+        }
+
       }
     }
   }
   h2 {
     font-size: 14px;
-
+    line-height: 1;
     .link {
       color: #5b5b5b;
       text-decoration: none;
@@ -125,11 +129,12 @@
     width: 75%;
     border-collapse: collapse;
     margin-bottom: 24px;
-    border-radius: 15px;
+    border-radius: 5px;
   th{
     background-color: #F5FAFF;
     padding: 16px;
     border: 1px solid #eee;
+    font-weight: 500;
 
   }
      td {

@@ -53,7 +53,9 @@
     }
   }
 
-
+  .notification-table-wrapper {
+    height: 500px;
+  }
 
   .notification-table {
     display: flex;
@@ -61,6 +63,8 @@
     border-collapse: collapse;
     width: 100%;
     border: 1px solid #E5E5E5;
+    height: 500px;
+
 
 
     .notification-row {
@@ -117,7 +121,7 @@
           flex: 1;
           font-size: 14px;
           h3{
-            font-size: 20px;
+            font-size: 16px;
           }
           p{
             color: #818181;

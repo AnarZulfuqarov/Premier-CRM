@@ -126,10 +126,24 @@ const SupplierProducts = () => {
                     <div className={`tab-item ${activeTab === 'requests' ? 'active' : ''}`}
                          onClick={() => setActiveTab('requests')}>
                         Məhsul istəkləri
+                        {combinedRequests?.length > 0 && (
+                            <div className={"countTab"}>
+
+                                <span className="tab-count">{combinedRequests.length}</span>
+
+                            </div>
+                        )}
                     </div>
                     <div className={`tab-item ${activeTab === 'edit' ? 'active' : ''}`}
                          onClick={() => setActiveTab('edit')}>
                         Düzəliş
+                        {editRequest?.length > 0 && (
+                            <div className={"countTab"}>
+
+                                <span className="tab-count">{editRequest.length}</span>
+
+                            </div>
+                        )}
                     </div>
                 </div>
                 {activeTab === 'products' && (
@@ -342,10 +356,10 @@ const SupplierProducts = () => {
                                                 }}>
                                                     {isConfirmed ? (
                                                         <div className={"statusss"} style={{
-                                                            backgroundColor:"#FAC22833"
+                                                            backgroundColor:"#3CFF3821"
                                                         }}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                                <path d="M13.25 9C11.18 9 9.5 10.68 9.5 12.75C9.5 14.82 11.18 16.5 13.25 16.5C15.32 16.5 17 14.82 17 12.75C17 10.68 15.32 9 13.25 9ZM14.4875 14.5125L12.875 12.9V10.5H13.625V12.5925L15.0125 13.98L14.4875 14.5125ZM14 2.25H11.615C11.3 1.38 10.475 0.75 9.5 0.75C8.525 0.75 7.7 1.38 7.385 2.25H5C4.175 2.25 3.5 2.925 3.5 3.75V15C3.5 15.825 4.175 16.5 5 16.5H9.5825C9.13822 16.0698 8.77717 15.5613 8.5175 15H5V3.75H6.5V6H12.5V3.75H14V7.56C14.5325 7.635 15.035 7.7925 15.5 8.01V3.75C15.5 2.925 14.825 2.25 14 2.25ZM9.5 3.75C9.0875 3.75 8.75 3.4125 8.75 3C8.75 2.5875 9.0875 2.25 9.5 2.25C9.9125 2.25 10.25 2.5875 10.25 3C10.25 3.4125 9.9125 3.75 9.5 3.75Z" fill="#FAC228"/>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                                                <path d="M3.5 15.5C3.0875 15.5 2.7345 15.3533 2.441 15.0597C2.1475 14.7662 2.0005 14.413 2 14V5C2 4.5875 2.147 4.2345 2.441 3.941C2.735 3.6475 3.088 3.5005 3.5 3.5H7.38125C7.58125 3.5 7.772 3.5375 7.9535 3.6125C8.135 3.6875 8.29425 3.79375 8.43125 3.93125L9.5 5H15.5C15.9125 5 16.2657 5.147 16.5597 5.441C16.8538 5.735 17.0005 6.088 17 6.5V14C17 14.4125 16.8533 14.7657 16.5597 15.0597C16.2662 15.3538 15.913 15.5005 15.5 15.5H3.5ZM3.5 14H15.5V6.5H8.88125L7.38125 5H3.5V14ZM11 11V11.75C11 11.9625 11.072 12.1407 11.216 12.2847C11.36 12.4288 11.538 12.5005 11.75 12.5C11.962 12.4995 12.1403 12.4275 12.2847 12.284C12.4292 12.1405 12.501 11.9625 12.5 11.75V11H13.25C13.4625 11 13.6407 10.928 13.7847 10.784C13.9287 10.64 14.0005 10.462 14 10.25C13.9995 10.038 13.9275 9.86 13.784 9.716C13.6405 9.572 13.4625 9.5 13.25 9.5H12.5V8.75C12.5 8.5375 12.428 8.3595 12.284 8.216C12.14 8.0725 11.962 8.0005 11.75 8C11.538 7.9995 11.36 8.0715 11.216 8.216C11.072 8.3605 11 8.5385 11 8.75V9.5H10.25C10.0375 9.5 9.8595 9.572 9.716 9.716C9.5725 9.86 9.5005 10.038 9.5 10.25C9.4995 10.462 9.5715 10.6403 9.716 10.7847C9.8605 10.9293 10.0385 11.001 10.25 11H11Z" fill="#31AC2E"/>
                                                             </svg>
                                                         </div>
                                                     ) : (
@@ -508,7 +522,6 @@ const SupplierProducts = () => {
                                         newMeasure: modalData.newMeasure,
                                     });
                                     setModalData(null);
-                                    refetch();
                                     showPopup("Məhsul düzəliş tələbi göndərildi","Seçilmiş məhsul üzrə redaktə tələbiniz uğurla göndərildi və baxılmaq üçün sistemə daxil edildi.",'success')
                                 } catch  {
                                     showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");
@@ -542,7 +555,6 @@ const SupplierProducts = () => {
                                     try {
                                         await deleteProduct(deleteIndex); // məhsulun ID-si backend-ə gedir
                                         setDeleteIndex(null);
-                                        refetch();
                                         showPopup("Məhsulun silinmə tələbi göndərildi","Seçilmiş məhsul üzrə silinmə tələbiniz uğurla göndərildi və baxılmaq üçün sistemə daxil edildi.",'success')
                                     } catch (err) {
                                         showPopup("Sistem xətası", "Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.", "error");

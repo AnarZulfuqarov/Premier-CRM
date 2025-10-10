@@ -115,10 +115,10 @@ function Login() {
                             </button>
 
 
-                            <div className="problem">
-                                Problemlə üzləşdiniz?
-                                <a href="mailto:admin@example.com"> Sistem administratoru ilə əlaqə saxlayın</a>
-                            </div>
+                            {/*<div className="problem">*/}
+                            {/*    Problemlə üzləşdiniz?*/}
+                            {/*    <a href="mailto:admin@example.com"> Sistem administratoru ilə əlaqə saxlayın</a>*/}
+                            {/*</div>*/}
                         </form>
                     </div>
                 </div>
@@ -128,7 +128,7 @@ function Login() {
                     <p>Copyright@2025</p>
                 </div>
                 <div className="terms">
-                    <p>Sistemə giriş yalnız icazəl şəxslər üçün mümkündür.</p>
+                    <p>Sistemə giriş yalnız icazəli şəxslər üçün mümkündür.</p>
                 </div>
             </div>
         </div>

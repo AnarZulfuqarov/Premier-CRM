@@ -79,7 +79,7 @@ const CustomerNotification = () => {
             refetch();
 
             if (n.type === "order_fighter_confirmed") {
-                navigate("/customer/history")
+                navigate(`/customer/history/${n.orderId}`)
             }
         } catch (error) {
             console.error("Bildiriş oxunarkən xəta baş verdi:", error);
@@ -126,7 +126,7 @@ const CustomerNotification = () => {
                 </div>
                 <div className="notification-table-wrapper">
                     <div className="notification-table">
-                        {notificationsToShow?.map((n, index) => {
+                        {notification?.map((n, index) => {
                             const iconColor = n.role === "fighter" ? "red" : n.role === "admin" ? "blue" : "red";
                             return (
                             <div className={`notification-row ${n.isRead ? 'read' : 'unread'}`} key={n.id} onClick={() => handleMarkAsRead(n)}>
@@ -190,32 +190,9 @@ const CustomerNotification = () => {
                     })}
                     </div>
                 </div>
-                <div className="super-admin-notification__pagination">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        &lt;
-                    </button>
-                    {getPageNumbers().map((page, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handlePageChange(page)}
-                            disabled={page === '...'}
-                            className={currentPage === page ? 'active' : ''}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages || totalPages === 0}
-                    >
-                        &gt;
-                    </button>
-                </div>
+
             </div>
-            <div className={"xett"}></div>
+
         </div>
     );
 };

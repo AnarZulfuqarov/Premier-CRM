@@ -96,8 +96,8 @@ const AccounterBorcTarixce = () => {
 
     const [modalData, setModalData] = useState({
         id: "",
-        paidDebt: 0,
-        returnedDebt: 0,
+        paidDebt: "",            // ✅ 0 yox, boş string
+        returnedDebt: "",        // ✅ 0 yox, boş string
         paymentType: "nagd",
         paymentDate: "",
         originalInvoices: [],
@@ -107,8 +107,9 @@ const AccounterBorcTarixce = () => {
         editValue: "",
         vendorId: "",
         paymentPrice: 0,
-        deleteInvoiceIds: [], // New field to track IDs of invoices to delete
+        deleteInvoiceIds: [],
     });
+
 
     const toUiPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
     const toServerPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
@@ -185,8 +186,8 @@ const AccounterBorcTarixce = () => {
     const openEditModal = (row) => {
         setModalData({
             id: row.orderId,
-            paidDebt: 0,
-            returnedDebt: 0,
+            paidDebt: "",               // ✅ boş string
+            returnedDebt: "",           // ✅ boş string
             paymentType: toUiPayment(row.paymentMethod && row.paymentMethod !== "—" ? row.paymentMethod : "nagd"),
             paymentDate: row.dateText,
             originalInvoices: Array.isArray(row.invoices) ? [...row.invoices] : [],
@@ -195,11 +196,12 @@ const AccounterBorcTarixce = () => {
             editIdx: null,
             editValue: "",
             vendorId: row.vendorId,
-                paymentPrice: row.remainingDebt,
+            paymentPrice: row.remainingDebt,
             deleteInvoiceIds: [],
         });
         setModalOpen(true);
     };
+
 
 
 
@@ -697,14 +699,16 @@ const AccounterBorcTarixce = () => {
                                             placeholder="0"
                                             value={modalData.paidDebt}
                                             onChange={(e) => {
-                                                const val = e.target.value;
-                                                const numVal =  parseInt(val);
-                                                const paid = parseInt(modalData.returnedDebt) ;
-                                                const maxAllowed = parseInt(modalData.paymentPrice.split(' ')[0]);
-                                                if (numVal >= 0 && numVal + paid <= maxAllowed) {
-                                                    setModalData((s) => ({ ...s, paidDebt: numVal }));
+                                                const val = e.target.value; // həmişə string saxla
+                                                const returned = Number(modalData.returnedDebt) || 0;
+                                                const maxAllowed = parseInt(modalData.paymentPrice.split(" ")[0]);
+
+                                                // Boş buraxmaq mümkündür
+                                                if (val === "" || (Number(val) >= 0 && Number(val) + returned <= maxAllowed)) {
+                                                    setModalData((s) => ({ ...s, paidDebt: val }));
                                                 }
                                             }}
+
                                             min={0}
                                         />
 
@@ -723,12 +727,11 @@ const AccounterBorcTarixce = () => {
                                             value={modalData.returnedDebt}
                                             onChange={(e) => {
                                                 const val = e.target.value;
-                                                const numVal = parseInt(val);
-                                                const returned = parseInt(modalData.paidDebt) || 0;
-                                                const maxAllowed = parseInt(modalData.paymentPrice.split(' ')[0]);
+                                                const paid = Number(modalData.paidDebt) || 0;
+                                                const maxAllowed = parseInt(modalData.paymentPrice.split(" ")[0]);
 
-                                                if (numVal >= 0 && numVal + returned <= maxAllowed) {
-                                                    setModalData((s) => ({ ...s, returnedDebt: numVal }));
+                                                if (val === "" || (Number(val) >= 0 && Number(val) + paid <= maxAllowed)) {
+                                                    setModalData((s) => ({ ...s, returnedDebt: val }));
                                                 }
                                             }}
                                             min={0}

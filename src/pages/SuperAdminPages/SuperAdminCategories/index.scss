@@ -190,8 +190,28 @@
       position: relative;
       width: 33%;
       text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
       &.active {
         color: #384871;
+      }
+      .countTab{
+        display: flex;
+        width: 25px;
+        height: 25px;
+        padding: 4px 5px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;border-radius: 12px;
+        background: #2486fc17;
+        color: #040404;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
       }
 
       &.active::after {
@@ -346,6 +366,14 @@
       position: sticky;
       top: 0;
       z-index: 1;
+    }
+    .statusss{
+      display: flex;
+      width: 29px;
+      height: 29px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
     }
     th {
       & .th-label,

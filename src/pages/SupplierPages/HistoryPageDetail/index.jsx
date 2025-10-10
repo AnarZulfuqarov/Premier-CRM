@@ -207,7 +207,7 @@ const OrderHistoryDetailSuplier = () => {
                                 <th>Təhvil alınma tarixi</th>
 
                                     <th>
-                                        İnyovsa Bax
+                                        İnvoysa Bax
                                     </th>
 
                             </tr>
@@ -257,17 +257,17 @@ const OrderHistoryDetailSuplier = () => {
                             </tbody>
 
                         </table>
-                        <div className="table-footer sticky-footer">
-                            <span>Ümumi məbləğ:</span>
-                            <span>
+
+                    </div>
+                    <div className="table-footer sticky-footer">
+                        <span>Ümumi məbləğ:</span>
+                        <span>
   {
       `${orderData?.items?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0).toFixed(2)} ₼`
   }
 </span>
 
-                        </div>
                     </div>
-
 
                 </div>
 

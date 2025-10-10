@@ -196,10 +196,29 @@
       position: relative;
       width: 33%;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       &.active {
         color: #384871;
       }
-
+      .countTab{
+        display: flex;
+        width: 25px;
+        height: 25px;
+        padding: 4px 5px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;border-radius: 12px;
+        background: #2486fc17;
+        color: #050505;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
       &.active::after {
         content: '';
         position: absolute;

@@ -60,7 +60,9 @@
     flex-direction: column;
     border-collapse: collapse;
     width: 100%;
-    border: 1px solid #E5E5E5;
+    height: 500px;
+    overflow-y: auto;
+    border: none !important;
 
 
     .notification-row {
@@ -104,12 +106,23 @@
             background-color: #D6EBFF;
           }
 
+          @media screen and (max-width: 576px){
+            width: 32px;
+            height: 30px;
+          }
+
           &.red {
             background-color: #FFE3E3;
+            margin-right: 20px;
           }
           svg {
             width: 24px;
             height: 24px;
+
+            @media screen and (max-width: 576px){
+              width: 16px;
+              height: 16px;
+            }
           }
         }
 
@@ -118,11 +131,15 @@
           font-size: 14px;
           h3{
             font-size: 16px;
+            line-height: 1.5;
+            font-weight: 600;
           }
           p{
             color: #818181;
             margin: 0;
             font-size: 14px;
+            max-width: 150px;
+            width: 100%;
           }
         }
 
@@ -135,6 +152,9 @@
     color: #666;
     position: relative;
     padding: 8px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     h6{
       font-weight: 400;
       font-size: 14px;
@@ -142,8 +162,8 @@
     }
 
     .dots {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background-color: #325ecd;
       margin-left: auto;
@@ -225,8 +245,13 @@
     .notification-table .notification-row {
       padding: 8px;
 
+      @media screen and (max-width: 992px){
+        padding: 0;
+      }
+
       .coll.index {
         font-size: 12px;
+        padding: 0;
       }
 
       .coll.text {
@@ -277,6 +302,13 @@
       overflow-y: auto;
       padding-right: 4px;
     }
+  }
+}
+
+@media (max-width: 576px) {
+  .super-admin-notification__controls {
+    display: flex;
+    flex-direction: row;
   }
 }
 

@@ -202,12 +202,12 @@
   border-color: #e6e8eb;
 
   &::-webkit-scrollbar {
-    width: 3px;
-    height: 8px;
+    width: 1px;
+    height: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #007aff;
+    background: #40446F;
     border-radius: 4px;
   }
 
@@ -380,6 +380,13 @@
 
   }
   .sticky-col{
-    width: 75px !important;
+    width: 120px !important;
+  }
+}
+
+.statusMobile {
+  text-align: center;
+  @media screen and (max-width: 992px){
+    width: 240px !important ;
   }
 }

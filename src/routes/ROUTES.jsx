@@ -79,7 +79,6 @@ import InCompleteOrdersDetail from "../pages/SupplierPages/InCompleteOrdersDetai
 import OrderHistoryDetailAccounter from "../pages/AccounterPages/AccounterHistoryPageDetail/index.jsx";
 import AccounterBorc from "../pages/AccounterPages/AccounterBorc/index.jsx";
 import AccounterBorcTarixce from "../pages/AccounterPages/AccounterBorcTarixce/index.jsx";
-import AccounterNotification from "../pages/NotificationPages/AccounterNotification/index.jsx";
 import SuperAdminAccounterBorc from "../pages/SuperAdminPages/SuperAdminAccounterBorc/index.jsx";
 import SuperAdminBorcTarixce from "../pages/SuperAdminPages/SuperAdminBorcTarixce/index.jsx";
 import AdminBorcE from "../pages/AccounterPages/AccounterBorcE/index.jsx";
@@ -454,10 +453,7 @@ const router = createBrowserRouter([
                 path: "/accounter/borc/vendor/:id",
                 element: <AccounterBorcTarixce/>
             },
-            {
-                path: "/accounter/notification",
-                element: <AccounterNotification/>
-            },
+            
         ]
     },
 ]);

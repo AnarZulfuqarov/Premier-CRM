@@ -1,5 +1,5 @@
 import './index.scss';
-import {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {
@@ -169,10 +169,24 @@ const SuperAdminProducts = () => {
                     <div className={`tab-item ${activeTab === 'requests' ? 'active' : ''}`}
                          onClick={() => setActiveTab('requests')}>
                         Məhsul istəkləri
+                        {combinedRequests?.length > 0 && (
+                       <div className={"countTab"}>
+
+                               <span className="tab-count">{combinedRequests.length}</span>
+
+                       </div>
+                               )}
                     </div>
                     <div className={`tab-item ${activeTab === 'edit' ? 'active' : ''}`}
                          onClick={() => setActiveTab('edit')}>
                         Düzəliş
+                        {editRequest?.length > 0 && (
+                       <div className={"countTab"}>
+
+                               <span className="tab-count">{editRequest.length}</span>
+
+                       </div>
+                               )}
                     </div>
                 </div>
                 {activeTab === 'products' && (
@@ -360,7 +374,9 @@ const SuperAdminProducts = () => {
                                         )}
                                     </th>
                                     <th>Ölçü vahidi</th>
+                                    <th>İstəyin növü</th>
                                     <th>Qərar</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -398,11 +414,40 @@ const SuperAdminProducts = () => {
                                             showPopup("Sistem xətası","Əməliyyat tamamlanmadı. Təkrar cəhd edin və ya dəstəyə müraciət edin.","error")
                                         }
                                     };
+                                    const isConfirmed = item.statusType === 'add';
+                                    const statusText = isConfirmed ? 'Yaradılma' : 'Silinmə';
                                     return (
                                         <tr key={i}>
                                             <td>{item.name}</td>
                                             <td>{item.categoryName}</td>
                                             <td>{item.measure}</td>
+                                            <td>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    color: isConfirmed ? '#D49100' : '#F04438'
+                                                }}>
+                                                    {isConfirmed ? (
+                                                        <div className={"statusss"} style={{
+                                                            backgroundColor:"#3CFF3821"
+                                                        }}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                                                <path d="M3.5 15.5C3.0875 15.5 2.7345 15.3533 2.441 15.0597C2.1475 14.7662 2.0005 14.413 2 14V5C2 4.5875 2.147 4.2345 2.441 3.941C2.735 3.6475 3.088 3.5005 3.5 3.5H7.38125C7.58125 3.5 7.772 3.5375 7.9535 3.6125C8.135 3.6875 8.29425 3.79375 8.43125 3.93125L9.5 5H15.5C15.9125 5 16.2657 5.147 16.5597 5.441C16.8538 5.735 17.0005 6.088 17 6.5V14C17 14.4125 16.8533 14.7657 16.5597 15.0597C16.2662 15.3538 15.913 15.5005 15.5 15.5H3.5ZM3.5 14H15.5V6.5H8.88125L7.38125 5H3.5V14ZM11 11V11.75C11 11.9625 11.072 12.1407 11.216 12.2847C11.36 12.4288 11.538 12.5005 11.75 12.5C11.962 12.4995 12.1403 12.4275 12.2847 12.284C12.4292 12.1405 12.501 11.9625 12.5 11.75V11H13.25C13.4625 11 13.6407 10.928 13.7847 10.784C13.9287 10.64 14.0005 10.462 14 10.25C13.9995 10.038 13.9275 9.86 13.784 9.716C13.6405 9.572 13.4625 9.5 13.25 9.5H12.5V8.75C12.5 8.5375 12.428 8.3595 12.284 8.216C12.14 8.0725 11.962 8.0005 11.75 8C11.538 7.9995 11.36 8.0715 11.216 8.216C11.072 8.3605 11 8.5385 11 8.75V9.5H10.25C10.0375 9.5 9.8595 9.572 9.716 9.716C9.5725 9.86 9.5005 10.038 9.5 10.25C9.4995 10.462 9.5715 10.6403 9.716 10.7847C9.8605 10.9293 10.0385 11.001 10.25 11H11Z" fill="#31AC2E"/>
+                                                            </svg>
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{
+                                                            backgroundColor:"#FFCECE78"
+                                                        }} className={"statusss"}><svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <path d="M5.56836 12.9324L9.50061 9.00012M9.50061 9.00012L13.4329 5.06787M9.50061 9.00012L5.56836 5.06787M9.50061 9.00012L13.4329 12.9324" stroke="#ED0303" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg></div>
+                                                    )}
+                                                    <span style={{
+                                                        color:"#6c6c6c"
+                                                    }}>{statusText}</span>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
                                                     <svg style={{cursor:"pointer"}}

@@ -196,7 +196,7 @@ const InCompleteOrdersDetail = () => {
                                     cursor: isLoading ? 'not-allowed' : 'pointer'
                                 }}
                             >
-                                {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla/yenilə'}
+                                {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                             </button>
                             <button className="printBtn" onClick={handlePrint}>
                                 <span>Çap et</span>
@@ -397,7 +397,7 @@ const InCompleteOrdersDetail = () => {
                                     }
                                 }}
                             >
-                                Sifarişi təsdiqlə/yenilə
+                                Sifarişi təsdiqlə
                             </button>
                         </div>
                     </div>
@@ -464,7 +464,6 @@ const InCompleteOrdersDetail = () => {
                     </button>
                 </div>
             </div>
-            <div className="xett"></div>
             {showPreviewModal && (
                 <div className="modal-overlay">
                     <div className="modal-box" style={{ width: '600px' }}>

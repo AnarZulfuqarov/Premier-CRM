@@ -52,6 +52,8 @@
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
+    line-height: 1;
+    margin-top:10px;
   }
 
   p {
@@ -116,7 +118,32 @@
 
         thead {
           background: #f9f9f9;
-
+          th {
+            & .th-label,
+            & .th-search {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+            & .th-label {
+              cursor: pointer;
+              svg { margin-left: 16px; }
+            }
+            & .th-search {
+              input {
+                flex: 1;
+                padding: 4px 8px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-right: 6px;
+                outline: none;
+              }
+              svg {
+                cursor: pointer;
+              }
+            }
+          }
           th {
             padding: 10px;
             border: 1px solid #e0e0e0; // border for th
@@ -134,6 +161,9 @@
             height: 49px;
             &:nth-child(odd) {
               background-color: #ffffff;
+            }
+            @media screen and (max-width: 576px){
+              height: 38px;
             }
 
             &:nth-child(even) {
@@ -165,6 +195,7 @@
       flex-direction: column;
       border-right: 1px solid #e0e0e0;
       border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
       box-shadow: 0px 0px 0px 0 rgba(126, 126, 126, 0.25), 0 5px 60px 0 rgba(126, 126, 126, 0.25);
       .header {
         font-weight: 500;
@@ -181,10 +212,13 @@
 
       .cell {
         padding: 8px 16px;
-        border-bottom: 1px solid #eee;
+        border-bottom: none;
         display: flex;
         align-items: center;
         justify-content: center;
+        @media screen and (max-width: 576px){
+          height: 35px !important;
+        }
 
         button {
           padding: 6px 12px;
@@ -266,14 +300,14 @@
 
           thead th,
           tbody td {
-            font-size: 12px;
+            font-size: 14px !important;
             padding: 8px;
           }
         }
       }
 
       .fixed-column {
-        width: 100px; // daha dar
+        width: 120px; // daha dar
         position: sticky;
         right: 0;
         top: 0;
@@ -284,7 +318,7 @@
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
 
         .header {
-          font-size: 12px;
+          font-size: 14px;
           padding: 8px;
           height: 37px;
         }
@@ -294,7 +328,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border-bottom: 1px solid #eee;
+          border-bottom: none;
           padding: 8px;
           button {
             background: none;

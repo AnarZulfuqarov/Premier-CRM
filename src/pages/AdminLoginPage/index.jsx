@@ -97,10 +97,10 @@ function AdminLogin() {
                             <button type="submit" className="submit" disabled={isLoading}>
                                 {isLoading ? 'Yoxlanılır...' : 'Giriş et'}
                             </button>
-                            <div className="problem">
-                                Şifrəni unutmusunuz?
-                                <Link to='/forgotPassword' > Bərpa etmək üçün buraya klikləyin.</Link>
-                            </div>
+                            {/*<div className="problem">*/}
+                            {/*    Şifrəni unutmusunuz?*/}
+                            {/*    <Link to='/forgotPassword' > Bərpa etmək üçün buraya klikləyin.</Link>*/}
+                            {/*</div>*/}
                         </form>
                     </div>
                 </div>

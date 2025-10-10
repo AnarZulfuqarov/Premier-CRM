@@ -271,7 +271,7 @@
   }
 
   .table-scroll {
-    height: calc(60vh - 129px);
+    height: calc(55vh - 129px);
     overflow: auto;
 
   }
@@ -460,8 +460,11 @@
         flex-direction: column;
         gap: 8px;
         align-items: flex-start;
+        margin-bottom: 8px;
       }
-
+      .order-history-detail-supplier__details{
+        margin-bottom: 8px !important;
+      }
       .order-history-detail-supplier__id {
         font-size: 13px;
 
@@ -503,8 +506,12 @@
     }
 
     .order-history-detail-supplier__table {
+      th{
+        font-size: 14px !important;
+        font-weight: 500;
+      }
       th, td {
-        font-size: 12px;
+        font-size: 14px;
         padding: 6px 8px;
       }
 

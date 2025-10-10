@@ -386,8 +386,10 @@ const OrderHistorySupplier = () => {
                             <th>Məhsullar</th>
                             <th>Ümumi məbləğ</th>
                             <th>Sifarişçinin adı</th>
-                            <th>Status</th>
-                            <th>Detallar</th>
+                            <th className={"statusMobile"} style={{
+                                textAlign:"center"
+                            }}>Status</th>
+                            <th className={'sticky-col'}>Detallar</th>
                         </tr>
                         </thead>
                         <tbody>

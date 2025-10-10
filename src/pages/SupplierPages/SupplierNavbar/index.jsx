@@ -7,6 +7,7 @@ import {
 } from "../../../services/adminApi.jsx";
 import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
+import logo from "../../../assets/Mask group.png";
 
 const SupplierNavbar = ({ setSidebarOpen }) => {
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ const SupplierNavbar = ({ setSidebarOpen }) => {
             <div id={"navbar"}>
                 <nav className="navbar">
                     <div className="navbar__logo">
-                        Shirvanshah
+                        <img src={logo} className="logo" alt="logo" />
                         <div className="navbar__menu-icon" onClick={() => setSidebarOpen(true)}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" fill="none">
                                 <path d="M0.5 1H11.5M0.5 4H11.5M0.5 7H11.5" stroke="#384871" stroke-miterlimit="10" stroke-linecap="round"/>

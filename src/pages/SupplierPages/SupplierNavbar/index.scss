@@ -217,10 +217,24 @@
           position: absolute;
           top: 0;
           right: 0;
+          @media screen and (max-width: 576px){
+            width:9px;
+            height: 9px;
+          }
         }
-
+      @media screen and (max-width: 576px) {
+        svg{
+          width: 18px;
+          height: 18px;
+        }
+      }
       h6{
         margin:0;
+        font-weight: 500;
+        @media screen and (max-width: 576px){
+          font-size: 14px;
+        }
+
       }
     }
   }

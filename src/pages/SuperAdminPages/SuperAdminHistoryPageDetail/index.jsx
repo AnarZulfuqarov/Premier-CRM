@@ -177,7 +177,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <th>Təhvil alınma tarixi</th>
                                 {status === 'Tamamlanmış' && (
                                     <th>
-                                        İnyovsa Bax
+                                        İnvoysa Bax
                                     </th>
                                 )}
 
@@ -220,17 +220,17 @@ const OrderHistoryDetailSuperAdmin = () => {
                             ))}
                             </tbody>
                         </table>
-                        <div className="table-footer sticky-footer">
-                            <span>Ümumi məbləğ:</span>
-                            <span>
+
+                    </div>
+                    <div className="table-footer sticky-footer">
+                        <span>Ümumi məbləğ:</span>
+                        <span>
   {
       `${orderData?.items?.reduce((sum, item) => sum + item.suppliedQuantity * (item?.price || 0), 0).toFixed(2)} ₼`
   }
 </span>
 
-                        </div>
                     </div>
-
                     {status === 'Təchizatçıdan təsdiq gözləyən' && (
                         <div className="order-history-detail-super-admin__delete">
                             <button className="delete-btn" onClick={() => {

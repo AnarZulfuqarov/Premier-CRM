@@ -239,15 +239,15 @@ const OrderHistoryDetail = () => {
 
                         </table>
 
-                        {(status === 'Təhvil alınmayan' || status === 'Tamamlanmış') && (
-                            <div className="table-footer sticky-footer">
-                                <span>Ümumi məbləğ:</span>
-                                <span>{totalPrice} ₼</span>
-                            </div>
-                        )}
+
                     </div>
 
-
+                    {(status === 'Təhvil alınmayan' || status === 'Tamamlanmış') && (
+                        <div className="table-footer sticky-footer">
+                            <span>Ümumi məbləğ:</span>
+                            <span>{totalPrice} ₼</span>
+                        </div>
+                    )}
 
                 </div>
 

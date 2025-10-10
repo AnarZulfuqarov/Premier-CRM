@@ -108,28 +108,32 @@
         font-size: 24px;
         font-style: normal;
         font-weight: 500;
-        line-height: normal;
         margin-bottom: 16px;
+        line-height: 1;
+        @media screen and (max-width: 576px) {
+          margin-bottom: 0;
+        }
       }
     }
   }
   h2 {
     font-size: 14px;
-
+    line-height: 1;
     .link {
       color: #5b5b5b;
       text-decoration: none;
     }
   }
   .product-table {
-    width: 75%;
+    width: 100%;
     border-collapse: collapse;
     margin-bottom: 24px;
-    border-radius: 15px;
+    border-radius: 5px;
   th{
     background-color: #F5FAFF;
     padding: 16px;
     border: 1px solid #eee;
+    font-weight: 500;
 
   }
      td {
@@ -194,12 +198,11 @@
     .product-table {
       width: 100%;
       overflow-x: auto;
-      display: block;
 
       th,
       td {
         padding: 8px;
-        font-size: 13px;
+        font-size: 14px !important;
       }
 
       input,
@@ -226,6 +229,7 @@
       width: 100%;
       font-size: 14px;
       padding: 12px;
+
     }
   }
 

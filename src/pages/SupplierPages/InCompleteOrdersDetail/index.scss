@@ -116,6 +116,10 @@
   background: #fff;
   min-height: calc(100vh - 129px);
   position: relative;
+  @media screen and (max-width: 576px){
+    max-height: calc(100vh - 129px);
+    overflow-y: auto !important;
+  }
   .headerr{
     width: 100%;
     display: flex;
@@ -181,6 +185,7 @@
       border-radius: 7px;
       border: 1px solid #9C9C9C;
       background: #FFF;
+
       span{
         color: #434343;
         font-size: 14px;
@@ -206,6 +211,7 @@
         line-height: normal;
 
 
+
     }
     .complateBtn:disabled{
       background-color: #7b7b7b !important;
@@ -220,7 +226,11 @@
   }
   h2 {
     font-size: 14px;
-
+    line-height: 1;
+    margin-top: 10px;
+    @media screen and (max-width: 576px){
+      font-size: 12px !important;
+    }
     .link {
       color: #5b5b5b;
       text-decoration: none;
@@ -628,6 +638,9 @@
           padding: 0;
           font-size: 13px;
           margin-bottom: 4px;
+          @media screen and (max-width: 576px){
+            font-size: 14px;
+          }
 
           span {
             font-size: 13px;

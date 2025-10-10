@@ -537,7 +537,6 @@ const ActiveOrdersDetail = () => {
                     </button>
                 </div>
             </div>
-            <div className="xett"></div>
             {showPreviewModal && (
                 <div className="modal-overlay">
                     <div className="modal-box" style={{width: '600px'}}>

@@ -67,8 +67,8 @@ const VendorHistorySupplier = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="vendor-detail-super-admin-main">
-            <div className="vendor-detail-super-admin">
+        <div className="vendor-detail-main">
+            <div className="vendor-detail">
                 <div className="path">
                     <h2>
                         <NavLink className="link" to="/supplier/products/vendors">
@@ -82,7 +82,7 @@ const VendorHistorySupplier = () => {
                 <p>Mövcud vendor məlumatlarını bu bölmədən nəzərdən keçirə bilərsiniz</p>
 
                 {/* Axtarış və filter */}
-                <div className="vendor-detail-super-admin__controls">
+                <div className="vendor-detail__controls">
                     <input
                         type="text"
                         placeholder="Axtarış edin"
@@ -108,7 +108,7 @@ const VendorHistorySupplier = () => {
                             <th>Təchizatçının adı</th>
                             <th>Order ID</th>
                             <th className="status-col">Status</th>
-                            <th className="sticky-right">Sifariş detalı</th>
+                            <th className="sticky-right sticky-col">Sifariş detalı</th>
                         </tr>
                         </thead>
                         <tbody>

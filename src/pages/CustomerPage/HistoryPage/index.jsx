@@ -346,8 +346,10 @@ const OrderHistory = () => {
                             <th>Məhsullar</th>
                             <th>Ümumi məbləğ</th>
                             <th>Təchizatçının adı</th>
-                            <th>Status</th>
-                            <th>Detallar</th>
+                            <th className={"statusMobile"} style={{
+                                textAlign: 'center'
+                            }}>Status</th>
+                            <th className={"sticky-col"}>Detallar</th>
                         </tr>
                         </thead>
                         <tbody>
