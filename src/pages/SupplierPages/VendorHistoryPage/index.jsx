@@ -115,7 +115,7 @@ const VendorHistorySupplier = () => {
                         {filteredOrders.map((o, i) => (
                             <tr
                                 key={o.id ?? i}
-                                onClick={() => navigate(`/superAdmin/history/${o.id}`)}
+                                onClick={() => navigate(`/supplier/history/${o.id}`)}
                             >
                                 <td>{o.createdDate}</td>
                                 <td>{o.companyName}</td>

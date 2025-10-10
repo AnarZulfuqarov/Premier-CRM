@@ -46,6 +46,7 @@ const OrderHistoryDetailSuperAdmin = () => {
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
+        const vendorName = item.vendorName
         return {
             name,
             category,
@@ -56,6 +57,7 @@ const OrderHistoryDetailSuperAdmin = () => {
             created,
             delivery,
             received,
+            vendorName
         };
     })
 
@@ -171,7 +173,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                                 <th>Qiyməti</th>
                                 {/* ✅ Yeni sütun */}
                                 <th>Sifarişin məbləği</th>
-
+                                <th>Vendor</th>
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
@@ -194,7 +196,7 @@ const OrderHistoryDetailSuperAdmin = () => {
                                     <td>{item.priceEach}</td>
                                     {/* ✅ Yeni hüceyrə */}
                                     <td>{item.price}</td>
-
+                                    <td>{item.vendorName}</td>
                                     <td>{item.created}</td>
                                     <td>{item.delivery}</td>
                                     <td>{item.received}</td>

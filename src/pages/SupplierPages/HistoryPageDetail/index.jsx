@@ -41,7 +41,7 @@ const OrderHistoryDetailSuplier = () => {
         const created = orderData?.createdDate;
         const delivery = orderData?.orderLimitTime;
         const received = item.orderItemDeliveryTime === '01.01.0001' ? '—' : item.orderItemDeliveryTime;
-
+        const vendorName = item.vendorName
         return {
             name,
             category,
@@ -51,7 +51,8 @@ const OrderHistoryDetailSuplier = () => {
             priceEach, // ✅ yeni hissə
             created,
             delivery,
-            received
+            received,
+            vendorName
         };
     }).filter(item => {
         const byName = item.name.toLowerCase().includes(searchName.toLowerCase());
@@ -202,6 +203,7 @@ const OrderHistoryDetailSuplier = () => {
                                 <th>Təmin olunan miqdar</th>
                                 <th>Sifarişin məbləği</th>
                                 <th>Qiyməti</th>
+                                <th>Vendor</th>
                                 <th>Sifarişin yaradılma tarixi</th>
                                 <th>Çatdırılacaq tarixi</th>
                                 <th>Təhvil alınma tarixi</th>
@@ -230,6 +232,7 @@ const OrderHistoryDetailSuplier = () => {
                                         <td>{item.provided}</td>
                                         <td>{item.price}</td>
                                         <td>{item.priceEach}</td>
+                                        <td>{item.vendorName}</td>
                                         <td>{item.created}</td>
                                         <td>{item.delivery}</td>
                                         <td>{item.received}</td>
