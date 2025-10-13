@@ -16,6 +16,7 @@ import ProductMonthlyTable from "../../components/Statistika/Cart3/index.jsx";
 import OrdersTotalCountAmountTable from "../../components/Statistika/Cart4/index.jsx";
 import OrdersSupplyStatusTable from "../../components/Statistika/Chart5/index.jsx";
 import OrdersByStatusCountTable from "../../components/Statistika/Chart6/index.jsx";
+import OrdersTotalCountAmountTable2 from "../../components/Statistika/Cart44/index.jsx";
 ChartJS.register(ArcElement, Tooltip, Legend);
 function SuperAdminStatistikTest() {
     const { data: getAllCompanies, isLoading } = useGetAllCompaniesQuery();
@@ -90,12 +91,18 @@ function SuperAdminStatistikTest() {
                         <DoughnutChartCard />
                     </div>
                 </div>
-                <div className={'secondStatik'}>
-                    <ProductMonthlyTable companyId={selectedBranch} />
+                <div className={'thirdStatik'}>
+                    <OrdersTotalCountAmountTable2 />
                 </div>
                 <div className={'thirdStatik'}>
                     <OrdersTotalCountAmountTable />
 
+                </div>
+                <div className={'secondStatik'}>
+                    <ProductMonthlyTable companyId={selectedBranch} />
+                </div>
+                <div className={'fifthStatik'}>
+                    <OrdersByStatusCountTable  />
                 </div>
                 <div className={'fourStatik'}>
                     <div className={'chart6'}>
@@ -103,9 +110,7 @@ function SuperAdminStatistikTest() {
                     </div>
 
                 </div>
-                <div className={'fifthStatik'}>
-                    <OrdersByStatusCountTable  />
-                </div>
+
                 {/*<div className="sixStatik">*/}
                 {/*    <div className="staticHead">*/}
                 {/*        <div className="content">*/}

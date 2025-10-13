@@ -11,7 +11,7 @@ import {
     useGetDateBasedPaymentHistoryQuery,
 } from "../../../services/adminApi.jsx";
 import { usePopup } from "../../../components/Popup/PopupContext.jsx";
-
+import icon from "/src/assets/Group26.svg"
 const columns = [
     { key: "orderId", label: "Faktura İD" },
 ];
@@ -44,6 +44,10 @@ const formatToAZDate = (dateStr) => {
     const yyyy = date.getFullYear();
     return `${dd}.${MM}.${yyyy}`;
 };
+const LS_KEYS = {
+    START_DATE: "accounter_borc_startDate",
+    END_DATE: "accounter_borc_endDate",
+};
 
 const AccounterBorcTarixce = () => {
     const navigate = useNavigate();
@@ -61,8 +65,26 @@ const AccounterBorcTarixce = () => {
         }
     });
 
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const formatDateInput = (date) => {
+        const yyyy = date.getFullYear();
+        const MM = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        return `${yyyy}-${MM}-${dd}`;
+    };
+
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+
+// İlk dəyərləri localStorage-dan oxu, yoxdursa default ver
+    const [startDate, setStartDate] = useState(
+        localStorage.getItem(LS_KEYS.START_DATE) || formatDateInput(oneMonthAgo)
+    );
+    const [endDate, setEndDate] = useState(
+        localStorage.getItem(LS_KEYS.END_DATE) || formatDateInput(today)
+    );
+
+
     const formattedStartDate = formatToAZDate(startDate);
     const formattedEndDate = formatToAZDate(endDate);
     const skipQuery = !formattedStartDate || !formattedEndDate || !borcCompanyId || !id;
@@ -127,10 +149,6 @@ const AccounterBorcTarixce = () => {
         setPopupInvoices([]);
     };
 
-    const combinedInvoices = [
-        ...(modalData.originalInvoices || []),
-        ...(modalData.newInvoices || []),
-    ].filter(Boolean);
 
 
     const saveModal = async () => {
@@ -404,33 +422,28 @@ const AccounterBorcTarixce = () => {
                     </div>
                     <div className="borcDiv">
                         <div className="borcDivMain">
-                            <div className="borcIcon">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="17"
-                                    height="17"
-                                    viewBox="0 0 17 17"
-                                    fill="none"
-                                >
-                                    <path
-                                        d="M9.5 7.03516C9.5 7.56559 9.28929 8.0743 8.91421 8.44937C8.53914 8.82444 8.03043 9.03516 7.5 9.03516C6.96957 9.03516 6.46086 8.82444 6.08579 8.44937C5.71071 8.0743 5.5 7.56559 5.5 7.03516C5.5 6.50472 5.71071 5.99602 6.08579 5.62094C6.46086 5.24587 6.96957 5.03516 7.5 5.03516C8.03043 5.03516 8.53914 5.24587 8.91421 5.62094C9.28929 5.99602 9.5 6.50472 9.5 7.03516ZM8.5 7.03516C8.5 6.76994 8.39464 6.51559 8.20711 6.32805C8.01957 6.14051 7.76522 6.03516 7.5 6.03516C7.23478 6.03516 6.98043 6.14051 6.79289 6.32805C6.60536 6.51559 6.5 6.76994 6.5 7.03516C6.5 7.30037 6.60536 7.55473 6.79289 7.74226C6.98043 7.9298 7.23478 8.03516 7.5 8.03516C7.76522 8.03516 8.01957 7.9298 8.20711 7.74226C8.39464 7.55473 8.5 7.30037 8.5 7.03516ZM1.5 4.28516C1.5 3.59516 2.06 3.03516 2.75 3.03516H12.25C12.94 3.03516 13.5 3.59516 13.5 4.28516V9.78516C13.5 10.4752 12.94 11.0352 12.25 11.0352H2.75C2.06 11.0352 1.5 10.4752 1.5 9.78516V4.28516ZM2.75 4.03516C2.6837 4.03516 2.62011 4.0615 2.57322 4.10838C2.52634 4.15526 2.5 4.21885 2.5 4.28516V5.03516H3C3.13261 5.03516 3.25979 4.98248 3.35355 4.88871C3.44732 4.79494 3.5 4.66776 3.5 4.53516V4.03516H2.75ZM2.5 9.78516C2.5 9.92316 2.612 10.0352 2.75 10.0352H3.5V9.53516C3.5 9.40255 3.44732 9.27537 3.35355 9.1816C3.25979 9.08783 3.13261 9.03516 3 9.03516H2.5V9.78516ZM4.5 9.53516V10.0352H10.5V9.53516C10.5 9.13733 10.658 8.7558 10.9393 8.4745C11.2206 8.19319 11.6022 8.03516 12 8.03516H12.5V6.03516H12C11.6022 6.03516 11.2206 5.87712 10.9393 5.59582C10.658 5.31451 10.5 4.93298 10.5 4.53516V4.03516H4.5V4.53516C4.5 4.93298 4.34196 5.31451 4.06066 5.59582C3.77936 5.87712 3.39782 6.03516 3 6.03516H2.5V8.03516H3C3.39782 8.03516 3.77936 8.19319 4.06066 8.4745C4.34196 8.7558 4.5 9.13733 4.5 9.53516ZM11.5 10.0352H12.25C12.3163 10.0352 12.3799 10.0088 12.4268 9.96193C12.4737 9.91505 12.5 9.85146 12.5 9.78516V9.03516H12C11.8674 9.03516 11.7402 9.08783 11.6464 9.1816C11.5527 9.27537 11.5 9.40255 11.5 9.53516V10.0352ZM12.5 5.03516V4.28516C12.5 4.21885 12.4737 4.15526 12.4268 4.10838C12.3799 4.0615 12.3163 4.03516 12.25 4.03516H11.5V4.53516C11.5 4.66776 11.5527 4.79494 11.6464 4.88871C11.7402 4.98248 11.8674 5.03516 12 5.03516H12.5ZM5 13.0352C4.68322 13.0353 4.37453 12.9351 4.11818 12.749C3.86184 12.5629 3.67099 12.3004 3.573 11.9992C3.71167 12.0232 3.854 12.0352 4 12.0352H12.25C12.8467 12.0352 13.419 11.7981 13.841 11.3761C14.2629 10.9542 14.5 10.3819 14.5 9.78516V5.12016C14.7926 5.2236 15.0459 5.41524 15.225 5.66867C15.4041 5.92209 15.5002 6.22483 15.5 6.53516V9.78516C15.5 10.212 15.4159 10.6346 15.2526 11.0289C15.0893 11.4232 14.8499 11.7815 14.5481 12.0833C14.2463 12.385 13.888 12.6244 13.4937 12.7878C13.0994 12.9511 12.6768 13.0352 12.25 13.0352H5Z"
-                                        fill="white"
-                                    />
-                                </svg>
+                            <div>
+                                <img src={icon}/>
                             </div>
                             <div className="borcText">
                                 <h5>{totalDebt.toLocaleString("az-Latn-AZ")} ₼</h5>
-                                <p>Ümumi borc</p>
+                                <p>Tarix üzrə ümumi borc</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="root">
                     <h2>
-                        <NavLink className="link" to="/accounter/borc">
+                        <NavLink className="link" to="/accounter/borc"  onClick={() => {
+                            localStorage.removeItem(LS_KEYS.START_DATE);
+                            localStorage.removeItem(LS_KEYS.END_DATE);
+                        }}>
                             — Şirkətlər
                         </NavLink>{" "}
-                        <NavLink className="link" to={`/accounter/borc/${companyId}`}>
+                        <NavLink className="link" to={`/accounter/borc/${companyId}`} onClick={() => {
+                            localStorage.removeItem(LS_KEYS.START_DATE);
+                            localStorage.removeItem(LS_KEYS.END_DATE);
+                        }}>
                             — {company?.name} ({vendor?.name})
                         </NavLink>{" "}
                         — Borc tarixçəsi
@@ -438,8 +451,14 @@ const AccounterBorcTarixce = () => {
                 </div>
                 <div className="table-toolbar">
                     <div className="filters">
-                        <DateField label="Başlanğıc tarix" value={startDate} onChange={setStartDate} />
-                        <DateField label="Son tarix" value={endDate} onChange={setEndDate} />
+                        <DateField label="Başlanğıc tarix" value={startDate} onChange={(val) => {
+                            setStartDate(val);
+                            localStorage.setItem(LS_KEYS.START_DATE, val);
+                        }}/>
+                        <DateField label="Son tarix" value={endDate} onChange={(val) => {
+                            setEndDate(val);
+                            localStorage.setItem(LS_KEYS.END_DATE, val);
+                        }} />
                     </div>
                 </div>
                 <div className="tablehead">

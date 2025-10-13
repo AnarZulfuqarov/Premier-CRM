@@ -6,6 +6,7 @@ import {
     useGetDateBasedPaymentTotalQuery, useGetCompanyIdQuery
 } from '../../../services/adminApi.jsx';
 import {NavLink, useNavigate, useParams} from "react-router-dom";
+import icon from "../../../assets/Group26.svg";
 
 
 const formatNumber = (num) => {
@@ -14,6 +15,11 @@ const formatNumber = (num) => {
     if (Number.isInteger(parsed)) return parsed.toString();
     return parsed.toFixed(2).replace(/\.?0+$/, '');
 };
+const LS_KEYS = {
+    START_DATE: "accounter_borc_startDate",
+    END_DATE: "accounter_borc_endDate",
+};
+
 const AccounterBorc = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -93,6 +99,10 @@ const AccounterBorc = () => {
             return matchesVendor ;
         });
     }, [dbpTotal, searchVendorId]);
+// totalDebt hesaplama — filteredData içindeki tüm totalDebt değerlerinin toplamı
+    const totalDebt = useMemo(() => {
+        return filteredData.reduce((acc, curr) => acc + (curr.totalDebt || 0), 0);
+    }, [filteredData]);
 
     // ... (JSX kısmı aynı kalacak, sadece tbody içindeki map'lemeyi filteredData ile güncelliyoruz)
     return (
@@ -103,6 +113,17 @@ const AccounterBorc = () => {
                     <div className="head">
                         <h2>Borc</h2>
                         <p>Vendorlara edilən ödənişləri və qalan borcları izləyin.</p>
+                    </div>
+                    <div className="borcDiv">
+                        <div className="borcDivMain">
+                            <div>
+                                <img src={icon}/>
+                            </div>
+                            <div className="borcText">
+                                <h5>{totalDebt.toLocaleString("az-Latn-AZ")} ₼</h5>
+                                <p>Ümumi borc</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -216,6 +237,8 @@ const AccounterBorc = () => {
                                             onClick={() => {
                                                 navigate(`/accounter/borc/vendor/${r.vendorId}`);
                                                 localStorage.setItem('vendorId', r.vendorId);
+                                                localStorage.removeItem(LS_KEYS.START_DATE);
+                                                localStorage.removeItem(LS_KEYS.END_DATE);
                                             }}
                                             aria-label="Sətiri redaktə et"
                                             style={{

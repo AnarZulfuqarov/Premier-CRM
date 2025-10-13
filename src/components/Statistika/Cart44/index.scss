@@ -78,13 +78,13 @@
   overflow: hidden;
 }
 
-.otca-table {
+.otca-table2 {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
 
   thead th {
-    background: #e9f9e9;      /* açıq yaşıl header */
+    background: #FFDCBE;      /* açıq yaşıl header */
     color: #0f172a;
     font-weight: 600;
     font-size: 14px;
@@ -101,10 +101,11 @@
 
   tbody td {
     font-size: 14px;
-    color:#6C6C6C;
+
     padding: 12px 14px;
     border-bottom: 1px solid #f2f4f7;
     vertical-align: middle;
+    color:#6C6C6C;
   }
   tbody tr:last-child td { border-bottom: none; }
 

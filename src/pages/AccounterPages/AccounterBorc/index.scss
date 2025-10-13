@@ -98,6 +98,58 @@
         margin: 0;
       }
     }
+    .borcDiv {
+      border-radius: 36px;
+      padding: 16px;
+      border: 1px solid #E9EAEB;
+      background: #FFF;
+      width: max-content;
+      height: 70px;
+
+      box-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.05);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .borcDivMain {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .borcIcon {
+        border-radius: 19.5px;
+        background: #FF3232;
+        display: flex;
+        width: 32px;
+        height: 32px;
+        padding: 8.864px;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .borcText {
+        h5 {
+          color: #060606;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+          margin-bottom: 4px;
+        }
+
+        p {
+          color: #5B5B5B;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+      }
+    }
   }
   .root {
     h2 {
