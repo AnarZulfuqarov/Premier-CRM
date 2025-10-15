@@ -464,7 +464,6 @@ const SuperAdminCategories = () => {
 
             </div>
 
-            <div className="xett"></div>
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>
