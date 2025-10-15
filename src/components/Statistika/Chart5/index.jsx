@@ -1,5 +1,4 @@
-// src/components/Statistika/OrdersSupplyStatusTable.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import  { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {
     useGetAllCompaniesQuery,
