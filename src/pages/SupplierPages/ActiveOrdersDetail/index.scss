@@ -647,6 +647,7 @@
 
     .table-wrapper {
       width: 100%;
+      margin-bottom:50px !important;
     }
 
     .table-scroll {
@@ -668,7 +669,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 12px;
-      margin-top: 8px;
+      margin-top: 50px;
 
       .upload-button {
         width: 100%;

@@ -89,7 +89,8 @@ const ActiveOrdersDetail = () => {
                 filled[index] = {
                     quantity: `${item.suppliedQuantity} ${item.product?.measure || ''}`,
                     price: `${item.price} ₼`,
-                    vendor: item.vendorName || '—'
+                    vendor: item.vendorName || '—',
+                    totalPrice:`${item.suppliedQuantity*item.price} ₼`
                 };
             });
             setConfirmedRows(filled);
@@ -368,6 +369,7 @@ const ActiveOrdersDetail = () => {
                                 <th>Tələb olunan miqdar</th>
                                 <th>Təmin olunan miqdar</th>
                                 <th>Vendor</th>
+                                <th>Məhsulun qiyməti</th>
                                 <th>Sifarişin məbləği</th>
                             </tr>
                             </thead>
@@ -385,7 +387,8 @@ const ActiveOrdersDetail = () => {
                                             setModalData({
                                                 quantity: data?.quantity?.replace(` ${currentMeasure}`, '') || '',
                                                 price: data?.price?.replace(' ₼', '') || '',
-                                                vendor: data?.vendor || ''
+                                                vendor: data?.vendor || '',
+                                                totalPrice:data?.quantity*data?.price
                                             });
                                         }}
                                     >
@@ -403,6 +406,7 @@ const ActiveOrdersDetail = () => {
                                         <td>{confirmedRows[absoluteIndex]?.quantity || '-'}</td>
                                         <td>{confirmedRows[absoluteIndex]?.vendor || '-'}</td>
                                         <td>{confirmedRows[absoluteIndex]?.price || '-'}</td>
+                                        <td>{confirmedRows[absoluteIndex]?.totalPrice || '-'}</td>
                                     </tr>
                                 );
                             })}
