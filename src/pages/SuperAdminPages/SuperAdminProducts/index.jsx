@@ -41,7 +41,7 @@ const SuperAdminProducts = () => {
     const [deleteProduct] = useDeleteProductsMutation()
     const {data:getAllCategories} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
-    const units = ['kg', 'litr', 'ədəd'];
+    const units = ['kg', 'litr', 'ədəd','qram'];
     const {
         data: pagedData,
         isFetching,

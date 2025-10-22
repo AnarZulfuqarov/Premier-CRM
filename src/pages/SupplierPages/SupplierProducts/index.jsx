@@ -69,7 +69,7 @@ const SupplierProducts = () => {
     }, [state]);
 
 
-    const units = ['kg', 'litr', 'ədəd'];
+    const units = ['kg', 'litr', 'ədəd','qram'];
     const {data:getAllCategories} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
     const [edit] = useUpdateProductsMutation()

@@ -70,7 +70,7 @@ const SuperProductsAdd = () => {
                             <td>
 
                                 <CustomDropdown
-                                    options={['kg', 'litr', 'ədəd']}
+                                    options={['kg', 'litr', 'ədəd','qram']}
                                     selected={row.unit}
                                     onSelect={(value) => handleChange(index, 'unit', value)}
                                     placeholder="Ölçü vahidi seç"

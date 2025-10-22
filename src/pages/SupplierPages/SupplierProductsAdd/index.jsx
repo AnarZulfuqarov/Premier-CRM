@@ -4,7 +4,7 @@ import {NavLink} from "react-router-dom";
 import CustomDropdown from "../../../components/Supplier/CustomDropdown/index.jsx";
 import {useCreateProductsMutation, useGetAllCategoriesQuery} from "../../../services/adminApi.jsx";
 
-const units = ['kg', 'litr', 'ədəd'];
+const units = ['kg', 'litr', 'ədəd','qram'];
 
 const SupplierProductAdd = () => {
     const [rows, setRows] = useState([{name: '', category: '', unit: ''}]);
