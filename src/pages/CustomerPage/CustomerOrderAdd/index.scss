@@ -5,7 +5,7 @@
   background-color: #fff;
   width: 100%;
   height: calc(100vh - 129px);
-  overflow: hidden ;
+  overflow: auto;
   box-sizing: border-box;
   @media screen and (max-width: 576px){
     height: calc(100vh - 70px);
@@ -16,7 +16,8 @@
 
   &__main {
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     .row{
       .col-6{
         padding: 16px 25px;
