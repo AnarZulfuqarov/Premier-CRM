@@ -138,7 +138,7 @@ const OrderHistoryDetail = () => {
 </span>
                         </div>
                         <div className="order-history-detail__data">
-                            <p>{orderData?.items?.map(item => item.product?.name).join(', ')}</p>
+                            <p className={'datass'}>{orderData?.items?.map(item => item.product?.name).join(', ').slice(0,65)}...</p>
                             <p>
                                 <span className="quantity-count">{itemCount}</span>{' '}
                                 <span className="quantity-label">məhsul,</span>{' '}

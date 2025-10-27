@@ -513,10 +513,18 @@
         padding: 8px 10px;
         align-items: center;
         gap: 4px;
-
+        .datass{
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          height: 5px;
+        }
         p {
           font-size: 13px;
           line-height: 1.4;
+
         }
 
         .quantity-count {

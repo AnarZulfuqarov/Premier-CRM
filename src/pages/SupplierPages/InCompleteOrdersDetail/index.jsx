@@ -63,14 +63,9 @@ const InCompleteOrdersDetail = () => {
         return byName && byCat;
     }) || [];
 
-    const totalPages = Math.ceil(filtered.length / pageSize);
-    const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-    const getPageNumbers = () => {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-        return pages;
-    };
+
+
 
     const totalAmount = Object.values(confirmedRows).reduce((sum, row) => {
         const price = parseFloat(row.price?.replace(' ₼', '') || '0');
@@ -301,7 +296,7 @@ const InCompleteOrdersDetail = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedItems.map((item, i) => {
+                            {filtered.map((item, i) => {
                                 const absoluteIndex = (currentPage - 1) * pageSize + i;
                                 const confirmedData = confirmedRows[absoluteIndex];
                                 let isCompleted = false;
