@@ -81,9 +81,7 @@ const SuperAdminProducts = () => {
       setActiveTab("edit");
     }
   }, [state]);
-  useEffect(() => {
-    productRefetch();
-  }, []);
+
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -117,6 +115,11 @@ const SuperAdminProducts = () => {
   } = useGetAllProductsBySearchNameQuery(searchName, {
     skip: !searchName,
   });
+  useEffect(() => {
+    productRefetch();
+    refetchSearch();
+    refetchSearchName();
+  }, []);
   const filteredProducts =
     searchCategory && searchName
       ? // hər iki search aktivdirsə → kəsişmə (intersection)
@@ -513,6 +516,8 @@ const SuperAdminProducts = () => {
                         addPendingRefetch();
                         deletePendingRefetch();
                         productRefetch();
+                        refetchSearch();
+                        refetchSearchName();
                       } catch {
                         showPopup(
                           "Sistem xətası",
@@ -542,6 +547,8 @@ const SuperAdminProducts = () => {
                         addPendingRefetch();
                         deletePendingRefetch();
                         productRefetch();
+                        refetchSearch();
+                        refetchSearchName();
                       } catch {
                         showPopup(
                           "Sistem xətası",
@@ -780,6 +787,8 @@ const SuperAdminProducts = () => {
                                   await confirmEdit(item.id);
                                   productRefetch();
                                   editRefetch();
+                                  refetchSearch();
+                                  refetchSearchName();
                                   showPopup(
                                     "Məhsulun düzəliş tələbəni təsdiq etdiniz",
                                     "Dəyişikliklər uğurla tətbiq olundu",
@@ -815,6 +824,8 @@ const SuperAdminProducts = () => {
                                   await rejectEdit(item.id);
                                   productRefetch();
                                   editRefetch();
+                                  refetchSearch();
+                                  refetchSearchName();
                                   showPopup(
                                     "Məhsulun edit tələbini ləğv etdiniz",
                                     "Gözləmədə olan düzəliş tələbi silindi",
@@ -928,6 +939,8 @@ const SuperAdminProducts = () => {
                   });
                   setModalData(null);
                   productRefetch();
+                  refetchSearch();
+                  refetchSearchName();
                   await handleRefetchProducts();
                   showPopup(
                     "Məhsula uğurla düzəliş etdiniz",
@@ -993,6 +1006,8 @@ const SuperAdminProducts = () => {
                     await deleteProduct(deleteIndex); // məhsulun ID-si backend-ə gedir
                     setDeleteIndex(null);
                     productRefetch();
+                    refetchSearch();
+                    refetchSearchName();
                     await handleRefetchProducts();
                     showPopup(
                       "Məhsulu uğurla sildiniz",

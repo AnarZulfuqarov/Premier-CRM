@@ -52,6 +52,7 @@ const SuperAdminCategories = () => {
   const [deleteCategory] = useDeleteCategoriesMutation();
   useEffect(() => {
     categoryRefetch();
+    refetchSearch();
   }, []);
 
    const filteredCategories = categories || [];
@@ -367,6 +368,7 @@ const SuperAdminCategories = () => {
                         addPendingRefetch();
                         deletePendingRefetch();
                         categoryRefetch();
+                        refetchSearch();
                       } catch (error) {
                         showPopup(
                           "Sistem xətası",
@@ -396,6 +398,7 @@ const SuperAdminCategories = () => {
                         addPendingRefetch();
                         deletePendingRefetch();
                         categoryRefetch();
+                        refetchSearch();
                       } catch (error) {
                         showPopup(
                           "Sistem xətası",
@@ -626,6 +629,7 @@ const SuperAdminCategories = () => {
                                   await confirmEdit(item.id);
                                   categoryRefetch();
                                   editRefetch();
+                                  refetchSearch();
                                   showPopup(
                                     "Kateqoriyanın düzəliş tələbəni təsdiq etdiniz",
                                     "Dəyişikliklər uğurla tətbiq olundu",
@@ -661,6 +665,7 @@ const SuperAdminCategories = () => {
                                   await rejectEdit(item.id);
                                   categoryRefetch();
                                   editRefetch();
+                                  refetchSearch();
                                   showPopup(
                                     "Kateqoriyanın düzəliş tələbini ləğv etdiniz",
                                     "Gözləmədə olan düzəliş tələbi silindi",
@@ -747,6 +752,7 @@ const SuperAdminCategories = () => {
                   );
 
                   categoryRefetch();
+                  refetchSearch();
                 } catch (error) {
                   showPopup(
                     "Sistem xətası",
@@ -811,6 +817,7 @@ const SuperAdminCategories = () => {
                     );
 
                     categoryRefetch(); // Backend-dəki dəyişiklikləri yenilə
+                    refetchSearch();
                   } catch {
                     showPopup(
                       "Sistem xətası",

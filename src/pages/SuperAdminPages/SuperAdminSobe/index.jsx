@@ -22,7 +22,7 @@ const SuperAdminSobe = () => {
   const pageSize = 5;
   const [searchName, setSearchName] = useState("");
   const [activeSearch, setActiveSearch] = useState(null);
-  const { data: getSobeBYCompanyId, refetch } = useGetSobeBYCompanyIdQuery(id);
+  const { data: getSobeBYCompanyId, refetch:bolmeRefetch } = useGetSobeBYCompanyIdQuery(id);
   const { data: getCompanyId } = useGetCompanyIdQuery(id);
   const company = getCompanyId?.data;
     const {
@@ -41,7 +41,8 @@ const SuperAdminSobe = () => {
     : data || [];
 
   useEffect(() => {
-    refetch();
+    bolmeRefetch();
+    refetchSearch();
   }, []);
   const totalPages = Math.ceil(departments.length / pageSize);
   const pagedDepartments = departments.slice(
@@ -321,7 +322,8 @@ const SuperAdminSobe = () => {
 
                   setModalVisible(false);
                   setEditDeptData({ id: "", name: "" });
-                  refetch();
+                  bolmeRefetch();
+                  refetchSearch();
                 } catch (err) {
                   console.error("Şöbə redaktə olunarkən xəta:", err);
                 }
@@ -372,7 +374,8 @@ const SuperAdminSobe = () => {
                   try {
                     await deleteDepartment(deleteDeptId);
                     setDeleteDeptId(null);
-                    refetch();
+                    bolmeRefetch();
+                    refetchSearch();
                   } catch (err) {
                     console.error("Silinərkən xəta:", err);
                   }

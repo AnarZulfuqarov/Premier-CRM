@@ -20,15 +20,16 @@ const SuperAdminVendors = () => {
   const showPopup = usePopup();
   const navigate = useNavigate();
 
-  const { data: getAllVendors, refetch } = useGetAllVendorsQuery();
-   const { data: getAllVendorsSearch, isFetching: vendorFetching } =
+  const { data: getAllVendors, refetch:vendorRefetch } = useGetAllVendorsQuery();
+   const { data: getAllVendorsSearch, isFetching: vendorFetching,refetch:refetchSearch } =
       useGetAllVendorsBySearchNameQuery(searchName, {
         skip: !searchName,
       });
   const [editVendor] = useEditVendorMutation();
   const [deleteVendor] = useDeleteVendorMutation();
   useEffect(() => {
-    refetch();
+    vendorRefetch();
+    refetchSearch();
   }, []);
   const vendors = getAllVendors?.data || [];
 
@@ -259,7 +260,8 @@ const SuperAdminVendors = () => {
                 });
                 setEditModalVisible(false);
                 setSelectedVendor(null);
-                refetch();
+                vendorRefetch();
+                refetchSearch();
                 showPopup(
                   "Vendora uğurla düzəliş etdiniz",
                   "Dəyişikliklər yadda saxlanıldı və vendor məlumatları yeniləndi.",
@@ -315,7 +317,8 @@ const SuperAdminVendors = () => {
                   await deleteVendor(selectedVendor.id);
                   setDeleteModalVisible(false);
                   setSelectedVendor(null);
-                  refetch();
+                  vendorRefetch();
+                  refetchSearch();
                   showPopup(
                     "Vendoru uğurla sildiniz",
                     "Seçilmiş vendor sistemdən silindi",

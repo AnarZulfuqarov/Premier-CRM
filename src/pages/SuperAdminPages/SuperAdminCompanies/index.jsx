@@ -18,7 +18,7 @@ const SuperAdminCompanies = () => {
   const [activeSearch, setActiveSearch] = useState(null);
   const [editCompanyData, setEditCompanyData] = useState({ id: "", name: "" });
   const showPopup = usePopup();
-  const { data: getAllCompanies, refetch } = useGetAllCompaniesQuery();
+  const { data: getAllCompanies, refetch:companyRefetch } = useGetAllCompaniesQuery();
   const {
     data: searchResults,
     refetch: refetchSearch,
@@ -31,7 +31,8 @@ const SuperAdminCompanies = () => {
   const [edit] = useEditCompanyMutation();
   const [deleteCompany] = useDeleteCompanyMutation();
   useEffect(() => {
-    refetch();
+    companyRefetch();
+    refetchSearch();
   }, []);
   // Şirkət datalarını hazırla
   const searchedCompanies = searchResults?.data || [];
@@ -263,7 +264,8 @@ const SuperAdminCompanies = () => {
 
                   setModalVisible(false);
                   setEditCompanyData({ id: "", name: "" });
-                  refetch();
+                  companyRefetch();
+                  refetchSearch();
                   showPopup(
                     "Şirkətə uğurla düzəliş etdiniz",
                     "Dəyişikliklər yadda saxlanıldı",
@@ -307,7 +309,8 @@ const SuperAdminCompanies = () => {
                   try {
                     await deleteCompany(deleteCompanyId);
                     setDeleteCompanyId(null);
-                    refetch();
+                    companyRefetch();
+                    refetchSearch()
                     showPopup(
                       "Şirkəti uğurla sildiniz",
                       "Seçilmiş şirkət sistemdən silindi",

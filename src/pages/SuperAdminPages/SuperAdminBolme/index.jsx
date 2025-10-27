@@ -22,7 +22,7 @@ const SuperAdminBolme = () => {
 
   const [searchName, setSearchName] = useState("");
   const [activeSearch, setActiveSearch] = useState(null);
-  const { data: getSobeBYDepartmentId, refetch } =
+  const { data: getSobeBYDepartmentId, refetch:sobeRefetch } =
     useGetSobeBYDepartmentIdQuery(id);
   const { data: getDepartmentId } = useGetDepartmentIdQuery(id);
   const {
@@ -44,7 +44,8 @@ const SuperAdminBolme = () => {
   const [edit] = useEditSectionMutation();
   const [deleteBolme] = useDeleteSectionMutation();
   useEffect(() => {
-    refetch();
+    sobeRefetch();
+    refetchSearch();
   }, []);
   const filteredSections = searchName ? searchResults?.data || [] : data || [];
   const totalPages = Math.ceil(filteredSections?.length / pageSize);
@@ -342,7 +343,8 @@ const SuperAdminBolme = () => {
 
                   setModalVisible(false);
                   setEditSectionData({ id: "", name: "" });
-                  refetch();
+                  sobeRefetch();
+                  refetchSearch();
                 } catch (err) {
                   console.error("Bölmə redaktə olunarkən xəta:", err);
                 }
@@ -393,7 +395,8 @@ const SuperAdminBolme = () => {
                   try {
                     await deleteBolme(deleteSectionId);
                     setDeleteSectionId(null);
-                    refetch();
+                    sobeRefetch();
+                    refetchSearch();
                   } catch (err) {
                     console.error("Silinərkən xəta baş verdi:", err);
                   }
