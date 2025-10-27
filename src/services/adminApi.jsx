@@ -316,6 +316,13 @@ export const api = createApi({
                 url: `/Categories`,
             }),
         }),
+        getAllCategoriesBySearch: builder.query({
+            query: (keyword="") => ({
+                url: `/Categories/search`,
+                params: { keyword },
+            }),
+        }),
+
         createCategories: builder.mutation({
             query: (category) => ({
                 url: '/Categories/request-create',
@@ -913,6 +920,7 @@ export const {
     useAddBolmeCustomersMutation,
 
     useGetAllCategoriesQuery,
+    useGetAllCategoriesBySearchQuery,
     useCreateCategoriesMutation,
     useUpdateCategoriesMutation,
     useDeleteCategoriesMutation,

@@ -25,6 +25,7 @@ const SupplierCategories = () => {
     const [confirmedRows, setConfirmedRows] = useState({});
     const [activeTab, setActiveTab] = useState('products'); // Sekme kontrolü eklendi
     const [deleteIndex, setDeleteIndex] = useState(null);
+
     useEffect(() => {
         if (state?.type === "create" || state?.type === "delete") {
             setActiveTab("requests");
@@ -36,6 +37,11 @@ const SupplierCategories = () => {
     //Sorgular
     const {data: getAllCategories , refetch} = useGetAllCategoriesQuery()
     const categories = getAllCategories?.data
+    const {
+        data: searchResults,
+        refetch: refetchSearch,
+        isFetching: isSearching,
+    } = useGetAllCategoriesBySearchQuery(searchName, { skip: !searchName });
 
     const [edit] = useUpdateCategoriesMutation()
     const [deleteCategory] = useDeleteCategoriesMutation()
