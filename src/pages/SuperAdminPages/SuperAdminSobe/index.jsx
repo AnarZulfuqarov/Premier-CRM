@@ -42,7 +42,6 @@ const SuperAdminSobe = () => {
 
   useEffect(() => {
     bolmeRefetch();
-    refetchSearch();
   }, []);
   const totalPages = Math.ceil(departments.length / pageSize);
   const pagedDepartments = departments.slice(

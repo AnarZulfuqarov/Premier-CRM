@@ -32,7 +32,6 @@ const SuperAdminCompanies = () => {
   const [deleteCompany] = useDeleteCompanyMutation();
   useEffect(() => {
     companyRefetch();
-    refetchSearch();
   }, []);
   // Şirkət datalarını hazırla
   const searchedCompanies = searchResults?.data || [];

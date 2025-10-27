@@ -29,7 +29,6 @@ const SuperAdminVendors = () => {
   const [deleteVendor] = useDeleteVendorMutation();
   useEffect(() => {
     vendorRefetch();
-    refetchSearch();
   }, []);
   const vendors = getAllVendors?.data || [];
 

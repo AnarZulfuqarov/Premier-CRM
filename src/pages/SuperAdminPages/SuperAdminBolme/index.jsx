@@ -45,7 +45,6 @@ const SuperAdminBolme = () => {
   const [deleteBolme] = useDeleteSectionMutation();
   useEffect(() => {
     sobeRefetch();
-    refetchSearch();
   }, []);
   const filteredSections = searchName ? searchResults?.data || [] : data || [];
   const totalPages = Math.ceil(filteredSections?.length / pageSize);

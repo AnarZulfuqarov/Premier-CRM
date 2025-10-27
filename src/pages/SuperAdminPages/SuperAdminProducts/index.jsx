@@ -117,8 +117,6 @@ const SuperAdminProducts = () => {
   });
   useEffect(() => {
     productRefetch();
-    refetchSearch();
-    refetchSearchName();
   }, []);
   const filteredProducts =
     searchCategory && searchName

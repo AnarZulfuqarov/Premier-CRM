@@ -52,7 +52,6 @@ const SuperAdminCategories = () => {
   const [deleteCategory] = useDeleteCategoriesMutation();
   useEffect(() => {
     categoryRefetch();
-    refetchSearch();
   }, []);
 
    const filteredCategories = categories || [];
