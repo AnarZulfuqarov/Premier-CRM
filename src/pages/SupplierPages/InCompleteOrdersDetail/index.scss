@@ -237,12 +237,14 @@
     }
   }
 
-  .order-table-wrapper {
+  .table-wrapper {
     display: flex;
     border: 1px solid #ddd;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
+    width: 100% !important;
+    margin-bottom: 50px;
 
     .scrollable-part {
       width: 100%;
