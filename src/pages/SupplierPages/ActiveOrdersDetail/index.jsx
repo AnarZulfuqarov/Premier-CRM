@@ -374,7 +374,7 @@ const ActiveOrdersDetail = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {pagedItems.map((item, i) => {
+                            {filtered.map((item, i) => {
                                 const absoluteIndex = (currentPage - 1) * pageSize + i;
                                 return (
                                     <tr key={i}
