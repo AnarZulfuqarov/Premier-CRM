@@ -30,9 +30,15 @@ const SuperAdminBolme = () => {
     refetch: refetchSearch,
     isFetching: isSearching,
     isLoading: isLoadingSearch,
-  } = useGetAllSectionsBySearchNameQuery(searchName, {
-    skip: !searchName,
-  });
+  } = useGetAllSectionsBySearchNameQuery(
+    {
+      departmentId: id,
+      keyword: searchName,
+    },
+    {
+      skip: !searchName,
+    }
+  );
   const department = getDepartmentId?.data;
   const data = getSobeBYDepartmentId?.data;
   const [edit] = useEditSectionMutation();
@@ -40,7 +46,6 @@ const SuperAdminBolme = () => {
   useEffect(() => {
     refetch();
   }, []);
-  console.log(searchResults)
   const filteredSections = searchName ? searchResults?.data || [] : data || [];
   const totalPages = Math.ceil(filteredSections?.length / pageSize);
   const pagedSections = filteredSections?.slice(

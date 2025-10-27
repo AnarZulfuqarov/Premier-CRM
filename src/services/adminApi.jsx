@@ -107,7 +107,7 @@ export const api = createApi({
         url: `/Companies`,
       }),
     }),
-        getAllCompaniesBySearchName: builder.query({
+    getAllCompaniesBySearchName: builder.query({
       query: (keyword = "") => ({
         url: `/Companies/search`,
         params: { keyword },
@@ -199,7 +199,7 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
-        getAllDepartmentsBySearchName: builder.query({
+    getAllDepartmentsBySearchName: builder.query({
       query: (keyword = "") => ({
         url: `/Departments/search`,
         params: { keyword },
@@ -220,10 +220,10 @@ export const api = createApi({
         url: `/Sections`,
       }),
     }),
-        getAllSectionsBySearchName: builder.query({
-      query: (keyword = "") => ({
-        url: `/Sections/search`,
-        params: { keyword },
+    getAllSectionsBySearchName: builder.query({
+      query: ({ departmentId = "", keyword = "" }) => ({
+        url: `/Sections/department/search`,
+        params: { departmentId, keyword },
       }),
     }),
     createSections: builder.mutation({
@@ -253,7 +253,7 @@ export const api = createApi({
         url: `/Vendors`,
       }),
     }),
-        getAllVendorsBySearchName: builder.query({
+    getAllVendorsBySearchName: builder.query({
       query: (keyword = "") => ({
         url: `/Vendors/search`,
         params: { keyword },
@@ -380,7 +380,7 @@ export const api = createApi({
         params: { keyword },
       }),
     }),
-     getAllProductsBySearchCategory: builder.query({
+    getAllProductsBySearchCategory: builder.query({
       query: (keyword = "") => ({
         url: `/Products/search-by-category`,
         params: { keyword },
