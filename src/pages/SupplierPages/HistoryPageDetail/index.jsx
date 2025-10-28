@@ -144,7 +144,7 @@ const OrderHistoryDetailSuplier = () => {
 
           <div className="order-history-detail-supplier__data">
             <p>
-              {orderData?.items?.map((item) => item.product?.name).join(", ")}
+              {orderData?.items?.map((item) => item.product?.name).join(", ").slice(0,65)}...
             </p>
             <p>
               <span className="quantity-count">{itemCount}</span>{" "}
