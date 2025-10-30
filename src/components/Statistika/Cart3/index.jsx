@@ -210,6 +210,7 @@ export default function ProductMonthlyTable({
                         <tr>
                             <th>Aylar</th>
                             <th>Sifariş verilən məhsul sayı</th>
+                            <th>Sifariş verilən məhsulun ümumi qiyməti</th>
                             <th>Sifariş verilən məhsulun ümumi məbləği</th>
                         </tr>
                         </thead>
@@ -218,6 +219,11 @@ export default function ProductMonthlyTable({
                             <tr key={r.monthName}>
                                 <td className="month">{r.monthName}</td>
                                 <td>{r.count}</td>
+                                <td>
+                                    {r.count > 0
+                                        ? (r.amount / r.count).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ₼"
+                                        : "0 ₼"}
+                                </td>
                                 <td>{r.amount.toLocaleString("az-AZ")} ₼</td>
                             </tr>
                         ))}

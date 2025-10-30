@@ -903,6 +903,11 @@ export const api = createApi({
         headers: { "Content-Type": "application/json" },
       }),
     }),
+    getProductCount: builder.query({
+      query: () => ({
+        url: `/Products/count`,
+      }),
+    }),
   }),
 });
 
@@ -1073,4 +1078,5 @@ export const {
   useGetDateBasedPaymentHistoryQuery,
   useGetDateBasedPaymentByDateQuery,
   useEditDateBasedPaymentMutation,
+    useGetProductCountQuery,
 } = api;

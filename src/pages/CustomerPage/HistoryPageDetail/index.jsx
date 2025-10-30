@@ -21,7 +21,7 @@ const OrderHistoryDetail = () => {
         if (orderData?.employeeDelivery && !orderData?.incompledEmployee) {
             status = 'Tamamlanmış';
         } else if (!orderData?.employeeDelivery && orderData?.incompledEmployee) {
-            status = 'Natamam sifariş';
+            status = 'Tamamlanmış';
         } else if (!orderData?.employeeDelivery && !orderData?.incompledEmployee) {
             status = 'Təhvil alınmayan';
         }
@@ -118,7 +118,7 @@ const OrderHistoryDetail = () => {
                                 <p className="order-history-detail__id">
                                     <span>Order ID</span> {orderData?.id}
                                 </p>
-                                {['Tamamlanmış', 'Təhvil alınmayan','Natamam sifariş'].includes(status) && (
+                                {['Tamamlanmış', 'Təhvil alınmayan'].includes(status) && (
 
                                         <p className={"order-history-detail__id"}>
                                             <span>Ümumi məbləğ:</span> {totalPrice} ₼
@@ -131,7 +131,7 @@ const OrderHistoryDetail = () => {
                                     status === 'Tamamlanmış' ? 'completed' :
                                         status === 'Təchizatçıdan təsdiq gözləyən' ? 'pending' :
                                             status === 'Təhvil alınmayan' ? 'not-completed' :
-                                                status === 'Natamam sifariş' ? 'incomplete' : ''
+                                             ''
                                 }`}
                             >
   {status}
@@ -269,7 +269,7 @@ const OrderHistoryDetail = () => {
                         </div>
                     )}
 
-                    {(status === 'Təhvil alınmayan' || status === "Natamam sifariş") && (
+                    {status === 'Təhvil alınmayan' && (
                         <div className="order-history-detail__actions">
                             <span>Sifariş hazırdır. Təhvil almağı təsdiq edin.</span>
                             <button

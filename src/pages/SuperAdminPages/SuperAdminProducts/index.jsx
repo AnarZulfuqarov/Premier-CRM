@@ -18,7 +18,7 @@ import {
   useGetProductUpdatePendingQuery,
   useGetProductByPageQuery,
   useGetAllProductsBySearchCategoryQuery,
-  useGetAllProductsBySearchNameQuery,
+  useGetAllProductsBySearchNameQuery, useGetProductCountQuery,
 } from "../../../services/adminApi.jsx";
 import { useLocation } from "react-router-dom";
 import { usePopup } from "../../../components/Popup/PopupContext.jsx";
@@ -161,7 +161,8 @@ const SuperAdminProducts = () => {
   const { data: getProductUpdatePending, refetch: editRefetch } =
     useGetProductUpdatePendingQuery();
   const editRequest = getProductUpdatePending?.data;
-
+  const {data:getProductCount} = useGetProductCountQuery()
+  const countPro = getProductCount?.totalActiveProducts
   const [confirmEdit] = useEditProductsConfirmMutation();
   const [rejectEdit] = useEditProductsRejectMutation();
   const [confirmDelete] = useDeleteProductsConfirmMutation();
@@ -211,6 +212,11 @@ const SuperAdminProducts = () => {
             onClick={() => setActiveTab("products")}
           >
             Məhsullar
+            {countPro > 0 && (
+                <div className={"countTab2"}>
+                  <span className="tab-count2">({countPro})</span>
+                </div>
+            )}
           </div>
           <div
             className={`tab-item ${activeTab === "requests" ? "active" : ""}`}

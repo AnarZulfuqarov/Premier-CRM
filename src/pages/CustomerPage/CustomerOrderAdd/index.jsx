@@ -448,19 +448,48 @@ const OrderForm = () => {
                                                             <td>{item.name}</td>
                                                             <td>
                                                                 <div className="quantity-Cart">
-                                                                    <button
-                                                                        className="order-form__quantity-btn"
-                                                                        onClick={() => handleQuantityChange(cartItems.findIndex(ci => ci.productId === item.productId), -1)}
-                                                                    >
-                                                                        -
-                                                                    </button>
-                                                                    <p>{item.quantity}</p>
-                                                                    <button
-                                                                        className="order-form__quantity-btn"
-                                                                        onClick={() => handleQuantityChange(cartItems.findIndex(ci => ci.productId === item.productId), 1)}
-                                                                    >
-                                                                        +
-                                                                    </button>
+                                                                    {/*<button*/}
+                                                                    {/*    className="order-form__quantity-btn"*/}
+                                                                    {/*    onClick={() => handleQuantityChange(cartItems.findIndex(ci => ci.productId === item.productId), -1)}*/}
+                                                                    {/*>*/}
+                                                                    {/*    -*/}
+                                                                    {/*</button>*/}
+                                                                    <input
+                                                                        type="text"
+                                                                        inputMode="decimal"
+                                                                        className="order-form__quantity-input"
+                                                                        value={item.quantity}
+                                                                        onChange={(e) => {
+                                                                            let val = e.target.value;
+                                                                            // yalnız rəqəm və bir dənə nöqtə
+                                                                            val = val.replace(/[^0-9.]/g, "");
+                                                                            const parts = val.split(".");
+                                                                            if (parts.length > 2) val = parts[0] + "." + parts.slice(1).join("");
+
+                                                                            // dəyəri string kimi saxla (yazmağa mane olmasın)
+                                                                            setCartItems(prev =>
+                                                                                prev.map(ci =>
+                                                                                    ci.productId === item.productId ? { ...ci, quantity: val } : ci
+                                                                                )
+                                                                            );
+                                                                        }}
+                                                                        onBlur={(e) => {
+                                                                            let val = parseFloat(e.target.value);
+                                                                            if (isNaN(val) || val <= 0) val = 1;
+                                                                            setCartItems(prev =>
+                                                                                prev.map(ci =>
+                                                                                    ci.productId === item.productId ? { ...ci, quantity: val.toFixed(2) } : ci
+                                                                                )
+                                                                            );
+                                                                        }}
+                                                                    />
+
+                                                                    {/*<button*/}
+                                                                    {/*    className="order-form__quantity-btn"*/}
+                                                                    {/*    onClick={() => handleQuantityChange(cartItems.findIndex(ci => ci.productId === item.productId), 1)}*/}
+                                                                    {/*>*/}
+                                                                    {/*    +*/}
+                                                                    {/*</button>*/}
                                                                 </div>
                                                             </td>
                                                             <td>

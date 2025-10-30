@@ -95,7 +95,7 @@ const parseAZDate = (s) => {
 const computeStatus = (order) => {
     if (order.employeeConfirm && order.fighterConfirm) {
         if (order.employeeDelivery && !order.incompledEmployee) return "Tamamlanmış";
-        if (!order.employeeDelivery && order.incompledEmployee) return "Natamam sifariş";
+        if (!order.employeeDelivery && order.incompledEmployee) return "Tamamlanmış";
         if (!order.employeeDelivery && !order.incompledEmployee) return "Təhvil alınmayan";
     } else if (order.employeeConfirm && !order.fighterConfirm) {
         return "Təchizatçıdan təsdiq gözləyən";
@@ -167,7 +167,7 @@ const OrderHistory = () => {
     const [priceMin, setPriceMin] = useState("");
     const [priceMax, setPriceMax] = useState("");
 
-    const statusOptions = ["Təchizatçıdan təsdiq gözləyən", "Tamamlanmış", "Təhvil alınmayan", "Natamam sifariş"];
+    const statusOptions = ["Təchizatçıdan təsdiq gözləyən", "Tamamlanmış", "Təhvil alınmayan"];
     const quickDateOptions = ["Bugün", "Dünən", "Bu həftə", "Keçən həftə", "Bu ay", "Keçən ay"];
 
     // options from data
@@ -372,8 +372,6 @@ const OrderHistory = () => {
                                 ? "completed"
                                 : o.status === "Təhvil alınmayan"
                                     ? "not-completed"
-                                    : o.status === "Natamam sifariş"
-                                        ? "incomplete"
                                         : "pending")
                         }
                     >

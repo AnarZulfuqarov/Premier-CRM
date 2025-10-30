@@ -254,6 +254,28 @@
       background-color: #d2e3fc;
     }
   }
+  .order-form__quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 14px;
+    outline: none;
+    margin: 0 auto;
+
+    &:focus {
+      border-color: #384871;
+    }
+
+    /* Səhv girişlər üçün arrowları gizlətmək (Chrome/Edge) */
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
   @media screen and (max-width: 576px) {
     .order-form__table {
       th, td {
@@ -444,7 +466,6 @@
     }
     .quantity-Cart{
       border-radius: 15px;
-      border: 1px solid #BEBEBE;
       display: flex;
       align-items: center;
       p{

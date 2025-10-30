@@ -10,7 +10,7 @@ import {
   useGetAllProductsBySearchNameQuery,
   useGetAllProductsQuery,
   useGetProductAddMyPendingQuery,
-  useGetProductByPageQuery,
+  useGetProductByPageQuery, useGetProductCountQuery,
   useGetProductDeleteMyPendingQuery,
   useGetProductUpdateMyPendingQuery,
   useUpdateProductsMutation,
@@ -110,7 +110,8 @@ const SupplierProducts = () => {
   const { data: getProductDeleteMyPending } =
     useGetProductDeleteMyPendingQuery();
   const deleteRequest = getProductDeleteMyPending?.data;
-
+const {data:getProductCount} = useGetProductCountQuery()
+  const countPro = getProductCount?.totalActiveProducts
   const filteredAddRequests =
     addRequests?.filter((item) => item.isCreated === false) || [];
   const filteredDeleteRequests =
@@ -171,6 +172,11 @@ const SupplierProducts = () => {
             onClick={() => setActiveTab("products")}
           >
             Məhsullar
+            {countPro > 0 && (
+                <div className={"countTab2"}>
+                  <span className="tab-count2">({countPro})</span>
+                </div>
+            )}
           </div>
           <div
             className={`tab-item ${activeTab === "requests" ? "active" : ""}`}
