@@ -715,21 +715,22 @@ const AccounterBorcTarixce = () => {
                                     <div className="input-with-icon">
                                         <input
                                             type="number"
+                                            step="0.01"
                                             placeholder="0"
                                             value={modalData.paidDebt}
                                             onChange={(e) => {
-                                                const val = e.target.value; // həmişə string saxla
-                                                const returned = Number(modalData.returnedDebt) || 0;
-                                                const maxAllowed = parseInt(modalData.paymentPrice.split(" ")[0]);
+                                                const val = e.target.value;
+                                                const paid = Number(modalData.returnedDebt) || 0;
+                                                const maxAllowed = parseFloat(modalData.paymentPrice.split(" ")[0]); // <-- burda düzəliş
 
-                                                // Boş buraxmaq mümkündür
-                                                if (val === "" || (Number(val) >= 0 && Number(val) + returned <= maxAllowed)) {
+                                                if (val === "" || (Number(val) >= 0 && Number(val) + paid <= maxAllowed)) {
                                                     setModalData((s) => ({ ...s, paidDebt: val }));
                                                 }
                                             }}
-
                                             min={0}
+                                            step="0.01" // <-- bu da vacibdir, onluq üçün
                                         />
+
 
 
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden>
@@ -742,18 +743,20 @@ const AccounterBorcTarixce = () => {
                                     <div className="input-with-icon">
                                         <input
                                             type="number"
+                                            step="0.01"
                                             placeholder="0"
                                             value={modalData.returnedDebt}
                                             onChange={(e) => {
                                                 const val = e.target.value;
                                                 const paid = Number(modalData.paidDebt) || 0;
-                                                const maxAllowed = parseInt(modalData.paymentPrice.split(" ")[0]);
+                                                const maxAllowed = parseFloat(modalData.paymentPrice.split(" ")[0]); // <-- burda düzəliş
 
                                                 if (val === "" || (Number(val) >= 0 && Number(val) + paid <= maxAllowed)) {
                                                     setModalData((s) => ({ ...s, returnedDebt: val }));
                                                 }
                                             }}
                                             min={0}
+                                            step="0.01" // <-- bu da vacibdir, onluq üçün
                                         />
 
 
