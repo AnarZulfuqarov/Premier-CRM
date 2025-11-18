@@ -133,8 +133,19 @@ const AccounterBorcTarixce = () => {
     });
 
 
-    const toUiPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
-    const toServerPayment = (val) => (String(val).toLowerCase() === "kart" ? "kart" : "nagd");
+    const toUiPayment = (val) => {
+        val = String(val).toLowerCase();
+        if (val === "kart") return "kart";
+        if (val === "bank") return "bank";
+        return "nagd";
+    };
+
+    const toServerPayment = (val) => {
+        val = String(val).toLowerCase();
+        if (val === "kart") return "kart";
+        if (val === "bank") return "bank";
+        return "nagd";
+    };
 
     const closeModal = () => setModalOpen(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -778,6 +789,7 @@ const AccounterBorcTarixce = () => {
                                         >
                                             <option value="nagd">Nağd</option>
                                             <option value="kart">Kart</option>
+                                            <option value="bank">Bank hesabı</option>
                                         </select>
                                         <button className="ghost-icon" tabIndex={-1} aria-hidden></button>
                                     </div>
