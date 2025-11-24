@@ -17,14 +17,7 @@ const ActiveOrders = () => {
     }, []);
     const {data: getOrders, refetch} = useGetOrderCompanyByPageQuery(id)
     const orderss = getOrders?.data
-    const orders = orderss
-        ?.filter(order => {
-            const {employeeConfirm, fighterConfirm, employeeDelivery} = order;
-            const bothConfirmed = employeeConfirm && fighterConfirm;
-            const allTrue = employeeConfirm && fighterConfirm && employeeDelivery;
-            return !(bothConfirmed || allTrue); // true olanları çıxarırıq
-        })
-        .map(order => {
+    const orders = orderss?.map(order => {
             const amount = order.items.reduce((sum, item) => {
                 return sum + item.price;
             }, 0);

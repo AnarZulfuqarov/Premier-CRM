@@ -22,10 +22,12 @@ const ActiveOrdersDetail = () => {
     const vendors = getAllVendors?.data
     const navigate = useNavigate();
     const pageSize = 9;
-    const {data: getMyOrdersId} = useGetMyOrdersIdQuery(id)
+    const {data: getMyOrdersId,refetch} = useGetMyOrdersIdQuery(id)
     const orderData = getMyOrdersId?.data;
     const [complateOrder, { isLoading }] = useOrderComplateMutation();
-
+useEffect(() => {
+    refetch()
+},[])
     const showPopup = usePopup();
     const filtered = orderData?.items?.map((item) => {
         return {
@@ -81,9 +83,9 @@ const ActiveOrdersDetail = () => {
     const handleRemoveImage = (indexToRemove) => {
         setUploadedFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
-    const isCompleted = orderData?.employeeConfirm && orderData?.fighterConfirm;
+
     useEffect(() => {
-        if (isCompleted && orderData?.items?.length) {
+        if ( orderData?.items?.length) {
             const filled = {};
             orderData.items.forEach((item, index) => {
                 filled[index] = {
@@ -95,7 +97,7 @@ const ActiveOrdersDetail = () => {
             });
             setConfirmedRows(filled);
         }
-    }, [orderData, isCompleted]);
+    }, [orderData]);
 
 
     const handlePrint = () => {
@@ -130,7 +132,7 @@ const ActiveOrdersDetail = () => {
                         — Sifariş detallları
                     </h2>
                     {isMobile ? ("") : (
-                        <>{!isCompleted && (
+                        <>
                             <button onClick={async () => {
                                 // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
                                 if (!Object.keys(confirmedRows).length) {
@@ -139,16 +141,25 @@ const ActiveOrdersDetail = () => {
                                 }
 
                                 // JSON üçün array düzəlt
-                                const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
-                                    const originalItem = filtered[parseInt(index)];
-                                    const vendor = vendors?.find(v => v.name === row.vendor);
-                                    return {
-                                        orderItemId: originalItem.itemId,
-                                        price: parseFloat(row.price.replace(' ₼', '')),
-                                        suppliedQuantity: parseFloat(row.quantity),
-                                        vendorId: vendor?.id || '',
-                                    };
-                                });
+                                const itemsArray = Object.entries(confirmedRows)
+                                    .filter(([_, row]) => {
+                                        const quantity = parseFloat(row.quantity);
+                                        const vendor = vendors?.find(v => v.name === row.vendor);
+
+                                        return quantity > 0 && vendor?.id; // yalnız DÜZGÜN sətirlər
+                                    })
+                                    .map(([index, row]) => {
+                                        const originalItem = filtered[parseInt(index)];
+                                        const vendor = vendors.find(v => v.name === row.vendor);
+
+                                        return {
+                                            orderItemId: originalItem.itemId,
+                                            price: parseFloat(row.price.replace(' ₼','')),
+                                            suppliedQuantity: parseFloat(row.quantity),
+                                            vendorId: vendor.id
+                                        };
+                                    });
+
 
                                 const formData = new FormData();
                                 formData.append("orderId", id);
@@ -184,7 +195,7 @@ const ActiveOrdersDetail = () => {
                                     }}>
                                 {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                             </button>
-                        )}</>
+                        </>
                     )}
 
 
@@ -217,7 +228,7 @@ const ActiveOrdersDetail = () => {
                             width:"100%",
                             gap:"10px"
                         }}>
-                            {!isCompleted && (
+
                                 <button className={'complateBtn'} onClick={async () => {
                                     // ⚠️ Warning 1: heç bir məhsul tamamlanmayıb
                                     if (!Object.keys(confirmedRows).length) {
@@ -271,7 +282,7 @@ const ActiveOrdersDetail = () => {
                                         }}>
                                     {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                                 </button>
-                            )}
+
                             <button className={"printBtn"} onClick={handlePrint}>
                                 <span>Çap et</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -379,7 +390,7 @@ const ActiveOrdersDetail = () => {
                                 return (
                                     <tr key={i}
                                         onClick={() => {
-                                            if (isCompleted) return; // ✅ tamamlanmışsa modal açılmasın
+
                                             const data = confirmedRows[absoluteIndex];
                                             setSelectedRowIndex(absoluteIndex);
 
@@ -395,9 +406,13 @@ const ActiveOrdersDetail = () => {
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                checked={!!confirmedRows[absoluteIndex]}
+                                                checked={
+                                                    confirmedRows[absoluteIndex] &&
+                                                    parseFloat(confirmedRows[absoluteIndex].quantity) >=
+                                                    parseFloat(filtered[absoluteIndex].required)
+                                                }
                                                 readOnly
-                                                disabled={isCompleted}
+
                                             />
                                         </td>
 
