@@ -44,7 +44,19 @@ useEffect(() => {
         return byName && byCat;
     }) || [];
 
+    const handleNumberInput = (e, field) => {
+        const value = e.target.value;
 
+        // Yalnız rəqəm, bir nöqtə və ya boşluq icazə ver
+        // ^[0-9]*\.?[0-9]*$  — bu regex ən yaxşısıdır
+        if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
+            setModalData(prev => ({
+                ...prev,
+                [field]: value
+            }));
+        }
+        // Əgər uyğun deyilsə — heç nə etmə, input dəyişməsin
+    };
     const totalPages = Math.ceil(filtered.length / pageSize);
     const pagedItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
@@ -85,14 +97,18 @@ useEffect(() => {
     };
 
     useEffect(() => {
-        if ( orderData?.items?.length) {
+        if (orderData?.items?.length) {
             const filled = {};
             orderData.items.forEach((item, index) => {
+                const qty = item.suppliedQuantity || 0;
+                const prc = item.price || 0;
+                const total = (qty * prc).toFixed(2);
+
                 filled[index] = {
-                    quantity: `${item.suppliedQuantity} ${item.product?.measure || ''}`,
-                    price: `${item.price} ₼`,
+                    quantity: `${qty} ${item.product?.measure || ''}`,
+                    price: `${prc} ₼`,
                     vendor: item.vendorName || '—',
-                    totalPrice:`${item.suppliedQuantity*item.price} ₼`
+                    totalPrice: `${total} ₼`  // Burda da hesablanır!
                 };
             });
             setConfirmedRows(filled);
@@ -421,7 +437,9 @@ useEffect(() => {
                                         <td>{confirmedRows[absoluteIndex]?.quantity || '-'}</td>
                                         <td>{confirmedRows[absoluteIndex]?.vendor || '-'}</td>
                                         <td>{confirmedRows[absoluteIndex]?.price || '-'}</td>
-                                        <td>{confirmedRows[absoluteIndex]?.totalPrice || '-'}</td>
+                                        <td>
+                                            {confirmedRows[absoluteIndex]?.totalPrice || '-'}
+                                        </td>
                                     </tr>
                                 );
                             })}
@@ -452,13 +470,14 @@ useEffect(() => {
                                 <input
                                     placeholder={`Təmin olunan miqdar (${filtered[selectedRowIndex]?.measure || ''})`}
                                     value={modalData.quantity}
-                                    onChange={(e) => setModalData({...modalData, quantity: e.target.value})}
+                                    onChange={(e) => handleNumberInput(e, 'quantity')}
+                                    // Əlavə olaraq type="text" saxlayırıq, çünki type="number" 0.5 yazmağı çətinləşdirir
                                 />
 
                                 <input
                                     placeholder="Qiymət daxil et"
                                     value={modalData.price}
-                                    onChange={(e) => setModalData({...modalData, price: e.target.value})}
+                                    onChange={(e) => handleNumberInput(e, 'price')}
                                 />
                                 <select
                                     value={modalData.vendor}
@@ -476,19 +495,24 @@ useEffect(() => {
                             <button onClick={() => {
                                 if (modalData.quantity && modalData.price && modalData.vendor) {
                                     const currentMeasure = filtered[selectedRowIndex]?.measure || '';
+                                    const qty = parseFloat(modalData.quantity);
+                                    const prc = parseFloat(modalData.price);
+                                    const total = (qty * prc).toFixed(2); // 2 onluq yerə qədər
+
                                     setConfirmedRows(prev => ({
                                         ...prev,
                                         [selectedRowIndex]: {
                                             quantity: `${modalData.quantity} ${currentMeasure}`,
                                             price: `${modalData.price} ₼`,
-                                            vendor: modalData.vendor
+                                            vendor: modalData.vendor,
+                                            totalPrice: `${total} ₼`  // Burda hesablayıb yazırıq!
                                         }
                                     }));
 
                                     setSelectedRowIndex(null);
+                                    setModalData({ quantity: '', price: '', vendor: '' }); // təmizlə
                                 }
-                            }}>Sifarişi təsdiqlə
-                            </button>
+                            }}>Sifarişi təsdiqlə</button>
                         </div>
                     </div>
                 )}
