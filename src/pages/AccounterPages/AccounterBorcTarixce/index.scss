@@ -870,12 +870,13 @@
 
 
   .headerr {
-    width:max-content;
+    width:100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px !important;
     padding: 5px;
+
 
     .borcDiv {
       border-radius: 36px;
