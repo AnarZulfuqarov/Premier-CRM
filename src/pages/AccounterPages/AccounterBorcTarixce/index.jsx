@@ -209,7 +209,7 @@ const AccounterBorcTarixce = () => {
                 invoices: o?.invoices || [],
                 vendorId: o?.vendorId || "",
             };
-        });
+        }).reverse();
     }, [vendorDebts]);
 
     const openEditModal = (row) => {
@@ -424,8 +424,8 @@ const AccounterBorcTarixce = () => {
     };
     console.log(modalData.paidDebt)
     return (
-        <div className="accounter-borc-tarixce-main">
-            <div className="accounter-borc-tarixce">
+        <div className="accounter-borc-tarixce-mainn">
+            <div className="accounter-borc-tarixcee">
                 <div className="headerr">
                     <div className="head">
                         <h2>Borc tarixçəsi</h2>
@@ -475,25 +475,26 @@ const AccounterBorcTarixce = () => {
                 <div className="tablehead">
                     <h2>Ödəniş tarixçəsi</h2>
                 </div>
-                <div className="order-table-wrapper">
-                    <div className="scrollable-part">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Tarix</th>
-                                <th>Borc</th>
-                                <th>Geri qaytarılan borc</th>
-                                <th>Ödənilən borc</th>
-                                <th>Qalıq borc</th>
-                                <th>Ödəniş üsulu</th>
-                                {columns.map((c) => (
-                                    <th key={c.key}>
-                                        {c.label}
-                                        {searchableKeys.has(c.key) && (
-                                            <span
-                                                className="search-icon"
-                                                onClick={() => setSearchCol(searchCol === c.key ? null : c.key)}
-                                            >
+                <div className="two-col-scroll-wrapper">
+                    <div className={'sync-scroll'}>
+                        <div className="left">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Tarix</th>
+                                    <th>Borc</th>
+                                    <th>Geri qaytarılan borc</th>
+                                    <th>Ödənilən borc</th>
+                                    <th>Qalıq borc</th>
+                                    <th>Ödəniş üsulu</th>
+                                    {columns.map((c) => (
+                                        <th key={c.key}>
+                                            {c.label}
+                                            {searchableKeys.has(c.key) && (
+                                                <span
+                                                    className="search-icon"
+                                                    onClick={() => setSearchCol(searchCol === c.key ? null : c.key)}
+                                                >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     width="18"
@@ -507,188 +508,190 @@ const AccounterBorcTarixce = () => {
                                                     />
                                                 </svg>
                                             </span>
-                                        )}
-                                        {searchCol === c.key && (
-                                            c.key === "date" ? (
-                                                <div className="search-input-wrapper">
-                                                    <input
-                                                        type="date"
-                                                        value={dateFrom}
-                                                        onChange={(e) => {
-                                                            setDateQuickF("");
-                                                            setDateFrom(e.target.value);
-                                                        }}
-                                                    />
-                                                    <span>—</span>
-                                                    <input
-                                                        type="date"
-                                                        value={dateTo}
-                                                        onChange={(e) => {
-                                                            setDateQuickF("");
-                                                            setDateTo(e.target.value);
-                                                        }}
-                                                    />
-                                                    <span
-                                                        className="close-search"
-                                                        onClick={() => {
-                                                            setSearchCol(null);
-                                                            setDateFrom("");
-                                                            setDateTo("");
-                                                            setDateQuickF("");
-                                                        }}
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="16"
-                                                            height="16"
-                                                            viewBox="0 0 16 16"
-                                                            fill="none"
-                                                        >
-                                                            <path
-                                                                d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5"
-                                                                stroke="#7A7A7A"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                </div>
-                                            ) : (
-                                                <div className="search-input-wrapper">
-                                                    <input
-                                                        autoFocus
-                                                        type="text"
-                                                        value={searchTerm}
-                                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                                        placeholder={`Axtar: ${c.label}`}
-                                                    />
-                                                    <span
-                                                        className="close-search"
-                                                        onClick={() => {
-                                                            setSearchCol(null);
-                                                            setSearchTerm("");
-                                                        }}
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="16"
-                                                            height="16"
-                                                            viewBox="0 0 16 16"
-                                                            fill="none"
-                                                        >
-                                                            <path
-                                                                d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5"
-                                                                stroke="#7A7A7A"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                </div>
-                                            )
-                                        )}
-                                    </th>
-                                ))}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {skipQuery ? (
-                                <tr>
-                                    <td colSpan={6 + columns.length} style={{ textAlign: "center" }}>
-                                        Tarix aralığı seçin
-                                    </td>
-                                </tr>
-                            ) : filtered.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6 + columns.length} style={{ textAlign: "center" }}>
-                                        Məlumat yoxdur
-                                    </td>
-                                </tr>
-                            ) : (
-                                filtered.map((row, idx) => (
-                                    <tr key={row.orderId ?? idx}>
-                                        <td
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => navigate(`/accounter/borc/history/${row.dateText}`)}
-                                        >
-                                            {row.dateText}
-                                        </td>
-                                        <td>{row.totalDebt}</td>
-                                        <td>{row.reverseAmount}</td>
-                                        <td>{row.paidAmount}</td>
-                                        <td>{row.remainingDebt}</td>
-                                        <td>{row.paymentMethod}</td>
-                                        <td
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => openInvoicePopup(row.invoices)}
-                                        >
-                                            {Array.isArray(row.invoices) && row.invoices.length > 0 ? (
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        justifyContent: "space-between",
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    {row.invoices[0].invoiceName} <span className="invoice-count">{row.invoices.length}</span>
-                                                </div>
-                                            ) : (
-                                                "—"
                                             )}
+                                            {searchCol === c.key && (
+                                                c.key === "date" ? (
+                                                    <div className="search-input-wrapper">
+                                                        <input
+                                                            type="date"
+                                                            value={dateFrom}
+                                                            onChange={(e) => {
+                                                                setDateQuickF("");
+                                                                setDateFrom(e.target.value);
+                                                            }}
+                                                        />
+                                                        <span>—</span>
+                                                        <input
+                                                            type="date"
+                                                            value={dateTo}
+                                                            onChange={(e) => {
+                                                                setDateQuickF("");
+                                                                setDateTo(e.target.value);
+                                                            }}
+                                                        />
+                                                        <span
+                                                            className="close-search"
+                                                            onClick={() => {
+                                                                setSearchCol(null);
+                                                                setDateFrom("");
+                                                                setDateTo("");
+                                                                setDateQuickF("");
+                                                            }}
+                                                        >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            viewBox="0 0 16 16"
+                                                            fill="none"
+                                                        >
+                                                            <path
+                                                                d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5"
+                                                                stroke="#7A7A7A"
+                                                                strokeWidth="1.5"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="search-input-wrapper">
+                                                        <input
+                                                            autoFocus
+                                                            type="text"
+                                                            value={searchTerm}
+                                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                                            placeholder={`Axtar: ${c.label}`}
+                                                        />
+                                                        <span
+                                                            className="close-search"
+                                                            onClick={() => {
+                                                                setSearchCol(null);
+                                                                setSearchTerm("");
+                                                            }}
+                                                        >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            viewBox="0 0 16 16"
+                                                            fill="none"
+                                                        >
+                                                            <path
+                                                                d="M12.5 3.5 3.5 12.5M3.5 3.5 12.5 12.5"
+                                                                stroke="#7A7A7A"
+                                                                strokeWidth="1.5"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                    </div>
+                                                )
+                                            )}
+                                        </th>
+                                    ))}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {skipQuery ? (
+                                    <tr>
+                                        <td colSpan={6 + columns.length} style={{ textAlign: "center" }}>
+                                            Tarix aralığı seçin
                                         </td>
                                     </tr>
+                                ) : filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6 + columns.length} style={{ textAlign: "center" }}>
+                                            Məlumat yoxdur
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filtered.map((row, idx) => (
+                                        <tr key={row.orderId ?? idx}>
+                                            <td
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => navigate(`/accounter/borc/history/${row.dateText}`)}
+                                            >
+                                                {row.dateText}
+                                            </td>
+                                            <td>{row.totalDebt}</td>
+                                            <td>{row.reverseAmount}</td>
+                                            <td>{row.paidAmount}</td>
+                                            <td>{row.remainingDebt}</td>
+                                            <td>{row.paymentMethod}</td>
+                                            <td
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => openInvoicePopup(row.invoices)}
+                                            >
+                                                {Array.isArray(row.invoices) && row.invoices.length > 0 ? (
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        {row.invoices[0].invoiceName} <span className="invoice-count">{row.invoices.length}</span>
+                                                    </div>
+                                                ) : (
+                                                    "—"
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="right">
+                            <div className="header">Fəaliyyət</div>
+                            {skipQuery || filtered.length === 0 ? (
+                                <div className="cell"></div>
+                            ) : (
+                                filtered.map((row, i) => (
+                                    <div key={row.orderId ?? i} className="cell">
+                                        {parseFloat(row.remainingDebt) !== 0 && (
+                                            <button className="detail-btnn" onClick={() => openEditModal(row)}>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="20"
+                                                    height="21"
+                                                    viewBox="0 0 20 21"
+                                                    fill="none"
+                                                >
+                                                    <path
+                                                        d="M1.66602 3.78516H7.29685C7.62527 3.78512 7.95048 3.84979 8.25389 3.97547C8.55731 4.10116 8.83299 4.28539 9.06518 4.51766L11.666 7.11849M4.16602 11.2852H1.66602M7.08268 6.28516L8.74935 7.95182C8.85878 8.06126 8.94559 8.19118 9.00482 8.33416C9.06404 8.47714 9.09453 8.63039 9.09453 8.78516C9.09453 8.93992 9.06404 9.09317 9.00482 9.23615C8.94559 9.37914 8.85878 9.50905 8.74935 9.61849C8.63991 9.72792 8.51 9.81473 8.36701 9.87396C8.22403 9.93318 8.07078 9.96367 7.91602 9.96367C7.76125 9.96367 7.608 9.93318 7.46502 9.87396C7.32204 9.81473 7.19212 9.72792 7.08268 9.61849L5.83268 8.36849C5.11602 9.08516 3.98018 9.16599 3.16852 8.55766L2.91602 8.36849"
+                                                        stroke="#FF6363"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                    <path
+                                                        d="M4.16602 9.20052V12.9505C4.16602 14.5222 4.16602 15.3072 4.65435 15.7955C5.14268 16.2839 5.92768 16.2839 7.49935 16.2839H14.9993C16.571 16.2839 17.356 16.2839 17.8443 15.7955C18.3327 15.3072 18.3327 14.5222 18.3327 12.9505V10.4505C18.3327 8.87885 18.3327 8.09385 17.8443 7.60552C17.356 7.11719 16.571 7.11719 14.9993 7.11719H7.91602"
+                                                        stroke="#FF6363"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                    <path
+                                                        d="M12.7077 11.7005C12.7077 12.0873 12.554 12.4582 12.2805 12.7317C12.0071 13.0052 11.6361 13.1589 11.2493 13.1589C10.8626 13.1589 10.4916 13.0052 10.2182 12.7317C9.94466 12.4582 9.79102 12.0873 9.79102 11.7005C9.79102 11.3137 9.94466 10.9428 10.2182 10.6693C10.4916 10.3958 10.8626 10.2422 11.2493 10.2422C11.6361 10.2422 12.0071 10.3958 12.2805 10.6693C12.554 10.9428 12.7077 11.3137 12.7077 11.7005Z"
+                                                        stroke="#FF6363"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>{" "}
+                                                Ödə
+                                            </button>
+                                        )}
+                                    </div>
                                 ))
                             )}
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
-                    <div className="fixed-column">
-                        <div className="header">Fəaliyyət</div>
-                        {skipQuery || filtered.length === 0 ? (
-                            <div className="cell"></div>
-                        ) : (
-                            filtered.map((row, i) => (
-                                <div key={row.orderId ?? i} className="cell">
-                                    {parseFloat(row.remainingDebt) !== 0 && (
-                                        <button className="detail-btnn" onClick={() => openEditModal(row)}>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="21"
-                                                viewBox="0 0 20 21"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M1.66602 3.78516H7.29685C7.62527 3.78512 7.95048 3.84979 8.25389 3.97547C8.55731 4.10116 8.83299 4.28539 9.06518 4.51766L11.666 7.11849M4.16602 11.2852H1.66602M7.08268 6.28516L8.74935 7.95182C8.85878 8.06126 8.94559 8.19118 9.00482 8.33416C9.06404 8.47714 9.09453 8.63039 9.09453 8.78516C9.09453 8.93992 9.06404 9.09317 9.00482 9.23615C8.94559 9.37914 8.85878 9.50905 8.74935 9.61849C8.63991 9.72792 8.51 9.81473 8.36701 9.87396C8.22403 9.93318 8.07078 9.96367 7.91602 9.96367C7.76125 9.96367 7.608 9.93318 7.46502 9.87396C7.32204 9.81473 7.19212 9.72792 7.08268 9.61849L5.83268 8.36849C5.11602 9.08516 3.98018 9.16599 3.16852 8.55766L2.91602 8.36849"
-                                                    stroke="#FF6363"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                                <path
-                                                    d="M4.16602 9.20052V12.9505C4.16602 14.5222 4.16602 15.3072 4.65435 15.7955C5.14268 16.2839 5.92768 16.2839 7.49935 16.2839H14.9993C16.571 16.2839 17.356 16.2839 17.8443 15.7955C18.3327 15.3072 18.3327 14.5222 18.3327 12.9505V10.4505C18.3327 8.87885 18.3327 8.09385 17.8443 7.60552C17.356 7.11719 16.571 7.11719 14.9993 7.11719H7.91602"
-                                                    stroke="#FF6363"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                                <path
-                                                    d="M12.7077 11.7005C12.7077 12.0873 12.554 12.4582 12.2805 12.7317C12.0071 13.0052 11.6361 13.1589 11.2493 13.1589C10.8626 13.1589 10.4916 13.0052 10.2182 12.7317C9.94466 12.4582 9.79102 12.0873 9.79102 11.7005C9.79102 11.3137 9.94466 10.9428 10.2182 10.6693C10.4916 10.3958 10.8626 10.2422 11.2493 10.2422C11.6361 10.2422 12.0071 10.3958 12.2805 10.6693C12.554 10.9428 12.7077 11.3137 12.7077 11.7005Z"
-                                                    stroke="#FF6363"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>{" "}
-                                            Ödə
-                                        </button>
-                                    )}
-                                </div>
-                            ))
-                        )}
-                    </div>
+
                 </div>
 
                 {modalOpen && (
