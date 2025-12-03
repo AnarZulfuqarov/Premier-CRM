@@ -253,16 +253,19 @@ useEffect(() => {
                                     }
 
                                     // JSON üçün array düzəlt
-                                    const itemsArray = Object.entries(confirmedRows).map(([index, row]) => {
-                                        const originalItem = filtered[parseInt(index)];
-                                        const vendor = vendors?.find(v => v.name === row.vendor);
-                                        return {
-                                            orderItemId: originalItem.itemId,
-                                            price: parseFloat(row.price.replace(' ₼', '')),
-                                            suppliedQuantity: parseFloat(row.quantity),
-                                            vendorId: vendor?.id || '',
-                                        };
-                                    });
+                                    const itemsArray = Object.entries(confirmedRows)
+                                        .filter(([_, row]) => row?.isChanged)   // 👈 2-ci vacib sətir
+                                        .map(([index, row]) => {
+                                            const originalItem = filtered[parseInt(index)];
+                                            const vendor = vendors?.find(v => v.name === row.vendor);
+                                            return {
+                                                orderItemId: originalItem.itemId,
+                                                price: parseFloat(row.price.replace(' ₼','')),
+                                                suppliedQuantity: parseFloat(row.quantity),
+                                                vendorId: vendor?.id
+                                            };
+                                        });
+
 
                                     const formData = new FormData();
                                     formData.append("orderId", id);
@@ -505,9 +508,11 @@ useEffect(() => {
                                             quantity: `${modalData.quantity} ${currentMeasure}`,
                                             price: `${modalData.price} ₼`,
                                             vendor: modalData.vendor,
-                                            totalPrice: `${total} ₼`  // Burda hesablayıb yazırıq!
+                                            totalPrice: `${total} ₼`,
+                                            isChanged: true   // 👈 1-ci əlavə etdiyin sətir
                                         }
                                     }));
+
 
                                     setSelectedRowIndex(null);
                                     setModalData({ quantity: '', price: '', vendor: '' }); // təmizlə
