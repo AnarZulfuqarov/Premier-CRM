@@ -4,7 +4,9 @@ import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {FaTimes} from "react-icons/fa";
 import {useGetAllVendorsQuery, useGetMyOrdersIdQuery, useOrderComplateMutation} from "../../../services/adminApi.jsx";
 import {usePopup} from "../../../components/Popup/PopupContext.jsx";
-
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
 const ActiveOrdersDetail = () => {
     const {id} = useParams()
     const [currentPage, setCurrentPage] = useState(1);
@@ -116,29 +118,56 @@ useEffect(() => {
     }, [orderData]);
 
 
-    const handlePrint = () => {
-        const printContents = printRef.current;
-        const printWindow = window.open('', '', 'height=600,width=800');
-
-        printWindow.document.write(`<h1>Sifariş  № ${orderData?.id}</h1>`);
-
-        printWindow.document.write(`
-    <style>
-      body { font-family: Arial, sans-serif; padding: 20px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-      th { background-color: #f2f2f2; }
-    </style>
-  `);
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(printContents.outerHTML);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    };
+  //   const handlePrint = () => {
+  //       const printContents = printRef.current;
+  //       const printWindow = window.open('', '', 'height=600,width=800');
+  //
+  //       printWindow.document.write(`<h1>Sifariş  № ${orderData?.id}</h1>`);
+  //
+  //       printWindow.document.write(`
+  //   <style>
+  //     body { font-family: Arial, sans-serif; padding: 20px; }
+  //     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  //     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  //     th { background-color: #f2f2f2; }
+  //   </style>
+  // `);
+  //       printWindow.document.write('</head><body>');
+  //       printWindow.document.write(printContents.outerHTML);
+  //       printWindow.document.write('</body></html>');
+  //       printWindow.document.close();
+  //       printWindow.focus();
+  //       printWindow.print();
+  //       printWindow.close();
+  //   };
     const isMobile = window.innerWidth <= 768;
+
+
+    const handleDownloadPDF = () => {
+        const element = document.createElement("div");
+
+        element.innerHTML = `
+        <h1>Sifariş № ${orderData?.id}</h1>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+        </style>
+        ${printRef.current.outerHTML}
+    `;
+
+        const options = {
+            margin:       10,
+            filename:     `Sifaris-${orderData?.id}.pdf`,
+            image:        { type: "jpeg", quality: 1 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" }
+        };
+
+        html2pdf().from(element).set(options).save();
+    };
+
     return (
         <div className="active-order-detail-main">
             <div className="active-order-detail">
@@ -302,7 +331,7 @@ useEffect(() => {
                                     {isLoading ? 'Yüklənir...' : 'Sifarişi tamamla'}
                                 </button>
 
-                            <button className={"printBtn"} onClick={handlePrint}>
+                            <button className={"printBtn"} onClick={handleDownloadPDF}>
                                 <span>Çap et</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <path
@@ -311,7 +340,7 @@ useEffect(() => {
                                 </svg>
                             </button>
                         </div>
-                    ) : ( <button className={"printBtn"} onClick={handlePrint}>
+                    ) : ( <button className={"printBtn"} onClick={handleDownloadPDF}>
                         <span>Çap et</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
