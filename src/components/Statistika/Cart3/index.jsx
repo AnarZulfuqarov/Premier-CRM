@@ -2,13 +2,16 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {
-    useGetMonthlyProductQuantityStatikQuery,
+    useGetMonthlyOrderStatusStatikNewQuery,
     useGetAllCategoriesQuery,
     useGetAllProductsQuery,
     useGetAllCompaniesQuery,
+
 } from "/src/services/adminApi.jsx";
 import "./index.scss";
-
+import {useNavigate} from "react-router-dom";
+import yuxari from '/src/assets/Yuxari.svg'
+import asagi from '/src/assets/Asagi.svg'
 const MONTHS_ORDER = [
     { label: "Yanvar", key: "yanvar" },
     { label: "Fevral", key: "fevral" },
@@ -37,7 +40,8 @@ export default function ProductMonthlyTable({
     const { data: companiesResp } = useGetAllCompaniesQuery();
     const companies = companiesResp?.data ?? companiesResp ?? [];
     const [companyId, setCompanyId] = useState(initialCompanyId || "");
-
+    const [openRowIndex, setOpenRowIndex] = useState(null);
+const navigate = useNavigate();
     useEffect(() => {
         if (!initialCompanyId && companies?.length && !companyId) {
             setCompanyId(companies[0].id);
@@ -53,6 +57,14 @@ export default function ProductMonthlyTable({
 
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedProduct, setSelectedProduct] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("");
+    useEffect(() => {
+        if (!selectedMonth) {
+            const m = new Date().getMonth() + 1; // 1–12 verir
+            setSelectedMonth(String(m));
+        }
+    }, [selectedMonth]);
+
 
     // ilk kateqoriya
     useEffect(() => {
@@ -84,24 +96,29 @@ export default function ProductMonthlyTable({
     /* ========== İl seçimi ========== */
     const [selectedYear, setSelectedYear] = useState(defaultYear);
 
-    const isValidId = Boolean(companyId) && Boolean(selectedCategory) && Boolean(selectedProduct);
+    const isValidId =
+        Boolean(companyId) &&
+        Boolean(selectedCategory) &&
+        Boolean(selectedProduct) &&
+        Boolean(selectedMonth);
 
-    // Backend path param qəbul edir → boş olduqda 0 göndərmək istəsən:
-    const qtyParams = isValidId
+    const newQueryParams = isValidId
         ? {
+            productId: selectedProduct,
             companyId,
-            categoryId: selectedCategory || 0,
-            productId: selectedProduct || 0,
             year: Number(selectedYear),
+            month: selectedMonth,
         }
         : skipToken;
+
 
     // TƏK sorğu: həm quantity, həm də amount burada gəlir
     const {
         data: monthlyStatData,
         isLoading,
         isError,
-    } = useGetMonthlyProductQuantityStatikQuery(qtyParams);
+    } = useGetMonthlyOrderStatusStatikNewQuery(newQueryParams);
+
 
     // GÖZLƏNƏN FORMAT:
     // {
@@ -112,15 +129,22 @@ export default function ProductMonthlyTable({
     const quantityObj = monthlyStatData?.monthlyQuantities ?? {};
     const amountObj   = monthlyStatData?.monthlyAmounts ?? {};
 
-    const rows = useMemo(
-        () =>
-            MONTHS_ORDER.map(({ label, key }) => ({
-                monthName: label,
-                count: Number(quantityObj?.[key] ?? 0),
-                amount: Number(amountObj?.[key] ?? 0),
-            })),
-        [quantityObj, amountObj]
-    );
+    const rows = useMemo(() => {
+        if (!monthlyStatData?.data) return [];
+
+        return monthlyStatData.data.map((d) => {
+            const count = Number(d.count ?? 0);
+            const totalAmount = d.orders?.reduce((sum, o) => sum + (o.price || 0), 0) ?? 0;
+
+            return {
+                date: d.day,                         // 01.12.2025 formatı
+                count,                                // həmin gün neçə dəfə sifariş olunub
+                avgPrice: count > 0 ? totalAmount / count : 0, // orta qiymət
+                orders: d.orders ?? [],               // həmin günün bütün orderləri
+            };
+        });
+    }, [monthlyStatData]);
+
 
     return (
         <div className="pmt-card">
@@ -161,6 +185,26 @@ export default function ProductMonthlyTable({
                             </select>
                         </div>
                     </div>
+                    {/* Ay seçimi */}
+                    {/* Ay seçimi */}
+                    <div className="filter">
+                        <span className="label">Ay seçimi:</span>
+                        <div className="select-wrap">
+                            <select
+                                value={selectedMonth}
+                                onChange={(e) => setSelectedMonth(e.target.value)}
+                            >
+                                {MONTHS_ORDER.map((m, idx) => (
+                                    <option key={m.key} value={idx + 1}>
+                                        {m.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+
+
 
                     {/* Kateqoriya */}
                     <div className="filter">
@@ -208,25 +252,92 @@ export default function ProductMonthlyTable({
                     <table className="pmt-table">
                         <thead>
                         <tr>
-                            <th>Aylar</th>
+                            <th>Tarix</th>
                             <th>Sifariş verilən məhsul sayı</th>
-                            <th>Sifariş verilən məhsulun ümumi qiyməti</th>
-                            <th>Sifariş verilən məhsulun ümumi məbləği</th>
+                            <th>Ortalama qiymət</th>
+                            <th>Fəaliyyət</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {rows.map((r) => (
-                            <tr key={r.monthName}>
-                                <td className="month">{r.monthName}</td>
+                        {rows.map((r, i) => (
+                            <>
+                            <tr key={i}>
+                                <td>{r.date}</td>
                                 <td>{r.count}</td>
                                 <td>
                                     {r.count > 0
-                                        ? (r.amount / r.count).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ₼"
+                                        ? r.avgPrice.toLocaleString("az-AZ", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }) + " ₼"
                                         : "0 ₼"}
                                 </td>
-                                <td>{r.amount.toLocaleString("az-AZ")} ₼</td>
+
+                                <td>
+                                    <button
+                                        className="action-btn"
+                                        onClick={() =>
+                                            setOpenRowIndex(openRowIndex === i ? null : i)
+                                        }
+                                    >
+                                        {openRowIndex === i ? (
+                                            <>
+                                                Daha az
+                                                <img src={yuxari} alt="yuxari" className="arrow-icon" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                Daha çox
+                                                <img src={asagi} alt="asagi" className="arrow-icon" />
+                                            </>
+                                        )}
+                                    </button>
+                                </td>
+
                             </tr>
-                        ))}
+                        {openRowIndex === i && (
+                            <tr className="expanded-row">
+                            <td colSpan={4}>
+
+                        <div className="orders-box">
+                            <table className="orders-table">
+                                <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Vendor</th>
+                                    <th>Order ID</th>
+                                    <th>Qiymət</th>
+                                    <th>Keçid</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {r.orders.map((o, idx) => (
+                                    <tr key={o.orderId}>
+                                        <td>{idx + 1}.</td>
+                                        <td>{o.vendorName}</td>
+                                        <td>#{o.orderId.substring(0, 8)}</td>
+                                        <td>{o.price} ₼</td>
+                                        <td>
+                                            <button
+                                                className="detail-btn"
+                                                onClick={() => navigate(`/superAdmin/history/${o.orderId}`)}
+                                            >
+                                                Detallı bax
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        </td>
+                    </tr>
+                )}
+                    </>
+                    ))}
+
                         </tbody>
                     </table>
                 )}

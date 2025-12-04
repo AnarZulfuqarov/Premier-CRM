@@ -8,8 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
 
   .pmt-title {
@@ -85,17 +85,81 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  .action-btn{
+    background: none;
+    display: flex;
+    gap: 12px;
+  }
   thead th:not(:last-child),
   tbody td:not(:last-child) {
     border-right: 1px solid #e9edf3; // istəsən #f2f4f7 istifadə et
+  }
+
+  .expanded-row {
+    background: #fff;
+
+    .orders-box {
+      margin-top: 10px;
+
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        border: none;
+        text-align: center;
+        padding: 8px 0;
+        color: #5d5d5d;
+        font-size: 14px;
+        font-weight: 500;
+        background: transparent;
+      }
+      th:nth-child(1) {
+        width: 50px;
+      }
+
+
+      tbody {
+        border: 1px solid #e6e6e6;
+        border-radius: 6px;
+        overflow: hidden;
+
+      }
+
+      td {
+        padding: 10px;
+        font-size: 15px;
+        border: none;
+        text-align: center;
+        border-bottom: 1px solid #e9edf3;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    .detail-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+
+
+    }
   }
 
   // (opsional) başlığın alt xəttini eyni rəngə çəkmək üçün:
   thead th {
     border-bottom: 1px solid #e9edf3;
   }
+
   thead th {
-    background: #eaf4ff;      /* açıq mavi başlıq */
+    background: #eaf4ff; /* açıq mavi başlıq */
     color: #0f172a;
     font-weight: 600;
     font-size: 14px;
@@ -106,7 +170,7 @@
 
   tbody td {
     font-size: 14px;
-    color:#6C6C6C;
+    color: #6C6C6C;
     padding: 12px 14px;
     border-bottom: 1px solid #f2f4f7;
     vertical-align: middle;
@@ -126,7 +190,10 @@
 .pmt-state {
   padding: 16px;
   font-size: 14px;
-  &.error { color: #b91c1c; }
+
+  &.error {
+    color: #b91c1c;
+  }
 }
 
 /* Mobil uyğunluğu */
