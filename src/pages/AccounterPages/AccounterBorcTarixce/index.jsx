@@ -742,7 +742,7 @@ const AccounterBorcTarixce = () => {
                                                 }
                                             }}
                                             min={0}
-                                            step="0.01" // <-- bu da vacibdir, onluq üçün
+
                                         />
 
 
@@ -770,7 +770,6 @@ const AccounterBorcTarixce = () => {
                                                 }
                                             }}
                                             min={0}
-                                            step="0.01" // <-- bu da vacibdir, onluq üçün
                                         />
 
 
