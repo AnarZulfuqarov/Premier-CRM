@@ -126,8 +126,7 @@ const navigate = useNavigate();
     //   monthlyQuantities: {...},
     //   monthlyAmounts: {...}
     // }
-    const quantityObj = monthlyStatData?.monthlyQuantities ?? {};
-    const amountObj   = monthlyStatData?.monthlyAmounts ?? {};
+
 
     const rows = useMemo(() => {
         if (!monthlyStatData?.data) return [];
@@ -144,6 +143,23 @@ const navigate = useNavigate();
             };
         });
     }, [monthlyStatData]);
+    const summary = useMemo(() => {
+        if (!rows.length) return { totalCount: 0, avgPrice: 0 };
+
+        const totalCount = rows.reduce((sum, r) => sum + r.count, 0);
+
+        // bütün orderlərin ümumi məbləği
+        const totalAmount = rows.reduce(
+            (sum, r) =>
+                sum +
+                (r.orders?.reduce((s, o) => s + (o.price || 0), 0) ?? 0),
+            0
+        );
+
+        const avgPrice = totalCount > 0 ? totalAmount / totalCount : 0;
+
+        return { totalCount, avgPrice };
+    }, [rows]);
 
 
     return (
@@ -328,6 +344,7 @@ const navigate = useNavigate();
                                         </td>
                                     </tr>
                                 ))}
+
                                 </tbody>
                             </table>
                         </div>
@@ -337,6 +354,19 @@ const navigate = useNavigate();
                 )}
                     </>
                     ))}
+                        <tr className="summary-row">
+                            <td><strong>Ümumi</strong></td>
+                            <td><strong>{summary.totalCount}</strong></td>
+                            <td colSpan={2} style={{ textAlign: 'right' }}>
+                                <strong>
+                                    {summary.avgPrice.toLocaleString("az-AZ", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })} ₼
+                                </strong>
+                            </td>
+
+                        </tr>
 
                         </tbody>
                     </table>
