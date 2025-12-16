@@ -133,33 +133,26 @@ const navigate = useNavigate();
 
         return monthlyStatData.data.map((d) => {
             const count = Number(d.count ?? 0);
-            const totalAmount = d.orders?.reduce((sum, o) => sum + (o.price || 0), 0) ?? 0;
+            const totalPrice =
+                d.orders?.reduce((sum, o) => sum + (o.price || 0), 0) ?? 0;
 
             return {
                 date: d.day,                         // 01.12.2025 formatı
                 count,                                // həmin gün neçə dəfə sifariş olunub
-                avgPrice: count > 0 ? totalAmount / count : 0, // orta qiymət
+                totalPrice, // orta qiymət
                 orders: d.orders ?? [],               // həmin günün bütün orderləri
             };
         });
     }, [monthlyStatData]);
     const summary = useMemo(() => {
-        if (!rows.length) return { totalCount: 0, avgPrice: 0 };
+        if (!rows.length) return { totalCount: 0, totalPrice: 0 };
 
         const totalCount = rows.reduce((sum, r) => sum + r.count, 0);
+        const totalPrice = rows.reduce((sum, r) => sum + r.totalPrice, 0);
 
-        // bütün orderlərin ümumi məbləği
-        const totalAmount = rows.reduce(
-            (sum, r) =>
-                sum +
-                (r.orders?.reduce((s, o) => s + (o.price || 0), 0) ?? 0),
-            0
-        );
-
-        const avgPrice = totalCount > 0 ? totalAmount / totalCount : 0;
-
-        return { totalCount, avgPrice };
+        return { totalCount, totalPrice };
     }, [rows]);
+
 
 
     return (
@@ -282,7 +275,7 @@ const navigate = useNavigate();
                                 <td>{r.count}</td>
                                 <td>
                                     {r.count > 0
-                                        ? r.avgPrice.toLocaleString("az-AZ", {
+                                        ? r.totalPrice.toLocaleString("az-AZ", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                     }) + " ₼"
@@ -359,14 +352,14 @@ const navigate = useNavigate();
                             <td><strong>{summary.totalCount}</strong></td>
                             <td colSpan={2} style={{ textAlign: 'right' }}>
                                 <strong>
-                                    {summary.avgPrice.toLocaleString("az-AZ", {
+                                    {summary.totalPrice.toLocaleString("az-AZ", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
                                     })} ₼
                                 </strong>
                             </td>
-
                         </tr>
+
 
                         </tbody>
                     </table>
